@@ -1,0 +1,53 @@
+﻿using System;
+using System.IO;
+using System.Net.Http;
+using System.Net.Sockets;
+using DSharpPlus;
+using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
+
+namespace AntiClownBot.Commands.OtherCommands
+{
+    public class IpCommand: BaseCommand
+    {
+        public IpCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
+        {
+        }
+
+        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        {
+            var message = e.Message.Content;
+            var parts = message.Split(' ');
+            var needPing = parts.Length > 1 && parts[1] == "ping";
+            // await e.Message.RespondAsync(
+            //     $"Сервер закрыт на неопределенный срок {DiscordEmoji.FromName(DiscordClient, ":BibleThump:")}" +
+            //     $"\nАйпишник внезапно стал серым {DiscordEmoji.FromName(DiscordClient, ":MEGALUL:")}" +
+            //     $"\nЕбучий дом ру {DiscordEmoji.FromName(DiscordClient, ":peepoPooPoo:")}");
+            await e.Message.RespondAsync($"{DiscordEmoji.FromName(DiscordClient, ":pauseChamp:")}");
+            using var tcpClient = new TcpClient();
+            try
+            {
+                var ip = File.ReadAllText("C:\\Minecraft\\Server 1.16 Clear\\server.txt");
+                tcpClient.SendTimeout = 1000;
+                tcpClient.ReceiveTimeout = 1000;
+                await tcpClient.ConnectAsync("localhost", 25565);
+                await e.Message.RespondAsync($"IP: {ip}\nСервер запущен");
+            } catch (Exception) {
+                if (!needPing)
+                {
+                    await e.Message.RespondAsync("Сервер не запущен");
+                    return;
+                }
+
+                var admin = await e.Guild.GetMemberAsync(259306088040628224);
+                await e.Message.RespondAsync($"Сервер не запущен\n{admin.Mention} запусти сервак!!!");
+            }
+        }
+
+        public override string Help()
+        {
+            return "Получения айпишника для удовлетворения кубоёбов\nИспользование:\n" +
+                   "!ip [ping] (параметр ping нужен, чтобы пингануть админа, чтобы он запустил сервак";
+        }
+    }
+}
