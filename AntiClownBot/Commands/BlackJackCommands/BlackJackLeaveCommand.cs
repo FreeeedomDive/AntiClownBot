@@ -18,12 +18,6 @@ namespace AntiClownBot.Commands.BlackJackCommands
                 return;
             }
 
-            if (Config.CurrentBlackJack.IsActive)
-            {
-                await e.Message.RespondAsync("Раунд уже начался");
-                return;
-            }
-
             if (Config.CurrentBlackJack.Players.All(player => player.Name != user.DiscordUsername))
             {
                 await e.Message.RespondAsync("Ты не принимаешь участие в игре");
