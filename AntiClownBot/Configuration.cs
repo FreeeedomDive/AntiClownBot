@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using AntiClownBot.Models.BlackJack;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using Emzi0767;
@@ -23,6 +24,7 @@ namespace AntiClownBot
         public int PidorRoulette;
 
         public Gamble CurrentGamble;
+        public BlackJack CurrentBlackJack;
 
         private const string FileName = "config.json";
 
