@@ -38,6 +38,7 @@ namespace AntiClownBot.Commands
             RegisterCommand("!blackjackhit", new BlackJackHitCommand(client, config));
             RegisterCommand("!blackjackdouble", new BlackJackDoubleCommand(client, config));
             RegisterCommand("!blackjackstand", new BlackJackStandCommand(client, config));
+            RegisterCommand("!blackjackleave", new BlackJackLeaveCommand(client, config));
             
             RegisterCommand("!stats", new EmojiStatsCommand(client, config));
             RegisterCommand("!pidor", new PidorStatsCommand(client, config));
