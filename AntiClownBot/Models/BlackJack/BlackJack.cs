@@ -106,7 +106,6 @@ namespace AntiClownBot.Models.BlackJack
             dealer.ReservedCard = CurrentDeck.Cards.Last();
             stringBuilder.Append($"{dealer.Name} got second card, but guess which one :monkaHmm:\n");
             CurrentDeck.Cards.RemoveAt(CurrentDeck.Cards.Count - 1);
-            Players.Enqueue(dealer);
             foreach(var player in Players)
             {
                 firstCard = GetCard(false, player);
@@ -119,6 +118,7 @@ namespace AntiClownBot.Models.BlackJack
                     stringBuilder.Append("BlackJack\n");
                 }
             }
+            Players.Enqueue(dealer);
             stringBuilder.Append($"{Players.Peek().Name} Your Turn");
             IsActive = true;
             return stringBuilder.ToString();
