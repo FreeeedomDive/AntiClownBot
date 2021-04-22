@@ -30,21 +30,22 @@ namespace AntiClownBot.Commands.BlackJackCommands
                 await e.Message.RespondAsync("Round has not started yet");
                 return;
             }
-            if (Config.CurrentBlackJack.CurrentPlayer.Name != user.DiscordUsername)
+            if (Config.CurrentBlackJack.Players.Peek().Name != user.DiscordUsername)
             {
                 await e.Message.RespondAsync("Not your turn");
                 return;
             }
-            
-            Config.CurrentBlackJack.CurrentPlayer = Config.CurrentBlackJack.CurrentPlayer.NextPlayer;
-            if(Config.CurrentBlackJack.CurrentPlayer.NextPlayer == null)
+
+            var player = Config.CurrentBlackJack.Players.Dequeue();
+            Config.CurrentBlackJack.Players.Enqueue(player);
+            if(Config.CurrentBlackJack.Players.Peek().IsDealer)
             {
                 await e.Message.RespondAsync(Config.CurrentBlackJack.MakeResult());
                 Config.Save();
                 return;
             }
             
-            await e.Message.RespondAsync($"{Config.CurrentBlackJack.CurrentPlayer.Name} , your turn");
+            await e.Message.RespondAsync($"{Config.CurrentBlackJack.Players.Peek().Name} , your turn");
             Config.Save();
         }
 

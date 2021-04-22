@@ -11,10 +11,10 @@ namespace AntiClownBot.Models.BlackJack
         public SocialRatingUser User;
         public string Name;
         public int Value;
-        public bool CanDouble;
+        public bool DidHit;
         public bool IsDouble;
         public bool IsBlackJack;
         public Card ReservedCard;
-        public Player NextPlayer;
+        public bool IsDealer;
     }
 }

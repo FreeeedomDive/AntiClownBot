@@ -33,27 +33,33 @@ namespace AntiClownBot.Commands.BlackJackCommands
                 return;
             }
             
-            if (Config.CurrentBlackJack.CurrentPlayer.Name != user.DiscordUsername)
+            if (Config.CurrentBlackJack.Players.Peek().Name != user.DiscordUsername)
             {
                 await e.Message.RespondAsync("Not your turn");
                 return;
             }
+            if(Config.CurrentBlackJack.Players.Peek().DidHit)
+            {
+                await e.Message.RespondAsync("You can not double");
+                return;
+            }
             
-            var result = Config.CurrentBlackJack.GetCard(true);
+            var result = Config.CurrentBlackJack.GetCard(true, Config.CurrentBlackJack.Players.Peek());
             switch (result.Status)
             {
                 case Models.BlackJack.GetResultStatus.OK:
                     await e.Message.RespondAsync(result.Message);
                     break;
                 case Models.BlackJack.GetResultStatus.NextPlayer:
-                    Config.CurrentBlackJack.CurrentPlayer = Config.CurrentBlackJack.CurrentPlayer.NextPlayer;
-                    if (Config.CurrentBlackJack.CurrentPlayer.NextPlayer == null)
+                    var player = Config.CurrentBlackJack.Players.Dequeue();
+                    Config.CurrentBlackJack.Players.Enqueue(player);
+                    if (Config.CurrentBlackJack.Players.Peek().IsDealer)
                     {
                         await e.Message.RespondAsync(result.Message + Config.CurrentBlackJack.MakeResult());
                     }
                     else
                     {
-                        await e.Message.RespondAsync(result.Message + $"@{Config.CurrentBlackJack.CurrentPlayer.Name} , your turn");
+                        await e.Message.RespondAsync(result.Message + $"{Config.CurrentBlackJack.Players.Peek().Name} , your turn");
                     }
                     break;
                 default:
