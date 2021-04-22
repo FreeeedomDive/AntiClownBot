@@ -150,6 +150,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\BlackJackCommands\BlackJackCreateCommand.cs" />
+    <Compile Include="Commands\BlackJackCommands\BlackJackDoubleCommand.cs" />
+    <Compile Include="Commands\BlackJackCommands\BlackJackEndCommand.cs" />
+    <Compile Include="Commands\BlackJackCommands\BlackJackHitCommand.cs" />
+    <Compile Include="Commands\BlackJackCommands\BlackJackJoinCommand.cs" />
+    <Compile Include="Commands\BlackJackCommands\BlackJackStandCommand.cs" />
+    <Compile Include="Commands\BlackJackCommands\BlackJackStartCommand.cs" />
     <Compile Include="Commands\CommandsManager.cs" />
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\GamblingCommands\CancelGambleCommand.cs" />

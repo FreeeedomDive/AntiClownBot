@@ -52,16 +52,16 @@ namespace AntiClownBot.Models.BlackJack
         }
         public GetResult GetCard(bool isDouble)
         {
-            var card = CurrentDeck.cards[CurrentDeck.cards.Count - 1];
+            var card = CurrentDeck.Cards[CurrentDeck.Cards.Count - 1];
             if(card == Card.Ace && CurrentPlayer.Value > 10)
             {
                 CurrentPlayer.Value += 1;
             }
             else
             {
-                CurrentPlayer.Value += (int)CurrentDeck.cards[CurrentDeck.cards.Count - 1];
+                CurrentPlayer.Value += (int)CurrentDeck.Cards[CurrentDeck.Cards.Count - 1];
             }
-            CurrentDeck.cards.RemoveAt(CurrentDeck.cards.Count - 1);
+            CurrentDeck.Cards.RemoveAt(CurrentDeck.Cards.Count - 1);
             var result = new GetResult();
             result.TakenCard = card;
             if(isDouble)
@@ -136,9 +136,9 @@ namespace AntiClownBot.Models.BlackJack
             }
             firstCard = GetCard(false);
             stringBuilder.Append(firstCard.Message + "\n");
-            CurrentPlayer.ReservedCard = CurrentDeck.cards.Last();
+            CurrentPlayer.ReservedCard = CurrentDeck.Cards.Last();
             stringBuilder.Append($"{CurrentPlayer.Name} got second card, but guess which one :monkaHmm:\n");
-            CurrentDeck.cards.RemoveAt(CurrentDeck.cards.Count - 1);
+            CurrentDeck.Cards.RemoveAt(CurrentDeck.Cards.Count - 1);
             CurrentPlayer = Players.Last();
             while(CurrentPlayer.IsBlackJack)
             {
@@ -230,14 +230,14 @@ namespace AntiClownBot.Models.BlackJack
             }
             else
             {
-                CurrentPlayer.Value += (int)CurrentDeck.cards[CurrentDeck.cards.Count - 1];
+                CurrentPlayer.Value += (int) CurrentPlayer.ReservedCard;
             }
             strBuilder.Append($"{CurrentPlayer.Name} got {CurrentPlayer.ReservedCard}, {CurrentPlayer.Value} points now\n");
             if (CurrentPlayer.Value == 21)
                 CurrentPlayer.IsBlackJack = true;
             while(CurrentPlayer.Value < 17)
             {
-                var card = CurrentDeck.cards.Last();
+                var card = CurrentDeck.Cards.Last();
                 CurrentPlayer.Value += (int)card;
                 strBuilder.Append($"{CurrentPlayer.Name} got {card}, {CurrentPlayer.Value} points now\n");
             }

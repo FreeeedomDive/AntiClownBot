@@ -1,27 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using AntiClownBot.Models.BlackJack;
 using DSharpPlus.EventArgs;
 
 namespace AntiClownBot
 {
     public static class Utility
     {
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) => items.OrderBy(item => Guid.NewGuid());
+        
         public static string ItemToString(InventoryItem item)
         {
-            switch (item)
+            return item switch
             {
-                case InventoryItem.CatWife:
-                    return "кошка-жена";
-                case InventoryItem.DogWife:
-                    return "собака-жена";
-                case InventoryItem.RiceBowl:
-                    return "рис миска";
-                case InventoryItem.Gigabyte:
-                    return "гигабайт интернет";
-                case InventoryItem.None:
-                    return "";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(item), item, null);
-            }
+                InventoryItem.CatWife => "кошка-жена",
+                InventoryItem.DogWife => "собака-жена",
+                InventoryItem.RiceBowl => "рис миска",
+                InventoryItem.Gigabyte => "гигабайт интернет",
+                InventoryItem.None => "",
+                _ => throw new ArgumentOutOfRangeException(nameof(item), item, null)
+            };
         }
 
         public static int GetTimeDiff(DateTime time1, DateTime time2)

@@ -1,10 +1,5 @@
 ﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AntiClownBot.Commands.BlackJackCommands
 {
@@ -13,6 +8,7 @@ namespace AntiClownBot.Commands.BlackJackCommands
         public BlackJackCreateCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
         }
+        
         public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             if(Config.CurrentBlackJack != null)
@@ -22,7 +18,7 @@ namespace AntiClownBot.Commands.BlackJackCommands
             }
             Config.CurrentBlackJack = new Models.BlackJack.BlackJack();
             await e.Message.RespondAsync("BlackJack started, join!");
-            return;
+            Config.Save();
         }
 
         public override string Help()

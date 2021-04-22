@@ -13,20 +13,29 @@ namespace AntiClownBot.Commands.BlackJackCommands
         public BlackJackStartCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
         }
-        public async override void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+
+        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
-            if(Config.CurrentBlackJack == null)
+            if (Config.CurrentBlackJack == null)
             {
                 await e.Message.RespondAsync("BlackJack doesn't exist");
                 return;
             }
-            if(Config.CurrentBlackJack.IsActive)
+
+            if (Config.CurrentBlackJack.IsActive)
             {
                 await e.Message.RespondAsync("Already started");
                 return;
             }
+            
+            if (Config.CurrentBlackJack.Players.All(player => player.Name != user.DiscordUsername))
+            {
+                await e.Message.RespondAsync("You are currently not participating in BlackJack");
+                return;
+            }
+
             await e.Message.RespondAsync(Config.CurrentBlackJack.StartRound());
-            return;
+            Config.Save();
         }
 
         public override string Help()

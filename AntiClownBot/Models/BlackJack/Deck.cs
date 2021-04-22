@@ -25,31 +25,22 @@ namespace AntiClownBot.Models.BlackJack
     }
     public class Deck
     {
-        public List<Card> cards;
+        public readonly List<Card> Cards;
         public Deck()
         {
             var tempList = new List<Card> { Card.Two, Card.Three, Card.Four, Card.Five, 
                 Card.Six, Card.Seven, Card.Eight, Card.Nine, Card.Ten, Card.Jack, Card.Queen, Card.King, Card.Ace };
+            
+            var list = new List<Card>();
             foreach(var card in tempList)
             {
                 for(var count = 0; count < 8; count++)
                 {
-                    cards.Add(card);
+                    list.Add(card);
                 }
             }
-            Shuffle();
-        }
-        private void Shuffle()
-        {
-            var count = cards.Count;
-            var last = count - 1;
-            for (var i = 0; i < last; ++i)
-            {
-                var r = Randomizer.GetRandomNumberBetween(i, count);
-                var tmp = cards[i];
-                cards[i] = cards[r];
-                cards[r] = tmp;
-            }
+
+            Cards = list.Shuffle().ToList();
         }
     }
 }

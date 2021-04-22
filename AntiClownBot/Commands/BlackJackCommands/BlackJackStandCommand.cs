@@ -13,14 +13,14 @@ namespace AntiClownBot.Commands.BlackJackCommands
         public BlackJackStandCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
         }
-        public async override void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             if (Config.CurrentBlackJack == null)
             {
                 await e.Message.RespondAsync("BlackJack doesn't exist");
                 return;
             }
-            if (Config.CurrentBlackJack.Players.Where(player => player.Name == user.DiscordUsername).Count() == 0)
+            if (Config.CurrentBlackJack.Players.All(player => player.Name != user.DiscordUsername))
             {
                 await e.Message.RespondAsync("You are currently not participating in BlackJack");
                 return;
@@ -35,17 +35,17 @@ namespace AntiClownBot.Commands.BlackJackCommands
                 await e.Message.RespondAsync("Not your turn");
                 return;
             }
+            
             Config.CurrentBlackJack.CurrentPlayer = Config.CurrentBlackJack.CurrentPlayer.NextPlayer;
             if(Config.CurrentBlackJack.CurrentPlayer.NextPlayer == null)
             {
                 await e.Message.RespondAsync(Config.CurrentBlackJack.MakeResult());
+                Config.Save();
                 return;
             }
-            else
-            {
-                await e.Message.RespondAsync($"{Config.CurrentBlackJack.CurrentPlayer.Name} , your turn");
-                return;
-            }
+            
+            await e.Message.RespondAsync($"{Config.CurrentBlackJack.CurrentPlayer.Name} , your turn");
+            Config.Save();
         }
 
         public override string Help()
