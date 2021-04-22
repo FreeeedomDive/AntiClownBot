@@ -1,10 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AntiClownBot.Commands.BlackJackCommands
 {
@@ -13,50 +10,53 @@ namespace AntiClownBot.Commands.BlackJackCommands
         public BlackJackHitCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
         }
+
         public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             if (Config.CurrentBlackJack == null)
             {
-                await e.Message.RespondAsync("BlackJack doesn't exist");
+                await e.Message.RespondAsync("Стол не создан");
                 return;
             }
-            
+
             if (Config.CurrentBlackJack.Players.All(player => player.Name != user.DiscordUsername))
             {
-                await e.Message.RespondAsync("You are currently not participating in BlackJack");
+                await e.Message.RespondAsync("Ты не принимаешь участие в игре");
                 return;
             }
-            
+
             if (!Config.CurrentBlackJack.IsActive)
             {
-                await e.Message.RespondAsync("Round has not started yet");
+                await e.Message.RespondAsync("Раунд еще не начался");
                 return;
             }
-            
+
             if (Config.CurrentBlackJack.Players.Peek().Name != user.DiscordUsername)
             {
-                await e.Message.RespondAsync("Not your turn");
+                await e.Message.RespondAsync("Не твой ход");
                 return;
             }
-            
+
             var result = Config.CurrentBlackJack.GetCard(false, Config.CurrentBlackJack.Players.Peek());
             Config.CurrentBlackJack.Players.Peek().DidHit = true;
             switch (result.Status)
             {
-                case Models.BlackJack.GetResultStatus.OK:
+                case Models.BlackJack.GetResultStatus.Ok:
                     await e.Message.RespondAsync(result.Message);
                     break;
                 case Models.BlackJack.GetResultStatus.NextPlayer:
                     var player = Config.CurrentBlackJack.Players.Dequeue();
                     Config.CurrentBlackJack.Players.Enqueue(player);
-                    if(Config.CurrentBlackJack.Players.Peek().IsDealer)
+                    if (Config.CurrentBlackJack.Players.Peek().IsDealer)
                     {
                         await e.Message.RespondAsync(result.Message + Config.CurrentBlackJack.MakeResult());
                     }
                     else
                     {
-                        await e.Message.RespondAsync(result.Message + $"{Config.CurrentBlackJack.Players.Peek().Name} , your turn");
+                        await e.Message.RespondAsync(result.Message +
+                                                     $"\n{Config.CurrentBlackJack.Players.Peek().Name}, твой ход");
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -67,7 +67,7 @@ namespace AntiClownBot.Commands.BlackJackCommands
 
         public override string Help()
         {
-            return "Take another card from the dealer.";
+            return "Взятие еще одной карты у дилера";
         }
     }
 }

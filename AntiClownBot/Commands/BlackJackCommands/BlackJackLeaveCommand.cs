@@ -1,12 +1,12 @@
-﻿using DSharpPlus;
+﻿using System.Linq;
+using DSharpPlus;
 using DSharpPlus.EventArgs;
-using System.Linq;
 
 namespace AntiClownBot.Commands.BlackJackCommands
 {
-    public class BlackJackStartCommand : BaseCommand
+    public class BlackJackLeaveCommand: BaseCommand
     {
-        public BlackJackStartCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
+        public BlackJackLeaveCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
         }
 
@@ -30,13 +30,10 @@ namespace AntiClownBot.Commands.BlackJackCommands
                 return;
             }
 
-            await e.Message.RespondAsync(Config.CurrentBlackJack.StartRound());
+            await e.Message.RespondAsync(Config.CurrentBlackJack.Leave(user));
             Config.Save();
         }
 
-        public override string Help()
-        {
-            return "Начало нового раунда с присоединившимися игроками";
-        }
+        public override string Help() => "Выход из текущей сессии игры BlackJack.\nВыход из активного раунда == автолуз";
     }
 }

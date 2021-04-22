@@ -21,7 +21,7 @@ namespace AntiClownBot.Commands.GamblingCommands
 
             if (e.Author.Id != Config.CurrentGamble.CreatorId)
             {
-                await e.Message.RespondAsync($"Ты кто такой, чел? Держи -30 {DiscordEmoji.FromName(DiscordClient, ":PogOff:")}");
+                await e.Message.RespondAsync($"Ты кто такой, чел? Держи -30 {Utility.StringEmoji(":PogOff:")}");
                 user.DecreaseRating(30);
                 return;
             }

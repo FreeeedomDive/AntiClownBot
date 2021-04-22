@@ -1,4 +1,5 @@
-﻿using DSharpPlus;
+﻿using AntiClownBot.Models.BlackJack;
+using DSharpPlus;
 using DSharpPlus.EventArgs;
 
 namespace AntiClownBot.Commands.BlackJackCommands
@@ -13,17 +14,17 @@ namespace AntiClownBot.Commands.BlackJackCommands
         {
             if(Config.CurrentBlackJack != null)
             {
-                await e.Message.RespondAsync("BlackJack already started");
+                await e.Message.RespondAsync("Стол уже создан");
                 return;
             }
-            Config.CurrentBlackJack = new Models.BlackJack.BlackJack();
-            await e.Message.RespondAsync("BlackJack started, join!");
+            Config.CurrentBlackJack = new BlackJack();
+            await e.Message.RespondAsync("Стол для BlackJack создан");
             Config.Save();
         }
 
         public override string Help()
         {
-            return "Creating new BlackJack \"table\" which u can join";
+            return "Создание нового \"стола\" для BlackJack";
         }
     }
 }

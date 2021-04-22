@@ -1,10 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AntiClownBot.Commands.BlackJackCommands
 {
@@ -13,41 +10,43 @@ namespace AntiClownBot.Commands.BlackJackCommands
         public BlackJackDoubleCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
         }
+
         public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             if (Config.CurrentBlackJack == null)
             {
-                await e.Message.RespondAsync("BlackJack doesn't exist");
+                await e.Message.RespondAsync("Стол не создан");
                 return;
             }
-            
+
             if (Config.CurrentBlackJack.Players.All(player => player.Name != user.DiscordUsername))
             {
-                await e.Message.RespondAsync("You are currently not participating in BlackJack");
+                await e.Message.RespondAsync("Ты не принимаешь участие в игре");
                 return;
             }
-            
+
             if (!Config.CurrentBlackJack.IsActive)
             {
-                await e.Message.RespondAsync("Round has not started yet");
+                await e.Message.RespondAsync("Раунд еще не начат");
                 return;
             }
-            
+
             if (Config.CurrentBlackJack.Players.Peek().Name != user.DiscordUsername)
             {
-                await e.Message.RespondAsync("Not your turn");
+                await e.Message.RespondAsync("Не твоя очередь");
                 return;
             }
-            if(Config.CurrentBlackJack.Players.Peek().DidHit)
+
+            if (Config.CurrentBlackJack.Players.Peek().DidHit)
             {
-                await e.Message.RespondAsync("You can not double");
+                await e.Message.RespondAsync("Уже нельзя удваивать ставку");
                 return;
             }
-            
+
             var result = Config.CurrentBlackJack.GetCard(true, Config.CurrentBlackJack.Players.Peek());
             switch (result.Status)
             {
-                case Models.BlackJack.GetResultStatus.OK:
+                case Models.BlackJack.GetResultStatus.Ok:
                     await e.Message.RespondAsync(result.Message);
                     break;
                 case Models.BlackJack.GetResultStatus.NextPlayer:
@@ -59,8 +58,10 @@ namespace AntiClownBot.Commands.BlackJackCommands
                     }
                     else
                     {
-                        await e.Message.RespondAsync(result.Message + $"{Config.CurrentBlackJack.Players.Peek().Name} , your turn");
+                        await e.Message.RespondAsync(result.Message +
+                                                     $"\n{Config.CurrentBlackJack.Players.Peek().Name}, твоя очередь");
                     }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -69,9 +70,7 @@ namespace AntiClownBot.Commands.BlackJackCommands
             Config.Save();
         }
 
-        public override string Help()
-        {
-            return " The player is allowed to increase the initial bet up to 100% in exchange for committing to stand after receiving exactly one more card.";
-        }
+        public override string Help() =>
+            "Игроку можно удвоить ставку, но он обязан остановиться после этого взятия карты.\nПосле того, как игрок уже брал карты, удваивать больше нельзя";
     }
 }

@@ -29,7 +29,7 @@ namespace AntiClownBot.Commands.GamblingCommands
                     await e.Message.RespondAsync("Одного из вариантов не существует, он не может быть верным");
                     break;
                 case GambleBetResult.UserIsNotAuthor:
-                    await e.Message.RespondAsync($"Ты кто такой, чел? Держи -30 {DiscordEmoji.FromName(DiscordClient, ":PogOff:")}");
+                    await e.Message.RespondAsync($"Ты кто такой, чел? Держи -30 {Utility.StringEmoji(":PogOff:")}");
                     user.DecreaseRating(30);
                     break;
                 case GambleBetResult.SuccessfulResult:

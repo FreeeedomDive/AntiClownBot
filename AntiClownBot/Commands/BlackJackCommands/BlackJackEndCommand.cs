@@ -1,10 +1,5 @@
 ﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DSharpPlus.Entities;
 
 namespace AntiClownBot.Commands.BlackJackCommands
@@ -14,29 +9,29 @@ namespace AntiClownBot.Commands.BlackJackCommands
         public BlackJackEndCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
         }
-        
+
         public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             if (Config.CurrentBlackJack == null)
             {
-                await e.Message.RespondAsync("BlackJack doesn't exist");
+                await e.Message.RespondAsync("Стол не создан");
                 return;
             }
-            
-            if(Config.CurrentBlackJack.IsActive)
+
+            if (Config.CurrentBlackJack.IsActive)
             {
-                await e.Message.RespondAsync("Cannot end BlackJack, cuz current round is not ended");
+                await e.Message.RespondAsync("Невозможно закрыть текущий стол, так как раунд еще не закончен");
                 return;
             }
-            
+
             Config.CurrentBlackJack = null;
-            await e.Message.RespondAsync("BlackJack Ended");
+            await e.Message.RespondAsync("Стол закрыт");
             Config.Save();
         }
 
         public override string Help()
         {
-            return $"End BlackJack {DiscordEmoji.FromName(DiscordClient, ":5Head:")}";
+            return $"Завершение игры {Utility.StringEmoji(":5Head:")}";
         }
     }
 }

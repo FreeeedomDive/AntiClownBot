@@ -1,135 +1,137 @@
-﻿using DSharpPlus;
-using System.Net.Sockets;
-using DSharpPlus.Entities;
-using System;
-using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using DSharpPlus.EventArgs;
+using DSharpPlus.Entities;
 
 namespace AntiClownBot.Models.BlackJack
 {
     public enum GetResultStatus
     {
-        OK,
+        Ok,
         NextPlayer
     }
-    public enum StartResultStatus
-    {
-        OK,
-        NoPlayers
-    }
-    public class StartResult
-    {
-        public string Message;
-        public StartResultStatus Status;
-    }
+
     public class GetResult
     {
         public string Message;
         public Card TakenCard;
         public GetResultStatus Status;
     }
+
     public class BlackJack
     {
         public bool IsActive;
         public Queue<Player> Players;
         public Deck CurrentDeck;
+
         public BlackJack()
         {
-            var tempArray = new string[] { "John Cock", "Hooba Booba", "Adam Yeppers", "James Poggers", "Johnny PauseChamp" };
-            Players = new Queue<Player> ();
-            Players.Enqueue(new Player { Name = tempArray[Randomizer.GetRandomNumberBetween(0, tempArray.Length)], Value = 0 , IsDealer = true});
+            var tempArray = new[]
+                {"John Cock", "Hooba Booba", "Adam Yeppers", "James Poggers", "Johnny PauseChamp", "Nikita Mazes🅱️in"};
+            Players = new Queue<Player>();
+            Players.Enqueue(new Player
+                {Name = tempArray[Randomizer.GetRandomNumberBetween(0, tempArray.Length)], Value = 0, IsDealer = true});
             IsActive = false;
         }
+
         public string Join(SocialRatingUser user)
         {
-            Players.Enqueue(new Player { User = user , Value = 0, Name = user.DiscordUsername});
-            return $"{user.DiscordUsername} joined BlackJack";
+            Players.Enqueue(new Player {User = user, Value = 0, Name = user.DiscordUsername});
+            return $"{user.DiscordUsername} присоединился к игре";
         }
+
+        public string Leave(SocialRatingUser user)
+        {
+            var potentialRemovableUser = Players.Where(p => p.User.Equals(user)).ToList();
+            if (potentialRemovableUser.Count == 0)
+                return "Ты и так не участвовал в игре";
+            var player = potentialRemovableUser[0];
+            Players = Players.WithoutItem(player);
+            if (IsActive)
+                player.User.DecreaseRating(player.IsDouble ? 100 : 50);
+            return $"{user.DiscordUsername} вышел из игры";
+        }
+
         public GetResult GetCard(bool isDouble, Player player)
         {
             var card = CurrentDeck.Cards[CurrentDeck.Cards.Count - 1];
-            if(card == Card.Ace && player.Value > 10)
+            if (card == Card.Ace && player.Value > 10)
             {
                 player.Value += 1;
             }
             else
             {
-                player.Value += (int)CurrentDeck.Cards[CurrentDeck.Cards.Count - 1];
+                player.Value += Utility.CardToInt(CurrentDeck.Cards.Last());
             }
+
             CurrentDeck.Cards.RemoveAt(CurrentDeck.Cards.Count - 1);
-            var result = new GetResult();
-            result.TakenCard = card;
-            if(isDouble)
+            var result = new GetResult
+            {
+                TakenCard = card
+            };
+            if (isDouble)
             {
                 player.IsDouble = true;
-                result.Message = $"{player.Name} doubled and got {card}, {player.Value} points now";
+                result.Message = $"{player.Name} удвоил ставку и получил {card}, {player.Value} очков";
                 result.Status = GetResultStatus.NextPlayer;
             }
             else
             {
-                result.Message = $"{player.Name} got {card}, {player.Value} points now ";
-                if (player.Value >= 21)
-                {
-                    result.Status = GetResultStatus.NextPlayer;
-                }
-                else
-                {
-                    result.Status = GetResultStatus.OK;
-                }
+                result.Message = $"{player.Name} получил {card}, {player.Value} очков";
+                result.Status = player.Value >= 21 ? GetResultStatus.NextPlayer : GetResultStatus.Ok;
             }
+
             return result;
         }
+
         public string StartRound()
         {
-            if(Players.Count < 2)
+            if (Players.Count < 2)
             {
-                return "Hello, why dealer playing alone?";
+                return $"А почему дилер играет один??? {Utility.StringEmoji(":weirdChamp")}";
             }
+
             CurrentDeck = new Deck();
-            foreach(var player in Players)
+            foreach (var player in Players)
             {
                 player.Value = 0;
                 player.IsBlackJack = false;
                 player.IsDouble = false;
                 player.DidHit = false;
             }
+
             var stringBuilder = new StringBuilder();
-            var firstCard = new GetResult();
-            var secondCard = new GetResult();
             var dealer = Players.Dequeue();
-            firstCard = GetCard(false, dealer);
+            var firstCard = GetCard(false, dealer);
             stringBuilder.Append(firstCard.Message + "\n");
             dealer.ReservedCard = CurrentDeck.Cards.Last();
-            stringBuilder.Append($"{dealer.Name} got second card, but guess which one :monkaHmm:\n");
+            stringBuilder.Append($"{dealer.Name} получил вторую карту, но какую же... {Utility.StringEmoji(":monkaHmm:")}\n");
             CurrentDeck.Cards.RemoveAt(CurrentDeck.Cards.Count - 1);
-            foreach(var player in Players)
+            foreach (var player in Players)
             {
                 firstCard = GetCard(false, player);
-                secondCard = GetCard(false, player);
+                var secondCard = GetCard(false, player);
                 stringBuilder.Append(firstCard.Message + "\n");
                 stringBuilder.Append(secondCard.Message + "\n");
-                if((int) firstCard.TakenCard + (int) secondCard.TakenCard == 21)
-                {
-                    player.IsBlackJack = true;
-                    stringBuilder.Append("BlackJack\n");
-                }
+                if (Utility.CardToInt(firstCard.TakenCard) + Utility.CardToInt(secondCard.TakenCard) != 21) 
+                    continue;
+                player.IsBlackJack = true;
+                stringBuilder.Append("BlackJack\n");
             }
+
             Players.Enqueue(dealer);
-            stringBuilder.Append($"{Players.Peek().Name} Your Turn");
+            stringBuilder.Append($"{Players.Peek().Name} твой ход");
             IsActive = true;
             return stringBuilder.ToString();
         }
+
         public string MakeResult()
         {
             var strBuilder = new StringBuilder();
             var dealer = Players.Dequeue();
             strBuilder.Append(DealerGetLastCards(dealer));
             Players.Enqueue(dealer);
-            while(!Players.Peek().IsDealer)
+            while (!Players.Peek().IsDealer)
             {
                 var player = Players.Dequeue();
                 if (player.Value > 21)
@@ -137,44 +139,44 @@ namespace AntiClownBot.Models.BlackJack
                     if (player.IsDouble)
                     {
                         player.User.DecreaseRating(100);
-                        strBuilder.Append($"{player.Name} with double lost 100 points\n");
+                        strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                     }
                     else
                     {
                         player.User.DecreaseRating(50);
-                        strBuilder.Append($"{player.Name} lost 50 points\n");
+                        strBuilder.Append($"{player.Name} проебал 50 очков\n");
                     }
                 }
                 else if (dealer.IsBlackJack)
                 {
                     if (player.IsBlackJack)
                     {
-                        strBuilder.Append($"{player.Name} tie\n");
+                        strBuilder.Append($"{player.Name} ничья\n");
                     }
                     else
                     {
                         if (player.IsDouble)
                         {
                             player.User.DecreaseRating(100);
-                            strBuilder.Append($"{player.Name} with double lost 100 points\n");
+                            strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                         }
                         else
                         {
                             player.User.DecreaseRating(50);
-                            strBuilder.Append($"{player.Name} lost 50 points\n");
+                            strBuilder.Append($"{player.Name} проебал 50 очков\n");
                         }
                     }
                 }
                 else if (player.IsBlackJack)
                 {
-                    if(dealer.Value != 21)
+                    if (dealer.Value != 21)
                     {
-                        Players.Peek().User.IncreaseRating(75);
-                        strBuilder.Append($"{Players.Peek().Name} won BlackJack and got 75 points\n");
+                        player.User.IncreaseRating(75);
+                        strBuilder.Append($"{player.Name} выиграл BlackJack и получил 75 очков\n");
                     }
                     else
                     {
-                        strBuilder.Append($"{player.Name} tie\n");
+                        strBuilder.Append($"{player.Name} ничья\n");
                     }
                 }
                 else if (dealer.Value > 21 || player.Value > Players.Peek().Value)
@@ -182,12 +184,12 @@ namespace AntiClownBot.Models.BlackJack
                     if (player.IsDouble)
                     {
                         player.User.IncreaseRating(100);
-                        strBuilder.Append($"{player.Name} won with double and got 100 points\n");
+                        strBuilder.Append($"{player.Name} с удвоенной ставкой выиграл 100 очков\n");
                     }
                     else
                     {
                         player.User.IncreaseRating(50);
-                        strBuilder.Append($"{player.Name} won and got 50 points\n");
+                        strBuilder.Append($"{player.Name} выиграл 50 очков\n");
                     }
                 }
                 else
@@ -195,19 +197,22 @@ namespace AntiClownBot.Models.BlackJack
                     if (player.IsDouble)
                     {
                         player.User.DecreaseRating(100);
-                        strBuilder.Append($"{player.Name} with double lost 100 points\n");
+                        strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                     }
                     else
                     {
                         player.User.DecreaseRating(50);
-                        strBuilder.Append($"{player.Name} lost 50 points\n");
+                        strBuilder.Append($"{player.Name} проебал 50 очков\n");
                     }
                 }
+
                 Players.Enqueue(player);
             }
+
             IsActive = false;
             return strBuilder.ToString();
         }
+
         public string DealerGetLastCards(Player dealer)
         {
             var strBuilder = new StringBuilder();
@@ -217,17 +222,19 @@ namespace AntiClownBot.Models.BlackJack
             }
             else
             {
-                dealer.Value += (int) dealer.ReservedCard;
+                dealer.Value += Utility.CardToInt(dealer.ReservedCard);
             }
-            strBuilder.Append($"{dealer.Name} got {dealer.ReservedCard}, {dealer.Value} points now\n");
+
+            strBuilder.Append($"{dealer.Name} получил {dealer.ReservedCard}, {dealer.Value} очков\n");
             if (dealer.Value == 21)
                 dealer.IsBlackJack = true;
-            while(dealer.Value < 17)
+            while (dealer.Value < 17)
             {
                 var card = CurrentDeck.Cards.Last();
-                dealer.Value += (int)card;
-                strBuilder.Append($"{dealer.Name} got {card}, {dealer.Value} points now\n");
+                dealer.Value += Utility.CardToInt(card);
+                strBuilder.Append($"{dealer.Name} получил {card}, {dealer.Value} очков\n");
             }
+
             return strBuilder.ToString();
         }
     }

@@ -69,7 +69,7 @@ namespace AntiClownBot
 
         public string GetEmojiStats(DiscordClient discord)
         {
-            return GetStatsForDict(EmojiStatistics, key => DiscordEmoji.FromName(discord, $":{key}:"));
+            return GetStatsForDict(EmojiStatistics, key => Utility.Emoji($":{key}:"));
         }
 
         public string GetPidorStats()
