@@ -179,7 +179,7 @@ namespace AntiClownBot.Models.BlackJack
                         strBuilder.Append($"{player.Name} ничья\n");
                     }
                 }
-                else if (dealer.Value > 21 || player.Value > Players.Peek().Value)
+                else if (dealer.Value > 21 || player.Value > dealer.Value)
                 {
                     if (player.IsDouble)
                     {
@@ -192,7 +192,7 @@ namespace AntiClownBot.Models.BlackJack
                         strBuilder.Append($"{player.Name} выиграл 50 очков\n");
                     }
                 }
-                else
+                else if (player.Value < dealer.Value)
                 {
                     if (player.IsDouble)
                     {
@@ -204,6 +204,10 @@ namespace AntiClownBot.Models.BlackJack
                         player.User.DecreaseRating(50);
                         strBuilder.Append($"{player.Name} проебал 50 очков\n");
                     }
+                }
+                else
+                {
+                    strBuilder.Append($"{player.Name} ничья\n");
                 }
 
                 Players.Enqueue(player);
