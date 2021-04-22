@@ -220,7 +220,7 @@ namespace AntiClownBot.Models.BlackJack
         public string DealerGetLastCards(Player dealer)
         {
             var strBuilder = new StringBuilder();
-            if (dealer.ReservedCard == Card.Ace && Players.Peek().Value > 10)
+            if (dealer.ReservedCard == Card.Ace && dealer.Value > 10)
             {
                 dealer.Value += 1;
             }
