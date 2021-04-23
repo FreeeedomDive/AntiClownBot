@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using AntiClownBot.Models.BlackJack;
 using DSharpPlus;
@@ -27,6 +28,8 @@ namespace AntiClownBot
         public BlackJack CurrentBlackJack;
 
         private const string FileName = "config.json";
+
+        private static Configuration _instance = null;
 
         private static Configuration GetNewConfiguration()
         {
@@ -61,10 +64,15 @@ namespace AntiClownBot
 
         public static Configuration GetConfiguration()
         {
-            var obj = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
-            return File.Exists(FileName)
-                ? obj
-                : GetNewConfiguration();
+            if (_instance != null) return _instance;
+            if (!File.Exists(FileName))
+            {
+                _instance = GetNewConfiguration();
+                _instance.Save();
+                return _instance;
+            }
+            _instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
+            return _instance;
         }
 
         public string GetEmojiStats(DiscordClient discord)

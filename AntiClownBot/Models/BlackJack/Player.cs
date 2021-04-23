@@ -2,7 +2,7 @@
 {
     public class Player
     {
-        public SocialRatingUser User;
+        public ulong UserId;
         public string Name;
         public int Value;
         public bool DidHit;

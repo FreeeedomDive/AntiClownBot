@@ -59,9 +59,9 @@ namespace AntiClownBot
 
             _discord.MessageCreated += async (client, e) =>
             {
-                var message = e.Message.Content;
-
                 if (e.Author.IsBot) return;
+
+                var message = e.Message.Content;
 
                 _config.DecreasePidorRoulette();
 
@@ -72,7 +72,7 @@ namespace AntiClownBot
                     user = _config.Users[e.Author.Id];
                 else
                 {
-                    user = new SocialRatingUser(e.Author.Username);
+                    user = new SocialRatingUser(e.Author.Id, e.Author.Username);
                     _config.Users.Add(e.Author.Id, user);
                     _config.Save();
                 }

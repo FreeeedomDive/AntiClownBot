@@ -25,9 +25,14 @@ namespace AntiClownBot.Models.BlackJack
 
     public class Deck
     {
-        public readonly List<Card> Cards;
+        public List<Card> Cards;
 
         public Deck()
+        {
+            
+        }
+
+        public Deck Init()
         {
             var tempList = new List<Card>
             {
@@ -45,6 +50,7 @@ namespace AntiClownBot.Models.BlackJack
             }
 
             Cards = list.Shuffle().ToList();
+            return this;
         }
     }
 }
