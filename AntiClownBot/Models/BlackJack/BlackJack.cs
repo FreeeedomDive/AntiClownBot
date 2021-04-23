@@ -169,15 +169,8 @@ namespace AntiClownBot.Models.BlackJack
                 }
                 else if (player.IsBlackJack)
                 {
-                    if (dealer.Value != 21)
-                    {
-                        player.User.IncreaseRating(75);
-                        strBuilder.Append($"{player.Name} выиграл BlackJack и получил 75 очков\n");
-                    }
-                    else
-                    {
-                        strBuilder.Append($"{player.Name} ничья\n");
-                    }
+                    player.User.IncreaseRating(75);
+                    strBuilder.Append($"{player.Name} выиграл BlackJack и получил 75 очков\n");
                 }
                 else if (dealer.Value > 21 || player.Value > dealer.Value)
                 {
