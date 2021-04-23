@@ -54,7 +54,7 @@ namespace AntiClownBot.Commands.BlackJackCommands
                     Config.CurrentBlackJack.Players.Enqueue(player);
                     if (Config.CurrentBlackJack.Players.Peek().IsDealer)
                     {
-                        await e.Message.RespondAsync(result.Message + Config.CurrentBlackJack.MakeResult());
+                        await e.Message.RespondAsync(result.Message + "\n" + Config.CurrentBlackJack.MakeResult());
                     }
                     else
                     {
