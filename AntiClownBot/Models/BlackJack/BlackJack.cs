@@ -231,7 +231,7 @@ namespace AntiClownBot.Models.BlackJack
             while (dealer.Value < 17)
             {
                 var card = CurrentDeck.Cards.Last();
-                if (dealer.ReservedCard == Card.Ace && dealer.Value > 10)
+                if (card == Card.Ace && dealer.Value > 10)
                 {
                     dealer.Value += 1;
                 }
