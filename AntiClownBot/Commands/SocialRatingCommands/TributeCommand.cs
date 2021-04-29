@@ -17,7 +17,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
             if (!user.IsCooldownPassed())
             {
                 await e.Message.RespondAsync(
-                    $"Не злоупотребляй подношение император XI {DiscordEmoji.FromName(DiscordClient, ":PepegaGun:")}");
+                    $"Не злоупотребляй подношение император XI {Utility.StringEmoji(":PepegaGun:")}");
                 Utility.DecreaseRating(Config, user, 15, e);
                 return;
             }

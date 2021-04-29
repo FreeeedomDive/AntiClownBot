@@ -17,13 +17,15 @@ namespace AntiClownBot
         private static readonly List<InventoryItem> allItems = new List<InventoryItem>
             {InventoryItem.CatWife, InventoryItem.DogWife, InventoryItem.RiceBowl};
 
+        public ulong DiscordId;
         public string DiscordUsername;
         public int SocialRating;
         public readonly Dictionary<InventoryItem, int> UserItems;
         public DateTime LastTribute;
 
-        public SocialRatingUser(string name)
+        public SocialRatingUser(ulong id, string name)
         {
+            DiscordId = id;
             DiscordUsername = name;
             SocialRating = 500;
             LastTribute = DateTime.MinValue;

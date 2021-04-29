@@ -19,11 +19,7 @@ namespace AntiClownBot.Commands.OtherCommands
             var message = e.Message.Content;
             var parts = message.Split(' ');
             var needPing = parts.Length > 1 && parts[1] == "ping";
-            // await e.Message.RespondAsync(
-            //     $"Сервер закрыт на неопределенный срок {DiscordEmoji.FromName(DiscordClient, ":BibleThump:")}" +
-            //     $"\nАйпишник внезапно стал серым {DiscordEmoji.FromName(DiscordClient, ":MEGALUL:")}" +
-            //     $"\nЕбучий дом ру {DiscordEmoji.FromName(DiscordClient, ":peepoPooPoo:")}");
-            await e.Message.RespondAsync($"{DiscordEmoji.FromName(DiscordClient, ":pauseChamp:")}");
+            await e.Message.RespondAsync($"{Utility.StringEmoji(":pauseChamp:")}");
             using var tcpClient = new TcpClient();
             try
             {

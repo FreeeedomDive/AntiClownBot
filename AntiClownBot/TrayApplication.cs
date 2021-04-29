@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -13,27 +11,25 @@ using System.Windows.Forms;
 using AntiClownBot.Commands;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using DSharpPlus.EventArgs;
-using Newtonsoft.Json.Bson;
 
 namespace AntiClownBot
 {
     public class TrayApplication : ApplicationContext
     {
-        private NotifyIcon trayIcon;
-        private DiscordClient discord;
-        private readonly Configuration config;
+        private readonly NotifyIcon _trayIcon;
+        private DiscordClient _discord;
+        private readonly Configuration _config;
         private CommandsManager _commandsManager;
 
-        private ulong lastReactionMessageId;
-        private ulong lastReactionUserId;
-        private string lastReactionEmote = "";
+        private ulong _lastReactionMessageId;
+        private ulong _lastReactionUserId;
+        private string _lastReactionEmote = "";
 
-        private ulong lastPidorId;
+        private ulong _lastPidorId;
 
         public TrayApplication()
         {
-            trayIcon = new NotifyIcon
+            _trayIcon = new NotifyIcon
             {
                 Text = @"AntiClown Discord Bot",
                 Icon = new Icon("peepoclown.ico"),
@@ -44,40 +40,41 @@ namespace AntiClownBot
                 })
             };
 
-            config = Configuration.GetConfiguration();
-            config.CheckCurrentDay();
+            _config = Configuration.GetConfiguration();
+            _config.CheckCurrentDay();
 
             MainTask().ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         private async Task MainTask()
         {
-            discord = new DiscordClient(new DiscordConfiguration
+            _discord = new DiscordClient(new DiscordConfiguration
             {
                 Token = "NzYwODc5NjI5NTA5ODUzMjI0.X3SeYA.JLxxQ2gUiFcF9MZyYegkhaDUhqE",
                 TokenType = TokenType.Bot
             });
 
-            _commandsManager = new CommandsManager(discord, config);
+            _commandsManager = new CommandsManager(_discord, _config);
+            Utility.Client = _discord;
 
-            discord.MessageCreated += async (client, e) =>
+            _discord.MessageCreated += async (client, e) =>
             {
-                var message = e.Message.Content;
-
                 if (e.Author.IsBot) return;
 
-                config.DecreasePidorRoulette();
+                var message = e.Message.Content;
+
+                _config.DecreasePidorRoulette();
 
                 AddLog($"{e.Author.Username}: {message}");
 
                 SocialRatingUser user;
-                if (config.Users.ContainsKey(e.Author.Id))
-                    user = config.Users[e.Author.Id];
+                if (_config.Users.ContainsKey(e.Author.Id))
+                    user = _config.Users[e.Author.Id];
                 else
                 {
-                    user = new SocialRatingUser(e.Author.Username);
-                    config.Users.Add(e.Author.Id, user);
-                    config.Save();
+                    user = new SocialRatingUser(e.Author.Id, e.Author.Username);
+                    _config.Users.Add(e.Author.Id, user);
+                    _config.Save();
                 }
 
                 if (message.StartsWith("!"))
@@ -89,9 +86,9 @@ namespace AntiClownBot
 
                 var randomMessageRating = Randomizer.GetRandomNumberBetween(-4, 11);
                 if (randomMessageRating > 0)
-                    Utility.IncreaseRating(config, user, randomMessageRating, e);
+                    Utility.IncreaseRating(_config, user, randomMessageRating, e);
                 else if (randomMessageRating < 0)
-                    Utility.DecreaseRating(config, user, -randomMessageRating, e);
+                    Utility.DecreaseRating(_config, user, -randomMessageRating, e);
 
                 CheckStats(message);
 
@@ -116,11 +113,11 @@ namespace AntiClownBot
 
                     if (Randomizer.FlipACoin())
                     {
-                        await e.Message.RespondAsync($"{DiscordEmoji.FromName(discord, ":YEP:")}");
+                        await e.Message.RespondAsync($"{Utility.StringEmoji(":YEP:")}");
                     }
                     else
                     {
-                        await e.Message.RespondAsync($"{DiscordEmoji.FromName(discord, ":NOPE:")}");
+                        await e.Message.RespondAsync($"{Utility.StringEmoji(":NOPE:")}");
                     }
 
                     return;
@@ -140,7 +137,7 @@ namespace AntiClownBot
                             "https://media.discordapp.net/attachments/654674644590264340/768151111252967424/3x.gif");
                     }
 
-                    Utility.IncreaseRating(config, user, 50, e);
+                    Utility.IncreaseRating(_config, user, 50, e);
 
                     return;
                 }
@@ -148,7 +145,7 @@ namespace AntiClownBot
                 if (message.Contains("<@!760879629509853224>"))
                 {
                     ReactToAppeal(e.Channel);
-                    Utility.DecreaseRating(config, user, 25, e);
+                    Utility.DecreaseRating(_config, user, 25, e);
                     return;
                 }
 
@@ -158,7 +155,7 @@ namespace AntiClownBot
                     if (pidor < 6)
                     {
                         ReactToAppeal(e.Channel);
-                       Utility.DecreaseRating(config, user, 30, e);
+                        Utility.DecreaseRating(_config, user, 30, e);
                         return;
                     }
                 }
@@ -180,9 +177,9 @@ namespace AntiClownBot
                 {
                     if (cocks)
                     {
-                        var didSomeoneSayCock = DiscordEmoji.FromName(discord, ":DIDSOMEONESAYCOCK:");
+                        var didSomeoneSayCock = Utility.Emoji(":DIDSOMEONESAYCOCK:");
                         await e.Message.CreateReactionAsync(didSomeoneSayCock);
-                        var yep = DiscordEmoji.FromName(discord, ":YEP:");
+                        var yep = Utility.StringEmoji(":YEP:");
                         await e.Message.RespondAsync($"{yep} COCK");
                     }
 
@@ -202,34 +199,34 @@ namespace AntiClownBot
 
                     if (anime)
                     {
-                        await e.Message.CreateReactionAsync(DiscordEmoji.FromName(discord, ":AYAYABASS:"));
+                        await e.Message.CreateReactionAsync(Utility.Emoji(":AYAYABASS:"));
                     }
                 }
 
-                if (config.IsPidor())
+                if (_config.IsPidor())
                 {
                     var emojis = new List<DiscordEmoji>();
                     var megapidor = Randomizer.GetRandomNumberBetween(0, 50) == 0;
                     if (megapidor)
                     {
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_p:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_a:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_t:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_r:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_e:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_g:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_o:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":PATREGO:"));
-                        Utility.IncreaseRating(config, user, Randomizer.GetRandomNumberBetween(100, 200), e);
+                        emojis.Add(Utility.Emoji(":regional_indicator_p:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_a:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_t:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_r:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_e:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_g:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_o:"));
+                        emojis.Add(Utility.Emoji(":PATREGO:"));
+                        Utility.IncreaseRating(_config, user, Randomizer.GetRandomNumberBetween(100, 200), e);
                     }
                     else
                     {
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_p:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_i:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_d:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_o:"));
-                        emojis.Add(DiscordEmoji.FromName(discord, ":regional_indicator_r:"));
-                        Utility.DecreaseRating(config, user, Randomizer.GetRandomNumberBetween(35, 65), e);
+                        emojis.Add(Utility.Emoji(":regional_indicator_p:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_i:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_d:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_o:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_r:"));
+                        Utility.DecreaseRating(_config, user, Randomizer.GetRandomNumberBetween(35, 65), e);
                     }
 
                     foreach (var emoji in emojis)
@@ -241,18 +238,18 @@ namespace AntiClownBot
                     var count = megapidor ? 10 : 1;
                     for (var i = 0; i < count; i++)
                     {
-                        config.AddPidor(e.Author.Username);
+                        _config.AddPidor(e.Author.Username);
                     }
 
-                    if (config.IsPidorOfTheDay(e.Author.Username))
+                    if (_config.IsPidorOfTheDay(e.Author.Username))
                     {
                         var role = e.Guild.GetRole(781970998685466654);
 
-                        if (config.CurrentPidorOfTheDay == e.Author.Id) return;
+                        if (_config.CurrentPidorOfTheDay == e.Author.Id) return;
 
-                        if (config.CurrentPidorOfTheDay != 0)
+                        if (_config.CurrentPidorOfTheDay != 0)
                         {
-                            var currentPidor = await e.Guild.GetMemberAsync(config.CurrentPidorOfTheDay);
+                            var currentPidor = await e.Guild.GetMemberAsync(_config.CurrentPidorOfTheDay);
                             await currentPidor.RevokeRoleAsync(role);
                         }
 
@@ -266,22 +263,22 @@ namespace AntiClownBot
                             AddLog(ex.Message);
                         }
 
-                        config.CurrentPidorOfTheDay = newPidor.Id;
+                        _config.CurrentPidorOfTheDay = newPidor.Id;
                     }
 
-                    lastPidorId = e.Author.Id;
+                    _lastPidorId = e.Author.Id;
                 }
 
                 if (randomMessageRating == -4)
                 {
-                    await e.Message.RespondAsync($"{DiscordEmoji.FromName(discord, ":osu:")}ждаю");
+                    await e.Message.RespondAsync($"{Utility.StringEmoji(":osu:")}ждаю");
                 }
             };
 
-            discord.TypingStarted += async (client, e) =>
+            _discord.TypingStarted += async (client, e) =>
             {
                 var user = e.User;
-                if (user.Id != lastPidorId) return;
+                if (user.Id != _lastPidorId) return;
 
                 var pool = new[]
                 {
@@ -291,22 +288,22 @@ namespace AntiClownBot
                     $"{user.Mention}, а кто это тут такой маленький обиженный пидор хочет мне что-то высрать?"
                 };
                 await e.Channel.SendMessageAsync(pool[Randomizer.GetRandomNumberBetween(0, pool.Length)]);
-                lastPidorId = 0;
+                _lastPidorId = 0;
             };
 
-            discord.GuildMemberAdded += async (client, e) =>
+            _discord.GuildMemberAdded += async (client, e) =>
             {
                 if (e.Member.IsBot)
                 {
                     await e.Guild.Channels[654674644590264340].SendMessageAsync(
                         $"Какого хуя на этом сервере существуют другие боты, кроме меня? " +
-                        $"{DiscordEmoji.FromName(client, ":pogOff:")} " +
-                        $"{DiscordEmoji.FromName(client, ":pogOff:")} " +
-                        $"{DiscordEmoji.FromName(client, ":pogOff:")} ");
+                        $"{Utility.StringEmoji(":pogOff:")} " +
+                        $"{Utility.StringEmoji(":pogOff:")} " +
+                        $"{Utility.StringEmoji(":pogOff:")} ");
                 }
             };
 
-            discord.MessageReactionAdded += async (client, e) =>
+            _discord.MessageReactionAdded += async (client, e) =>
             {
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
@@ -322,7 +319,7 @@ namespace AntiClownBot
 
                 AddLog($"EMOTE ADDED - {username}: {emojiName}");
 
-                config.AddEmoji(emojiName);
+                _config.AddEmoji(emojiName);
 
                 if ((emojiName == "peepoClown" || emojiName == "roflanClownbalo" ||
                      emojiName == "clownChamp") && e.User.Id == 423498706336088085)
@@ -332,24 +329,24 @@ namespace AntiClownBot
                 }
                 else if (Randomizer.GetRandomNumberBetween(1, 20) == 1)
                 {
-                    if (e.Message.Id != lastReactionMessageId || e.User.Id != lastReactionUserId ||
-                        emojiName != lastReactionEmote)
+                    if (e.Message.Id != _lastReactionMessageId || e.User.Id != _lastReactionUserId ||
+                        emojiName != _lastReactionEmote)
                     {
                         await e.Message.CreateReactionAsync(emoji);
                     }
                     else
                     {
                         await e.Message.RespondAsync(
-                            $"{e.User.Mention}, зачем ты срешь эмотами? {DiscordEmoji.FromName(discord, ":peepoPooPoo:")}");
+                            $"{e.User.Mention}, зачем ты срешь эмотами? {Utility.StringEmoji(":peepoPooPoo:")}");
                     }
                 }
 
-                lastReactionMessageId = e.Message.Id;
-                lastReactionUserId = e.User.Id;
-                lastReactionEmote = emojiName;
+                _lastReactionMessageId = e.Message.Id;
+                _lastReactionUserId = e.User.Id;
+                _lastReactionEmote = emojiName;
             };
 
-            discord.MessageReactionRemoved += (client, e) =>
+            _discord.MessageReactionRemoved += (client, e) =>
             {
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
@@ -364,12 +361,12 @@ namespace AntiClownBot
                 }
 
                 AddLog($"EMOTE REMOVED - {username}: {emojiName}");
-                config.RemoveEmoji(emojiName);
+                _config.RemoveEmoji(emojiName);
 
                 return Task.CompletedTask;
             };
 
-            discord.PresenceUpdated += (client, args) =>
+            _discord.PresenceUpdated += (client, args) =>
             {
                 var user = args.User;
                 var name = args.Activity.Name;
@@ -378,7 +375,7 @@ namespace AntiClownBot
                 return Task.CompletedTask;
             };
 
-            await discord.ConnectAsync();
+            await _discord.ConnectAsync();
             await Task.Delay(-1);
         }
 
@@ -387,10 +384,10 @@ namespace AntiClownBot
             var pool = new[]
             {
                 "Ты понимаешь, что общаешься с бинарником?",
-                $"{DiscordEmoji.FromName(discord, ":PogOff:")}",
+                $"{Utility.StringEmoji(":PogOff:")}",
                 "*икает*",
-                $"{DiscordEmoji.FromName(discord, ":gachiBASS:")} - мое ебало, когда у кого-то сгорело из-за меня",
-                $"{DiscordEmoji.FromName(discord, ":monkaW:")}",
+                $"{Utility.StringEmoji(":gachiBASS:")} - мое ебало, когда у кого-то сгорело из-за меня",
+                $"{Utility.StringEmoji(":monkaW:")}",
             };
             await channel.SendMessageAsync(pool[Randomizer.GetRandomNumberBetween(0, pool.Length)]);
         }
@@ -403,7 +400,7 @@ namespace AntiClownBot
             foreach (Match match in matches)
             {
                 var emote = match.Groups[1].Value;
-                config.AddEmoji(emote);
+                _config.AddEmoji(emote);
             }
         }
 
@@ -468,7 +465,7 @@ namespace AntiClownBot
 
         private void Exit(object sender, EventArgs e)
         {
-            trayIcon.Visible = false;
+            _trayIcon.Visible = false;
             Environment.Exit(0);
         }
 

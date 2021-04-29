@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AntiClownBot.Commands.BlackJackCommands;
 using AntiClownBot.Commands.GamblingCommands;
 using AntiClownBot.Commands.OtherCommands;
 using AntiClownBot.Commands.RandomSelectCommands;
@@ -29,6 +30,15 @@ namespace AntiClownBot.Commands
             RegisterCommand("!gamble", new GambleCommand(client, config));
             RegisterCommand("!gambleresult", new GambleResultCommand(client, config));
             RegisterCommand("!cancelgamble", new CancelGambleCommand(client, config));
+
+            RegisterCommand("!blackjackcreate", new BlackJackCreateCommand(client, config));
+            RegisterCommand("!blackjackjoin", new BlackJackJoinCommand(client, config));
+            RegisterCommand("!blackjackstart", new BlackJackStartCommand(client, config));
+            RegisterCommand("!blackjackend", new BlackJackEndCommand(client, config));
+            RegisterCommand("!blackjackhit", new BlackJackHitCommand(client, config));
+            RegisterCommand("!blackjackdouble", new BlackJackDoubleCommand(client, config));
+            RegisterCommand("!blackjackstand", new BlackJackStandCommand(client, config));
+            RegisterCommand("!blackjackleave", new BlackJackLeaveCommand(client, config));
             
             RegisterCommand("!stats", new EmojiStatsCommand(client, config));
             RegisterCommand("!pidor", new PidorStatsCommand(client, config));

@@ -30,14 +30,7 @@ namespace AntiClownBot.Commands.GamblingCommands
                 return;
             }
 
-            var options = (
-                    from line in optionsLines
-                    select line.Split(' ')
-                    into args
-                    select string.Join(" ", args.Take(args.Length - 1))
-                    into option
-                    select new GambleOption(option, 0f))
-                .ToList();
+            var options = optionsLines.Select(option => new GambleOption(option, 0f)).ToList();
 
             Config.CurrentGamble = new Gamble(gambleName, e.Author.Id, GambleType.Default, options);
             Config.Save();
