@@ -178,12 +178,12 @@
     <Compile Include="Commands\StatsCommands\EmojiStatsCommand.cs" />
     <Compile Include="Commands\StatsCommands\PidorStatsCommand.cs" />
     <Compile Include="Configuration.cs" />
-    <Compile Include="Gamble.cs" />
-    <Compile Include="GambleOption.cs" />
-    <Compile Include="GambleUser.cs" />
     <Compile Include="Models\BlackJack\BlackJack.cs" />
     <Compile Include="Models\BlackJack\Deck.cs" />
     <Compile Include="Models\BlackJack\Player.cs" />
+    <Compile Include="Models\Gamble\Gamble.cs" />
+    <Compile Include="Models\Gamble\GambleOption.cs" />
+    <Compile Include="Models\Gamble\GambleUser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Randomizer.cs" />
@@ -219,6 +219,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

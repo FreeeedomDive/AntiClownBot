@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AntiClownBot
+namespace AntiClownBot.Models.Gamble
 {
     public enum GambleBetOptions
     {

@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace AntiClownBot
+namespace AntiClownBot.Models.Gamble
 {
     [TypeConverter(typeof(GambleOptionTypeConverter))]
     public class GambleOption

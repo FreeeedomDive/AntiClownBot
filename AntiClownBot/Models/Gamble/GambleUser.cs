@@ -1,4 +1,4 @@
-﻿namespace AntiClownBot
+﻿namespace AntiClownBot.Models.Gamble
 {
     public class GambleUser
     {

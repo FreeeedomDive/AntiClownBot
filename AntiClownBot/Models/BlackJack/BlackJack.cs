@@ -38,7 +38,7 @@ namespace AntiClownBot.Models.BlackJack
         public string Join(SocialRatingUser user)
         {
             Players.Enqueue(new Player {UserId = user.DiscordId, Value = 0, Name = user.DiscordUsername});
-            return $"{user.DiscordUsername} присоединился к игре";
+            return $"{user.DiscordUsername} присоединился к игре {Utility.StringEmoji(":peepoArrive:")}";
         }
 
         public string Leave(SocialRatingUser user)
@@ -51,7 +51,7 @@ namespace AntiClownBot.Models.BlackJack
             Players = Players.WithoutItem(player);
             if (IsActive)
                 _configuration.Users[player.UserId].DecreaseRating(player.IsDouble ? 100 : 50);
-            return $"{user.DiscordUsername} вышел из игры";
+            return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}";
         }
 
         public GetResult GetCard(bool isDouble, Player player)
