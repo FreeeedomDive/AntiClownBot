@@ -21,14 +21,14 @@ namespace AntiClownBot
         public string DiscordUsername;
         public int SocialRating;
         public readonly Dictionary<InventoryItem, int> UserItems;
-        public DateTime LastTribute;
+        public DateTime NextTribute;
 
         public SocialRatingUser(ulong id, string name)
         {
             DiscordId = id;
             DiscordUsername = name;
             SocialRating = 500;
-            LastTribute = DateTime.MinValue;
+            NextTribute = DateTime.MinValue;
             UserItems = new Dictionary<InventoryItem, int>
             {
                 {InventoryItem.CatWife, 0},
@@ -43,9 +43,9 @@ namespace AntiClownBot
             var oldRating = SocialRating;
             SocialRating += rating;
             var diff = SocialRating / 1000 - oldRating / 1000;
-            
+
             var items = new List<InventoryItem>();
-            
+
             if (diff == 0)
                 return items;
             for (var i = 0; i < diff; i++)
@@ -59,6 +59,7 @@ namespace AntiClownBot
                 UserItems[newItem]++;
                 items.Add(newItem);
             }
+
             return items;
         }
 
@@ -84,16 +85,23 @@ namespace AntiClownBot
             return deletedItems;
         }
 
+        public bool HasDodgedPidor()
+        {
+            const int pidorDodgeChanceByOneDogWife = 5;
+            return Randomizer.GetRandomNumberBetween(0, 100) < 
+                   pidorDodgeChanceByOneDogWife * UserItems[InventoryItem.DogWife];
+        }
+
         public void UpdateCooldown()
         {
-            LastTribute = DateTime.Now;
+            const double cooldownDecreaseByOneGigabyteItem = 0.03;
+            NextTribute = DateTime.Now.AddMilliseconds(
+                60 * 60 * 1000 * (1 - cooldownDecreaseByOneGigabyteItem * UserItems[InventoryItem.Gigabyte]));
         }
 
         public bool IsCooldownPassed()
         {
-            const int cooldownIsMinutes = 60;
-            var diff = Utility.GetTimeDiff(LastTribute, DateTime.Now);
-            return diff >= cooldownIsMinutes;
+            return DateTime.Now > NextTribute;
         }
     }
 }

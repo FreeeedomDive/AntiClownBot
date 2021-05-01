@@ -2,12 +2,12 @@
 {
     public class GambleUser
     {
-        public SocialRatingUser User;
+        public ulong DiscordId;
         public int Bet;
 
-        public GambleUser(SocialRatingUser user)
+        public GambleUser(ulong id)
         {
-            User = user;
+            DiscordId = id;
             Bet = 0;
         }
 

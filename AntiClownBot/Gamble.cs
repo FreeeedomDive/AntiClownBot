@@ -55,10 +55,10 @@ namespace AntiClownBot
             if (options.Count == 0) return GambleBetOptions.OptionDoesntExist;
             var selectedOption = options[0];
 
-            var gamblers = Bids[selectedOption].Where(gambleUser => gambleUser.User.Equals(user)).ToList();
+            var gamblers = Bids[selectedOption].Where(gambleUser => gambleUser.DiscordId == user.DiscordId).ToList();
             if (gamblers.Count == 0)
             {
-                var gambleUser = new GambleUser(user);
+                var gambleUser = new GambleUser(user.DiscordId);
                 if (bet > user.SocialRating) return GambleBetOptions.NotEnoughRating;
                 Bids[selectedOption].Add(gambleUser);
                 gambleUser.IncreaseBet(bet);
@@ -75,6 +75,8 @@ namespace AntiClownBot
 
         public GambleBetResult MakeGambleResult(ulong id, string[] correctOptions)
         {
+            var config = Configuration.GetConfiguration();
+
             if (CreatorId != id) return GambleBetResult.UserIsNotAuthor;
             if (correctOptions.Where(option =>
             {
@@ -112,7 +114,7 @@ namespace AntiClownBot
             {
                 foreach (var incorrectUser in incorrectUsers)
                 {
-                    var socialUser = incorrectUser.User;
+                    var socialUser = config.Users[incorrectUser.DiscordId];
                     var loosedItems = socialUser.DecreaseRating(incorrectUser.Bet).Select(Utility.ItemToString)
                         .ToList();
                     sb.Append($"{socialUser.DiscordUsername}: -{incorrectUser.Bet}");
@@ -133,7 +135,7 @@ namespace AntiClownBot
             foreach (var correctUser in correctUsers)
             {
                 var win = (int) Math.Floor(correctUser.Bet * ratio - correctUser.Bet);
-                var socialUser = correctUser.User;
+                var socialUser = config.Users[correctUser.DiscordId];
                 var newItems = socialUser.IncreaseRating(win).Select(Utility.ItemToString).ToList();
                 sb.Append($"{socialUser.DiscordUsername}: +{win}");
                 if (newItems.Count != 0)
@@ -146,7 +148,7 @@ namespace AntiClownBot
 
             foreach (var incorrectUser in incorrectUsers)
             {
-                var socialUser = incorrectUser.User;
+                var socialUser = config.Users[incorrectUser.DiscordId];
                 var lostItems = socialUser.DecreaseRating(incorrectUser.Bet).Select(Utility.ItemToString).ToList();
                 sb.Append($"{socialUser.DiscordUsername}: -{incorrectUser.Bet}");
                 if (lostItems.Count != 0)
@@ -164,6 +166,8 @@ namespace AntiClownBot
 
         private GambleBetResult MakeCustomGambleResult(string[] correctStringOptions)
         {
+            var config = Configuration.GetConfiguration();
+
             var sb = new StringBuilder();
             sb.Append($"Результаты ставки \"{GambleName}\"\n");
 
@@ -181,7 +185,7 @@ namespace AntiClownBot
                 {
                     var win = (int) Math.Floor(correctUser.Bet * correctOption.Ratio - correctUser.Bet);
                     pointsWon += win;
-                    var socialUser = correctUser.User;
+                    var socialUser = config.Users[correctUser.DiscordId];
                     var newItems = socialUser.IncreaseRating(win).Select(Utility.ItemToString).ToList();
                     sb.Append($"{socialUser.DiscordUsername}: +{win}");
                     if (newItems.Count != 0)
@@ -199,7 +203,7 @@ namespace AntiClownBot
             {
                 foreach (var incorrectUser in Bids[incorrectOption])
                 {
-                    var socialUser = incorrectUser.User;
+                    var socialUser = config.Users[incorrectUser.DiscordId];
                     pointsLost += incorrectUser.Bet;
                     var lostItems = socialUser.DecreaseRating(incorrectUser.Bet).Select(Utility.ItemToString).ToList();
                     sb.Append($"{socialUser.DiscordUsername}: -{incorrectUser.Bet}");

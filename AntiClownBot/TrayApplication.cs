@@ -63,8 +63,6 @@ namespace AntiClownBot
 
                 var message = e.Message.Content;
 
-                _config.DecreasePidorRoulette();
-
                 AddLog($"{e.Author.Username}: {message}");
 
                 SocialRatingUser user;
@@ -83,6 +81,8 @@ namespace AntiClownBot
                     _commandsManager.ExecuteCommand(commandName, e, user);
                     return;
                 }
+
+                _config.DecreasePidorRoulette();
 
                 var randomMessageRating = Randomizer.GetRandomNumberBetween(-4, 11);
                 if (randomMessageRating > 0)
@@ -205,68 +205,76 @@ namespace AntiClownBot
 
                 if (_config.IsPidor())
                 {
-                    var emojis = new List<DiscordEmoji>();
-                    var megapidor = Randomizer.GetRandomNumberBetween(0, 50) == 0;
-                    if (megapidor)
+                    if (user.HasDodgedPidor())
                     {
-                        emojis.Add(Utility.Emoji(":regional_indicator_p:"));
-                        emojis.Add(Utility.Emoji(":regional_indicator_a:"));
-                        emojis.Add(Utility.Emoji(":regional_indicator_t:"));
-                        emojis.Add(Utility.Emoji(":regional_indicator_r:"));
-                        emojis.Add(Utility.Emoji(":regional_indicator_e:"));
-                        emojis.Add(Utility.Emoji(":regional_indicator_g:"));
-                        emojis.Add(Utility.Emoji(":regional_indicator_o:"));
-                        emojis.Add(Utility.Emoji(":PATREGO:"));
-                        Utility.IncreaseRating(_config, user, Randomizer.GetRandomNumberBetween(100, 200), e);
+                        await e.Message.RespondAsync(
+                            $"{e.Author.Mention} увернулся от пидора {Utility.StringEmoji(":ricardoFlick:")}");
                     }
                     else
                     {
-                        emojis.Add(Utility.Emoji(":regional_indicator_p:"));
-                        emojis.Add(Utility.Emoji(":regional_indicator_i:"));
-                        emojis.Add(Utility.Emoji(":regional_indicator_d:"));
-                        emojis.Add(Utility.Emoji(":regional_indicator_o:"));
-                        emojis.Add(Utility.Emoji(":regional_indicator_r:"));
-                        Utility.DecreaseRating(_config, user, Randomizer.GetRandomNumberBetween(35, 65), e);
-                    }
-
-                    foreach (var emoji in emojis)
-                    {
-                        await e.Message.CreateReactionAsync(emoji);
-                        Thread.Sleep(150);
-                    }
-
-                    var count = megapidor ? 10 : 1;
-                    for (var i = 0; i < count; i++)
-                    {
-                        _config.AddPidor(e.Author.Username);
-                    }
-
-                    if (_config.IsPidorOfTheDay(e.Author.Username))
-                    {
-                        var role = e.Guild.GetRole(781970998685466654);
-
-                        if (_config.CurrentPidorOfTheDay == e.Author.Id) return;
-
-                        if (_config.CurrentPidorOfTheDay != 0)
+                        var emojis = new List<DiscordEmoji>();
+                        var megapidor = Randomizer.GetRandomNumberBetween(0, 50) == 0;
+                        if (megapidor)
                         {
-                            var currentPidor = await e.Guild.GetMemberAsync(_config.CurrentPidorOfTheDay);
-                            await currentPidor.RevokeRoleAsync(role);
+                            emojis.Add(Utility.Emoji(":regional_indicator_p:"));
+                            emojis.Add(Utility.Emoji(":regional_indicator_a:"));
+                            emojis.Add(Utility.Emoji(":regional_indicator_t:"));
+                            emojis.Add(Utility.Emoji(":regional_indicator_r:"));
+                            emojis.Add(Utility.Emoji(":regional_indicator_e:"));
+                            emojis.Add(Utility.Emoji(":regional_indicator_g:"));
+                            emojis.Add(Utility.Emoji(":regional_indicator_o:"));
+                            emojis.Add(Utility.Emoji(":PATREGO:"));
+                            Utility.IncreaseRating(_config, user, Randomizer.GetRandomNumberBetween(100, 200), e);
+                        }
+                        else
+                        {
+                            emojis.Add(Utility.Emoji(":regional_indicator_p:"));
+                            emojis.Add(Utility.Emoji(":regional_indicator_i:"));
+                            emojis.Add(Utility.Emoji(":regional_indicator_d:"));
+                            emojis.Add(Utility.Emoji(":regional_indicator_o:"));
+                            emojis.Add(Utility.Emoji(":regional_indicator_r:"));
+                            Utility.DecreaseRating(_config, user, Randomizer.GetRandomNumberBetween(35, 65), e);
                         }
 
-                        var newPidor = await e.Guild.GetMemberAsync(e.Author.Id);
-                        try
+                        foreach (var emoji in emojis)
                         {
-                            await newPidor.GrantRoleAsync(role);
-                        }
-                        catch (Exception ex)
-                        {
-                            AddLog(ex.Message);
+                            await e.Message.CreateReactionAsync(emoji);
+                            Thread.Sleep(150);
                         }
 
-                        _config.CurrentPidorOfTheDay = newPidor.Id;
+                        var count = megapidor ? 10 : 1;
+                        for (var i = 0; i < count; i++)
+                        {
+                            _config.AddPidor(e.Author.Username);
+                        }
+
+                        if (_config.IsPidorOfTheDay(e.Author.Username))
+                        {
+                            var role = e.Guild.GetRole(781970998685466654);
+
+                            if (_config.CurrentPidorOfTheDay == e.Author.Id) return;
+
+                            if (_config.CurrentPidorOfTheDay != 0)
+                            {
+                                var currentPidor = await e.Guild.GetMemberAsync(_config.CurrentPidorOfTheDay);
+                                await currentPidor.RevokeRoleAsync(role);
+                            }
+
+                            var newPidor = await e.Guild.GetMemberAsync(e.Author.Id);
+                            try
+                            {
+                                await newPidor.GrantRoleAsync(role);
+                            }
+                            catch (Exception ex)
+                            {
+                                AddLog(ex.Message);
+                            }
+
+                            _config.CurrentPidorOfTheDay = newPidor.Id;
+                        }
+
+                        _lastPidorId = e.Author.Id;
                     }
-
-                    _lastPidorId = e.Author.Id;
                 }
 
                 if (randomMessageRating == -4)

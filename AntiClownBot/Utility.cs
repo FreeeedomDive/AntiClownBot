@@ -62,10 +62,20 @@ namespace AntiClownBot
         public static string StringEmoji(string emoji) => $"{DiscordEmoji.FromName(Client, emoji)}";
         public static DiscordEmoji Emoji(string emoji) => DiscordEmoji.FromName(Client, emoji);
 
-        public static int GetTimeDiff(DateTime time1, DateTime time2)
+        public static string NormalizeTime(DateTime dateTime)
         {
-            var diff = time1 - time2;
-            return (int) Math.Abs(diff.TotalMinutes);
+            return $"{Normalize(dateTime.Hour)}:{Normalize(dateTime.Minute)}:{Normalize(dateTime.Second)}";
+        }
+
+        private static string Normalize(int number)
+        {
+            return number < 10 ? $"0{number}" : $"{number}";
+        }
+
+        public static string GetTimeDiff(DateTime dateTime)
+        {
+            var diff = dateTime - DateTime.Now;
+            return $"{diff.Minutes} минут {diff.Seconds} секунд";
         }
         
         public static async void IncreaseRating(Configuration config, SocialRatingUser user, int rating, MessageCreateEventArgs e)

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using AntiClownBot.Models.BlackJack;
-using DSharpPlus;
 using DSharpPlus.Entities;
 using Emzi0767;
 using Newtonsoft.Json;
@@ -75,7 +74,7 @@ namespace AntiClownBot
             return _instance;
         }
 
-        public string GetEmojiStats(DiscordClient discord)
+        public string GetEmojiStats()
         {
             return GetStatsForDict(EmojiStatistics, key => Utility.Emoji($":{key}:"));
         }

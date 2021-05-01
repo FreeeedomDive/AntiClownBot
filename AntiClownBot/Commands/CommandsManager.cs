@@ -23,6 +23,7 @@ namespace AntiClownBot.Commands
             RegisterCommand("!tribute", new TributeCommand(client, config));
             RegisterCommand("!socialstatus", new SocialStatusCommand(client, config));
             RegisterCommand("!rating", new RatingCommand(client, config));
+            RegisterCommand("!when", new WhenCommand(client, config));
             
             RegisterCommand("!startgamble", new StartGambleCommand(client, config));
             RegisterCommand("!startcustomgamble", new StartCustomGambleCommand(client, config));
@@ -51,10 +52,7 @@ namespace AntiClownBot.Commands
             RegisterCommand("!help", new HelpCommand(client, config, this));
             RegisterCommand("!allcommands", new AllCommandsCommand(client, config, this));
 
-            RegisterCommand("!f1", new F1CommandParser(client, config, new List<IF1Parser>
-            { 
-                new F1QualiParser(client, config) 
-            }));
+            RegisterCommand("!f1", new F1CommandParser(client, config));
         }
 
         private void RegisterCommand(string name, BaseCommand baseCommand)
