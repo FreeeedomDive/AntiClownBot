@@ -9,21 +9,29 @@ using System.Threading.Tasks;
 
 namespace AntiClownBot.Commands.F1
 {
-    class F1CommandParser : BaseCommand
+    public class F1CommandParser : BaseCommand
     {
-        public F1CommandParser(DiscordClient client, Configuration configuration) : base(client, configuration)
+        private readonly Dictionary<string,IF1Parser> f1Parsers;
+        public F1CommandParser(DiscordClient client, Configuration configuration, List<IF1Parser> f1Parsers) : base(client, configuration)
         {
+            this.f1Parsers = f1Parsers.ToDictionary(x => x.Name);
         }
         public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             var message = e.Message.Content;
-            var messageArgs = message.Split(' ');
-            switch(messageArgs.Last())
+            var messageArgs = message.Split(' ').Skip(1);
+            if(messageArgs.Count() < 1)
             {
-                default:
-                    await e.Message.RespondAsync("https://docs.google.com/spreadsheets/d/1-_FdarbFwNoQ0DGii1K5Sl45mEprO-Z5PD2p_mStje4/edit?usp=sharing");
-                    break;
+                await e.Message.RespondAsync("https://docs.google.com/spreadsheets/d/1-_FdarbFwNoQ0DGii1K5Sl45mEprO-Z5PD2p_mStje4/edit?usp=sharing");
+                return;
             }
+            if(!f1Parsers.TryGetValue(messageArgs.First(), out var parser))
+            {
+                await e.Message.RespondAsync("Чел, такой команды нет");
+                return;
+            }
+            var result = parser.Execute(user, messageArgs.Skip(1));
+            await e.Message.RespondAsync(result);
         }
 
         public override string Help()

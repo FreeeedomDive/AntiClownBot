@@ -51,7 +51,10 @@ namespace AntiClownBot.Commands
             RegisterCommand("!help", new HelpCommand(client, config, this));
             RegisterCommand("!allcommands", new AllCommandsCommand(client, config, this));
 
-            RegisterCommand("!f1", new F1CommandParser(client, config));
+            RegisterCommand("!f1", new F1CommandParser(client, config, new List<IF1Parser>
+            { 
+                new F1QualiParser(client, config) 
+            }));
         }
 
         private void RegisterCommand(string name, BaseCommand baseCommand)
