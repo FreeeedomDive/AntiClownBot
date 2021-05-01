@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AntiClownBot.Commands.BlackJackCommands;
+using AntiClownBot.Commands.F1;
 using AntiClownBot.Commands.GamblingCommands;
 using AntiClownBot.Commands.OtherCommands;
 using AntiClownBot.Commands.RandomSelectCommands;
@@ -49,6 +50,8 @@ namespace AntiClownBot.Commands
             RegisterCommand("!ip", new IpCommand(client, config));
             RegisterCommand("!help", new HelpCommand(client, config, this));
             RegisterCommand("!allcommands", new AllCommandsCommand(client, config, this));
+
+            RegisterCommand("!f1", new F1CommandParser(client, config));
         }
 
         private void RegisterCommand(string name, BaseCommand baseCommand)
