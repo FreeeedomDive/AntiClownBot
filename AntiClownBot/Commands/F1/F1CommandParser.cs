@@ -14,14 +14,14 @@ namespace AntiClownBot.Commands.F1
         public F1CommandParser(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
         }
-        public override void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             var message = e.Message.Content;
             var messageArgs = message.Split(' ');
             switch(messageArgs.Last())
             {
                 default:
-                    e.Message.RespondAsync("https://docs.google.com/spreadsheets/d/1-_FdarbFwNoQ0DGii1K5Sl45mEprO-Z5PD2p_mStje4/edit?usp=sharing");
+                    await e.Message.RespondAsync("https://docs.google.com/spreadsheets/d/1-_FdarbFwNoQ0DGii1K5Sl45mEprO-Z5PD2p_mStje4/edit?usp=sharing");
                     break;
             }
         }
