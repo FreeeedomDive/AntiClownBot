@@ -160,6 +160,7 @@
     <Compile Include="Commands\BlackJackCommands\BlackJackStartCommand.cs" />
     <Compile Include="Commands\CommandsManager.cs" />
     <Compile Include="Commands\BaseCommand.cs" />
+    <Compile Include="Commands\F1\F1CommandParser.cs" />
     <Compile Include="Commands\GamblingCommands\CancelGambleCommand.cs" />
     <Compile Include="Commands\GamblingCommands\CurrentGambleCommand.cs" />
     <Compile Include="Commands\GamblingCommands\GambleCommand.cs" />

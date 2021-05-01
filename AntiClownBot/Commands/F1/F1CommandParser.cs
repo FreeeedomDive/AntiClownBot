@@ -28,7 +28,9 @@ namespace AntiClownBot.Commands.F1
 
         public override string Help()
         {
-            throw new NotImplementedException();
+            return "Может принимать в себя параметры(нет)\n" +
+                "без параметров : возвращает ссылку на УДОБНЫЙ гугл док с результатами f1(автор: Лучший снайпер данного дискорда)\n";
+
         }
     }
 }
