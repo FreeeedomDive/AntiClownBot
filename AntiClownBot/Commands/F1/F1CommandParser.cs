@@ -34,15 +34,18 @@ namespace AntiClownBot.Commands.F1
                 await e.Message.RespondAsync("Чел, такой команды нет");
                 return;
             }
-            var result = parser.Execute(user, messageArgs.Skip(1));
+            var result = parser.Parse(user, messageArgs.Skip(1).ToList());
             await e.Message.RespondAsync(result);
         }
 
         public override string Help()
         {
             return "Может принимать в себя параметры(нет)\n" +
-                "без параметров : возвращает ссылку на УДОБНЫЙ гугл док с результатами f1(автор: Лучший снайпер данного дискорда)\n";
-
+                "без параметров : возвращает ссылку на УДОБНЫЙ гугл док с результатами f1(автор: Лучший снайпер данного дискорда)\n" +
+                "quali : возвращает информацию о данном блоке команд\n" +
+                "quali start : принимает 20 строк с форматом {Место} {Имя} {Время от 1 места} и возвращает их с коэффициентами\n" +
+                "Далее взаимодействуйте как с стандартной ставкой\n";
+                
         }
     }
 }

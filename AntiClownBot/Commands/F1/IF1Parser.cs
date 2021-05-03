@@ -10,6 +10,6 @@ namespace AntiClownBot.Commands.F1
     public interface IF1Parser
     {
         string Name { get; }
-        string Execute(SocialRatingUser user, IEnumerable<string> args);
+        string Parse(SocialRatingUser user, List<string> args);
     }
 }

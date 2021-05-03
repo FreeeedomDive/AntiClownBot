@@ -23,7 +23,7 @@ namespace AntiClownBot.Commands
             RegisterCommand("!tribute", new TributeCommand(client, config));
             RegisterCommand("!socialstatus", new SocialStatusCommand(client, config));
             RegisterCommand("!rating", new RatingCommand(client, config));
-            RegisterCommand("!when", new WhenCommand(client, config));
+            //RegisterCommand("!when", new WhenCommand(client, config));
             
             RegisterCommand("!startgamble", new StartGambleCommand(client, config));
             RegisterCommand("!startcustomgamble", new StartCustomGambleCommand(client, config));
