@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AntiClownBot.Models.BlackJack;
 using DSharpPlus;
 using DSharpPlus.Entities;
@@ -11,7 +12,7 @@ namespace AntiClownBot
     public static class Utility
     {
         public static DiscordClient Client;
-        
+
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) => items.OrderBy(item => Guid.NewGuid());
 
         public static Queue<T> WithoutItem<T>(this Queue<T> queue, T removableItem)
@@ -24,7 +25,7 @@ namespace AntiClownBot
 
             return newQueue;
         }
-        
+
         public static string ItemToString(InventoryItem item)
         {
             return item switch
@@ -76,10 +77,27 @@ namespace AntiClownBot
         public static string GetTimeDiff(DateTime dateTime)
         {
             var diff = dateTime - DateTime.Now;
-            return $"{diff.Minutes} минут {diff.Seconds} секунд";
+            var sb = new StringBuilder();
+            if (diff.Hours != 0)
+                sb.Append(PluralizeString(diff.Hours, "час", "часа", "часов")).Append(" ");
+            if (diff.Minutes != 0)
+                sb.Append(PluralizeString(diff.Minutes, "минута", "минуты", "минут")).Append(" ");
+            sb.Append(PluralizeString(diff.Seconds, "секунда", "секунды", "секунд"));
+
+            return sb.ToString();
         }
-        
-        public static async void IncreaseRating(Configuration config, SocialRatingUser user, int rating, MessageCreateEventArgs e)
+
+        private static string PluralizeString(int count, string singleForm, string severalForm, string manyForm)
+        {
+            var correctCount = count % 100;
+            if (correctCount >= 10 && correctCount <= 20 || correctCount % 10 >= 5 && correctCount % 10 <= 9 ||
+                correctCount % 10 == 0)
+                return $"{count} {manyForm}";
+            return correctCount % 10 == 1 ? $"{count} {singleForm}" : $"{count} {severalForm}";
+        }
+
+        public static async void IncreaseRating(Configuration config, SocialRatingUser user, int rating,
+            MessageCreateEventArgs e)
         {
             var items = user.IncreaseRating(rating);
             foreach (var item in items)
@@ -90,7 +108,8 @@ namespace AntiClownBot
             config.Save();
         }
 
-        public static async void DecreaseRating(Configuration config, SocialRatingUser user, int rating, MessageCreateEventArgs e)
+        public static async void DecreaseRating(Configuration config, SocialRatingUser user, int rating,
+            MessageCreateEventArgs e)
         {
             var items = user.DecreaseRating(rating);
             foreach (var item in items)
