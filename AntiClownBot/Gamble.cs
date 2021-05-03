@@ -244,6 +244,6 @@ namespace AntiClownBot
 
         public override string ToString() =>
             $"Текущая ставка:\n{GambleName}\nВарианты:\n" +
-            $"{string.Join("\n", Bids.Keys.Select(key => Type == GambleType.Default ? $"\t{key.Name}" : $"\t{key.Name} {key.Ratio}"))}";
+            $"{string.Join("\n", Bids.Keys.Select(key => Type == GambleType.Default ? $"\t{key.Name}" : $"\t{key.Name} {key.Ratio:n3}"))}";
     }
 }
