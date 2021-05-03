@@ -59,9 +59,9 @@ namespace AntiClownBot.Commands.F1.Quali
                 {
                     return "Ало, у тебя 2 гонщика на 1 позиции";
                 }
-                tuples[position - 1] =  new (option, timeBehindFirst);
+                tuples[position - 1] =  new Tuple<string, double>(option, timeBehindFirst);
             }
-            if(!tuples.All(x => x != null))
+            if(tuples.Any(x => x == null))
             {
                 return "Есть позиция без гонщика";
             }
