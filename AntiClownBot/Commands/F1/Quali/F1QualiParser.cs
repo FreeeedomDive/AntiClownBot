@@ -24,15 +24,20 @@ namespace AntiClownBot.Commands.F1
             }.ToDictionary(x => x.Name);
         }
         public string Name => "quali";
-        public string Parse(SocialRatingUser user, List<string> args)
+        public string Parse(SocialRatingUser user, List<string> lines)
         {
+            var args = lines[0].Split(' ').Skip(2).ToList();
             if (!args.Any())
             {
                 return "Данный блок команд создан для организации удобных ставок на квалификацию F1\n" +
                     "Побеждают те гонщики, которые квалифицируются в P11-P15\n" +
                     "Коэффициенты ставятся автоматически";
             }
-            return "Данная команда ещё в процессе разработки";
+            if (!commands.TryGetValue(args.First(), out var command))
+            {
+                return "Чел, такой команды нет";
+            }
+            return command.Execute(user, lines.Skip(1).ToList());
         }
     }
 }

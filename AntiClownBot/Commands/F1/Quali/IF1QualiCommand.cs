@@ -9,6 +9,6 @@ namespace AntiClownBot.Commands.F1.Quali
     public interface IF1QualiCommand
     {
         string Name { get; }
-        string Execute(SocialRatingUser user, string args);
+        string Execute(SocialRatingUser user, List<string> args);
     }
 }

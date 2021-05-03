@@ -18,22 +18,20 @@ namespace AntiClownBot.Commands.F1.Quali
         }
         public string Name => "start";
 
-        public string Execute(SocialRatingUser user, string args)
+        public string Execute(SocialRatingUser user, List<string> optionLines)
         {
             if (Config.CurrentGamble != null)
             {
                 return "В данный момент уже запущена ставка";
             }
-            var lines = args.Split('\n');
             var gambleName = "F1 Quali P11-P15";
-            var optionsLines = lines.Skip(1).ToList();
-            if (optionsLines.Count != 20)
+            if (optionLines.Count != 20)
             {
                 return "Гонщиков не 20, чел";
             }
             var options = new List<GambleOption>();
             var tuples = new Tuple<string, double>[20];
-            foreach (var line in optionsLines)
+            foreach (var line in optionLines)
             {
                 var splittedline = line.Split(' ');
                 if(splittedline.Length != 3)

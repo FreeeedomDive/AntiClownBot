@@ -34,7 +34,7 @@ namespace AntiClownBot.Commands.F1
                 await e.Message.RespondAsync("Чел, такой команды нет");
                 return;
             }
-            var result = parser.Parse(user, messageArgs.Skip(1).ToList());
+            var result = parser.Parse(user, message.Split('\n').ToList());
             await e.Message.RespondAsync(result);
         }
 
