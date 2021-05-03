@@ -33,6 +33,7 @@ namespace AntiClownBot
                 InventoryItem.DogWife => "собака-жена",
                 InventoryItem.RiceBowl => "рис миска",
                 InventoryItem.Gigabyte => "гигабайт интернет",
+                InventoryItem.JadeRod => "нефритовый стержень",
                 InventoryItem.None => "",
                 _ => throw new ArgumentOutOfRangeException(nameof(item), item, null)
             };
@@ -98,6 +99,20 @@ namespace AntiClownBot
             }
 
             config.Save();
+        }
+
+        public static int LogarithmicDistribution(int startValue, int count)
+        {
+            if (count == 0) return 0;
+            var result = startValue;
+            var ratio = startValue / 2;
+            for (var i = 0; i < count - 1; i++)
+            {
+                result += Math.Min(1, ratio);
+                ratio /= 2;
+            }
+
+            return result;
         }
     }
 }

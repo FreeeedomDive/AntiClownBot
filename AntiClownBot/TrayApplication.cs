@@ -104,6 +104,12 @@ namespace AntiClownBot
 
                 if (message.Length > 0 && message[message.Length - 1] == '?')
                 {
+                    if (message.Contains("когда"))
+                    {
+                        await e.Message.RespondAsync("Завтра в 3");
+                        return;
+                    }
+                    
                     if ((message.Contains("бот, ты") || message.Contains("бот ты")) &&
                         Randomizer.GetRandomNumberBetween(0, 3) == 0)
                     {
@@ -382,9 +388,31 @@ namespace AntiClownBot
 
                 return Task.CompletedTask;
             };
+            
+            // for changelogs
+            // new Thread(async () =>
+            // {
+            //     await Task.Delay(10000);
+            //     ChangeLog();
+            // }).Start();
 
             await _discord.ConnectAsync();
             await Task.Delay(-1);
+        }
+
+        private async void ChangeLog()
+        {
+            // tell to others about last changes
+            var channel = _discord.Guilds[277096298761551872].GetChannel(838477706643374090);
+            var changeLog = @$"@everyone ВНИМАНИЕ {Utility.StringEmoji(":monkaX:")}
+Я вводить поправка!!!
+Ввести предмет с целью наказать и унижать: 'Нефритовый стержень' - каждый ваш подношения может испортить ваш настроение и увеличить время подготовки подношения в 2 раз {Utility.StringEmoji(":bonkaS:")}. 
+Выкусите, челы с 5к+ {Utility.StringEmoji(":PogOff:")}{Utility.StringEmoji(":PogOff:")}{Utility.StringEmoji(":PogOff:")}
+Исправить предметы:
+'Гигабайт интернет' теперь каждый гигабайт имеет шанс ускорить ваш подготовка подношение на 6 минут. {Utility.StringEmoji(":peepoSprint:")}
+'Рис миска' теперь повышает верхний граница на 5 и понижает нижний на 2, сытый гражданин работать лучше!! {Utility.StringEmoji(":peepoClap:")}
+";
+            await _discord.SendMessageAsync(channel, changeLog);
         }
 
         private async void ReactToAppeal(DiscordChannel channel)

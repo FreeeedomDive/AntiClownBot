@@ -9,13 +9,14 @@ namespace AntiClownBot
         DogWife,
         RiceBowl,
         Gigabyte,
+        JadeRod,
         None
     }
 
     public class SocialRatingUser
     {
         private static readonly List<InventoryItem> allItems = new List<InventoryItem>
-            {InventoryItem.CatWife, InventoryItem.DogWife, InventoryItem.RiceBowl};
+            {InventoryItem.CatWife, InventoryItem.DogWife, InventoryItem.RiceBowl, InventoryItem.JadeRod};
 
         public ulong DiscordId;
         public string DiscordUsername;
@@ -34,7 +35,8 @@ namespace AntiClownBot
                 {InventoryItem.CatWife, 0},
                 {InventoryItem.DogWife, 0},
                 {InventoryItem.RiceBowl, 0},
-                {InventoryItem.Gigabyte, 0}
+                {InventoryItem.Gigabyte, 0},
+                {InventoryItem.JadeRod, 0}
             };
         }
 
@@ -88,15 +90,36 @@ namespace AntiClownBot
         public bool HasDodgedPidor()
         {
             const int pidorDodgeChanceByOneDogWife = 5;
-            return Randomizer.GetRandomNumberBetween(0, 100) < 
+            return Randomizer.GetRandomNumberBetween(0, 100) <
                    pidorDodgeChanceByOneDogWife * UserItems[InventoryItem.DogWife];
         }
 
         public void UpdateCooldown()
         {
-            const double cooldownDecreaseByOneGigabyteItem = 0.03;
-            NextTribute = DateTime.Now.AddMilliseconds(
-                60 * 60 * 1000 * (1 - cooldownDecreaseByOneGigabyteItem * UserItems[InventoryItem.Gigabyte]));
+            const double cooldownDecreaseByOneGigabyteItem = 0.1;
+            var cooldown = 60 * 60 * 1000d;
+
+            const double cooldownDecreaseChanceByOneGigabyte = 5;
+            for (var i = 0; i < UserItems[InventoryItem.Gigabyte]; i++)
+            {
+                // за каждый гигабайт 5% шанс уменьшить cock на 10%
+                if (Randomizer.GetRandomNumberBetween(0, 100) < cooldownDecreaseChanceByOneGigabyte)
+                {
+                    cooldown *= 1 - cooldownDecreaseByOneGigabyteItem;
+                }
+            }
+
+            const int cooldownIncreaseChanceByOneJade = 2;
+            for (var i = 0; i < UserItems[InventoryItem.JadeRod]; i++)
+            {
+                // за каждый стержень 2% шанс увеличить cock в 2 раза
+                if (Randomizer.GetRandomNumberBetween(0, 100) < cooldownIncreaseChanceByOneJade)
+                {
+                    cooldown *= 2;
+                }
+            }
+
+            NextTribute = DateTime.Now.AddMilliseconds(cooldown);
         }
 
         public bool IsCooldownPassed()

@@ -1,8 +1,7 @@
-﻿using System;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
 
-namespace AntiClownBot.Commands
+namespace AntiClownBot.Commands.SocialRatingCommands
 {
     public class SocialStatusCommand: BaseCommand
     {
