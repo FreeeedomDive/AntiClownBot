@@ -30,8 +30,11 @@ namespace AntiClownBot.Commands.SocialRatingCommands
             }
 
             user.UpdateCooldown();
+            const int tributeDecreaseByOneRiceBowl = 2;
             const int tributeIncreaseByOneRiceBowl = 5;
-            var tributeQuality = Randomizer.GetRandomNumberBetween(-40, 100 + user.UserItems[InventoryItem.RiceBowl] * tributeIncreaseByOneRiceBowl);
+            var tributeQuality = Randomizer.GetRandomNumberBetween(
+                -40 - user.UserItems[InventoryItem.RiceBowl] * tributeDecreaseByOneRiceBowl, 
+                100 + user.UserItems[InventoryItem.RiceBowl] * tributeIncreaseByOneRiceBowl);
             var response = isAutomatic ? $"Автоматическое подношение для {user.DiscordUsername}\n" : "";
             if (tributeQuality > 0)
             {
@@ -46,9 +49,8 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 response += "Партия не оценить ваших усилий";
             }
 
-            const int chanceByOneCatWife = 10;
             var isNextTributeAutomatic =
-                Randomizer.GetRandomNumberBetween(0, 100) < chanceByOneCatWife * user.UserItems[InventoryItem.CatWife];
+                Randomizer.GetRandomNumberBetween(0, 100) < Utility.LogarithmicDistribution(16, user.UserItems[InventoryItem.CatWife]);
             if (isNextTributeAutomatic)
                 response +=
                     $"\nКошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}";

@@ -1,8 +1,7 @@
-﻿using System;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
 
-namespace AntiClownBot.Commands
+namespace AntiClownBot.Commands.SocialRatingCommands
 {
     public class RatingCommand : BaseCommand
     {
@@ -16,7 +15,8 @@ namespace AntiClownBot.Commands
                                          $"{user.UserItems[InventoryItem.CatWife]} {Utility.ItemToString(InventoryItem.CatWife)}, " +
                                          $"{user.UserItems[InventoryItem.DogWife]} {Utility.ItemToString(InventoryItem.DogWife)}, " +
                                          $"{user.UserItems[InventoryItem.RiceBowl]} {Utility.ItemToString(InventoryItem.RiceBowl)}, " +
-                                         $"{user.UserItems[InventoryItem.Gigabyte]} {Utility.ItemToString(InventoryItem.Gigabyte)}");
+                                         $"{user.UserItems[InventoryItem.Gigabyte]} {Utility.ItemToString(InventoryItem.Gigabyte)}, " +
+                                         $"{user.UserItems[InventoryItem.JadeRod]} {Utility.ItemToString(InventoryItem.JadeRod)}");
         }
 
         public override string Help()
