@@ -67,11 +67,11 @@ namespace AntiClownBot.Commands.F1.Quali
             {
                 if(count < 10)
                 {
-                    options.Add(new GambleOption(tuples[count].Item1, (tuples[10].Item2 - tuples[count].Item2) * (tuples[14].Item2 - tuples[count].Item2) * 10));
+                    options.Add(new GambleOption(tuples[count].Item1, (tuples[10].Item2 - tuples[count].Item2) * (tuples[10].Item2 - tuples[count].Item2) * 10 + 1.8));
                 }
                 else if (count > 14)
                 {
-                    options.Add(new GambleOption(tuples[count].Item1, (tuples[count].Item2 - tuples[14].Item2) * (tuples[count].Item2 - tuples[14].Item2) * 10));
+                    options.Add(new GambleOption(tuples[count].Item1, (tuples[count].Item2 - tuples[14].Item2) * (tuples[count].Item2 - tuples[14].Item2) * 10 + 1.8));
                 }
                 else
                 {
