@@ -13,7 +13,13 @@ namespace AntiClownBot
     {
         public static DiscordClient Client;
 
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) => items.OrderBy(item => Guid.NewGuid());
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) => items.OrderBy(_ => Guid.NewGuid());
+
+        public static T SelectRandomItem<T>(this IEnumerable<T> items)
+        {
+            var list = items.ToList();
+            return list[Randomizer.GetRandomNumberBetween(0, list.Count)];
+        }
 
         public static Queue<T> WithoutItem<T>(this Queue<T> queue, T removableItem)
         {
@@ -35,6 +41,7 @@ namespace AntiClownBot
                 InventoryItem.RiceBowl => "рис миска",
                 InventoryItem.Gigabyte => "гигабайт интернет",
                 InventoryItem.JadeRod => "нефритовый стержень",
+                InventoryItem.CommunismPoster => "коммунистический плакат",
                 InventoryItem.None => "",
                 _ => throw new ArgumentOutOfRangeException(nameof(item), item, null)
             };
@@ -102,7 +109,7 @@ namespace AntiClownBot
             var items = user.IncreaseRating(rating);
             foreach (var item in items)
             {
-                await e.Message.RespondAsync($"Ты получаешь {ItemToString(item)}!");
+                await e.Message.RespondAsync($"{user.DiscordUsername} получает {ItemToString(item)}!");
             }
 
             config.Save();
@@ -114,7 +121,7 @@ namespace AntiClownBot
             var items = user.DecreaseRating(rating);
             foreach (var item in items)
             {
-                await e.Message.RespondAsync($"Ты теряешь {ItemToString(item)}!");
+                await e.Message.RespondAsync($"{user.DiscordUsername} теряет {ItemToString(item)}!");
             }
 
             config.Save();

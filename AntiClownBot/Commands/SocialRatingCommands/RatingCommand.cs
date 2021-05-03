@@ -16,12 +16,14 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                                          $"{user.UserItems[InventoryItem.DogWife]} {Utility.ItemToString(InventoryItem.DogWife)}, " +
                                          $"{user.UserItems[InventoryItem.RiceBowl]} {Utility.ItemToString(InventoryItem.RiceBowl)}, " +
                                          $"{user.UserItems[InventoryItem.Gigabyte]} {Utility.ItemToString(InventoryItem.Gigabyte)}, " +
-                                         $"{user.UserItems[InventoryItem.JadeRod]} {Utility.ItemToString(InventoryItem.JadeRod)}");
+                                         $"{user.UserItems[InventoryItem.JadeRod]} {Utility.ItemToString(InventoryItem.JadeRod)}, " +
+                                         $"{user.UserItems[InventoryItem.CommunismPoster]} {Utility.ItemToString(InventoryItem.CommunismPoster)}"
+            );
         }
 
         public override string Help()
         {
-            return $"Получение своего социального рейтинга";
+            return "Получение своего социального рейтинга";
         }
     }
 }

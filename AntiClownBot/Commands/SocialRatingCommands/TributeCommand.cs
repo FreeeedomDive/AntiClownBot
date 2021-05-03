@@ -21,7 +21,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
         private async void Tribute(MessageCreateEventArgs e, SocialRatingUser user, bool isAutomatic)
         {
-            if (!user.IsCooldownPassed() && !isAutomatic)
+            if (!user.IsCooldownPassed())
             {
                 await e.Message.RespondAsync(
                     $"Не злоупотребляй подношение император XI {Utility.StringEmoji(":PepegaGun:")}");
@@ -29,16 +29,30 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 return;
             }
 
-            user.UpdateCooldown();
+            var (gigabyteWorked, jadeRodWorked) = user.UpdateCooldown();
+
             const int tributeDecreaseByOneRiceBowl = 2;
             const int tributeIncreaseByOneRiceBowl = 5;
             var tributeQuality = Randomizer.GetRandomNumberBetween(
-                -40 - user.UserItems[InventoryItem.RiceBowl] * tributeDecreaseByOneRiceBowl, 
+                -40 - user.UserItems[InventoryItem.RiceBowl] * tributeDecreaseByOneRiceBowl,
                 100 + user.UserItems[InventoryItem.RiceBowl] * tributeIncreaseByOneRiceBowl);
             var response = isAutomatic ? $"Автоматическое подношение для {user.DiscordUsername}\n" : "";
+
+            var communismChance = Utility.LogarithmicDistribution(4, user.UserItems[InventoryItem.CommunismPoster]);
+            var communism = Randomizer.GetRandomNumberBetween(0, 100) < communismChance;
+
+            var sharedUser = user;
+            if (communism)
+            {
+                response += $"Произошел коммунизм {Utility.StringEmoji(":Pepega:")}\n";
+                sharedUser = Config.Users.Values.SelectRandomItem();
+                response += $"Разделение подношения с {sharedUser.DiscordUsername}";
+                tributeQuality /= 2;
+            }
+
             if (tributeQuality > 0)
             {
-                response += $"Партия гордится тобой!!!\n+{tributeQuality} social credit";
+                response += $"Партия гордится вами!!!\n+{tributeQuality} social credit";
             }
             else if (tributeQuality < 0)
             {
@@ -49,21 +63,42 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 response += "Партия не оценить ваших усилий";
             }
 
+            if (gigabyteWorked != 0 || jadeRodWorked != 0)
+            {
+                response += "\nНа изменение кулдауна повлияли: ";
+                response += gigabyteWorked > 0 ? $"гигабайт интернет x{gigabyteWorked} " : "";
+                response += gigabyteWorked > 0 && jadeRodWorked > 0 ? " и " : "";
+                response += jadeRodWorked > 0 ? $"нефритовый стержень x{gigabyteWorked}" : "";
+            }
+
             var isNextTributeAutomatic =
-                Randomizer.GetRandomNumberBetween(0, 100) < Utility.LogarithmicDistribution(16, user.UserItems[InventoryItem.CatWife]);
+                Randomizer.GetRandomNumberBetween(0, 100) <
+                Utility.LogarithmicDistribution(16, user.UserItems[InventoryItem.CatWife]);
             if (isNextTributeAutomatic)
                 response +=
                     $"\nКошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}";
 
             await e.Message.RespondAsync(response);
-            
+
             if (tributeQuality > 0)
+            {
                 Utility.IncreaseRating(Config, user, tributeQuality, e);
+                if (communism)
+                {
+                    Utility.IncreaseRating(Config, sharedUser, tributeQuality, e);
+                }
+            }
             else
+            {
                 Utility.DecreaseRating(Config, user, -tributeQuality, e);
+                if (communism)
+                {
+                    Utility.DecreaseRating(Config, sharedUser, -tributeQuality, e);
+                }
+            }
 
             if (!isNextTributeAutomatic) return;
-            
+
             var thread = new Thread(async () =>
             {
                 await Task.Delay((int) (user.NextTribute - DateTime.Now).TotalMilliseconds + 1000);
@@ -74,7 +109,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
             };
             thread.Start();
         }
-        
+
         public override string Help()
         {
             return
