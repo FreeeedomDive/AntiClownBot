@@ -9,8 +9,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AntiClownBot.Commands;
+using AntiClownBot.Events;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using EventHandler = AntiClownBot.Events.EventHandler;
 
 namespace AntiClownBot
 {
@@ -63,8 +65,6 @@ namespace AntiClownBot
 
                 var message = e.Message.Content;
 
-                _config.DecreasePidorRoulette();
-
                 AddLog($"{e.Author.Username}: {message}");
 
                 SocialRatingUser user;
@@ -83,6 +83,8 @@ namespace AntiClownBot
                     _commandsManager.ExecuteCommand(commandName, e, user);
                     return;
                 }
+
+                _config.DecreasePidorRoulette();
 
                 var randomMessageRating = Randomizer.GetRandomNumberBetween(-4, 11);
                 if (randomMessageRating > 0)
@@ -104,6 +106,12 @@ namespace AntiClownBot
 
                 if (message.Length > 0 && message[message.Length - 1] == '?')
                 {
+                    if (message.Contains("когда"))
+                    {
+                        await e.Message.RespondAsync("Завтра в 3");
+                        return;
+                    }
+                    
                     if ((message.Contains("бот, ты") || message.Contains("бот ты")) &&
                         Randomizer.GetRandomNumberBetween(0, 3) == 0)
                     {
@@ -205,6 +213,13 @@ namespace AntiClownBot
 
                 if (_config.IsPidor())
                 {
+                    if (user.HasDodgedPidor())
+                    {
+                        await e.Message.RespondAsync(
+                            $"{e.Author.Mention} увернулся от пидора {Utility.StringEmoji(":ricardoFlick:")}");
+                        return;
+                    }
+
                     var emojis = new List<DiscordEmoji>();
                     var megapidor = Randomizer.GetRandomNumberBetween(0, 50) == 0;
                     if (megapidor)
@@ -307,6 +322,15 @@ namespace AntiClownBot
             {
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
+
+                if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
+                {
+                    var member = await e.Guild.GetMemberAsync(e.User.Id);
+                    var role = e.Guild.GetRole(838794615334633502);
+                    await member.GrantRoleAsync(role);
+                    return;
+                }
+                
                 var username = "unknown";
                 try
                 {
@@ -346,10 +370,18 @@ namespace AntiClownBot
                 _lastReactionEmote = emojiName;
             };
 
-            _discord.MessageReactionRemoved += (client, e) =>
+            _discord.MessageReactionRemoved += async (client, e) =>
             {
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
+
+                if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
+                {
+                    var member = await e.Guild.GetMemberAsync(e.User.Id);
+                    var role = e.Guild.GetRole(838794615334633502);
+                    await member.RevokeRoleAsync(role);
+                    return;
+                }
                 var username = "unknown";
                 try
                 {
@@ -362,8 +394,6 @@ namespace AntiClownBot
 
                 AddLog($"EMOTE REMOVED - {username}: {emojiName}");
                 _config.RemoveEmoji(emojiName);
-
-                return Task.CompletedTask;
             };
 
             _discord.PresenceUpdated += (client, args) =>
@@ -374,9 +404,30 @@ namespace AntiClownBot
 
                 return Task.CompletedTask;
             };
+            
+            // for changelogs
+            // new Thread(async () =>
+            // {
+            //     await Task.Delay(10000);
+            //     ChangeLog();
+            // }).Start();
+
+            new EventHandler(_discord).Start();
 
             await _discord.ConnectAsync();
             await Task.Delay(-1);
+        }
+
+        private async void ChangeLog()
+        {
+            // tell to others about last changes
+            var channel = _discord.Guilds[277096298761551872].GetChannel(838477706643374090);
+            var changeLog = @$"{Utility.StringEmoji(":monkaX:")} ВНИМАНИЕ {Utility.StringEmoji(":monkaX:")}
+Обновочка!
+С текущего дня в наш Империя будет происходить события. {Utility.StringEmoji(":NOTED:")}
+Информация о событие присылаться в этот канал. {Utility.StringEmoji(":NOTED:")}
+Это всё, осатльное узнавать по ходу появления события. {Utility.StringEmoji(":pauseChamp:")}";
+            await _discord.SendMessageAsync(channel, changeLog);
         }
 
         private async void ReactToAppeal(DiscordChannel channel)
@@ -471,10 +522,8 @@ namespace AntiClownBot
 
         private static async void AddLog(string content)
         {
-            using (var file = new StreamWriter("log.txt", true))
-            {
-                await file.WriteLineAsync($"{DateTime.Now} | {content}");
-            }
+            using var file = new StreamWriter("log.txt", true);
+            await file.WriteLineAsync($"{DateTime.Now} | {content}");
         }
     }
 }

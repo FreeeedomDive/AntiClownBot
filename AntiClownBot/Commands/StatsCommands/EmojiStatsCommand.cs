@@ -12,7 +12,7 @@ namespace AntiClownBot.Commands.StatsCommands
 
         public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
-            await e.Message.RespondAsync(Config.GetEmojiStats(DiscordClient));
+            await e.Message.RespondAsync(Config.GetEmojiStats());
         }
 
         public override string Help()

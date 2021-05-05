@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using AntiClownBot.Models.BlackJack;
 using AntiClownBot.Models.Gamble;
-using DSharpPlus;
-using DSharpPlus.Entities;
 using Emzi0767;
 using Newtonsoft.Json;
 
@@ -27,6 +24,8 @@ namespace AntiClownBot
 
         public Gamble CurrentGamble;
         public BlackJack CurrentBlackJack;
+
+        public bool AreTributesOpen = true;
 
         private const string FileName = "config.json";
 
@@ -76,7 +75,7 @@ namespace AntiClownBot
             return _instance;
         }
 
-        public string GetEmojiStats(DiscordClient discord)
+        public string GetEmojiStats()
         {
             return GetStatsForDict(EmojiStatistics, key => Utility.Emoji($":{key}:"));
         }
@@ -183,6 +182,18 @@ namespace AntiClownBot
             PidorRoulette = Randomizer.GetRandomNumberBetween(5, 40);
             Save();
             return true;
+        }
+
+        public void CloseTributes()
+        {
+            AreTributesOpen = false;
+            Save();
+        }
+
+        public void OpenTributes()
+        {
+            AreTributesOpen = true;
+            Save();
         }
     }
 }
