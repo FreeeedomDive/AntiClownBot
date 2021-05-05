@@ -9,8 +9,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AntiClownBot.Commands;
+using AntiClownBot.Events;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using EventHandler = AntiClownBot.Events.EventHandler;
 
 namespace AntiClownBot
 {
@@ -215,72 +217,71 @@ namespace AntiClownBot
                     {
                         await e.Message.RespondAsync(
                             $"{e.Author.Mention} увернулся от пидора {Utility.StringEmoji(":ricardoFlick:")}");
+                        return;
+                    }
+
+                    var emojis = new List<DiscordEmoji>();
+                    var megapidor = Randomizer.GetRandomNumberBetween(0, 50) == 0;
+                    if (megapidor)
+                    {
+                        emojis.Add(Utility.Emoji(":regional_indicator_p:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_a:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_t:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_r:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_e:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_g:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_o:"));
+                        emojis.Add(Utility.Emoji(":PATREGO:"));
+                        Utility.IncreaseRating(_config, user, Randomizer.GetRandomNumberBetween(100, 200), e);
                     }
                     else
                     {
-                        var emojis = new List<DiscordEmoji>();
-                        var megapidor = Randomizer.GetRandomNumberBetween(0, 50) == 0;
-                        if (megapidor)
-                        {
-                            emojis.Add(Utility.Emoji(":regional_indicator_p:"));
-                            emojis.Add(Utility.Emoji(":regional_indicator_a:"));
-                            emojis.Add(Utility.Emoji(":regional_indicator_t:"));
-                            emojis.Add(Utility.Emoji(":regional_indicator_r:"));
-                            emojis.Add(Utility.Emoji(":regional_indicator_e:"));
-                            emojis.Add(Utility.Emoji(":regional_indicator_g:"));
-                            emojis.Add(Utility.Emoji(":regional_indicator_o:"));
-                            emojis.Add(Utility.Emoji(":PATREGO:"));
-                            Utility.IncreaseRating(_config, user, Randomizer.GetRandomNumberBetween(100, 200), e);
-                        }
-                        else
-                        {
-                            emojis.Add(Utility.Emoji(":regional_indicator_p:"));
-                            emojis.Add(Utility.Emoji(":regional_indicator_i:"));
-                            emojis.Add(Utility.Emoji(":regional_indicator_d:"));
-                            emojis.Add(Utility.Emoji(":regional_indicator_o:"));
-                            emojis.Add(Utility.Emoji(":regional_indicator_r:"));
-                            Utility.DecreaseRating(_config, user, Randomizer.GetRandomNumberBetween(35, 65), e);
-                        }
-
-                        foreach (var emoji in emojis)
-                        {
-                            await e.Message.CreateReactionAsync(emoji);
-                            Thread.Sleep(150);
-                        }
-
-                        var count = megapidor ? 10 : 1;
-                        for (var i = 0; i < count; i++)
-                        {
-                            _config.AddPidor(e.Author.Username);
-                        }
-
-                        if (_config.IsPidorOfTheDay(e.Author.Username))
-                        {
-                            var role = e.Guild.GetRole(781970998685466654);
-
-                            if (_config.CurrentPidorOfTheDay == e.Author.Id) return;
-
-                            if (_config.CurrentPidorOfTheDay != 0)
-                            {
-                                var currentPidor = await e.Guild.GetMemberAsync(_config.CurrentPidorOfTheDay);
-                                await currentPidor.RevokeRoleAsync(role);
-                            }
-
-                            var newPidor = await e.Guild.GetMemberAsync(e.Author.Id);
-                            try
-                            {
-                                await newPidor.GrantRoleAsync(role);
-                            }
-                            catch (Exception ex)
-                            {
-                                AddLog(ex.Message);
-                            }
-
-                            _config.CurrentPidorOfTheDay = newPidor.Id;
-                        }
-
-                        _lastPidorId = e.Author.Id;
+                        emojis.Add(Utility.Emoji(":regional_indicator_p:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_i:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_d:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_o:"));
+                        emojis.Add(Utility.Emoji(":regional_indicator_r:"));
+                        Utility.DecreaseRating(_config, user, Randomizer.GetRandomNumberBetween(35, 65), e);
                     }
+
+                    foreach (var emoji in emojis)
+                    {
+                        await e.Message.CreateReactionAsync(emoji);
+                        Thread.Sleep(150);
+                    }
+
+                    var count = megapidor ? 10 : 1;
+                    for (var i = 0; i < count; i++)
+                    {
+                        _config.AddPidor(e.Author.Username);
+                    }
+
+                    if (_config.IsPidorOfTheDay(e.Author.Username))
+                    {
+                        var role = e.Guild.GetRole(781970998685466654);
+
+                        if (_config.CurrentPidorOfTheDay == e.Author.Id) return;
+
+                        if (_config.CurrentPidorOfTheDay != 0)
+                        {
+                            var currentPidor = await e.Guild.GetMemberAsync(_config.CurrentPidorOfTheDay);
+                            await currentPidor.RevokeRoleAsync(role);
+                        }
+
+                        var newPidor = await e.Guild.GetMemberAsync(e.Author.Id);
+                        try
+                        {
+                            await newPidor.GrantRoleAsync(role);
+                        }
+                        catch (Exception ex)
+                        {
+                            AddLog(ex.Message);
+                        }
+
+                        _config.CurrentPidorOfTheDay = newPidor.Id;
+                    }
+
+                    _lastPidorId = e.Author.Id;
                 }
 
                 if (randomMessageRating == -4)
@@ -321,6 +322,15 @@ namespace AntiClownBot
             {
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
+
+                if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
+                {
+                    var member = await e.Guild.GetMemberAsync(e.User.Id);
+                    var role = e.Guild.GetRole(838794615334633502);
+                    await member.GrantRoleAsync(role);
+                    return;
+                }
+                
                 var username = "unknown";
                 try
                 {
@@ -360,10 +370,18 @@ namespace AntiClownBot
                 _lastReactionEmote = emojiName;
             };
 
-            _discord.MessageReactionRemoved += (client, e) =>
+            _discord.MessageReactionRemoved += async (client, e) =>
             {
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
+
+                if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
+                {
+                    var member = await e.Guild.GetMemberAsync(e.User.Id);
+                    var role = e.Guild.GetRole(838794615334633502);
+                    await member.RevokeRoleAsync(role);
+                    return;
+                }
                 var username = "unknown";
                 try
                 {
@@ -376,8 +394,6 @@ namespace AntiClownBot
 
                 AddLog($"EMOTE REMOVED - {username}: {emojiName}");
                 _config.RemoveEmoji(emojiName);
-
-                return Task.CompletedTask;
             };
 
             _discord.PresenceUpdated += (client, args) =>
@@ -396,6 +412,8 @@ namespace AntiClownBot
             //     ChangeLog();
             // }).Start();
 
+            new EventHandler(_discord).Start();
+
             await _discord.ConnectAsync();
             await Task.Delay(-1);
         }
@@ -404,11 +422,11 @@ namespace AntiClownBot
         {
             // tell to others about last changes
             var channel = _discord.Guilds[277096298761551872].GetChannel(838477706643374090);
-            var changeLog = @$"@everyone {Utility.StringEmoji(":monkaX:")} ВНИМАНИЕ {Utility.StringEmoji(":monkaX:")}
-Я вводить поправка!!!
-С текущий день в наш Империя появиться немного коммунизм {Utility.StringEmoji(":olyashGasm:")}, а именно:
-Ввести коммунистический плакат. Если вы иметь плакат при себе, то при подношение Императору (мне {Utility.StringEmoji(":PATREGO:")}) есть шанс разделить ваш награда поровну между вы и ещё один гражданин. {Utility.StringEmoji(":pepeLaughPizdec:")} 
-";
+            var changeLog = @$"{Utility.StringEmoji(":monkaX:")} ВНИМАНИЕ {Utility.StringEmoji(":monkaX:")}
+Обновочка!
+С текущего дня в наш Империя будет происходить события. {Utility.StringEmoji(":NOTED:")}
+Информация о событие присылаться в этот канал. {Utility.StringEmoji(":NOTED:")}
+Это всё, осатльное узнавать по ходу появления события. {Utility.StringEmoji(":pauseChamp:")}";
             await _discord.SendMessageAsync(channel, changeLog);
         }
 
@@ -504,10 +522,8 @@ namespace AntiClownBot
 
         private static async void AddLog(string content)
         {
-            using (var file = new StreamWriter("log.txt", true))
-            {
-                await file.WriteLineAsync($"{DateTime.Now} | {content}");
-            }
+            using var file = new StreamWriter("log.txt", true);
+            await file.WriteLineAsync($"{DateTime.Now} | {content}");
         }
     }
 }

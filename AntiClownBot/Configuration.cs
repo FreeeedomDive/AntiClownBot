@@ -26,6 +26,8 @@ namespace AntiClownBot
         public Gamble CurrentGamble;
         public BlackJack CurrentBlackJack;
 
+        public bool AreTributesOpen = true;
+
         private const string FileName = "config.json";
 
         private static Configuration _instance = null;
@@ -181,6 +183,18 @@ namespace AntiClownBot
             PidorRoulette = Randomizer.GetRandomNumberBetween(5, 40);
             Save();
             return true;
+        }
+
+        public void CloseTributes()
+        {
+            AreTributesOpen = false;
+            Save();
+        }
+
+        public void OpenTributes()
+        {
+            AreTributesOpen = true;
+            Save();
         }
     }
 }

@@ -21,8 +21,23 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
         private async void Tribute(MessageCreateEventArgs e, SocialRatingUser user, bool isAutomatic)
         {
+            if (!Config.AreTributesOpen)
+            {
+                var message = isAutomatic
+                    ? "Даже автоматические подношения от кошки-жены не принимаю, отъебитесь"
+                    : "Я занят, отъебись";
+                await e.Message.RespondAsync(message);
+                return;
+            }
+            
             if (!user.IsCooldownPassed())
             {
+                if (isAutomatic)
+                {
+                    await e.Message.RespondAsync(
+                        "Ты успеть принести подношение до твой кошачья жена, подношение от кошки не учитываться");
+                    return;
+                }
                 await e.Message.RespondAsync(
                     $"Не злоупотребляй подношение император XI {Utility.StringEmoji(":PepegaGun:")}");
                 Utility.DecreaseRating(Config, user, 15, e);
@@ -71,9 +86,9 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 response += jadeRodWorked > 0 ? $"нефритовый стержень x{gigabyteWorked}" : "";
             }
 
+            var chance = Utility.LogarithmicDistribution(16, user.UserItems[InventoryItem.CatWife]);
             var isNextTributeAutomatic =
-                Randomizer.GetRandomNumberBetween(0, 100) <
-                Utility.LogarithmicDistribution(16, user.UserItems[InventoryItem.CatWife]);
+                Randomizer.GetRandomNumberBetween(0, 100) < chance;
             if (isNextTributeAutomatic)
                 response +=
                     $"\nКошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}";

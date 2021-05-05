@@ -184,6 +184,12 @@
     <Compile Include="Commands\StatsCommands\EmojiStatsCommand.cs" />
     <Compile Include="Commands\StatsCommands\PidorStatsCommand.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Events\BaseEvent.cs" />
+    <Compile Include="Events\CloseTributeEvent\CloseTributesEvent.cs" />
+    <Compile Include="Events\CloseTributeEvent\RelatedOpenTributesEvent\OpenTributesEvent.cs" />
+    <Compile Include="Events\EventHandler.cs" />
+    <Compile Include="Events\RemoveCooldownEvent\RemoveCooldownEvent.cs" />
+    <Compile Include="Events\TransfusionEvent\TransfusionEvent.cs" />
     <Compile Include="Gamble.cs" />
     <Compile Include="GambleOption.cs" />
     <Compile Include="GambleUser.cs" />
@@ -225,6 +231,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

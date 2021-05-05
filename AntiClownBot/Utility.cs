@@ -134,7 +134,7 @@ namespace AntiClownBot
             var ratio = startValue / 2;
             for (var i = 0; i < count - 1; i++)
             {
-                result += Math.Min(1, ratio);
+                result += Math.Max(1, ratio);
                 ratio /= 2;
             }
 
