@@ -184,6 +184,7 @@
     <Compile Include="Commands\StatsCommands\EmojiStatsCommand.cs" />
     <Compile Include="Commands\StatsCommands\PidorStatsCommand.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Events\BaseEvent.cs" />
     <Compile Include="Events\CloseTributeEvent\CloseTributesEvent.cs" />
     <Compile Include="Events\CloseTributeEvent\RelatedOpenTributesEvent\OpenTributesEvent.cs" />

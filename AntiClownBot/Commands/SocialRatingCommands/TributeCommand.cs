@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using DSharpPlus;
@@ -29,7 +30,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 await e.Message.RespondAsync(message);
                 return;
             }
-            
+
             if (!user.IsCooldownPassed())
             {
                 if (isAutomatic)
@@ -38,6 +39,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                         "Ты успеть принести подношение до твой кошачья жена, подношение от кошки не учитываться");
                     return;
                 }
+
                 await e.Message.RespondAsync(
                     $"Не злоупотребляй подношение император XI {Utility.StringEmoji(":PepegaGun:")}");
                 Utility.DecreaseRating(Config, user, 15, e);
@@ -46,14 +48,15 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
             var (gigabyteWorked, jadeRodWorked) = user.UpdateCooldown();
 
-            const int tributeDecreaseByOneRiceBowl = 2;
-            const int tributeIncreaseByOneRiceBowl = 5;
             var tributeQuality = Randomizer.GetRandomNumberBetween(
-                -40 - user.UserItems[InventoryItem.RiceBowl] * tributeDecreaseByOneRiceBowl,
-                100 + user.UserItems[InventoryItem.RiceBowl] * tributeIncreaseByOneRiceBowl);
+                Constants.MinTributeValue -
+                user.UserItems[InventoryItem.RiceBowl] * Constants.TributeDecreaseByOneRiceBowl,
+                Constants.MaxTributeValue +
+                user.UserItems[InventoryItem.RiceBowl] * Constants.TributeIncreaseByOneRiceBowl);
             var response = isAutomatic ? $"Автоматическое подношение для {user.DiscordUsername}\n" : "";
 
-            var communismChance = Utility.LogarithmicDistribution(4, user.UserItems[InventoryItem.CommunismPoster]);
+            var communismChance = Utility.LogarithmicDistribution(
+                Constants.LogarithmicDistributionStartValueForCommunism, user.UserItems[InventoryItem.CommunismPoster]);
             var communism = Randomizer.GetRandomNumberBetween(0, 100) < communismChance;
 
             var sharedUser = user;
@@ -86,9 +89,10 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 response += jadeRodWorked > 0 ? $"нефритовый стержень x{gigabyteWorked}" : "";
             }
 
-            var chance = Utility.LogarithmicDistribution(16, user.UserItems[InventoryItem.CatWife]);
-            var isNextTributeAutomatic =
-                Randomizer.GetRandomNumberBetween(0, 100) < chance;
+            var chance = Utility.LogarithmicDistribution(
+                Constants.LogarithmicDistributionStartValueForCatWife,
+                user.UserItems[InventoryItem.CatWife]);
+            var isNextTributeAutomatic = Randomizer.GetRandomNumberBetween(0, 100) < chance;
             if (isNextTributeAutomatic)
                 response +=
                     $"\nКошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}";
