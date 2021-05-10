@@ -3,6 +3,7 @@ using System.Linq;
 using AntiClownBot.Commands.BlackJackCommands;
 using AntiClownBot.Commands.F1;
 using AntiClownBot.Commands.GamblingCommands;
+using AntiClownBot.Commands.Lottery;
 using AntiClownBot.Commands.OtherCommands;
 using AntiClownBot.Commands.RandomSelectCommands;
 using AntiClownBot.Commands.SocialRatingCommands;
@@ -53,6 +54,7 @@ namespace AntiClownBot.Commands
             RegisterCommand("!allcommands", new AllCommandsCommand(client, config, this));
 
             RegisterCommand("!f1", new F1CommandParser(client, config));
+            RegisterCommand("!lottery", new LotteryCommand(client, config));
         }
 
         private void RegisterCommand(string name, BaseCommand baseCommand)
