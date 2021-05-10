@@ -9,9 +9,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AntiClownBot.Commands;
+using AntiClownBot.Commands.SocialRatingCommands;
 using AntiClownBot.Events;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
 using EventHandler = AntiClownBot.Events.EventHandler;
 
 namespace AntiClownBot
@@ -111,7 +113,7 @@ namespace AntiClownBot
                         await e.Message.RespondAsync("Завтра в 3");
                         return;
                     }
-                    
+
                     if ((message.Contains("бот, ты") || message.Contains("бот ты")) &&
                         Randomizer.GetRandomNumberBetween(0, 3) == 0)
                     {
@@ -330,7 +332,7 @@ namespace AntiClownBot
                     await member.GrantRoleAsync(role);
                     return;
                 }
-                
+
                 var username = "unknown";
                 try
                 {
@@ -382,6 +384,7 @@ namespace AntiClownBot
                     await member.RevokeRoleAsync(role);
                     return;
                 }
+
                 var username = "unknown";
                 try
                 {
@@ -404,7 +407,7 @@ namespace AntiClownBot
 
                 return Task.CompletedTask;
             };
-            
+
             // for changelogs
             // new Thread(async () =>
             // {

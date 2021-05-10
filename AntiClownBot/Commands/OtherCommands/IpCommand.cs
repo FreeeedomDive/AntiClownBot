@@ -19,7 +19,7 @@ namespace AntiClownBot.Commands.OtherCommands
             var message = e.Message.Content;
             var parts = message.Split(' ');
             var needPing = parts.Length > 1 && parts[1] == "ping";
-            await e.Message.RespondAsync($"{Utility.StringEmoji(":pauseChamp:")}");
+            var respondMessage = await e.Message.RespondAsync($"{Utility.StringEmoji(":pauseChamp:")}");
             using var tcpClient = new TcpClient();
             try
             {
@@ -27,16 +27,16 @@ namespace AntiClownBot.Commands.OtherCommands
                 tcpClient.SendTimeout = 1000;
                 tcpClient.ReceiveTimeout = 1000;
                 await tcpClient.ConnectAsync("localhost", 25565);
-                await e.Message.RespondAsync($"IP: {ip}\nСервер запущен");
+                await respondMessage.ModifyAsync($"IP: {ip}\nСервер запущен");
             } catch (Exception) {
                 if (!needPing)
                 {
-                    await e.Message.RespondAsync("Сервер не запущен");
+                    await respondMessage.ModifyAsync("Сервер не запущен");
                     return;
                 }
 
                 var admin = await e.Guild.GetMemberAsync(259306088040628224);
-                await e.Message.RespondAsync($"Сервер не запущен\n{admin.Mention} запусти сервак!!!");
+                await respondMessage.ModifyAsync($"Сервер не запущен\n{admin.Mention} запусти сервак!!!");
             }
         }
 

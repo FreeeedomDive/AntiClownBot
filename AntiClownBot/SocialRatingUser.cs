@@ -29,7 +29,7 @@ namespace AntiClownBot
         {
             DiscordId = id;
             DiscordUsername = name;
-            SocialRating = 500;
+            SocialRating = Constants.DefaultSocialRating;
             NextTribute = DateTime.MinValue;
             UserItems = new Dictionary<InventoryItem, int>
             {
@@ -91,35 +91,31 @@ namespace AntiClownBot
 
         public bool HasDodgedPidor()
         {
-            const int pidorDodgeChanceByOneDogWife = 5;
             return Randomizer.GetRandomNumberBetween(0, 100) <
-                   pidorDodgeChanceByOneDogWife * UserItems[InventoryItem.DogWife];
+                   Utility.LogarithmicDistribution(Constants.LogarithmicDistributionStartValueForDogWife,
+                       UserItems[InventoryItem.DogWife]);
         }
 
         public (int, int) UpdateCooldown()
         {
-            const double cooldownDecreaseByOneGigabyteItem = 0.1;
-            var cooldown = 60 * 60 * 1000d;
+            var cooldown = Constants.DefaultCooldown;
 
             var gigabyteWorked = 0;
             var jadeRodWorked = 0;
 
-            const double cooldownDecreaseChanceByOneGigabyte = 5;
             for (var i = 0; i < UserItems[InventoryItem.Gigabyte]; i++)
             {
-                // за каждый гигабайт 5% шанс уменьшить cock на 10%
-                if (!(Randomizer.GetRandomNumberBetween(0, 100) < cooldownDecreaseChanceByOneGigabyte)) continue;
+                if (!(Randomizer.GetRandomNumberBetween(0, 100) <
+                      Constants.CooldownDecreaseChanceByOneGigabyte)) continue;
                 gigabyteWorked++;
-                cooldown *= 1 - cooldownDecreaseByOneGigabyteItem;
+                cooldown *= 1 - Constants.CooldownDecreaseByOneGigabyteItem;
             }
 
-            const int cooldownIncreaseChanceByOneJade = 2;
             for (var i = 0; i < UserItems[InventoryItem.JadeRod]; i++)
             {
-                // за каждый стержень 2% шанс увеличить cock в 2 раза
-                if (!(Randomizer.GetRandomNumberBetween(0, 100) < cooldownIncreaseChanceByOneJade)) continue;
+                if (!(Randomizer.GetRandomNumberBetween(0, 100) < Constants.CooldownIncreaseChanceByOneJade)) continue;
                 jadeRodWorked++;
-                cooldown *= 2;
+                cooldown *= Constants.CooldownIncreaseByOneJade;
             }
 
             NextTribute = DateTime.Now.AddMilliseconds(cooldown);
