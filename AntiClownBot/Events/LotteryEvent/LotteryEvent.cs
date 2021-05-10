@@ -11,7 +11,7 @@ namespace AntiClownBot.Events.LotteryEvent
     {
         public override void Execute()
         {
-            Config.CurrentLottery = new Models.Lottery.Lottery(Config, DiscordClient);
+            Config.CurrentLottery = new Models.Lottery.Lottery();
         }
 
         protected override string BackStory()

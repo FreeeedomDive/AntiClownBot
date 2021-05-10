@@ -42,10 +42,10 @@ namespace AntiClownBot.Models.Lottery
             peepoClap,
             PATREGO
         }
-        public Lottery(Configuration configuration, DiscordClient client)
+        public Lottery()
         {
-            _configuration = configuration;
-            DiscordClient = client;
+            _configuration = Configuration.GetConfiguration();
+            DiscordClient = Utility.Client;
             participants = new Queue<ulong>();
             IsJoinable = true;
             var thread = new Thread(StartEvent)
