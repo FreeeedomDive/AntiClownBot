@@ -8,5 +8,10 @@
         {
             Id = id;
         }
+
+        public bool Equals(RoulettePlayer p2)
+        {
+            return Id == p2.Id;
+        }
     }
 }

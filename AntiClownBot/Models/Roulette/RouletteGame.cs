@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Emzi0767;
 
 namespace Roulette
 {
@@ -30,17 +31,20 @@ namespace Roulette
         public PlayResult Play()
         {
             var winPoints = new Dictionary<RoulettePlayer, int>();
+            var allBetsForUser = new Dictionary<RoulettePlayer, int>();
             var winSector = new Sector(random.Next(0, 37));
             
-            foreach (var userBet in usersBets)
+            foreach (var (player, bets) in usersBets)
             {
-                var resultWin = userBet.Value.Sum(bet => GetWinByBet(bet, winSector));
-                winPoints.Add(userBet.Key, resultWin);
+                var resultWin = bets.Sum(bet => GetWinByBet(bet, winSector));
+                winPoints.Add(player, resultWin);
+
+                if (!allBetsForUser.ContainsKey(player))
+                    allBetsForUser.Add(player, 0);
+                
+                allBetsForUser[player] += bets.Sum(b => b.Points);
             }
-            var result = new PlayResult(winPoints, winSector, 
-                usersBets
-                    .Select(e => 
-                        new KeyValuePair<RoulettePlayer, int>(e.Key, e.Value.Sum(b => b.Points))));
+            var result = new PlayResult(winPoints, winSector, allBetsForUser);
             
             usersBets.Clear();
 
