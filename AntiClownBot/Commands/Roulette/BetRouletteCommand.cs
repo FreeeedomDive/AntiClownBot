@@ -26,6 +26,8 @@ namespace AntiClownBot.Commands.Roulette
                 ? $"поставлена ставка в {bet.Points} на то что выпадет {bet.SectorForSingle}" 
                 : $"поставлена ставка в {bet.Points} на то что выпадет {bet.Type}";
             
+            Utility.IncreaseRating(Config, user, bet.Points, e);
+            
             await e.Message.RespondAsync(messageText);
         }
 
@@ -50,7 +52,7 @@ namespace AntiClownBot.Commands.Roulette
 
             if (betType != BetType.Single) return bet;
             
-            if (splitMessage.Length < 4 || !int.TryParse(splitMessage[3], out var sectorNumber))
+            if (splitMessage.Length < 4 || !int.TryParse(splitMessage[3], out var sectorNumber) || sectorNumber > 36)
                 return null;
 
             bet.SectorForSingle = sectorNumber;

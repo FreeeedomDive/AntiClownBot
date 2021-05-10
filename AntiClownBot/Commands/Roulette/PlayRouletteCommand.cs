@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
+using Emzi0767;
 
 namespace AntiClownBot.Commands.Roulette
 {
@@ -23,13 +24,15 @@ namespace AntiClownBot.Commands.Roulette
                 ? "\nА игроков то и не было" 
                 : "\nРезультаты стола: ");
 
-            foreach (var winPoint in playResult.WinPoints)
+            foreach (var (player, winPoints) in playResult.WinPoints)
             {
-                Config.Users.TryGetValue(winPoint.Key.Id, out var nick);
+                Config.Users.TryGetValue(player.Id, out var nick);
                 message.Append("\n")
                     .Append(nick?.DiscordUsername)
                     .Append(": ")
-                    .Append(winPoint.Value);
+                    .Append(winPoints);
+                
+                Utility.IncreaseRating(Config, user, winPoints, e);
             }
             
             await e.Message.RespondAsync(message.ToString());
@@ -37,7 +40,7 @@ namespace AntiClownBot.Commands.Roulette
 
         public override string Help()
         {
-            return "Команда чтобы сгенерировать запустить рулетку и раздать очки";
+            return "Команда чтобы запустить рулетку и раздать очки";
         }
     }
 }
