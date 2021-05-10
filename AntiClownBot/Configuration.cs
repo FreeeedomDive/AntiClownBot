@@ -9,6 +9,7 @@ using DSharpPlus.Entities;
 using AntiClownBot.Models.Gamble;
 using Emzi0767;
 using Newtonsoft.Json;
+using Roulette;
 
 namespace AntiClownBot
 {
@@ -24,6 +25,7 @@ namespace AntiClownBot
 
         public int PidorRoulette;
 
+        public RouletteGame Roulette;
         public Gamble CurrentGamble;
         public BlackJack CurrentBlackJack;
         public Lottery CurrentLottery;
@@ -44,7 +46,8 @@ namespace AntiClownBot
                 PidorOfTheDay = new Dictionary<string, int>(),
                 TodayDate = DateTime.Today,
                 CurrentPidorOfTheDay = 0,
-                PidorRoulette = Randomizer.GetRandomNumberBetween(5, 40)
+                PidorRoulette = Randomizer.GetRandomNumberBetween(5, 40),
+                Roulette = new RouletteGame(),
             };
         }
 

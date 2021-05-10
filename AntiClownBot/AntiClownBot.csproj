@@ -178,6 +178,8 @@
     <Compile Include="Commands\OtherCommands\IpCommand.cs" />
     <Compile Include="Commands\RandomSelectCommands\RollCommand.cs" />
     <Compile Include="Commands\RandomSelectCommands\SelectCommand.cs" />
+    <Compile Include="Commands\Roulette\BetRouletteCommand.cs" />
+    <Compile Include="Commands\Roulette\PlayRouletteCommand.cs" />
     <Compile Include="Commands\SocialRatingCommands\RatingCommand.cs" />
     <Compile Include="Commands\SocialRatingCommands\SocialStatusCommand.cs" />
     <Compile Include="Commands\SocialRatingCommands\TributeCommand.cs" />
@@ -200,6 +202,11 @@
     <Compile Include="Models\Gamble\Gamble.cs" />
     <Compile Include="Models\Gamble\GambleOption.cs" />
     <Compile Include="Models\Gamble\GambleUser.cs" />
+    <Compile Include="Models\Roulette\Bet.cs" />
+    <Compile Include="Models\Roulette\PlayResult.cs" />
+    <Compile Include="Models\Roulette\RouletteGame.cs" />
+    <Compile Include="Models\Roulette\RoulettePlayer.cs" />
+    <Compile Include="Models\Roulette\Sector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Randomizer.cs" />
@@ -235,6 +242,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
