@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 using Emzi0767;
@@ -32,7 +33,13 @@ namespace AntiClownBot.Commands.Roulette
                     .Append(": ")
                     .Append(winPoints);
                 
-                Utility.IncreaseRating(Config, user, winPoints, e);
+                var resultWinPoints = 
+                    playResult.Bets.FirstOrDefault(b => b.Key.Equals(player)).Value + winPoints;
+                
+                if (resultWinPoints >= 0)
+                    Utility.IncreaseRating(Config, user, resultWinPoints, e);
+                else
+                    Utility.DecreaseRating(Config, user, -resultWinPoints, e);
             }
             
             await e.Message.RespondAsync(message.ToString());

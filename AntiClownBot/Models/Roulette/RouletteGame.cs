@@ -29,17 +29,22 @@ namespace Roulette
 
         public PlayResult Play()
         {
-            var result = new Dictionary<RoulettePlayer, int>();
+            var winPoints = new Dictionary<RoulettePlayer, int>();
             var winSector = new Sector(random.Next(0, 37));
             
             foreach (var userBet in usersBets)
             {
                 var resultWin = userBet.Value.Sum(bet => GetWinByBet(bet, winSector));
-                result.Add(userBet.Key, resultWin);
+                winPoints.Add(userBet.Key, resultWin);
             }
+            var result = new PlayResult(winPoints, winSector, 
+                usersBets
+                    .Select(e => 
+                        new KeyValuePair<RoulettePlayer, int>(e.Key, e.Value.Sum(b => b.Points))));
             
             usersBets.Clear();
-            return new PlayResult(result, winSector);
+
+            return result;
         }
 
         private static int GetWinByBet(Bet bet, Sector winSector)

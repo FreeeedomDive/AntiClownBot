@@ -26,8 +26,6 @@ namespace AntiClownBot.Commands.Roulette
                 ? $"поставлена ставка в {bet.Points} на то что выпадет {bet.SectorForSingle}" 
                 : $"поставлена ставка в {bet.Points} на то что выпадет {bet.Type}";
             
-            Utility.IncreaseRating(Config, user, bet.Points, e);
-            
             await e.Message.RespondAsync(messageText);
         }
 
