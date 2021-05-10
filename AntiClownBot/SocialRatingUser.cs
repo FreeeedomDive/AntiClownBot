@@ -17,7 +17,7 @@ namespace AntiClownBot
     public class SocialRatingUser
     {
         private static readonly List<InventoryItem> allItems = new List<InventoryItem>
-            {InventoryItem.CatWife, InventoryItem.DogWife, InventoryItem.RiceBowl, InventoryItem.JadeRod};
+            {InventoryItem.CatWife, InventoryItem.DogWife, InventoryItem.RiceBowl, InventoryItem.JadeRod, InventoryItem.CommunismPoster};
 
         public ulong DiscordId;
         public string DiscordUsername;
