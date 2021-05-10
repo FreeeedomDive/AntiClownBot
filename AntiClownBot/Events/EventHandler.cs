@@ -38,8 +38,8 @@ namespace AntiClownBot.Events
 
         private async void HandleNextEvent()
         {
-            const double minHoursToSleep = 1;
-            const double maxHoursToSleep = 4;
+            const double minHoursToSleep = 0.45;
+            const double maxHoursToSleep = 0.55;
             while (true)
             {
                 var sleepTime = Randomizer.GetRandomNumberBetween(
@@ -52,7 +52,7 @@ namespace AntiClownBot.Events
                 await Task.Delay(sleepTime);
                 if (NextEvents.Count == 0)
                 {
-                    NextEvents.Enqueue(_allEvents.SelectRandomItem());
+                    NextEvents.Enqueue(new LotteryEvent.LotteryEvent());
                 }
 
                 var currentEvent = NextEvents.Dequeue();
