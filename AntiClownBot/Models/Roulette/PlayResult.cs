@@ -13,5 +13,6 @@ namespace Roulette
             WinPoints = winPoints;
             WinSector = winSector;
             Bets = bets;
-        }    }
+        }    
+    }
 }
