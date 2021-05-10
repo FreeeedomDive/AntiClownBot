@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using AntiClownBot.Models.BlackJack;
+using AntiClownBot.Models.Lottery;
+using DSharpPlus.Entities;
 using AntiClownBot.Models.Gamble;
 using Emzi0767;
 using Newtonsoft.Json;
@@ -24,6 +26,7 @@ namespace AntiClownBot
 
         public Gamble CurrentGamble;
         public BlackJack CurrentBlackJack;
+        public Lottery CurrentLottery;
 
         public bool AreTributesOpen = true;
 

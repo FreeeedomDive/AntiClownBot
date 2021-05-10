@@ -172,6 +172,7 @@
     <Compile Include="Commands\GamblingCommands\StartCustomGambleCommand.cs" />
     <Compile Include="Commands\GamblingCommands\StartGambleCommand.cs" />
     <Compile Include="Commands\GamblingCommands\CloseGambleCommand.cs" />
+    <Compile Include="Commands\Lottery\LotteryCommand.cs" />
     <Compile Include="Commands\OtherCommands\AllCommandsCommand.cs" />
     <Compile Include="Commands\OtherCommands\HelpCommand.cs" />
     <Compile Include="Commands\OtherCommands\IpCommand.cs" />
@@ -189,11 +190,13 @@
     <Compile Include="Events\CloseTributeEvent\CloseTributesEvent.cs" />
     <Compile Include="Events\CloseTributeEvent\RelatedOpenTributesEvent\OpenTributesEvent.cs" />
     <Compile Include="Events\EventHandler.cs" />
+    <Compile Include="Events\LotteryEvent\LotteryEvent.cs" />
     <Compile Include="Events\RemoveCooldownEvent\RemoveCooldownEvent.cs" />
     <Compile Include="Events\TransfusionEvent\TransfusionEvent.cs" />
     <Compile Include="Models\BlackJack\BlackJack.cs" />
     <Compile Include="Models\BlackJack\Deck.cs" />
     <Compile Include="Models\BlackJack\Player.cs" />
+    <Compile Include="Models\Lottery\Lottery.cs" />
     <Compile Include="Models\Gamble\Gamble.cs" />
     <Compile Include="Models\Gamble\GambleOption.cs" />
     <Compile Include="Models\Gamble\GambleUser.cs" />
@@ -232,5 +235,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
