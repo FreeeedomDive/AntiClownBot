@@ -86,7 +86,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 response += "\nНа изменение кулдауна повлияли: ";
                 response += gigabyteWorked > 0 ? $"гигабайт интернет x{gigabyteWorked} " : "";
                 response += gigabyteWorked > 0 && jadeRodWorked > 0 ? " и " : "";
-                response += jadeRodWorked > 0 ? $"нефритовый стержень x{gigabyteWorked}" : "";
+                response += jadeRodWorked > 0 ? $"нефритовый стержень x{jadeRodWorked}" : "";
             }
 
             var chance = Utility.LogarithmicDistribution(

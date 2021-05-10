@@ -13,7 +13,7 @@ namespace AntiClownBot
     {
         public static DiscordClient Client;
 
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) => items.OrderBy(_ => Guid.NewGuid());
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) => items.OrderBy(_ => Randomizer.GetRandomNumberBetween(0, 1000000));
 
         public static T SelectRandomItem<T>(this IEnumerable<T> items)
         {
@@ -90,8 +90,9 @@ namespace AntiClownBot
             if (diff.Hours != 0)
                 sb.Append(PluralizeString(diff.Hours, "час", "часа", "часов")).Append(" ");
             if (diff.Minutes != 0)
-                sb.Append(PluralizeString(diff.Minutes, "минута", "минуты", "минут")).Append(" ");
-            sb.Append(PluralizeString(diff.Seconds, "секунда", "секунды", "секунд"));
+                sb.Append(PluralizeString(diff.Minutes, "минуту", "минуты", "минут")).Append(" ");
+            if (diff.Seconds != 0)
+                sb.Append(PluralizeString(diff.Seconds, "секунду", "секунды", "секунд"));
 
             return sb.ToString();
         }

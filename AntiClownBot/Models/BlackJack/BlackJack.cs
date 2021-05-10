@@ -88,26 +88,47 @@ namespace AntiClownBot.Models.BlackJack
 
         public string StartRound()
         {
+            _configuration ??= Configuration.GetConfiguration();
             if (Players.Count < 2)
             {
                 return $"А почему дилер играет один??? {Utility.StringEmoji(":weirdChamp")}";
             }
 
             CurrentDeck = new Deck().Init();
+
+            var stringBuilder = new StringBuilder();
+
+            var tempQueueWithoutPoorPlayers = new Queue<Player>();
             foreach (var player in Players)
             {
+                if (!player.IsDealer && _configuration.Users[player.UserId].SocialRating < 50)
+                {
+                    stringBuilder.Append(
+                        $"{_configuration.Users[player.UserId].DiscordUsername} оказался слишком бедным и кикнут из этой игры\n");
+                    continue;
+                }
+
+                tempQueueWithoutPoorPlayers.Enqueue(player);
                 player.Value = 0;
                 player.IsBlackJack = false;
                 player.IsDouble = false;
                 player.DidHit = false;
             }
 
-            var stringBuilder = new StringBuilder();
+            Players = tempQueueWithoutPoorPlayers;
+
+            if (Players.Count < 2)
+            {
+                stringBuilder.Append($"Все оказались слишком бедными, и я остался один {Utility.StringEmoji(":BibleThump:")}");
+                return stringBuilder.ToString();
+            }
+
             var dealer = Players.Dequeue();
             var firstCard = GetCard(false, dealer);
             stringBuilder.Append(firstCard.Message + "\n");
             dealer.ReservedCard = CurrentDeck.Cards.Last();
-            stringBuilder.Append($"{dealer.Name} получил вторую карту, но какую же... {Utility.StringEmoji(":monkaHmm:")}\n");
+            stringBuilder.Append(
+                $"{dealer.Name} получил вторую карту, но какую же... {Utility.StringEmoji(":monkaHmm:")}\n");
             CurrentDeck.Cards.RemoveAt(CurrentDeck.Cards.Count - 1);
             foreach (var player in Players)
             {
@@ -115,12 +136,12 @@ namespace AntiClownBot.Models.BlackJack
                 var secondCard = GetCard(false, player);
                 stringBuilder.Append(firstCard.Message + "\n");
                 stringBuilder.Append(secondCard.Message + "\n");
-                if (Utility.CardToInt(firstCard.TakenCard) + Utility.CardToInt(secondCard.TakenCard) != 21) 
+                if (Utility.CardToInt(firstCard.TakenCard) + Utility.CardToInt(secondCard.TakenCard) != 21)
                     continue;
                 player.IsBlackJack = true;
                 stringBuilder.Append("BlackJack\n");
             }
-            
+
             Players.Enqueue(dealer);
             stringBuilder.Append($"{Players.Peek().Name} твой ход");
             IsActive = true;
@@ -239,6 +260,7 @@ namespace AntiClownBot.Models.BlackJack
                 {
                     dealer.Value += Utility.CardToInt(card);
                 }
+
                 strBuilder.Append($"{dealer.Name} получил {card}, {dealer.Value} очков\n");
             }
 
