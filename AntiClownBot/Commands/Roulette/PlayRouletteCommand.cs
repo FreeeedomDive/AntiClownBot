@@ -34,7 +34,7 @@ namespace AntiClownBot.Commands.Roulette
                     .Append(winPoints);
                 
                 var resultWinPoints = 
-                    playResult.Bets.FirstOrDefault(b => b.Key.Equals(player)).Value + winPoints;
+                    -playResult.Bets.FirstOrDefault(b => b.Key.Equals(player)).Value + winPoints;
                 
                 if (resultWinPoints >= 0)
                     Utility.IncreaseRating(Config, user, resultWinPoints, e);
