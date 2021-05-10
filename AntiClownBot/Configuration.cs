@@ -25,7 +25,9 @@ namespace AntiClownBot
 
         public int PidorRoulette;
 
-        public RouletteGame Roulette;
+        [JsonIgnore]
+        public RouletteGame Roulette = new RouletteGame();
+        
         public Gamble CurrentGamble;
         public BlackJack CurrentBlackJack;
         public Lottery CurrentLottery;
@@ -46,8 +48,7 @@ namespace AntiClownBot
                 PidorOfTheDay = new Dictionary<string, int>(),
                 TodayDate = DateTime.Today,
                 CurrentPidorOfTheDay = 0,
-                PidorRoulette = Randomizer.GetRandomNumberBetween(5, 40),
-                Roulette = new RouletteGame(),
+                PidorRoulette = Randomizer.GetRandomNumberBetween(5, 40)
             };
         }
 

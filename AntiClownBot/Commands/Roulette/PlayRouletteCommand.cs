@@ -27,7 +27,7 @@ namespace AntiClownBot.Commands.Roulette
             {
                 Config.Users.TryGetValue(winPoint.Key.Id, out var nick);
                 message.Append("\n")
-                    .Append(nick)
+                    .Append(nick?.DiscordUsername)
                     .Append(": ")
                     .Append(winPoint.Value);
             }
