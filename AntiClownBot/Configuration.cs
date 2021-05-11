@@ -9,6 +9,7 @@ using DSharpPlus.Entities;
 using AntiClownBot.Models.Gamble;
 using Emzi0767;
 using Newtonsoft.Json;
+using Roulette;
 
 namespace AntiClownBot
 {
@@ -24,6 +25,9 @@ namespace AntiClownBot
 
         public int PidorRoulette;
 
+        [JsonIgnore]
+        public RouletteGame Roulette = new RouletteGame();
+        
         public Gamble CurrentGamble;
         public BlackJack CurrentBlackJack;
         public Lottery CurrentLottery;

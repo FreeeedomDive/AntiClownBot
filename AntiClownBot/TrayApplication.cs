@@ -322,8 +322,22 @@ namespace AntiClownBot
 
             _discord.MessageReactionAdded += async (client, e) =>
             {
+                if (e.User.IsBot) return;
+
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
+
+                SocialRatingUser user;
+                if (_config.Users.ContainsKey(e.User.Id))
+                    user = _config.Users[e.User.Id];
+                else
+                {
+                    user = new SocialRatingUser(e.User.Id, e.User.Username);
+                    _config.Users.Add(e.User.Id, user);
+                    _config.Save();
+                }
+                
+                AddLog(user.ToString());
 
                 if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
                 {
@@ -331,6 +345,17 @@ namespace AntiClownBot
                     var role = e.Guild.GetRole(838794615334633502);
                     await member.GrantRoleAsync(role);
                     return;
+                }
+                
+                AddLog($"{emojiName} | {_config.CurrentLottery} | {_config.CurrentLottery.LotteryMessageId} | {_config.CurrentLottery.IsJoinable} | {!_config.CurrentLottery.Participants.Contains(e.User.Id)}");
+
+                if (emojiName == "NOTED"
+                    && _config.CurrentLottery != null
+                    && _config.CurrentLottery.LotteryMessageId == e.Message.Id
+                    && _config.CurrentLottery.IsJoinable
+                    && !_config.CurrentLottery.Participants.Contains(e.User.Id))
+                {
+                    _config.CurrentLottery.Join(user);
                 }
 
                 var username = "unknown";
@@ -426,10 +451,11 @@ namespace AntiClownBot
             // tell to others about last changes
             var channel = _discord.Guilds[277096298761551872].GetChannel(838477706643374090);
             var changeLog = @$"{Utility.StringEmoji(":monkaX:")} ВНИМАНИЕ {Utility.StringEmoji(":monkaX:")}
-Обновочка!
-С текущего дня в наш Империя будет происходить события. {Utility.StringEmoji(":NOTED:")}
-Информация о событие присылаться в этот канал. {Utility.StringEmoji(":NOTED:")}
-Это всё, осатльное узнавать по ходу появления события. {Utility.StringEmoji(":pauseChamp:")}";
+С днем лотереи!
+Сегодня примерно каждые полчаса будет запускаться лотерея, в которой вы можете принять участие!
+Забирайте большие выигрыши очков social rating!
+Вы можете выиграть до 7500 рейтинга за одну лотерею!
+Команда '!help lottery' для подробной информации...";
             await _discord.SendMessageAsync(channel, changeLog);
         }
 
