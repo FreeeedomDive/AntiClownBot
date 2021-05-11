@@ -1,4 +1,5 @@
-﻿using DSharpPlus;
+﻿using System.Threading.Tasks;
+using DSharpPlus;
 using DSharpPlus.EventArgs;
 using Roulette;
 
@@ -14,7 +15,7 @@ namespace AntiClownBot.Commands.Roulette
         {
             var player = new RoulettePlayer(user.DiscordId);
 
-            var bet = GetBetByMessage(e.Message.Content);
+            var bet = await GetBetByMessage(e.Message.Content, user);
             if (bet is null)
             {
                 await e.Message.RespondAsync("чел ты хуйню написал");
@@ -34,13 +35,14 @@ namespace AntiClownBot.Commands.Roulette
             return "[размер ставки] [single|red|black|odd|even] [номер сектора если ставка single]";
         }
 
-        private Bet GetBetByMessage(string message)
+        private async Task<Bet> GetBetByMessage(string message, SocialRatingUser user)
         {
             var splitMessage = message.Split(' ');
 
             if (splitMessage.Length < 3) return null;
             if (!int.TryParse(splitMessage[1], out var betCount)) return null;
             if (!ParseBetType(splitMessage[2], out var betType)) return null;
+            if (betCount <= 0 || betCount > user.SocialRating) return null;
 
             var bet = new Bet()
             {
