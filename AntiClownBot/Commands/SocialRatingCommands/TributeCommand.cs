@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DSharpPlus;
@@ -63,7 +64,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
             if (communism)
             {
                 response += $"Произошел коммунизм {Utility.StringEmoji(":Pepega:")}\n";
-                sharedUser = Config.Users.Values.SelectRandomItem();
+                sharedUser = Config.Users.Values.Where(u => u.UserItems[InventoryItem.CommunismPoster] != 0).SelectRandomItem();
                 response += $"Разделение подношения с {sharedUser.DiscordUsername}";
                 tributeQuality /= 2;
             }

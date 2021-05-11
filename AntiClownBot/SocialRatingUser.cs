@@ -126,5 +126,10 @@ namespace AntiClownBot
         {
             return DateTime.Now > NextTribute;
         }
+
+        public override string ToString()
+        {
+            return $"{DiscordUsername} {SocialRating}";
+        }
     }
 }

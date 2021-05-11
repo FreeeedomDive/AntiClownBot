@@ -14,6 +14,7 @@ namespace AntiClownBot.Models.Lottery
         private Configuration _configuration;
         protected static DiscordClient DiscordClient;
         public bool IsJoinable;
+        public ulong LotteryMessageId;
 
         public enum LotteryEmotes
         {
@@ -78,7 +79,7 @@ namespace AntiClownBot.Models.Lottery
 
         private async void StartEvent()
         {
-            await Task.Delay(20 * 60 * 1000);
+            await Task.Delay(15 * 60 * 1000);
             _configuration ??= Configuration.GetConfiguration();
             DiscordClient ??= Utility.Client;
             IsJoinable = false;
