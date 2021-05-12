@@ -65,7 +65,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
             {
                 response += $"Произошел коммунизм {Utility.StringEmoji(":Pepega:")}\n";
                 sharedUser = Config.Users.Values.Where(u => u.UserItems[InventoryItem.CommunismPoster] != 0).SelectRandomItem();
-                response += $"Разделение подношения с {sharedUser.DiscordUsername}";
+                response += $"Разделение подношения с {sharedUser.DiscordUsername}\n";
                 tributeQuality /= 2;
             }
 

@@ -110,24 +110,20 @@ namespace AntiClownBot
             MessageCreateEventArgs e)
         {
             var items = user.IncreaseRating(rating);
-            foreach (var item in items)
-            {
-                await e.Message.RespondAsync($"{user.DiscordUsername} получает {ItemToString(item)}!");
-            }
-
             config.Save();
+            
+            if (items.Count == 0) return;
+            await e.Message.RespondAsync(string.Join("\n", items.Select(item => $"{user.DiscordUsername} получает {ItemToString(item)}!")));
         }
 
         public static async void DecreaseRating(Configuration config, SocialRatingUser user, int rating,
             MessageCreateEventArgs e)
         {
             var items = user.DecreaseRating(rating);
-            foreach (var item in items)
-            {
-                await e.Message.RespondAsync($"{user.DiscordUsername} теряет {ItemToString(item)}!");
-            }
-
             config.Save();
+            
+            if (items.Count == 0) return;
+            await e.Message.RespondAsync(string.Join("\n", items.Select(item => $"{user.DiscordUsername} теряет {ItemToString(item)}!")));
         }
 
         public static int LogarithmicDistribution(int startValue, int count)

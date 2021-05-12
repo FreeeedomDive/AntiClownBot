@@ -16,7 +16,7 @@ namespace AntiClownBot.Models.Lottery
         public bool IsJoinable;
         public ulong LotteryMessageId;
 
-        public enum LotteryEmotes
+        public enum LotteryEmote
         {
             //Плохие эмоты
             weirdChamp,
@@ -47,12 +47,11 @@ namespace AntiClownBot.Models.Lottery
             peepoClap,
             PATREGO,
             popCat
-            
         }
 
-        public static List<LotteryEmotes> GetAllEmotes()
+        public static List<LotteryEmote> GetAllEmotes()
         {
-            return Enum.GetValues(typeof(LotteryEmotes)).Cast<LotteryEmotes>().ToList();
+            return Enum.GetValues(typeof(LotteryEmote)).Cast<LotteryEmote>().ToList();
         }
 
         public Lottery()
@@ -79,33 +78,66 @@ namespace AntiClownBot.Models.Lottery
 
         private async void StartEvent()
         {
+            var allEmotes = GetAllEmotes();
             await Task.Delay(15 * 60 * 1000);
             _configuration ??= Configuration.GetConfiguration();
             DiscordClient ??= Utility.Client;
             IsJoinable = false;
             foreach (var user in Start())
             {
-                var strBuilder = new StringBuilder();
-                strBuilder.Append($"{user.User.DiscordUsername}:\n");
+                var lastMessage = $"{user.User.DiscordUsername}:\n";
+
                 var message = await DiscordClient
                     .Guilds[277096298761551872]
                     .GetChannel(838477706643374090)
-                    .SendMessageAsync(strBuilder.ToString());
-                foreach (var emote in user.Emotes)
+                    .SendMessageAsync(lastMessage);
+
+                var emotesToRoll = 7;
+                while (emotesToRoll > 0)
                 {
-                    strBuilder.Append($"{Utility.StringEmoji($":{emote}:")} ");
-                    await message.ModifyAsync(strBuilder.ToString());
+                    var currentEmote = 7 - emotesToRoll;
+                    var strBuilder = new StringBuilder();
+                    strBuilder.Append($"{user.User.DiscordUsername}:\n");
+
+                    for (var rolledEmotes = 0; rolledEmotes < currentEmote; rolledEmotes++)
+                    {
+                        strBuilder.Append($"{Utility.StringEmoji($":{user.Emotes[rolledEmotes]}:")} ");
+                    }
+                    
+                    LotteryEmote rollingEmote;
+                    if (Randomizer.GetRandomNumberBetween(0, 4) == 0)
+                    {
+                        rollingEmote = allEmotes.SelectRandomItem();
+                    }
+                    else
+                    {
+                        rollingEmote = user.Emotes[currentEmote];
+                        emotesToRoll--;
+                    }
+                    strBuilder.Append($"   {Utility.StringEmoji($":{rollingEmote}:")} ");
+                    
+                    for (var remainingEmote = currentEmote + 1; remainingEmote < 7; remainingEmote++)
+                    {
+                        strBuilder.Append($"{Utility.StringEmoji($":{allEmotes.SelectRandomItem()}:")} ");
+                    }
+
+                    lastMessage = strBuilder.ToString();
+                    await message.ModifyAsync(lastMessage);
                     Thread.Sleep(1000);
                 }
 
-                strBuilder.Append($"\nТы получил {user.Value} social credit!");
+                var builder = new StringBuilder();
+                builder.Append($"{user.User.DiscordUsername}:\n");
+                builder.Append(string.Join(" ", user.Emotes.Select(emote => $"{Utility.StringEmoji($":{emote}:")}")));
+
+                builder.Append($"\nТы получил {user.Value} social credit!");
                 if (user.Value < 0)
                 {
                     user.Value *= -1;
                     var items = user.User.DecreaseRating(user.Value);
                     foreach (var item in items)
                     {
-                        strBuilder.Append($"\n{user.User.DiscordUsername} теряет {Utility.ItemToString(item)}!");
+                        builder.Append($"\n{user.User.DiscordUsername} теряет {Utility.ItemToString(item)}!");
                     }
                 }
                 else
@@ -113,11 +145,11 @@ namespace AntiClownBot.Models.Lottery
                     var items = user.User.IncreaseRating(user.Value);
                     foreach (var item in items)
                     {
-                        strBuilder.Append($"\n{user.User.DiscordUsername} получает {Utility.ItemToString(item)}!");
+                        builder.Append($"\n{user.User.DiscordUsername} получает {Utility.ItemToString(item)}!");
                     }
                 }
 
-                await message.ModifyAsync(strBuilder.ToString());
+                await message.ModifyAsync(builder.ToString());
                 _configuration.Save();
             }
 
@@ -128,12 +160,12 @@ namespace AntiClownBot.Models.Lottery
         public IEnumerable<LotteryUser> Start()
         {
             _configuration ??= Configuration.GetConfiguration();
-            var allEmotes = Enum.GetValues(typeof(LotteryEmotes)).Cast<LotteryEmotes>().ToList();
+            var allEmotes = Enum.GetValues(typeof(LotteryEmote)).Cast<LotteryEmote>().ToList();
             while (Participants.Count != 0)
             {
                 var user = _configuration.Users[Participants.Dequeue()];
-                var emotes = new LotteryEmotes[7];
-                var tempDictionary = new Dictionary<LotteryEmotes, int>();
+                var emotes = new LotteryEmote[7];
+                var tempDictionary = new Dictionary<LotteryEmote, int>();
                 for (var i = 0; i < 7; i++)
                 {
                     var emote = allEmotes.SelectRandomItem();
@@ -162,45 +194,45 @@ namespace AntiClownBot.Models.Lottery
         public class LotteryUser
         {
             public SocialRatingUser User;
-            public LotteryEmotes[] Emotes;
+            public LotteryEmote[] Emotes;
             public int Value;
         }
 
-        public static int EmoteToInt(LotteryEmotes emote)
+        public static int EmoteToInt(LotteryEmote emote)
         {
             return emote switch
             {
-                LotteryEmotes.weirdChamp => -10,
-                LotteryEmotes.sadKEK => -20,
-                LotteryEmotes.Sadge => -10,
-                LotteryEmotes.PogOff => -50,
-                LotteryEmotes.pigRoll => -30,
-                LotteryEmotes.KEKW => -40,
-                LotteryEmotes.bonk => -30,
-                LotteryEmotes.BibleThump => -20,
-                LotteryEmotes.OMEGAKEK => -40,
-                LotteryEmotes.PepegaGun => -75,
-                LotteryEmotes.peepoClown => -20,
-                LotteryEmotes.PogYou => 40,
-                LotteryEmotes.poggers => 30,
-                LotteryEmotes.pauseChamp => 50,
-                LotteryEmotes.olyashGasm => 30,
-                LotteryEmotes.OkayChamp => 20,
-                LotteryEmotes.BOOBA => 40,
-                LotteryEmotes.funnyChamp => 10,
-                LotteryEmotes.BASED => 40,
-                LotteryEmotes.AYAYA => 40,
-                LotteryEmotes.YEPPING => 10,
-                LotteryEmotes.RainbowPls => 30,
-                LotteryEmotes.peepoClap => 20,
-                LotteryEmotes.PATREGO => 75,
-                LotteryEmotes.Kekega => -35,
-                LotteryEmotes.popCat => 50,
+                LotteryEmote.weirdChamp => -10,
+                LotteryEmote.sadKEK => -20,
+                LotteryEmote.Sadge => -10,
+                LotteryEmote.PogOff => -50,
+                LotteryEmote.pigRoll => -30,
+                LotteryEmote.KEKW => -40,
+                LotteryEmote.bonk => -30,
+                LotteryEmote.BibleThump => -20,
+                LotteryEmote.OMEGAKEK => -40,
+                LotteryEmote.PepegaGun => -75,
+                LotteryEmote.peepoClown => -20,
+                LotteryEmote.PogYou => 40,
+                LotteryEmote.poggers => 30,
+                LotteryEmote.pauseChamp => 50,
+                LotteryEmote.olyashGasm => 30,
+                LotteryEmote.OkayChamp => 20,
+                LotteryEmote.BOOBA => 40,
+                LotteryEmote.funnyChamp => 10,
+                LotteryEmote.BASED => 40,
+                LotteryEmote.AYAYA => 40,
+                LotteryEmote.YEPPING => 10,
+                LotteryEmote.RainbowPls => 30,
+                LotteryEmote.peepoClap => 20,
+                LotteryEmote.PATREGO => 75,
+                LotteryEmote.Kekega => -35,
+                LotteryEmote.popCat => 50,
                 _ => throw new ArgumentOutOfRangeException(nameof(emote), emote, null)
             };
         }
 
-        private static int GetEmotesValue(LotteryEmotes emote, int count)
+        private static int GetEmotesValue(LotteryEmote emote, int count)
         {
             return count switch
             {

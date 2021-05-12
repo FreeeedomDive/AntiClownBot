@@ -12,8 +12,7 @@ namespace AntiClownBot.Events
     {
         public Queue<BaseEvent> NextEvents;
 
-        private List<BaseEvent> _allEvents;
-        private bool firstLaunch = true;
+        private readonly List<BaseEvent> _allEvents;
 
         public EventHandler(DiscordClient client)
         {
@@ -39,11 +38,10 @@ namespace AntiClownBot.Events
 
         private async void HandleNextEvent()
         {
+            const double minHoursToSleep = 1;
+            const double maxHoursToSleep = 3;
             while (true)
             {
-                var minHoursToSleep = firstLaunch ? 0.01 : 0.45;
-                var maxHoursToSleep = firstLaunch ? 0.02 : 0.55;
-                firstLaunch = false;
                 var sleepTime = Randomizer.GetRandomNumberBetween(
                     (int)(minHoursToSleep * 60 * 60 * 1000),
                     (int)(maxHoursToSleep * 60 * 60 * 1000)
@@ -54,7 +52,7 @@ namespace AntiClownBot.Events
                 await Task.Delay(sleepTime);
                 if (NextEvents.Count == 0)
                 {
-                    NextEvents.Enqueue(new LotteryEvent.LotteryEvent());
+                    NextEvents.Enqueue(_allEvents.SelectRandomItem());
                 }
 
                 var currentEvent = NextEvents.Dequeue();

@@ -34,8 +34,13 @@ namespace AntiClownBot.Commands.Lottery
                    "Принятие участия в активной лотерее\n" +
                    "Смайлики, которые могут выпасть:\n" +
                    string.Join("\n",
-                       Models.Lottery.Lottery.GetAllEmotes().OrderBy(Models.Lottery.Lottery.EmoteToInt).Select(emote =>
-                           $"\t{Utility.StringEmoji($":{emote.ToString()}:")} = {Models.Lottery.Lottery.EmoteToInt(emote)}")) +
+                       Models
+                           .Lottery
+                           .Lottery
+                           .GetAllEmotes()
+                           .OrderBy(Models.Lottery.Lottery.EmoteToInt)
+                           .Select(emote =>
+                               $"\t{Utility.StringEmoji($":{emote.ToString()}:")} = {Models.Lottery.Lottery.EmoteToInt(emote)}")) +
                    "\nКоличество одинаковых смайликов тоже влияет на результат\n" +
                    "1 смайлик = x1, 2 смайлика = x5, 3 смайлика = x10, 4 смайлика = x50, 5 смайликов = x100";
         }

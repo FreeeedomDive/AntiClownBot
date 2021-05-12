@@ -15,7 +15,7 @@ namespace AntiClownBot.Commands.Roulette
         {
             var player = new RoulettePlayer(user.DiscordId);
 
-            var bet = await GetBetByMessage(e.Message.Content, user);
+            var bet = GetBetByMessage(e.Message.Content, user);
             if (bet is null)
             {
                 await e.Message.RespondAsync("чел ты хуйню написал");
@@ -35,7 +35,7 @@ namespace AntiClownBot.Commands.Roulette
             return "[размер ставки] [single|red|black|odd|even] [номер сектора если ставка single]";
         }
 
-        private async Task<Bet> GetBetByMessage(string message, SocialRatingUser user)
+        private Bet GetBetByMessage(string message, SocialRatingUser user)
         {
             var splitMessage = message.Split(' ');
 

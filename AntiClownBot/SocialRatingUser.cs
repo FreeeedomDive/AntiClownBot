@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AntiClownBot
 {
@@ -16,8 +17,8 @@ namespace AntiClownBot
 
     public class SocialRatingUser
     {
-        private static readonly List<InventoryItem> allItems = new List<InventoryItem>
-            {InventoryItem.CatWife, InventoryItem.DogWife, InventoryItem.RiceBowl, InventoryItem.JadeRod, InventoryItem.CommunismPoster};
+        private static readonly List<InventoryItem> allItems =
+            Enum.GetValues(typeof(InventoryItem)).Cast<InventoryItem>().Where(item => item != InventoryItem.None).ToList();
 
         public ulong DiscordId;
         public string DiscordUsername;
