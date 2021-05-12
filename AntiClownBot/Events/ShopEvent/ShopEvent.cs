@@ -31,14 +31,14 @@ namespace AntiClownBot.Events.ShopEvent
             await message.CreateReactionAsync(Utility.Emoji(":monkaGIGA:"));
             Config.Market.ShopMessageId = message.Id;
             Config.Save();
-            Thread.Sleep(2 * 60 * 60 * 1000);
+            Thread.Sleep(40 * 60 * 1000);
             Config.Market = null;
         }
         protected override string BackStory()
         {
             return $"Магазин ОТКРЫТЬСЯ!\n" +
                 "Всё по 1000! Но покупать каждый 'предмет' только 1 раз!\n" +
-                "Магазин работать 2 часа" +
+                "Магазин работать 40 минут" +
                 $"{Utility.Emoji(":dog:")} - собака жена\n" +
                 $"{Utility.Emoji(":RainowPls:")} - кошка жена\n" +
                 $"{Utility.Emoji(":rice:")} - миска рис" +
