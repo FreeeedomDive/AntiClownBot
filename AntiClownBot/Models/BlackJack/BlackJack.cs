@@ -50,7 +50,7 @@ namespace AntiClownBot.Models.BlackJack
             var player = potentialRemovableUser[0];
             Players = Players.WithoutItem(player);
             if (IsActive)
-                _configuration.Users[player.UserId].DecreaseRating(player.IsDouble ? 100 : 50);
+                _configuration.Users[player.UserId].ChangeRating(player.IsDouble ? -100 : -50);
             return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}";
         }
 
@@ -162,12 +162,12 @@ namespace AntiClownBot.Models.BlackJack
                 {
                     if (player.IsDouble)
                     {
-                        _configuration.Users[player.UserId].DecreaseRating(100);
+                        _configuration.Users[player.UserId].ChangeRating(-100);
                         strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                     }
                     else
                     {
-                        _configuration.Users[player.UserId].DecreaseRating(50);
+                        _configuration.Users[player.UserId].ChangeRating(-50);
                         strBuilder.Append($"{player.Name} проебал 50 очков\n");
                     }
                 }
@@ -181,31 +181,31 @@ namespace AntiClownBot.Models.BlackJack
                     {
                         if (player.IsDouble)
                         {
-                            _configuration.Users[player.UserId].DecreaseRating(100);
+                            _configuration.Users[player.UserId].ChangeRating(-100);
                             strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                         }
                         else
                         {
-                            _configuration.Users[player.UserId].DecreaseRating(50);
+                            _configuration.Users[player.UserId].ChangeRating(-50);
                             strBuilder.Append($"{player.Name} проебал 50 очков\n");
                         }
                     }
                 }
                 else if (player.IsBlackJack)
                 {
-                    _configuration.Users[player.UserId].IncreaseRating(75);
+                    _configuration.Users[player.UserId].ChangeRating(75);
                     strBuilder.Append($"{player.Name} выиграл BlackJack и получил 75 очков\n");
                 }
                 else if (dealer.Value > 21 || player.Value > dealer.Value)
                 {
                     if (player.IsDouble)
                     {
-                        _configuration.Users[player.UserId].IncreaseRating(100);
+                        _configuration.Users[player.UserId].ChangeRating(100);
                         strBuilder.Append($"{player.Name} с удвоенной ставкой выиграл 100 очков\n");
                     }
                     else
                     {
-                        _configuration.Users[player.UserId].IncreaseRating(50);
+                        _configuration.Users[player.UserId].ChangeRating(50);
                         strBuilder.Append($"{player.Name} выиграл 50 очков\n");
                     }
                 }
@@ -213,12 +213,12 @@ namespace AntiClownBot.Models.BlackJack
                 {
                     if (player.IsDouble)
                     {
-                        _configuration.Users[player.UserId].DecreaseRating(100);
+                        _configuration.Users[player.UserId].ChangeRating(-100);
                         strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                     }
                     else
                     {
-                        _configuration.Users[player.UserId].DecreaseRating(50);
+                        _configuration.Users[player.UserId].ChangeRating(-50);
                         strBuilder.Append($"{player.Name} проебал 50 очков\n");
                     }
                 }

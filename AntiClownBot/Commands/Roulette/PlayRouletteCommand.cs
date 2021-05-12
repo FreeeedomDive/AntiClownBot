@@ -35,11 +35,8 @@ namespace AntiClownBot.Commands.Roulette
                 
                 var resultWinPoints = 
                     -playResult.Bets.FirstOrDefault(b => b.Key.Equals(player)).Value + winPoints;
-                
-                if (resultWinPoints >= 0)
-                    Utility.IncreaseRating(Config, nick, resultWinPoints, e);
-                else
-                    Utility.DecreaseRating(Config, nick, -resultWinPoints, e);
+
+                nick.ChangeRating(resultWinPoints);
             }
             
             await e.Message.RespondAsync(message.ToString());

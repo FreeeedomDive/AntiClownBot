@@ -116,15 +116,8 @@ namespace AntiClownBot
                 foreach (var incorrectUser in incorrectUsers)
                 {
                     var socialUser = config.Users[incorrectUser.DiscordId];
-                    var loosedItems = socialUser.DecreaseRating(incorrectUser.Bet).Select(Utility.ItemToString)
-                        .ToList();
-                    sb.Append($"{socialUser.DiscordUsername}: -{incorrectUser.Bet}");
-                    if (loosedItems.Count != 0)
-                    {
-                        sb.Append($". Проебанные шмотки: {string.Join(", ", loosedItems)}");
-                    }
-
-                    sb.Append("\n");
+                    socialUser.ChangeRating(-incorrectUser.Bet);
+                    sb.Append($"{socialUser.DiscordUsername}: -{incorrectUser.Bet}\n");
                 }
 
                 sb.Append("Все проебали свои пойнты, грац, долбаебы");
@@ -137,27 +130,15 @@ namespace AntiClownBot
             {
                 var win = (int) Math.Floor(correctUser.Bet * ratio - correctUser.Bet);
                 var socialUser = config.Users[correctUser.DiscordId];
-                var newItems = socialUser.IncreaseRating(win).Select(Utility.ItemToString).ToList();
-                sb.Append($"{socialUser.DiscordUsername}: +{win}");
-                if (newItems.Count != 0)
-                {
-                    sb.Append($". Полученные шмотки: {string.Join(", ", newItems)}");
-                }
-
-                sb.Append("\n");
+                socialUser.ChangeRating(win);
+                sb.Append($"{socialUser.DiscordUsername}: +{win}\n");
             }
 
             foreach (var incorrectUser in incorrectUsers)
             {
                 var socialUser = config.Users[incorrectUser.DiscordId];
-                var lostItems = socialUser.DecreaseRating(incorrectUser.Bet).Select(Utility.ItemToString).ToList();
-                sb.Append($"{socialUser.DiscordUsername}: -{incorrectUser.Bet}");
-                if (lostItems.Count != 0)
-                {
-                    sb.Append($". Проебанные шмотки: {string.Join(", ", lostItems)}");
-                }
-
-                sb.Append("\n");
+                socialUser.ChangeRating(-incorrectUser.Bet);
+                sb.Append($"{socialUser.DiscordUsername}: -{incorrectUser.Bet}\n");
             }
 
             sb.Append($"Всего проебано {totalIncorrectPoints}");
@@ -187,14 +168,8 @@ namespace AntiClownBot
                     var win = (int) Math.Floor(correctUser.Bet * correctOption.Ratio - correctUser.Bet);
                     pointsWon += win;
                     var socialUser = config.Users[correctUser.DiscordId];
-                    var newItems = socialUser.IncreaseRating(win).Select(Utility.ItemToString).ToList();
-                    sb.Append($"{socialUser.DiscordUsername}: +{win}");
-                    if (newItems.Count != 0)
-                    {
-                        sb.Append($". Полученные шмотки: {string.Join(", ", newItems)}");
-                    }
-
-                    sb.Append("\n");
+                    socialUser.ChangeRating(win);
+                    sb.Append($"{socialUser.DiscordUsername}: +{win}\n");
                 }
             }
 
@@ -206,14 +181,8 @@ namespace AntiClownBot
                 {
                     var socialUser = config.Users[incorrectUser.DiscordId];
                     pointsLost += incorrectUser.Bet;
-                    var lostItems = socialUser.DecreaseRating(incorrectUser.Bet).Select(Utility.ItemToString).ToList();
-                    sb.Append($"{socialUser.DiscordUsername}: -{incorrectUser.Bet}");
-                    if (lostItems.Count != 0)
-                    {
-                        sb.Append($". Проебанные шмотки: {string.Join(", ", lostItems)}");
-                    }
-
-                    sb.Append("\n");
+                    socialUser.ChangeRating(-incorrectUser.Bet);
+                    sb.Append($"{socialUser.DiscordUsername}: -{incorrectUser.Bet}\n");
                 }
             }
 

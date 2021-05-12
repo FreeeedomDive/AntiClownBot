@@ -4,7 +4,7 @@ namespace AntiClownBot.Events.RemoveCooldownEvent
 {
     public class RemoveCooldownEvent: BaseEvent
     {
-        public override void Execute()
+        public override void ExecuteAsync()
         {
             TellBackStory();
             

@@ -56,7 +56,7 @@ namespace AntiClownBot.Events
                 }
 
                 var currentEvent = NextEvents.Dequeue();
-                currentEvent.Execute();
+                currentEvent.ExecuteAsync();
 
                 if (!currentEvent.HasRelatedEvents()) continue;
 

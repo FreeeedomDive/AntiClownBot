@@ -194,6 +194,7 @@
     <Compile Include="Events\EventHandler.cs" />
     <Compile Include="Events\LotteryEvent\LotteryEvent.cs" />
     <Compile Include="Events\RemoveCooldownEvent\RemoveCooldownEvent.cs" />
+    <Compile Include="Events\ShopEvent\ShopEvent.cs" />
     <Compile Include="Events\TransfusionEvent\TransfusionEvent.cs" />
     <Compile Include="Models\BlackJack\BlackJack.cs" />
     <Compile Include="Models\BlackJack\Deck.cs" />
@@ -207,6 +208,7 @@
     <Compile Include="Models\Roulette\RouletteGame.cs" />
     <Compile Include="Models\Roulette\RoulettePlayer.cs" />
     <Compile Include="Models\Roulette\Sector.cs" />
+    <Compile Include="Models\Shop\Shop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Randomizer.cs" />

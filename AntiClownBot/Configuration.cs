@@ -10,6 +10,7 @@ using AntiClownBot.Models.Gamble;
 using Emzi0767;
 using Newtonsoft.Json;
 using Roulette;
+using AntiClownBot.Models.Shop;
 
 namespace AntiClownBot
 {
@@ -27,7 +28,10 @@ namespace AntiClownBot
 
         [JsonIgnore]
         public RouletteGame Roulette = new RouletteGame();
-        
+
+        [JsonIgnore]
+        public Shop Market;
+
         public Gamble CurrentGamble;
         public BlackJack CurrentBlackJack;
         public Lottery CurrentLottery;

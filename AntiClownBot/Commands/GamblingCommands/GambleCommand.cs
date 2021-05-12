@@ -18,7 +18,7 @@ namespace AntiClownBot.Commands.GamblingCommands
             if (Config.CurrentGamble == null)
             {
                 await e.Message.RespondAsync("В данный момент нет активной ставки, лудоман ебучий");
-                user.DecreaseRating(15);
+                user.ChangeRating(-15);
                 return;
             }
 
@@ -35,14 +35,14 @@ namespace AntiClownBot.Commands.GamblingCommands
             if (!betParsed)
             {
                 await e.Message.RespondAsync($"Вместо ставки ты высрал какую-то хуйню, держи -15 {Utility.StringEmoji(":Pepega:")}");
-                user.DecreaseRating(15);
+                user.ChangeRating(-15);
                 return;
             }
 
             if (bet <= 0)
             {
                 await e.Message.RespondAsync($"Ты серьезно думал меня наебать? Держи -50 {Utility.StringEmoji(":Pepega:")}");
-                user.DecreaseRating(50);
+                user.ChangeRating(-50);
                 return;
             }
             var result = Config.CurrentGamble.MakeBid(user, option, bet);

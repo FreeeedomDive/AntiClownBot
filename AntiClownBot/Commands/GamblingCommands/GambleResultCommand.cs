@@ -31,7 +31,7 @@ namespace AntiClownBot.Commands.GamblingCommands
                     break;
                 case GambleBetResult.UserIsNotAuthor:
                     await e.Message.RespondAsync($"Ты кто такой, чел? Держи -30 {Utility.StringEmoji(":PogOff:")}");
-                    user.DecreaseRating(30);
+                    user.ChangeRating(-30);
                     break;
                 case GambleBetResult.SuccessfulResult:
                     await e.Message.RespondAsync(Config.CurrentGamble.Result);
