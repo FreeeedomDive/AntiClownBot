@@ -45,12 +45,12 @@ namespace AntiClownBot.Commands.RollDice
             if(playerResult > imperatorResult)
             {
                 user.ChangeRating(bet);
-                stringBuilder.Append($"{user.DiscordUsername} выиграл {bet} и теперь имеет {user.SocialRating} кредитов.");
+                stringBuilder.Append($"\n{user.DiscordUsername} выиграл {bet} и теперь имеет {user.SocialRating} кредитов.");
             }
             else
             {
                 user.ChangeRating(-bet);
-                stringBuilder.Append($"{user.DiscordUsername} проиграл {bet} и теперь имеет {user.SocialRating} кредитов.");
+                stringBuilder.Append($"\n{user.DiscordUsername} проиграл {bet} и теперь имеет {user.SocialRating} кредитов.");
             }
             await e.Message.RespondAsync(stringBuilder.ToString());
         }
