@@ -241,7 +241,7 @@ namespace AntiClownBot
                         emojis.Add(Utility.Emoji(":regional_indicator_d:"));
                         emojis.Add(Utility.Emoji(":regional_indicator_o:"));
                         emojis.Add(Utility.Emoji(":regional_indicator_r:"));
-                        user.ChangeRating(Randomizer.GetRandomNumberBetween(35, 65));
+                        user.ChangeRating(Randomizer.GetRandomNumberBetween(-65, -35));
                     }
 
                     foreach (var emoji in emojis)
@@ -334,8 +334,6 @@ namespace AntiClownBot
                     _config.Users.Add(e.User.Id, user);
                     _config.Save();
                 }
-                
-                AddLog(user.ToString());
 
                 if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
                 {
@@ -345,8 +343,6 @@ namespace AntiClownBot
                     return;
                 }
                 
-                AddLog($"{emojiName} | {_config.CurrentLottery} | {_config.CurrentLottery.LotteryMessageId} | {_config.CurrentLottery.IsJoinable} | {!_config.CurrentLottery.Participants.Contains(e.User.Id)}");
-
                 if (emojiName == "NOTED"
                     && _config.CurrentLottery != null
                     && _config.CurrentLottery.LotteryMessageId == e.Message.Id
@@ -355,29 +351,33 @@ namespace AntiClownBot
                 {
                     _config.CurrentLottery.Join(user);
                 }
-                if (_config.Market.ShopMessageId == e.Message.Id)
+                
+                if (_config.Market != null && _config.Market.ShopMessageId == e.Message.Id)
                 {
-                    var marketResult = new Shop.BuyResult();
+                    Shop.BuyResult marketResult;
                     switch (emojiName)
                     {
                         case "dog":
+                        case "🐶":
                             marketResult = _config.Market.BuyItem(InventoryItem.DogWife, user);
-                            return;
+                            break;
                         case "RainbowPls":
                             marketResult = _config.Market.BuyItem(InventoryItem.CatWife, user);
-                            return;
+                            break;
                         case "rice":
+                        case "🍚":
                             marketResult = _config.Market.BuyItem(InventoryItem.RiceBowl, user);
-                            return;
-                        case "monkaGIGA":
+                            break;
+                        case "HACKERJAMS":
                             marketResult = _config.Market.BuyItem(InventoryItem.Gigabyte, user);
-                            return;
+                            break;
                         default:
                             return;
                     }
                     if (marketResult.Status == Shop.BuyStatus.Success)
                         await e.Message.RespondAsync(marketResult.Result);
                 }
+                
                 var username = "unknown";
                 try
                 {

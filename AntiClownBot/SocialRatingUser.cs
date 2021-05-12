@@ -18,8 +18,9 @@ namespace AntiClownBot
 
     public class SocialRatingUser
     {
-        private static readonly List<InventoryItem> allItems =
-            Enum.GetValues(typeof(InventoryItem)).Cast<InventoryItem>().Where(item => item != InventoryItem.None).ToList();
+        private static readonly List<InventoryItem> AllItems =
+            Enum.GetValues(typeof(InventoryItem)).Cast<InventoryItem>().Where(item => item != InventoryItem.None)
+                .ToList();
 
         public ulong DiscordId;
         public string DiscordUsername;
@@ -43,48 +44,64 @@ namespace AntiClownBot
                 {InventoryItem.CommunismPoster, 0}
             };
         }
+
         public void ChangeRating(int rating)
         {
             SocialRating += rating;
             Configuration.GetConfiguration().Save();
         }
+
         public string LoseRandomItems(int count)
         {
             var stringBuilder = new StringBuilder();
             while (count > 0)
             {
-                if (!UserItems.Where(item => item.Value > 0).Any())
+                if (!UserItems.Any(item => item.Value > 0))
                 {
                     stringBuilder.Append($"У {DiscordUsername} нет предметов, удалять нечего");
                     Configuration.GetConfiguration().Save();
                     return stringBuilder.ToString();
                 }
+
                 var item = UserItems.Where(item => item.Value > 0).SelectRandomItem().Key;
                 UserItems[item]--;
                 stringBuilder.Append($"{DiscordUsername} теряет {Utility.ItemToString(item)}\n");
                 count--;
             }
+
             Configuration.GetConfiguration().Save();
             return stringBuilder.ToString();
         }
+
         public string AddRandomItems(int count)
         {
             var stringBuilder = new StringBuilder();
             while (count > 0)
             {
-                var item = UserItems.SelectRandomItem().Key;
+                var item = AllItems.SelectRandomItem();
                 UserItems[item]++;
                 stringBuilder.Append($"{DiscordUsername} получает {Utility.ItemToString(item)}\n");
                 count--;
             }
+
             Configuration.GetConfiguration().Save();
             return stringBuilder.ToString();
         }
+
         public void AddCustomItem(InventoryItem item)
         {
             UserItems[item]++;
             Configuration.GetConfiguration().Save();
         }
+
+        public void RemoveCustomItem(InventoryItem item)
+        {
+            if (!UserItems.ContainsKey(item) || UserItems[item] <= 0) return;
+            
+            UserItems[item]--;
+            Configuration.GetConfiguration().Save();
+        }
+
         public bool HasDodgedPidor()
         {
             return Randomizer.GetRandomNumberBetween(0, 100) <

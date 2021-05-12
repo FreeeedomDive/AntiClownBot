@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace AntiClownBot.Events.ShopEvent
@@ -17,6 +13,7 @@ namespace AntiClownBot.Events.ShopEvent
             };
             thread.Start();
         }
+
         private async void Run()
         {
             Config.Market = new Models.Shop.Shop();
@@ -28,21 +25,22 @@ namespace AntiClownBot.Events.ShopEvent
             await message.CreateReactionAsync(Utility.Emoji(":dog:"));
             await message.CreateReactionAsync(Utility.Emoji(":RainbowPls:"));
             await message.CreateReactionAsync(Utility.Emoji(":rice:"));
-            await message.CreateReactionAsync(Utility.Emoji(":monkaGIGA:"));
+            await message.CreateReactionAsync(Utility.Emoji(":HACKERJAMS:"));
             Config.Market.ShopMessageId = message.Id;
             Config.Save();
-            Thread.Sleep(40 * 60 * 1000);
+            await Task.Delay(40 * 60 * 1000);
             Config.Market = null;
         }
+
         protected override string BackStory()
         {
-            return $"Магазин ОТКРЫТЬСЯ!\n" +
-                "Всё по 1000! Но покупать каждый 'предмет' только 1 раз!\n" +
-                "Магазин работать 40 минут" +
-                $"{Utility.Emoji(":dog:")} - собака жена\n" +
-                $"{Utility.Emoji(":RainowPls:")} - кошка жена\n" +
-                $"{Utility.Emoji(":rice:")} - миска рис" +
-                $"{Utility.Emoji(":monkaGIGA:")} - гигабайт интернет";
+            return "Магазин ОТКРЫТЬСЯ!\n" +
+                   "Всё по 1000! Но покупать каждый 'предмет' только 1 раз!\n" +
+                   "Магазин работать 40 минут\n" +
+                   $"{Utility.Emoji(":dog:")} - собака жена\n" +
+                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена\n" +
+                   $"{Utility.Emoji(":rice:")} - миска рис\n" +
+                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет";
         }
     }
 }
