@@ -20,7 +20,7 @@ namespace AntiClownBot.Events
             DiscordClient = client;
         }
 
-        public abstract void Execute();
+        public abstract void ExecuteAsync();
 
         protected abstract string BackStory();
 

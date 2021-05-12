@@ -14,6 +14,7 @@ using AntiClownBot.Events;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
+using AntiClownBot.Models.Shop;
 using EventHandler = AntiClownBot.Events.EventHandler;
 
 namespace AntiClownBot
@@ -89,10 +90,7 @@ namespace AntiClownBot
                 _config.DecreasePidorRoulette();
 
                 var randomMessageRating = Randomizer.GetRandomNumberBetween(-4, 11);
-                if (randomMessageRating > 0)
-                    Utility.IncreaseRating(_config, user, randomMessageRating, e);
-                else if (randomMessageRating < 0)
-                    Utility.DecreaseRating(_config, user, -randomMessageRating, e);
+                user.ChangeRating(randomMessageRating);
 
                 CheckStats(message);
 
@@ -147,7 +145,7 @@ namespace AntiClownBot
                             "https://media.discordapp.net/attachments/654674644590264340/768151111252967424/3x.gif");
                     }
 
-                    Utility.IncreaseRating(_config, user, 50, e);
+                    user.ChangeRating(50);
 
                     return;
                 }
@@ -155,7 +153,7 @@ namespace AntiClownBot
                 if (message.Contains("<@!760879629509853224>"))
                 {
                     ReactToAppeal(e.Channel);
-                    Utility.DecreaseRating(_config, user, 25, e);
+                    user.ChangeRating(-25);
                     return;
                 }
 
@@ -165,7 +163,7 @@ namespace AntiClownBot
                     if (pidor < 6)
                     {
                         ReactToAppeal(e.Channel);
-                        Utility.DecreaseRating(_config, user, 30, e);
+                        user.ChangeRating(-30);
                         return;
                     }
                 }
@@ -234,7 +232,7 @@ namespace AntiClownBot
                         emojis.Add(Utility.Emoji(":regional_indicator_g:"));
                         emojis.Add(Utility.Emoji(":regional_indicator_o:"));
                         emojis.Add(Utility.Emoji(":PATREGO:"));
-                        Utility.IncreaseRating(_config, user, Randomizer.GetRandomNumberBetween(100, 200), e);
+                        user.ChangeRating(Randomizer.GetRandomNumberBetween(100, 200));
                     }
                     else
                     {
@@ -243,7 +241,7 @@ namespace AntiClownBot
                         emojis.Add(Utility.Emoji(":regional_indicator_d:"));
                         emojis.Add(Utility.Emoji(":regional_indicator_o:"));
                         emojis.Add(Utility.Emoji(":regional_indicator_r:"));
-                        Utility.DecreaseRating(_config, user, Randomizer.GetRandomNumberBetween(35, 65), e);
+                        user.ChangeRating(Randomizer.GetRandomNumberBetween(-65, -35));
                     }
 
                     foreach (var emoji in emojis)
@@ -336,8 +334,6 @@ namespace AntiClownBot
                     _config.Users.Add(e.User.Id, user);
                     _config.Save();
                 }
-                
-                AddLog(user.ToString());
 
                 if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
                 {
@@ -347,8 +343,6 @@ namespace AntiClownBot
                     return;
                 }
                 
-                AddLog($"{emojiName} | {_config.CurrentLottery} | {_config.CurrentLottery.LotteryMessageId} | {_config.CurrentLottery.IsJoinable} | {!_config.CurrentLottery.Participants.Contains(e.User.Id)}");
-
                 if (emojiName == "NOTED"
                     && _config.CurrentLottery != null
                     && _config.CurrentLottery.LotteryMessageId == e.Message.Id
@@ -357,7 +351,33 @@ namespace AntiClownBot
                 {
                     _config.CurrentLottery.Join(user);
                 }
-
+                
+                if (_config.Market != null && _config.Market.ShopMessageId == e.Message.Id)
+                {
+                    Shop.BuyResult marketResult;
+                    switch (emojiName)
+                    {
+                        case "dog":
+                        case "🐶":
+                            marketResult = _config.Market.BuyItem(InventoryItem.DogWife, user);
+                            break;
+                        case "RainbowPls":
+                            marketResult = _config.Market.BuyItem(InventoryItem.CatWife, user);
+                            break;
+                        case "rice":
+                        case "🍚":
+                            marketResult = _config.Market.BuyItem(InventoryItem.RiceBowl, user);
+                            break;
+                        case "HACKERJAMS":
+                            marketResult = _config.Market.BuyItem(InventoryItem.Gigabyte, user);
+                            break;
+                        default:
+                            return;
+                    }
+                    if (marketResult.Status == Shop.BuyStatus.Success)
+                        await e.Message.RespondAsync(marketResult.Result);
+                }
+                
                 var username = "unknown";
                 try
                 {

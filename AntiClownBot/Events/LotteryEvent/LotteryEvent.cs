@@ -2,7 +2,7 @@
 {
     class LotteryEvent : BaseEvent
     {
-        public override async void Execute()
+        public override async void ExecuteAsync()
         {
             Config.CurrentLottery = new Models.Lottery.Lottery();
             Config.Save();

@@ -4,7 +4,7 @@ namespace AntiClownBot.Events.CloseTributeEvent.RelatedOpenTributesEvent
 {
     public class OpenTributesEvent: BaseEvent
     {
-        public override void Execute()
+        public override void ExecuteAsync()
         {
             TellBackStory();
             Config.OpenTributes();

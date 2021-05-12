@@ -4,7 +4,7 @@ namespace AntiClownBot.Events.TransfusionEvent
 {
     public class TransfusionEvent : BaseEvent
     {
-        public override void Execute()
+        public override void ExecuteAsync()
         {
             SocialRatingUser theRichestUser = null;
             var maxRating = -1;
@@ -29,9 +29,8 @@ namespace AntiClownBot.Events.TransfusionEvent
                                  $"{Utility.StringEmoji(":MEGALUL:")} {Utility.StringEmoji(":point_right:")} {theRichestUser?.DiscordUsername}. " +
                                  $"Отдай {exchangeUser.DiscordUsername} {exchange} social credits");
 
-            theRichestUser?.IncreaseRating(exchange);
-            exchangeUser.DecreaseRating(exchange);
-            Config.Save();
+            theRichestUser?.ChangeRating(-exchange);
+            exchangeUser.ChangeRating(exchange);
         }
 
         protected override string BackStory()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace AntiClownBot
 {
@@ -17,8 +18,9 @@ namespace AntiClownBot
 
     public class SocialRatingUser
     {
-        private static readonly List<InventoryItem> allItems =
-            Enum.GetValues(typeof(InventoryItem)).Cast<InventoryItem>().Where(item => item != InventoryItem.None).ToList();
+        private static readonly List<InventoryItem> AllItems =
+            Enum.GetValues(typeof(InventoryItem)).Cast<InventoryItem>().Where(item => item != InventoryItem.None)
+                .ToList();
 
         public ulong DiscordId;
         public string DiscordUsername;
@@ -43,51 +45,61 @@ namespace AntiClownBot
             };
         }
 
-        public List<InventoryItem> IncreaseRating(int rating)
+        public void ChangeRating(int rating)
         {
-            var oldRating = SocialRating;
             SocialRating += rating;
-            var diff = SocialRating / 1000 - oldRating / 1000;
-
-            var items = new List<InventoryItem>();
-
-            if (diff == 0)
-                return items;
-            for (var i = 0; i < diff; i++)
-            {
-                var newItem = allItems.SelectRandomItem();
-                if (!UserItems.ContainsKey(newItem))
-                {
-                    UserItems.Add(newItem, 0);
-                }
-
-                UserItems[newItem]++;
-                items.Add(newItem);
-            }
-
-            return items;
+            Configuration.GetConfiguration().Save();
         }
 
-        public List<InventoryItem> DecreaseRating(int rating)
+        public string LoseRandomItems(int count)
         {
-            var oldRating = SocialRating;
-            SocialRating = Math.Max(SocialRating - rating, 0);
-            var diff = oldRating / 1000 - SocialRating / 1000;
-
-            var deletedItems = new List<InventoryItem>();
-            if (diff == 0)
-                return deletedItems;
-
-            while (deletedItems.Count != diff)
+            var stringBuilder = new StringBuilder();
+            while (count > 0)
             {
-                var deletableItem = allItems.SelectRandomItem();
-                if (!UserItems.TryGetValue(deletableItem, out var value) || value <= 0) continue;
+                if (!UserItems.Any(item => item.Value > 0))
+                {
+                    stringBuilder.Append($"У {DiscordUsername} нет предметов, удалять нечего");
+                    Configuration.GetConfiguration().Save();
+                    return stringBuilder.ToString();
+                }
 
-                UserItems[deletableItem]--;
-                deletedItems.Add(deletableItem);
+                var item = UserItems.Where(item => item.Value > 0).SelectRandomItem().Key;
+                UserItems[item]--;
+                stringBuilder.Append($"{DiscordUsername} теряет {Utility.ItemToString(item)}\n");
+                count--;
             }
 
-            return deletedItems;
+            Configuration.GetConfiguration().Save();
+            return stringBuilder.ToString();
+        }
+
+        public string AddRandomItems(int count)
+        {
+            var stringBuilder = new StringBuilder();
+            while (count > 0)
+            {
+                var item = AllItems.SelectRandomItem();
+                UserItems[item]++;
+                stringBuilder.Append($"{DiscordUsername} получает {Utility.ItemToString(item)}\n");
+                count--;
+            }
+
+            Configuration.GetConfiguration().Save();
+            return stringBuilder.ToString();
+        }
+
+        public void AddCustomItem(InventoryItem item)
+        {
+            UserItems[item]++;
+            Configuration.GetConfiguration().Save();
+        }
+
+        public void RemoveCustomItem(InventoryItem item)
+        {
+            if (!UserItems.ContainsKey(item) || UserItems[item] <= 0) return;
+            
+            UserItems[item]--;
+            Configuration.GetConfiguration().Save();
         }
 
         public bool HasDodgedPidor()

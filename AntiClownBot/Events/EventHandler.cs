@@ -23,7 +23,8 @@ namespace AntiClownBot.Events
                 new CloseTributesEvent(),
                 new RemoveCooldownEvent.RemoveCooldownEvent(),
                 new TransfusionEvent.TransfusionEvent(),
-                new LotteryEvent.LotteryEvent()
+                new LotteryEvent.LotteryEvent(),
+                new ShopEvent.ShopEvent()
             };
         }
 
@@ -56,7 +57,7 @@ namespace AntiClownBot.Events
                 }
 
                 var currentEvent = NextEvents.Dequeue();
-                currentEvent.Execute();
+                currentEvent.ExecuteAsync();
 
                 if (!currentEvent.HasRelatedEvents()) continue;
 

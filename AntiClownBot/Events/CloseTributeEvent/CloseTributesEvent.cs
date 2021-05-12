@@ -14,7 +14,7 @@ namespace AntiClownBot.Events.CloseTributeEvent
             };
         }
 
-        public override void Execute()
+        public override void ExecuteAsync()
         {
             TellBackStory();
             Config.CloseTributes();

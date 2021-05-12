@@ -131,23 +131,7 @@ namespace AntiClownBot.Models.Lottery
                 builder.Append(string.Join(" ", user.Emotes.Select(emote => $"{Utility.StringEmoji($":{emote}:")}")));
 
                 builder.Append($"\nТы получил {user.Value} social credit!");
-                if (user.Value < 0)
-                {
-                    user.Value *= -1;
-                    var items = user.User.DecreaseRating(user.Value);
-                    foreach (var item in items)
-                    {
-                        builder.Append($"\n{user.User.DiscordUsername} теряет {Utility.ItemToString(item)}!");
-                    }
-                }
-                else
-                {
-                    var items = user.User.IncreaseRating(user.Value);
-                    foreach (var item in items)
-                    {
-                        builder.Append($"\n{user.User.DiscordUsername} получает {Utility.ItemToString(item)}!");
-                    }
-                }
+                user.User.ChangeRating(user.Value);
 
                 await message.ModifyAsync(builder.ToString());
                 _configuration.Save();

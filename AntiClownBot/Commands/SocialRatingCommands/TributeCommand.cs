@@ -43,7 +43,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
                 await e.Message.RespondAsync(
                     $"Не злоупотребляй подношение император XI {Utility.StringEmoji(":PepegaGun:")}");
-                Utility.DecreaseRating(Config, user, 15, e);
+                user.ChangeRating(-15);
                 return;
             }
 
@@ -99,22 +99,10 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                     $"\nКошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}";
 
             await e.Message.RespondAsync(response);
-
-            if (tributeQuality > 0)
+            user.ChangeRating(tributeQuality);
+            if(communism)
             {
-                Utility.IncreaseRating(Config, user, tributeQuality, e);
-                if (communism)
-                {
-                    Utility.IncreaseRating(Config, sharedUser, tributeQuality, e);
-                }
-            }
-            else
-            {
-                Utility.DecreaseRating(Config, user, -tributeQuality, e);
-                if (communism)
-                {
-                    Utility.DecreaseRating(Config, sharedUser, -tributeQuality, e);
-                }
+                sharedUser.ChangeRating(tributeQuality);
             }
 
             if (!isNextTributeAutomatic) return;

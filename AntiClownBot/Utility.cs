@@ -106,26 +106,6 @@ namespace AntiClownBot
             return correctCount % 10 == 1 ? $"{count} {singleForm}" : $"{count} {severalForm}";
         }
 
-        public static async void IncreaseRating(Configuration config, SocialRatingUser user, int rating,
-            MessageCreateEventArgs e)
-        {
-            var items = user.IncreaseRating(rating);
-            config.Save();
-            
-            if (items.Count == 0) return;
-            await e.Message.RespondAsync(string.Join("\n", items.Select(item => $"{user.DiscordUsername} получает {ItemToString(item)}!")));
-        }
-
-        public static async void DecreaseRating(Configuration config, SocialRatingUser user, int rating,
-            MessageCreateEventArgs e)
-        {
-            var items = user.DecreaseRating(rating);
-            config.Save();
-            
-            if (items.Count == 0) return;
-            await e.Message.RespondAsync(string.Join("\n", items.Select(item => $"{user.DiscordUsername} теряет {ItemToString(item)}!")));
-        }
-
         public static int LogarithmicDistribution(int startValue, int count)
         {
             if (count == 0) return 0;
