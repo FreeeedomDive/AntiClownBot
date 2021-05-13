@@ -9,6 +9,7 @@ using AntiClownBot.Commands.RandomSelectCommands;
 using AntiClownBot.Commands.SocialRatingCommands;
 using AntiClownBot.Commands.StatsCommands;
 using AntiClownBot.Commands.Roulette;
+using AntiClownBot.Commands.Slot;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 
@@ -59,6 +60,8 @@ namespace AntiClownBot.Commands
             
             RegisterCommand("!roulettebet", new BetRouletteCommand(client, config));
             RegisterCommand("!rouletteplay", new PlayRouletteCommand(client, config));
+            
+            RegisterCommand("!slotplay", new SlotMachineCommand(client, config));
         }
 
         private void RegisterCommand(string name, BaseCommand baseCommand)

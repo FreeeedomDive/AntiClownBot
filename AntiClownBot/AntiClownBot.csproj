@@ -180,6 +180,7 @@
     <Compile Include="Commands\RandomSelectCommands\SelectCommand.cs" />
     <Compile Include="Commands\Roulette\BetRouletteCommand.cs" />
     <Compile Include="Commands\Roulette\PlayRouletteCommand.cs" />
+    <Compile Include="Commands\Slot\SlotMachineCommand.cs" />
     <Compile Include="Commands\SocialRatingCommands\RatingCommand.cs" />
     <Compile Include="Commands\SocialRatingCommands\SocialStatusCommand.cs" />
     <Compile Include="Commands\SocialRatingCommands\TributeCommand.cs" />
@@ -209,6 +210,13 @@
     <Compile Include="Models\Roulette\RoulettePlayer.cs" />
     <Compile Include="Models\Roulette\Sector.cs" />
     <Compile Include="Models\Shop\Shop.cs" />
+    <Compile Include="Models\SlotMachine\CellSeries.cs" />
+    <Compile Include="Models\SlotMachine\CherrySlotCell.cs" />
+    <Compile Include="Models\SlotMachine\CircularReel.cs" />
+    <Compile Include="Models\SlotMachine\DefaultSlotCell.cs" />
+    <Compile Include="Models\SlotMachine\ISlotCell.cs" />
+    <Compile Include="Models\SlotMachine\SlotMachine.cs" />
+    <Compile Include="Models\SlotMachine\SlotMachineResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Randomizer.cs" />
