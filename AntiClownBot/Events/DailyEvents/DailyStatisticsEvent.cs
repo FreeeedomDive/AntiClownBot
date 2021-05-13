@@ -26,8 +26,8 @@ namespace AntiClownBot.Events.DailyEvents
                 $"Спонсор каждого из них - Я!\n" +
                 $"Граждане наш Clown-City за день заработать {Config.DailyStatistics.CreditsCollected}\n" +
                 $"Мною было проводить {Config.DailyStatistics.EventsCount} событий\n" +
-                $"Мажор дня:{Utility.KeyValuePairToString(Config.DailyStatistics.CreditsById.OrderBy(x => x.Value).Last())}\n" +
-                $"Бомж дня:{Utility.KeyValuePairToString(Config.DailyStatistics.CreditsById.OrderBy(x => x.Value).First())}";
+                $"Мажор дня - {Utility.KeyValuePairToString(Config.DailyStatistics.CreditsById.OrderBy(x => x.Value).Last())}\n" +
+                $"Бомж дня - {Utility.KeyValuePairToString(Config.DailyStatistics.CreditsById.OrderBy(x => x.Value).First())}";
         }
     }
 }

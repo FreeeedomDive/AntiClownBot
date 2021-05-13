@@ -59,7 +59,7 @@ namespace AntiClownBot
             SocialRating += rating;
             var config = Configuration.GetConfiguration();
             config.DailyStatistics.CreditsCollected += rating;
-            config.DailyStatistics.ChangeUserCredits(DiscordId, rating);
+            config.DailyStatistics.ChangeUserCredits(DiscordUsername, rating);
             Configuration.GetConfiguration().Save();
         }
 
