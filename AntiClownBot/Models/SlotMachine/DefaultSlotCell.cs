@@ -5,7 +5,9 @@
         public int Multiplier { get; }
         public string Emoji { get; }
 
-        public string Description() => Utility.StringEmoji(Emoji) + ": " + Multiplier;
+        public string Description() => Utility.StringEmoji(Emoji) + " " +
+                                       Utility.StringEmoji(Emoji) + " " +  
+                                       Utility.StringEmoji(Emoji) + ": " + Multiplier + "x";
 
         public DefaultSlotCell(int multiplier, string emoji)
         {

@@ -27,13 +27,16 @@ namespace AntiClownBot.Commands.Slot
 
             var result = slotMachine.Play(bet);
             var textCells = string.Join(" ", result.Cells.Select(c => Utility.StringEmoji(c.Emoji)));
+
+            var resultRatingChange = result.Win - bet;
+            user.ChangeRating(resultRatingChange);
             
             e.Message.RespondAsync("Кручу верчу наебать хочу:\n" + textCells + "\nВыигрыш: " + result.Win);
         }
 
         public override string Help()
         {
-            return slotMachine.Description();
+            return SlotMachine.Description();
         }
     }
 }

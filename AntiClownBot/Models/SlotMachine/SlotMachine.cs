@@ -62,7 +62,7 @@ namespace AntiClownBot.Models.SlotMachine
             }
         };
 
-        public string Description() => string.Join("\n", AllCells.Select(c => c.Description()));
+        public static string Description() => "Коэфицентычи :\n" + string.Join("\n", AllCells.Select(c => c.Description()));
 
         private Random randomizer = new();
         

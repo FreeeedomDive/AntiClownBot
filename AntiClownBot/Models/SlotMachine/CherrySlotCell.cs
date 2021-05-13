@@ -7,9 +7,9 @@
         public int X3Multiplier { get; }
         public string Emoji { get; }
         
-        public string Description() => Utility.StringEmoji(Emoji) + ": " + X1Multiplier + "  " + 
-                                       Utility.StringEmoji(Emoji) + Utility.StringEmoji(Emoji) + ": " + X2Multiplier + "  " +
-                                       Utility.StringEmoji(Emoji) + Utility.StringEmoji(Emoji) + Utility.StringEmoji(Emoji) + ": " + X3Multiplier;
+        public string Description() => Utility.StringEmoji(Emoji) + ": " + X1Multiplier + "x  " + 
+                                       Utility.StringEmoji(Emoji) + Utility.StringEmoji(Emoji) + ": " + X2Multiplier + "x  " +
+                                       Utility.StringEmoji(Emoji) + Utility.StringEmoji(Emoji) + Utility.StringEmoji(Emoji) + ": " + X3Multiplier + "x";
 
         public CherrySlotCell(int x1Multiplier, int x2Multiplier, int x3Multiplier, string emoji)
         {
