@@ -11,6 +11,7 @@ using Emzi0767;
 using Newtonsoft.Json;
 using Roulette;
 using AntiClownBot.Models.Shop;
+using AntiClownBot.Models.DailyStatistics;
 
 namespace AntiClownBot
 {
@@ -23,6 +24,8 @@ namespace AntiClownBot
         public DateTime TodayDate;
         public Dictionary<string, int> PidorOfTheDay;
         public ulong CurrentPidorOfTheDay;
+
+        public DailyStatistics DailyStatistics;
 
         public int PidorRoulette;
 
@@ -52,6 +55,7 @@ namespace AntiClownBot
                 PidorOfTheDay = new Dictionary<string, int>(),
                 TodayDate = DateTime.Today,
                 CurrentPidorOfTheDay = 0,
+                DailyStatistics = new DailyStatistics(),
                 PidorRoulette = Randomizer.GetRandomNumberBetween(5, 40)
             };
         }

@@ -34,6 +34,10 @@ namespace AntiClownBot
 
         public static string Repeat(this string s, int count) => string.Concat(Enumerable.Repeat(s, count));
 
+        public static string KeyValuePairToString<T1,T2>(KeyValuePair<T1,T2> pair)
+        {
+            return $"{pair.Key} : {pair.Value}";
+        }
         public static string ItemToString(InventoryItem item)
         {
             return item switch

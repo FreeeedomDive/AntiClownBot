@@ -19,7 +19,8 @@ namespace AntiClownBot.Events
         {
             _dailyEvents = new List<BaseEvent>
             {
-                new PayoutsDailyEvent()
+                new PayoutsDailyEvent(),
+                new DailyStatisticsEvent()
             };
         }
 
@@ -35,7 +36,7 @@ namespace AntiClownBot.Events
         {
             AddLog($"!!!Timer started!!!");
             DateTime nowTime = DateTime.Now;
-            DateTime scheduledTime = new DateTime(nowTime.Year, nowTime.Month, nowTime.Day, 12, 0, 0, 0);
+            DateTime scheduledTime = new DateTime(nowTime.Year, nowTime.Month, nowTime.Day, 21, 0, 0, 0);
             if(nowTime > scheduledTime)
             {
                 scheduledTime = scheduledTime.AddDays(1);
