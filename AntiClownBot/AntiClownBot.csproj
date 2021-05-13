@@ -178,6 +178,7 @@
     <Compile Include="Commands\OtherCommands\IpCommand.cs" />
     <Compile Include="Commands\RandomSelectCommands\RollCommand.cs" />
     <Compile Include="Commands\RandomSelectCommands\SelectCommand.cs" />
+    <Compile Include="Commands\RollDice\RollDiceCommand.cs" />
     <Compile Include="Commands\Roulette\BetRouletteCommand.cs" />
     <Compile Include="Commands\Roulette\PlayRouletteCommand.cs" />
     <Compile Include="Commands\Slot\SlotMachineCommand.cs" />
@@ -192,6 +193,9 @@
     <Compile Include="Events\BaseEvent.cs" />
     <Compile Include="Events\CloseTributeEvent\CloseTributesEvent.cs" />
     <Compile Include="Events\CloseTributeEvent\RelatedOpenTributesEvent\OpenTributesEvent.cs" />
+    <Compile Include="Events\DailyEventHandler.cs" />
+    <Compile Include="Events\DailyEvents\DailyStatisticsEvent.cs" />
+    <Compile Include="Events\DailyEvents\PayoutsDailyEvent.cs" />
     <Compile Include="Events\EventHandler.cs" />
     <Compile Include="Events\LotteryEvent\LotteryEvent.cs" />
     <Compile Include="Events\RemoveCooldownEvent\RemoveCooldownEvent.cs" />
@@ -200,6 +204,7 @@
     <Compile Include="Models\BlackJack\BlackJack.cs" />
     <Compile Include="Models\BlackJack\Deck.cs" />
     <Compile Include="Models\BlackJack\Player.cs" />
+    <Compile Include="Models\DailyStatistics\DailyStatistics.cs" />
     <Compile Include="Models\Lottery\Lottery.cs" />
     <Compile Include="Models\Gamble\Gamble.cs" />
     <Compile Include="Models\Gamble\GambleOption.cs" />
@@ -252,5 +257,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

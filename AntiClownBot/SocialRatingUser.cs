@@ -25,6 +25,15 @@ namespace AntiClownBot
         public ulong DiscordId;
         public string DiscordUsername;
         public int SocialRating;
+
+        public int NetWorth => SocialRating + UserItems.Keys
+            .Where(item =>
+                item == InventoryItem.DogWife ||
+                item == InventoryItem.CatWife ||
+                item == InventoryItem.Gigabyte ||
+                item == InventoryItem.RiceBowl)
+            .Select(key => UserItems[key] * 1000).Sum();
+
         public readonly Dictionary<InventoryItem, int> UserItems;
         public DateTime NextTribute;
 
@@ -48,6 +57,9 @@ namespace AntiClownBot
         public void ChangeRating(int rating)
         {
             SocialRating += rating;
+            var config = Configuration.GetConfiguration();
+            config.DailyStatistics.CreditsCollected += rating;
+            config.DailyStatistics.ChangeUserCredits(DiscordUsername, rating);
             Configuration.GetConfiguration().Save();
         }
 
@@ -97,7 +109,7 @@ namespace AntiClownBot
         public void RemoveCustomItem(InventoryItem item)
         {
             if (!UserItems.ContainsKey(item) || UserItems[item] <= 0) return;
-            
+
             UserItems[item]--;
             Configuration.GetConfiguration().Save();
         }

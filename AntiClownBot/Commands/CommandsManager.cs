@@ -12,6 +12,7 @@ using AntiClownBot.Commands.Roulette;
 using AntiClownBot.Commands.Slot;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
+using AntiClownBot.Commands.RollDice;
 
 namespace AntiClownBot.Commands
 {
@@ -60,7 +61,7 @@ namespace AntiClownBot.Commands
             
             RegisterCommand("!roulettebet", new BetRouletteCommand(client, config));
             RegisterCommand("!rouletteplay", new PlayRouletteCommand(client, config));
-            
+            RegisterCommand("!rolldice", new RollDiceCommand(client, config));
             RegisterCommand("!slotplay", new SlotMachineCommand(client, config));
         }
 

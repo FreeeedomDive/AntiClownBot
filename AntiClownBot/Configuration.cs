@@ -11,6 +11,7 @@ using Emzi0767;
 using Newtonsoft.Json;
 using Roulette;
 using AntiClownBot.Models.Shop;
+using AntiClownBot.Models.DailyStatistics;
 
 namespace AntiClownBot
 {
@@ -23,6 +24,8 @@ namespace AntiClownBot
         public DateTime TodayDate;
         public Dictionary<string, int> PidorOfTheDay;
         public ulong CurrentPidorOfTheDay;
+
+        public DailyStatistics DailyStatistics;
 
         public int PidorRoulette;
 
@@ -52,6 +55,7 @@ namespace AntiClownBot
                 PidorOfTheDay = new Dictionary<string, int>(),
                 TodayDate = DateTime.Today,
                 CurrentPidorOfTheDay = 0,
+                DailyStatistics = new DailyStatistics(),
                 PidorRoulette = Randomizer.GetRandomNumberBetween(5, 40)
             };
         }
@@ -62,6 +66,7 @@ namespace AntiClownBot
             if (TodayDate == today) return;
             TodayDate = today;
             PidorOfTheDay = new Dictionary<string, int>();
+            DailyStatistics = new DailyStatistics();
             Save();
         }
 
@@ -83,6 +88,8 @@ namespace AntiClownBot
                 return _instance;
             }
             _instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
+            _instance.DailyStatistics ??= new DailyStatistics();
+            _instance.Save();
             return _instance;
         }
 
@@ -101,7 +108,7 @@ namespace AntiClownBot
             var dict = Users
                 .ToDictionary(
                     pair => pair.Value.DiscordUsername, 
-                    pair => pair.Value.SocialRating);
+                    pair => pair.Value.NetWorth);
             return GetStatsForDict(dict, key => key);
         }
 
@@ -132,6 +139,7 @@ namespace AntiClownBot
 
         public void AddPidor(string username)
         {
+            DailyStatistics.PidorCollected++;
             AddRecordToDictionary(PidorStatistics, username);
             CheckCurrentDay();
             AddRecordToDictionary(PidorOfTheDay, username);

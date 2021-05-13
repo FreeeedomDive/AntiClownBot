@@ -10,9 +10,9 @@ namespace AntiClownBot.Events.TransfusionEvent
             var maxRating = -1;
             foreach (var user in Config.Users.Values)
             {
-                if (user.SocialRating > maxRating)
+                if (user.NetWorth > maxRating)
                 {
-                    maxRating = user.SocialRating;
+                    maxRating = user.NetWorth;
                     theRichestUser = user;
                 }
             }
