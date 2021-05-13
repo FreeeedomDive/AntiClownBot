@@ -12,7 +12,7 @@ namespace AntiClownBot.Events.TransfusionEvent
             {
                 if (user.SocialRating > maxRating)
                 {
-                    maxRating = user.SocialRating;
+                    maxRating = user.NetWorth;
                     theRichestUser = user;
                 }
             }

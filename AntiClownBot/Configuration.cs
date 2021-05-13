@@ -101,7 +101,7 @@ namespace AntiClownBot
             var dict = Users
                 .ToDictionary(
                     pair => pair.Value.DiscordUsername, 
-                    pair => pair.Value.SocialRating);
+                    pair => pair.Value.NetWorth);
             return GetStatsForDict(dict, key => key);
         }
 

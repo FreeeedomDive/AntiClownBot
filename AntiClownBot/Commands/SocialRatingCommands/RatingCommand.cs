@@ -55,6 +55,8 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 .Append("\n")
                 .Append($"Социальный рейтинг: {user.SocialRating}")
                 .Append("\n")
+                .Append($"Общий рейтинг: {user.NetWorth}")
+                .Append("\n")
                 .Append(catWifeCount);
             if (user.UserItems[InventoryItem.CatWife] != 0)
             {
