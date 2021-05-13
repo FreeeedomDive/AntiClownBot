@@ -192,6 +192,8 @@
     <Compile Include="Events\BaseEvent.cs" />
     <Compile Include="Events\CloseTributeEvent\CloseTributesEvent.cs" />
     <Compile Include="Events\CloseTributeEvent\RelatedOpenTributesEvent\OpenTributesEvent.cs" />
+    <Compile Include="Events\DailyEventHandler.cs" />
+    <Compile Include="Events\DailyEvents\PayoutsDailyEvent.cs" />
     <Compile Include="Events\EventHandler.cs" />
     <Compile Include="Events\LotteryEvent\LotteryEvent.cs" />
     <Compile Include="Events\RemoveCooldownEvent\RemoveCooldownEvent.cs" />

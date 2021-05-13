@@ -461,6 +461,7 @@ namespace AntiClownBot
             // }).Start();
 
             new EventHandler(_discord).Start();
+            new DailyEventHandler().Start();
 
             await _discord.ConnectAsync();
             await Task.Delay(-1);
