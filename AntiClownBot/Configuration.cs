@@ -66,6 +66,7 @@ namespace AntiClownBot
             if (TodayDate == today) return;
             TodayDate = today;
             PidorOfTheDay = new Dictionary<string, int>();
+            DailyStatistics = new DailyStatistics();
             Save();
         }
 
@@ -87,6 +88,8 @@ namespace AntiClownBot
                 return _instance;
             }
             _instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
+            _instance.DailyStatistics ??= new DailyStatistics();
+            _instance.Save();
             return _instance;
         }
 

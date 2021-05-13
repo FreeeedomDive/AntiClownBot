@@ -15,7 +15,7 @@ namespace AntiClownBot.Events.DailyEvents
                 .Guilds[277096298761551872]
                 .GetChannel(838477706643374090)
                 .SendMessageAsync(text);
-            Config.DailyStatistics = new Models.DailyStatistics.DailyStatistics();
+            Config.CheckCurrentDay();
             Config.Save();
         }
 

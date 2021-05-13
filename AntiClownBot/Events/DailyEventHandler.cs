@@ -32,29 +32,31 @@ namespace AntiClownBot.Events
             };
             thread.Start();
         }
+
         public void StartTimer()
         {
-            AddLog($"!!!Timer started!!!");
-            DateTime nowTime = DateTime.Now;
-            DateTime scheduledTime = new DateTime(nowTime.Year, nowTime.Month, nowTime.Day, 21, 0, 0, 0);
-            if(nowTime > scheduledTime)
+            var nowTime = DateTime.Now;
+            var scheduledTime = new DateTime(nowTime.Year, nowTime.Month, nowTime.Day, 0, 1, 0, 0);
+            if (nowTime > scheduledTime)
             {
                 scheduledTime = scheduledTime.AddDays(1);
             }
 
-            double tickTime = (double)(scheduledTime - DateTime.Now).TotalMilliseconds;
+            var tickTime = (scheduledTime - DateTime.Now).TotalMilliseconds;
             timer = new System.Timers.Timer(tickTime);
-            timer.Elapsed += new System.Timers.ElapsedEventHandler(HandleEvents);
+            timer.Elapsed += HandleEvents;
             timer.Start();
         }
+
         private async void HandleEvents(object sender, System.Timers.ElapsedEventArgs e)
         {
             AddLog($"!!!Timer stopped!!!");
             timer.Stop();
-            foreach(var dailyEvent in _dailyEvents)
+            foreach (var dailyEvent in _dailyEvents)
             {
                 dailyEvent.ExecuteAsync();
             }
+
             StartTimer();
         }
 
