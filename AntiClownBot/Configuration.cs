@@ -136,6 +136,7 @@ namespace AntiClownBot
 
         public void AddPidor(string username)
         {
+            DailyStatistics.PidorCollected++;
             AddRecordToDictionary(PidorStatistics, username);
             CheckCurrentDay();
             AddRecordToDictionary(PidorOfTheDay, username);

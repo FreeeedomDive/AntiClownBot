@@ -193,6 +193,7 @@
     <Compile Include="Events\CloseTributeEvent\CloseTributesEvent.cs" />
     <Compile Include="Events\CloseTributeEvent\RelatedOpenTributesEvent\OpenTributesEvent.cs" />
     <Compile Include="Events\DailyEventHandler.cs" />
+    <Compile Include="Events\DailyEvents\DailyStatisticsEvent.cs" />
     <Compile Include="Events\DailyEvents\PayoutsDailyEvent.cs" />
     <Compile Include="Events\EventHandler.cs" />
     <Compile Include="Events\LotteryEvent\LotteryEvent.cs" />
@@ -202,6 +203,7 @@
     <Compile Include="Models\BlackJack\BlackJack.cs" />
     <Compile Include="Models\BlackJack\Deck.cs" />
     <Compile Include="Models\BlackJack\Player.cs" />
+    <Compile Include="Models\DailyStatistics\DailyStatistics.cs" />
     <Compile Include="Models\Lottery\Lottery.cs" />
     <Compile Include="Models\Gamble\Gamble.cs" />
     <Compile Include="Models\Gamble\GambleOption.cs" />

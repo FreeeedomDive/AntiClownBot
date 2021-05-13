@@ -57,6 +57,9 @@ namespace AntiClownBot
         public void ChangeRating(int rating)
         {
             SocialRating += rating;
+            var config = Configuration.GetConfiguration();
+            config.DailyStatistics.CreditsCollected += rating;
+            config.DailyStatistics.ChangeUserCredits(DiscordId, rating);
             Configuration.GetConfiguration().Save();
         }
 
