@@ -25,18 +25,23 @@ namespace AntiClownBot.Commands.RollDice
                 await e.Message.RespondAsync("Нормально пиши. чел");
                 return;
             }
+            if(user.SocialRating + bet < -1000)
+            {
+                await e.Message.RespondAsync("Долг больше 1к");
+                return;
+            }
             var stringBuilder = new StringBuilder();
             stringBuilder.Append($"{user.DiscordUsername}:\n");
             var playerResult = 0;
             var imperatorResult = 0;
-            for(var i = 0; i < 3; i++)
+            for(var i = 0; i < 2; i++)
             {
                 var dice = Randomizer.GetRandomNumberBetween(1, 7);
                 playerResult += dice;
                 stringBuilder.Append($"{dice} ");
             }
             stringBuilder.Append($"\nИмператорXI:\n");
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < 2; i++)
             {
                 var dice = Randomizer.GetRandomNumberBetween(1, 7);
                 imperatorResult += dice;
@@ -57,7 +62,7 @@ namespace AntiClownBot.Commands.RollDice
 
         public override string Help()
         {
-            return "!rolldice {ставка}. Бросить 3 кубика, если результат больше чем у бота - выигрываешь, если меньше или равно - проигрываешь.";
+            return "!rolldice {ставка}. Бросить 2 кубика, если результат больше чем у бота - выигрываешь, если меньше или равно - проигрываешь.";
         }
     }
 }
