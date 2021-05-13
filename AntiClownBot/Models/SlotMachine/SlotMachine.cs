@@ -18,30 +18,30 @@ namespace AntiClownBot.Models.SlotMachine
         };
 
         public static readonly CircularReel[] CircularReels = {
-            new(new CellSeries(6, AllCells[0]),
-                    new CellSeries(5, AllCells[1]),
-                    new CellSeries(5, AllCells[2]),
-                    new CellSeries(3, AllCells[3]),
-                    new CellSeries(2, AllCells[4]),
+            new(new CellSeries(11, AllCells[0]),
+                    new CellSeries(10, AllCells[1]),
+                    new CellSeries(6, AllCells[2]),
+                    new CellSeries(5, AllCells[3]),
+                    new CellSeries(3, AllCells[4]),
                     new CellSeries(2, AllCells[5]),
                     new CellSeries(1, AllCells[6]),
                     new CellSeries(2, AllCells[7])),
-            new(new CellSeries(6, AllCells[0]),
+            new(new CellSeries(11, AllCells[0]),
+                    new CellSeries(11, AllCells[1]),
+                    new CellSeries(5, AllCells[2]),
+                    new CellSeries(6, AllCells[3]),
+                    new CellSeries(3, AllCells[4]),
+                    new CellSeries(1, AllCells[5]),
+                    new CellSeries(1, AllCells[6]),
+                    new CellSeries(3, AllCells[7])),
+            new(new CellSeries(17, AllCells[0]),
                     new CellSeries(7, AllCells[1]),
-                    new CellSeries(3, AllCells[2]),
-                    new CellSeries(4, AllCells[3]),
-                    new CellSeries(2, AllCells[4]),
+                    new CellSeries(5, AllCells[2]),
+                    new CellSeries(2, AllCells[3]),
+                    new CellSeries(4, AllCells[4]),
                     new CellSeries(1, AllCells[5]),
                     new CellSeries(1, AllCells[6]),
-                    new CellSeries(2, AllCells[7])),
-            new(new CellSeries(13, AllCells[0]),
-                    new CellSeries(6, AllCells[1]),
-                    new CellSeries(2, AllCells[2]),
-                    new CellSeries(1, AllCells[3]),
-                    new CellSeries(1, AllCells[4]),
-                    new CellSeries(1, AllCells[5]),
-                    new CellSeries(1, AllCells[6]),
-                    new CellSeries(1, AllCells[7]))
+                    new CellSeries(3, AllCells[7]))
         };
 
         public static string Description() => "Коэфицентычи :\n" + string.Join("\n", AllCells.Select(c => c.Description()));
