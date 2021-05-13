@@ -1,30 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AntiClownBot.Models.SlotMachine
 {
     public class CircularReel
     {
-        public CellSeries[] CellSeries { get; set; }
-        public int CellCount => CellSeries.Sum(c => c.Count);
+        public List<ISlotCell> Cells { get; } = new();
+        public int CellCount => Cells.Count;
 
-        public ISlotCell GetCell(int pos)
+        public CircularReel(params CellSeries[] cellList)
         {
-            var currentPos = 0;
-            
-            foreach (var cell in CellSeries)
+            foreach (var cellSeries in cellList)
             {
-                if (currentPos + cell.Count < pos)
+                for (var i = 0; i < cellSeries.CellCount; i++)
                 {
-                    currentPos += cell.Count;
-                }
-                else
-                {
-                    return cell.Cell;
+                    Cells.Add(cellSeries.Cell);
                 }
             }
-
-            throw new ArgumentOutOfRangeException();
+        }
+        
+        public ISlotCell GetCell(int pos)
+        {
+            return Cells[pos];
         }
     }
 }

@@ -1,13 +1,15 @@
-﻿namespace AntiClownBot.Models.SlotMachine
+﻿using System;
+
+namespace AntiClownBot.Models.SlotMachine
 {
     public class CellSeries
     {
-        public int Count { get; }
+        public int CellCount { get; }
         public ISlotCell Cell { get; }
 
-        public CellSeries(int count, ISlotCell cell)
+        public CellSeries(int cellCount, ISlotCell cell)
         {
-            Count = count;
+            CellCount = cellCount;
             Cell = cell;
         }
     }
