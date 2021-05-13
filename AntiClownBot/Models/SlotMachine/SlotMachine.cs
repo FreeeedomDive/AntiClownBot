@@ -12,7 +12,7 @@ namespace AntiClownBot.Models.SlotMachine
             new DefaultSlotCell(25, ":peepoClap:"),
             new DefaultSlotCell(50, ":ricardoFlick:"),
             new DefaultSlotCell(100, ":BOOBA:"),
-            new DefaultSlotCell(300, ":rainbowPls:"),
+            new DefaultSlotCell(300, ":RainbowPls:"),
             new DefaultSlotCell(1000, ":PATREGO:"),
             new CherrySlotCell(2, 4, 10, ":blobDance:"),
         };
@@ -98,7 +98,7 @@ namespace AntiClownBot.Models.SlotMachine
         private IEnumerable<ISlotCell> GetRandomCells()
         {
             return CircularReels
-                .Select(reel => new {reel, winPos = randomizer.Next(0, reel.CellSeries.Length)})
+                .Select(reel => new {reel, winPos = randomizer.Next(0, reel.CellCount)})
                 .Select(@t => @t.reel.GetCell(@t.winPos))
                 .ToList();
         }
