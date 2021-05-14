@@ -18,7 +18,7 @@ namespace AntiClownBot.Models.SlotMachine
         };
 
         public static readonly CircularReel[] CircularReels = {
-            new(new CellSeries(19, AllCells[0]), //x3
+            new(new CellSeries(19, AllCells[0]), //x4
                     new CellSeries(14, AllCells[1]),        //x15
                     new CellSeries(9, AllCells[2]),         //x30
                     new CellSeries(7, AllCells[3]),         //x50
@@ -26,7 +26,7 @@ namespace AntiClownBot.Models.SlotMachine
                     new CellSeries(3, AllCells[5]),         //x500
                     new CellSeries(2, AllCells[6]),         //x1000
                     new CellSeries(5, AllCells[7])),        //x2-x5-x15
-            new(new CellSeries(16, AllCells[0]), //x3
+            new(new CellSeries(16, AllCells[0]), //x4
                     new CellSeries(16, AllCells[1]),        //x15
                     new CellSeries(9, AllCells[2]),         //x30
                     new CellSeries(8, AllCells[3]),         //x50
@@ -34,7 +34,7 @@ namespace AntiClownBot.Models.SlotMachine
                     new CellSeries(3, AllCells[5]),         //x500
                     new CellSeries(2, AllCells[6]),         //x1000
                     new CellSeries(5, AllCells[7])),        //x2-x5-x15
-            new(new CellSeries(23, AllCells[0]), //x3
+            new(new CellSeries(23, AllCells[0]), //x4
                     new CellSeries(10, AllCells[1]),        //x15
                     new CellSeries(8, AllCells[2]),         //x30
                     new CellSeries(5, AllCells[3]),         //x50
