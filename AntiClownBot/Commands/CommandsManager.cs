@@ -13,6 +13,7 @@ using AntiClownBot.Commands.Slot;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 using AntiClownBot.Commands.RollDice;
+using AntiClownBot.Commands.Lohotron;
 
 namespace AntiClownBot.Commands
 {
@@ -63,6 +64,8 @@ namespace AntiClownBot.Commands
             RegisterCommand("!rouletteplay", new PlayRouletteCommand(client, config));
             RegisterCommand("!rolldice", new RollDiceCommand(client, config));
             RegisterCommand("!slotplay", new SlotMachineCommand(client, config));
+
+            RegisterCommand("!lohotron", new LohotronCommand(client, config));
         }
 
         private void RegisterCommand(string name, BaseCommand baseCommand)
