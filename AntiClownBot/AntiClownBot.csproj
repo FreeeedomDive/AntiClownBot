@@ -172,6 +172,7 @@
     <Compile Include="Commands\GamblingCommands\StartCustomGambleCommand.cs" />
     <Compile Include="Commands\GamblingCommands\StartGambleCommand.cs" />
     <Compile Include="Commands\GamblingCommands\CloseGambleCommand.cs" />
+    <Compile Include="Commands\Lohotron\LohotronCommand.cs" />
     <Compile Include="Commands\Lottery\LotteryCommand.cs" />
     <Compile Include="Commands\OtherCommands\AllCommandsCommand.cs" />
     <Compile Include="Commands\OtherCommands\HelpCommand.cs" />
@@ -205,6 +206,13 @@
     <Compile Include="Models\BlackJack\Deck.cs" />
     <Compile Include="Models\BlackJack\Player.cs" />
     <Compile Include="Models\DailyStatistics\DailyStatistics.cs" />
+    <Compile Include="Models\Lohotron\CreditsLohotronPrize.cs" />
+    <Compile Include="Models\Lohotron\DefaultLohotronPrize.cs" />
+    <Compile Include="Models\Lohotron\ILohotronPrize.cs" />
+    <Compile Include="Models\Lohotron\ItemLohotronPrize.cs" />
+    <Compile Include="Models\Lohotron\Lohotron.cs" />
+    <Compile Include="Models\Lohotron\PrizeSeries.cs" />
+    <Compile Include="Models\Lohotron\Wheel.cs" />
     <Compile Include="Models\Lottery\Lottery.cs" />
     <Compile Include="Models\Gamble\Gamble.cs" />
     <Compile Include="Models\Gamble\GambleOption.cs" />

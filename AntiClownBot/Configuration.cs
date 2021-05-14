@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Roulette;
 using AntiClownBot.Models.Shop;
 using AntiClownBot.Models.DailyStatistics;
+using AntiClownBot.Models.Lohotron;
 
 namespace AntiClownBot
 {
@@ -35,6 +36,7 @@ namespace AntiClownBot
         [JsonIgnore]
         public Shop Market;
 
+        public Lohotron DailyScamMachine;
         public Gamble CurrentGamble;
         public BlackJack CurrentBlackJack;
         public Lottery CurrentLottery;
@@ -67,6 +69,7 @@ namespace AntiClownBot
             TodayDate = today;
             PidorOfTheDay = new Dictionary<string, int>();
             DailyStatistics = new DailyStatistics();
+            DailyScamMachine = new Lohotron();
             Save();
         }
 
@@ -89,6 +92,7 @@ namespace AntiClownBot
             }
             _instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
             _instance.DailyStatistics ??= new DailyStatistics();
+            _instance.DailyScamMachine ??= new Lohotron();
             _instance.Save();
             return _instance;
         }
