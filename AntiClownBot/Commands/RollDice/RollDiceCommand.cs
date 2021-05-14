@@ -25,7 +25,7 @@ namespace AntiClownBot.Commands.RollDice
                 await e.Message.RespondAsync("Нормально пиши. чел");
                 return;
             }
-            if(user.SocialRating + bet < -1000)
+            if(user.SocialRating - bet < -1000)
             {
                 await e.Message.RespondAsync("Долг больше 1к");
                 return;
