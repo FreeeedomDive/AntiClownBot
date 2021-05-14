@@ -45,8 +45,6 @@ namespace AntiClownBot.Models.SlotMachine
         };
 
         public static string Description() => "Таблица выплат:\n" + string.Join("\n", AllCells.Select(c => c.Description()));
-
-        private Random randomizer = new();
         
         public SlotMachineResult Play(int bet)
         {
@@ -80,7 +78,7 @@ namespace AntiClownBot.Models.SlotMachine
         private IEnumerable<ISlotCell> GetRandomCells()
         {
             return CircularReels
-                .Select(reel => new {reel, winPos = randomizer.Next(0, reel.CellCount)})
+                .Select(reel => new {reel, winPos = Randomizer.GetRandomNumberBetween(0, reel.CellCount)})
                 .Select(@t => @t.reel.GetCell(@t.winPos))
                 .ToList();
         }

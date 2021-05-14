@@ -21,12 +21,12 @@ namespace AntiClownBot.Commands.Lohotron
             switch (prize.Name)
             {
                 case "Credits":
-                    var count = (prize as CreditsLohotronPrize).Count;
+                    var count = ((CreditsLohotronPrize) prize).Count;
                     user.ChangeRating(count);
-                    await e.Message.RespondAsync($"Ты получаешь {count} Credits");
+                    await e.Message.RespondAsync($"Ты получаешь {count} social credits");
                     return;
                 case "Item":
-                    var item = (prize as ItemLohotronPrize).Item;
+                    var item = ((ItemLohotronPrize) prize).Item;
                     user.AddCustomItem(item);
                     await e.Message.RespondAsync($"Ты получаешь {Utility.ItemToString(item)}");
                     return;
