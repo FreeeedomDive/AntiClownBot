@@ -43,7 +43,7 @@ namespace AntiClownBot.Models.BlackJack
             var list = new List<Card>();
             foreach (var card in tempList)
             {
-                for (var count = 0; count < 8; count++)
+                for (var count = 0; count < 4; count++)
                 {
                     list.Add(card);
                 }
