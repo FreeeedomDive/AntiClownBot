@@ -18,7 +18,7 @@ namespace AntiClownBot.Commands.Slot
             var splitMessage = e.Message.Content.Split(' ');
             if (splitMessage.Length != 2 
                 || !int.TryParse(splitMessage[1], out var bet)
-                || bet <= 0 
+                || bet <= 4 
                 || bet > user.SocialRating)
             {
                 e.Message.RespondAsync("чел ты кого наебать вздумал");
