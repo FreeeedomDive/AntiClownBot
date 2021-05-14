@@ -31,12 +31,12 @@ namespace AntiClownBot.Commands.Slot
             var resultRatingChange = result.Win - bet;
             user.ChangeRating(resultRatingChange);
             
-            e.Message.RespondAsync("Кручу верчу наебать хочу:\n" + textCells + "\nВыигрыш: " + result.Win);
+            e.Message.RespondAsync("Кручу верчу богатство принести хочу:\n" + textCells + "\nВыигрыш: " + result.Win);
         }
 
         public override string Help()
         {
-            return SlotMachine.Description();
+            return "!slotplay [ставка]\n" + SlotMachine.Description();
         }
     }
 }
