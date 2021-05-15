@@ -16,6 +16,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using AntiClownBot.Models.Shop;
 using EventHandler = AntiClownBot.Events.EventHandler;
+using AntiClownBot.SpecialChannels;
 
 namespace AntiClownBot
 {
@@ -25,6 +26,7 @@ namespace AntiClownBot
         private DiscordClient _discord;
         private readonly Configuration _config;
         private CommandsManager _commandsManager;
+        private SpecialChannelsManager _specialChannelsManager;
 
         private ulong _lastReactionMessageId;
         private ulong _lastReactionUserId;
@@ -60,6 +62,7 @@ namespace AntiClownBot
             });
 
             _commandsManager = new CommandsManager(_discord, _config);
+            _specialChannelsManager = new SpecialChannelsManager(_discord, _config);
             Utility.Client = _discord;
 
             _discord.MessageCreated += async (client, e) =>
@@ -78,6 +81,11 @@ namespace AntiClownBot
                     user = new SocialRatingUser(e.Author.Id, e.Author.Username);
                     _config.Users.Add(e.Author.Id, user);
                     _config.Save();
+                }
+                if(_specialChannelsManager.AllChannels.Contains(e.Channel.Id))
+                {
+                    _specialChannelsManager.ParseMessage(e, user);
+                    return;
                 }
 
                 if (message.StartsWith("!"))

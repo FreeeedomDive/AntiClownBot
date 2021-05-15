@@ -150,6 +150,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SpecialChannels\BlackJack\BlackJackParser.cs" />
+    <Compile Include="SpecialChannels\BlackJack\Commands\BlackJackDouble.cs" />
+    <Compile Include="SpecialChannels\BlackJack\Commands\BlackJackHit.cs" />
+    <Compile Include="SpecialChannels\BlackJack\Commands\BlackJackJoin.cs" />
+    <Compile Include="SpecialChannels\BlackJack\Commands\BlackJackLeave.cs" />
+    <Compile Include="SpecialChannels\BlackJack\Commands\BlackJackStand.cs" />
+    <Compile Include="SpecialChannels\BlackJack\Commands\BlackJackStart.cs" />
+    <Compile Include="SpecialChannels\ICommand.cs" />
+    <Compile Include="SpecialChannels\SpecialChannelParser.cs" />
     <Compile Include="Commands\BlackJackCommands\BlackJackCreateCommand.cs" />
     <Compile Include="Commands\BlackJackCommands\BlackJackDoubleCommand.cs" />
     <Compile Include="Commands\BlackJackCommands\BlackJackEndCommand.cs" />
@@ -187,6 +196,7 @@
     <Compile Include="Commands\SocialRatingCommands\SocialStatusCommand.cs" />
     <Compile Include="Commands\SocialRatingCommands\TributeCommand.cs" />
     <Compile Include="Commands\SocialRatingCommands\WhenCommand.cs" />
+    <Compile Include="SpecialChannels\SpecialChannelsManager.cs" />
     <Compile Include="Commands\StatsCommands\EmojiStatsCommand.cs" />
     <Compile Include="Commands\StatsCommands\PidorStatsCommand.cs" />
     <Compile Include="Configuration.cs" />

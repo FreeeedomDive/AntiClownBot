@@ -20,7 +20,6 @@ namespace AntiClownBot.Commands
     public class CommandsManager
     {
         private readonly Dictionary<string, BaseCommand> _commands;
-
         public CommandsManager(DiscordClient client, Configuration config)
         {
             _commands = new Dictionary<string, BaseCommand>();

@@ -38,7 +38,7 @@ namespace AntiClownBot
 
         public Lohotron DailyScamMachine;
         public Gamble CurrentGamble;
-        public BlackJack CurrentBlackJack;
+        public BlackJack CurrentBlackJack = new BlackJack();
         public Lottery CurrentLottery;
 
         public bool AreTributesOpen = true;
