@@ -82,16 +82,18 @@ namespace AntiClownBot
                     _config.Users.Add(e.Author.Id, user);
                     _config.Save();
                 }
-                if(_specialChannelsManager.AllChannels.Contains(e.Channel.Id))
-                {
-                    _specialChannelsManager.ParseMessage(e, user);
-                    return;
-                }
+                
 
                 if (message.StartsWith("!"))
                 {
                     var commandName = message.Split('\n')[0].Split(' ').First();
                     _commandsManager.ExecuteCommand(commandName, e, user);
+                    return;
+                }
+
+                if (_specialChannelsManager.AllChannels.Contains(e.Channel.Id))
+                {
+                    _specialChannelsManager.ParseMessage(e, user);
                     return;
                 }
 
