@@ -1,40 +1,37 @@
-﻿using System.Threading.Tasks;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
 using Roulette;
 
-namespace AntiClownBot.Commands.Roulette
+namespace AntiClownBot.SpecialChannels.Roulette.Commands
 {
-    public class BetRouletteCommand : BaseCommand
+    public class RouletteBet : ICommand
     {
-        public BetRouletteCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
+        protected readonly Configuration Config;
+        protected readonly DiscordClient DiscordClient;
+        public RouletteBet(DiscordClient client, Configuration configuration)
         {
+            Config = configuration;
+            DiscordClient = client;
         }
+        public string Name => "bet";
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             var player = new RoulettePlayer(user.DiscordId);
 
             var bet = GetBetByMessage(e.Message.Content, user);
             if (bet is null)
             {
-                await e.Message.RespondAsync("чел ты хуйню написал");
-                return;
+                return "чел ты хуйню написал";
             }
-            
+
             Config.Roulette.Bet(player, bet);
-            var messageText = bet.Type == BetType.Single 
-                ? $"поставлена ставка в {bet.Points} на то что выпадет {bet.SectorForSingle}" 
+            var messageText = bet.Type == BetType.Single
+                ? $"поставлена ставка в {bet.Points} на то что выпадет {bet.SectorForSingle}"
                 : $"поставлена ставка в {bet.Points} на то что выпадет {bet.Type}";
-            
-            await e.Message.RespondAsync(messageText);
-        }
 
-        public override string Help()
-        {
-            return "[размер ставки] [single|red|black|odd|even] [номер сектора если ставка single]";
+            return messageText;
         }
-
         private Bet GetBetByMessage(string message, SocialRatingUser user)
         {
             var splitMessage = message.Split(' ');
@@ -51,7 +48,7 @@ namespace AntiClownBot.Commands.Roulette
             };
 
             if (betType != BetType.Single) return bet;
-            
+
             if (splitMessage.Length < 4 || !int.TryParse(splitMessage[3], out var sectorNumber) || sectorNumber > 36)
                 return null;
 
@@ -68,16 +65,16 @@ namespace AntiClownBot.Commands.Roulette
                     type = BetType.Single;
                     return true;
                 case "odd":
-                    type =  BetType.Odd;
+                    type = BetType.Odd;
                     return true;
                 case "even":
-                    type =  BetType.Even;
+                    type = BetType.Even;
                     return true;
                 case "red":
-                    type =  BetType.Red;
+                    type = BetType.Red;
                     return true;
                 case "black":
-                    type =  BetType.Black;
+                    type = BetType.Black;
                     return true;
                 default:
                     type = BetType.None;

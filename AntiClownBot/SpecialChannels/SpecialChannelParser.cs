@@ -17,6 +17,6 @@ namespace AntiClownBot.SpecialChannels
             Config = configuration;
         }
         public abstract void Parse(MessageCreateEventArgs e, SocialRatingUser user);
-        public abstract string Help();
+        public abstract string Help(MessageCreateEventArgs e);
     }
 }

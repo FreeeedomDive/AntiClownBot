@@ -32,9 +32,14 @@ namespace AntiClownBot.SpecialChannels.BlackJack
             await e.Message.RespondAsync(message);
             Config.Save();
         }
-        public override string Help()
+        public override string Help(MessageCreateEventArgs e)
         {
-            return "";
+            return "join - присоединиться\n" +
+                "leave - уйти\n" +
+                "start - начать раунд\n" +
+                "hit - взять карту\n" +
+                "double - взять карту и удвоить ставку (нельзя если уже брал(а) карту), после double добирать нельзя\n" +
+                "stand - перестать добирать карты";
         }
     }
 }
