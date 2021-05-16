@@ -32,13 +32,20 @@ namespace AntiClownBot.SpecialChannels.Slot.Commands
                 return "чел ты кого наебать вздумал";
             }
 
+            var cornerSmile = Utility.StringEmoji(":white_large_square:");
             var result = slotMachine.Play(bet);
-            var textCells = string.Join(" ", result.Cells.Select(c => Utility.StringEmoji(c.Emoji)));
+            var textCells = string.Join(" ", result.Cells
+                .Select((c, i) =>
+                    (i == 1 ? Utility.StringEmoji(":arrow_forward:") : cornerSmile) + 
+                    string.Join(" ",c.Select(c2 => Utility.StringEmoji(c2.Emoji))) + 
+                    (i == 1 ? Utility.StringEmoji(":arrow_backward:") : cornerSmile)));
 
             var resultRatingChange = result.Win - bet;
             user.ChangeRating(resultRatingChange);
 
-            return "Кручу верчу богатство принести хочу:\n" + textCells + "\nВыигрыш: " + result.Win;
+            return "Кручу верчу богатство принести хочу:\n" + textCells + 
+                   "\nВыигрыш: " + result.Win + 
+                   "\nБаланс: " + user.SocialRating;
         }
     }
 }

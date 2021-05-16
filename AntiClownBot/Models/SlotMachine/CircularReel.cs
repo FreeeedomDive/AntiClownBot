@@ -18,11 +18,16 @@ namespace AntiClownBot.Models.SlotMachine
                     Cells.Add(cellSeries.Cell);
                 }
             }
+
+            Cells = Cells.Shuffle().ToList();
         }
         
         public ISlotCell GetCell(int pos)
         {
-            return Cells[pos];
+            var realPos = pos < 0 
+                ? CellCount + pos 
+                : pos % CellCount;
+            return Cells[realPos];
         }
     }
 }
