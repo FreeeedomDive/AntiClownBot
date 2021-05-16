@@ -4,15 +4,20 @@ using DSharpPlus;
 using DSharpPlus.EventArgs;
 using Emzi0767;
 
-namespace AntiClownBot.Commands.Roulette
+namespace AntiClownBot.SpecialChannels.Roulette.Commands
 {
-    public class PlayRouletteCommand : BaseCommand
+    public class RoulettePlay : ICommand
     {
-        public PlayRouletteCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
+        protected readonly Configuration Config;
+        protected readonly DiscordClient DiscordClient;
+        public RoulettePlay(DiscordClient client, Configuration configuration)
         {
+            Config = configuration;
+            DiscordClient = client;
         }
+        public string Name => "play";
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             var playResult = Config.Roulette.Play();
             var message = new StringBuilder();
@@ -21,8 +26,8 @@ namespace AntiClownBot.Commands.Roulette
                 .Append(" с цветом ")
                 .Append(playResult.WinSector.Color);
 
-            message.Append(playResult.WinPoints.Count == 0 
-                ? "\nА игроков то и не было" 
+            message.Append(playResult.WinPoints.Count == 0
+                ? "\nА игроков то и не было"
                 : "\nРезультаты стола: ");
 
             foreach (var (player, winPoints) in playResult.WinPoints)
@@ -32,19 +37,14 @@ namespace AntiClownBot.Commands.Roulette
                     .Append(nick?.DiscordUsername)
                     .Append(": ")
                     .Append(winPoints);
-                
-                var resultWinPoints = 
+
+                var resultWinPoints =
                     -playResult.Bets.FirstOrDefault(b => b.Key.Equals(player)).Value + winPoints;
 
                 nick.ChangeRating(resultWinPoints);
             }
-            
-            await e.Message.RespondAsync(message.ToString());
-        }
 
-        public override string Help()
-        {
-            return "Команда чтобы запустить рулетку и раздать очки";
+            return message.ToString();
         }
     }
 }

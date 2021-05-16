@@ -38,7 +38,8 @@ namespace AntiClownBot
 
         public Lohotron DailyScamMachine;
         public Gamble CurrentGamble;
-        public BlackJack CurrentBlackJack;
+        [JsonIgnore]
+        public BlackJack CurrentBlackJack = new BlackJack();
         public Lottery CurrentLottery;
 
         public bool AreTributesOpen = true;
@@ -93,6 +94,7 @@ namespace AntiClownBot
             _instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
             _instance.DailyStatistics ??= new DailyStatistics();
             _instance.DailyScamMachine ??= new Lohotron();
+            _instance.AreTributesOpen = true;
             _instance.Save();
             return _instance;
         }

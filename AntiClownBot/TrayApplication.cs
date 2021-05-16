@@ -16,6 +16,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using AntiClownBot.Models.Shop;
 using EventHandler = AntiClownBot.Events.EventHandler;
+using AntiClownBot.SpecialChannels;
 
 namespace AntiClownBot
 {
@@ -25,6 +26,7 @@ namespace AntiClownBot
         private DiscordClient _discord;
         private readonly Configuration _config;
         private CommandsManager _commandsManager;
+        private SpecialChannelsManager _specialChannelsManager;
 
         private ulong _lastReactionMessageId;
         private ulong _lastReactionUserId;
@@ -60,6 +62,7 @@ namespace AntiClownBot
             });
 
             _commandsManager = new CommandsManager(_discord, _config);
+            _specialChannelsManager = new SpecialChannelsManager(_discord, _config);
             Utility.Client = _discord;
 
             _discord.MessageCreated += async (client, e) =>
@@ -79,11 +82,18 @@ namespace AntiClownBot
                     _config.Users.Add(e.Author.Id, user);
                     _config.Save();
                 }
+                
 
                 if (message.StartsWith("!"))
                 {
                     var commandName = message.Split('\n')[0].Split(' ').First();
                     _commandsManager.ExecuteCommand(commandName, e, user);
+                    return;
+                }
+
+                if (_specialChannelsManager.AllChannels.Contains(e.Channel.Id))
+                {
+                    _specialChannelsManager.ParseMessage(e, user);
                     return;
                 }
 
@@ -352,9 +362,9 @@ namespace AntiClownBot
                     _config.CurrentLottery.Join(user);
                 }
                 
-                if (_config.Market != null && _config.Market.ShopMessageId == e.Message.Id)
+                if (_config.Market != null && _config.Market.ShopBuyMessageId == e.Message.Id)
                 {
-                    Shop.BuyResult marketResult;
+                    Shop.TransactionResult marketResult;
                     switch (emojiName)
                     {
                         case "dog":
@@ -374,7 +384,38 @@ namespace AntiClownBot
                         default:
                             return;
                     }
-                    if (marketResult.Status == Shop.BuyStatus.Success)
+                    if (marketResult.Status == Shop.TransactionStatus.Success)
+                        await e.Message.RespondAsync(marketResult.Result);
+                }
+                if(_config.Market != null && _config.Market.ShopSellMessageId == e.Message.Id)
+                {
+                    Shop.TransactionResult marketResult;
+                    switch (emojiName)
+                    {
+                        case "dog":
+                        case "🐶":
+                            marketResult = _config.Market.SellItem(InventoryItem.DogWife, user);
+                            break;
+                        case "RainbowPls":
+                            marketResult = _config.Market.SellItem(InventoryItem.CatWife, user);
+                            break;
+                        case "rice":
+                        case "🍚":
+                            marketResult = _config.Market.SellItem(InventoryItem.RiceBowl, user);
+                            break;
+                        case "HACKERJAMS":
+                            marketResult = _config.Market.SellItem(InventoryItem.Gigabyte, user);
+                            break;
+                        case "cykaPls":
+                            marketResult = _config.Market.SellItem(InventoryItem.CommunismPoster, user);
+                            break;
+                        case "BONK":
+                            marketResult = _config.Market.SellItem(InventoryItem.JadeRod, user);
+                            break;
+                        default:
+                            return;
+                    }
+                    if (marketResult.Status == Shop.TransactionStatus.Success)
                         await e.Message.RespondAsync(marketResult.Result);
                 }
                 

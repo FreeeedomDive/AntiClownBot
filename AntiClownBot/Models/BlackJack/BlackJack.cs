@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Timers;
+using DSharpPlus;
 using DSharpPlus.Entities;
 
 namespace AntiClownBot.Models.BlackJack
@@ -24,7 +26,7 @@ namespace AntiClownBot.Models.BlackJack
         public Queue<Player> Players;
         public Deck CurrentDeck;
         private Configuration _configuration;
-
+        private Timer _timer;
         public BlackJack()
         {
             var tempArray = new[]
@@ -33,8 +35,32 @@ namespace AntiClownBot.Models.BlackJack
             Players.Enqueue(new Player
                 {Name = tempArray[Randomizer.GetRandomNumberBetween(0, tempArray.Length)], Value = 0, IsDealer = true});
             IsActive = false;
+            _timer = new Timer(60 * 1000);
+            _timer.Elapsed += Kick;
         }
-
+        public void StartTimer()
+        {
+            _timer.Start();
+        }
+        public void StopTimer()
+        {
+            _timer.Stop();
+        }
+        private async void Kick(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            var player = Players.Dequeue();
+            _configuration.Users[player.UserId].ChangeRating(-50);
+            _configuration.Save();
+            var message = $"{player.Name} исключён за бездействие и теряет 50 ClownCoins\n";
+            
+            if (Players.First().IsDealer)
+                message += MakeResult();
+            else message += $"{Players.First().Name}, твой ход.";
+            await Utility.Client
+                .Guilds[277096298761551872]
+                .GetChannel(843065708023382036)
+                .SendMessageAsync(message);
+        }
         public string Join(SocialRatingUser user)
         {
             Players.Enqueue(new Player {UserId = user.DiscordId, Value = 0, Name = user.DiscordUsername});
@@ -44,6 +70,14 @@ namespace AntiClownBot.Models.BlackJack
         public string Leave(SocialRatingUser user)
         {
             _configuration ??= Configuration.GetConfiguration();
+            if(Players.First().UserId == user.DiscordId)
+            {
+                StopTimer();
+                if(IsActive)user.ChangeRating(Players.First().IsDouble ? -100 : -50);
+                Players.Dequeue();
+                if(IsActive)StartTimer();
+                return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}\n";
+            }
             var potentialRemovableUser = Players.Where(p => user.DiscordId.Equals(p.UserId)).ToList();
             if (potentialRemovableUser.Count == 0)
                 return "Ты и так не участвовал в игре";
@@ -51,7 +85,7 @@ namespace AntiClownBot.Models.BlackJack
             Players = Players.WithoutItem(player);
             if (IsActive)
                 _configuration.Users[player.UserId].ChangeRating(player.IsDouble ? -100 : -50);
-            return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}";
+            return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}\n";
         }
 
         public GetResult GetCard(bool isDouble, Player player)

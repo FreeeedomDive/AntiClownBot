@@ -1,18 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AntiClownBot.Commands.BlackJackCommands;
 using AntiClownBot.Commands.F1;
-using AntiClownBot.Commands.GamblingCommands;
 using AntiClownBot.Commands.Lottery;
 using AntiClownBot.Commands.OtherCommands;
 using AntiClownBot.Commands.RandomSelectCommands;
 using AntiClownBot.Commands.SocialRatingCommands;
 using AntiClownBot.Commands.StatsCommands;
-using AntiClownBot.Commands.Roulette;
-using AntiClownBot.Commands.Slot;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
-using AntiClownBot.Commands.RollDice;
 using AntiClownBot.Commands.Lohotron;
 
 namespace AntiClownBot.Commands
@@ -20,7 +15,6 @@ namespace AntiClownBot.Commands
     public class CommandsManager
     {
         private readonly Dictionary<string, BaseCommand> _commands;
-
         public CommandsManager(DiscordClient client, Configuration config)
         {
             _commands = new Dictionary<string, BaseCommand>();
@@ -29,23 +23,6 @@ namespace AntiClownBot.Commands
             RegisterCommand("!socialstatus", new SocialStatusCommand(client, config));
             RegisterCommand("!rating", new RatingCommand(client, config));
             RegisterCommand("!when", new WhenCommand(client, config));
-            
-            RegisterCommand("!startgamble", new StartGambleCommand(client, config));
-            RegisterCommand("!startcustomgamble", new StartCustomGambleCommand(client, config));
-            RegisterCommand("!closegamble", new CloseGambleCommand(client, config));
-            RegisterCommand("!currentgamble", new CurrentGambleCommand(client, config));
-            RegisterCommand("!gamble", new GambleCommand(client, config));
-            RegisterCommand("!gambleresult", new GambleResultCommand(client, config));
-            RegisterCommand("!cancelgamble", new CancelGambleCommand(client, config));
-
-            RegisterCommand("!blackjackcreate", new BlackJackCreateCommand(client, config));
-            RegisterCommand("!blackjackjoin", new BlackJackJoinCommand(client, config));
-            RegisterCommand("!blackjackstart", new BlackJackStartCommand(client, config));
-            RegisterCommand("!blackjackend", new BlackJackEndCommand(client, config));
-            RegisterCommand("!blackjackhit", new BlackJackHitCommand(client, config));
-            RegisterCommand("!blackjackdouble", new BlackJackDoubleCommand(client, config));
-            RegisterCommand("!blackjackstand", new BlackJackStandCommand(client, config));
-            RegisterCommand("!blackjackleave", new BlackJackLeaveCommand(client, config));
             
             RegisterCommand("!stats", new EmojiStatsCommand(client, config));
             RegisterCommand("!pidor", new PidorStatsCommand(client, config));
@@ -59,11 +36,6 @@ namespace AntiClownBot.Commands
 
             RegisterCommand("!f1", new F1CommandParser(client, config));
             RegisterCommand("!lottery", new LotteryCommand(client, config));
-            
-            RegisterCommand("!roulettebet", new BetRouletteCommand(client, config));
-            RegisterCommand("!rouletteplay", new PlayRouletteCommand(client, config));
-            RegisterCommand("!rolldice", new RollDiceCommand(client, config));
-            RegisterCommand("!slotplay", new SlotMachineCommand(client, config));
 
             RegisterCommand("!lohotron", new LohotronCommand(client, config));
         }

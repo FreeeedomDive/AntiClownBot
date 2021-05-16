@@ -48,7 +48,7 @@ namespace AntiClownBot.Events
             timer.Start();
         }
 
-        private async void HandleEvents(object sender, System.Timers.ElapsedEventArgs e)
+        private void HandleEvents(object sender, System.Timers.ElapsedEventArgs e)
         {
             AddLog($"!!!Timer stopped!!!");
             timer.Stop();
