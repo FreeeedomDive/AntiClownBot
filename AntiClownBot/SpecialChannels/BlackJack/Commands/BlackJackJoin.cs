@@ -27,6 +27,10 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
             {
                 return "Раунд уже начался";
             }
+            if(Config.CurrentBlackJack.Players.Count > 4)
+            {
+                return "Невозможно присоединиться, так как стол уже полон";
+            }
             return Config.CurrentBlackJack.Join(user);
         }
     }
