@@ -73,9 +73,9 @@ namespace AntiClownBot.Models.BlackJack
             if(Players.First().UserId == user.DiscordId)
             {
                 StopTimer();
-                user.ChangeRating(Players.First().IsDouble ? -100 : -50);
+                if(IsActive)user.ChangeRating(Players.First().IsDouble ? -100 : -50);
                 Players.Dequeue();
-                StartTimer();
+                if(IsActive)StartTimer();
                 return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}\n";
             }
             var potentialRemovableUser = Players.Where(p => user.DiscordId.Equals(p.UserId)).ToList();
