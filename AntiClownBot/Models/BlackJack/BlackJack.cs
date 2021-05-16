@@ -71,10 +71,10 @@ namespace AntiClownBot.Models.BlackJack
             if(Players.First().UserId == user.DiscordId)
             {
                 StopTimer();
+                user.ChangeRating(Players.First().IsDouble ? -100 : -50);
                 Players.Dequeue();
                 StartTimer();
-                return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}\n" +
-                    $"{Players.First().Name}, твоя очередь";
+                return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}\n";
             }
             var potentialRemovableUser = Players.Where(p => user.DiscordId.Equals(p.UserId)).ToList();
             if (potentialRemovableUser.Count == 0)
@@ -83,7 +83,7 @@ namespace AntiClownBot.Models.BlackJack
             Players = Players.WithoutItem(player);
             if (IsActive)
                 _configuration.Users[player.UserId].ChangeRating(player.IsDouble ? -100 : -50);
-            return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}";
+            return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}\n";
         }
 
         public GetResult GetCard(bool isDouble, Player player)

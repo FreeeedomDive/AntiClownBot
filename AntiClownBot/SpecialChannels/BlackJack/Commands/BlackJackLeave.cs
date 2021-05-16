@@ -30,10 +30,14 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
                 Config.CurrentBlackJack.StopTimer();
             }
             var message = (Config.CurrentBlackJack.Leave(user));
-            if(Config.CurrentBlackJack.Players.First().IsDealer)
+            if (Config.CurrentBlackJack.Players.First().IsDealer)
             {
                 Config.CurrentBlackJack.StopTimer();
                 message += Config.CurrentBlackJack.MakeResult();
+            }
+            else
+            {
+                message += $"{Config.CurrentBlackJack.Players.First().Name}, твоя очередь";
             }
             return message;
         }
