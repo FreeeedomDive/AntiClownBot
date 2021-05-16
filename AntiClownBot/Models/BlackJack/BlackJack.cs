@@ -49,15 +49,17 @@ namespace AntiClownBot.Models.BlackJack
         private async void Kick(object sender, System.Timers.ElapsedEventArgs e)
         {
             var player = Players.Dequeue();
-            if (player.IsDealer)
-                Players.Enqueue(player);
             _configuration.Users[player.UserId].ChangeRating(-50);
             _configuration.Save();
+            var message = $"{player.Name} исключён за бездействие и теряет 50 ClownCoins\n";
+            
+            if (Players.First().IsDealer)
+                message += MakeResult();
+            else message += $"{Players.First().Name}, твой ход.";
             await Utility.Client
                 .Guilds[277096298761551872]
                 .GetChannel(843065708023382036)
-                .SendMessageAsync($"{player.Name} исключён за бездействие и теряет 50 ClownCoins\n" +
-                $"{Players.First().Name}, твой ход.");
+                .SendMessageAsync(message);
         }
         public string Join(SocialRatingUser user)
         {
