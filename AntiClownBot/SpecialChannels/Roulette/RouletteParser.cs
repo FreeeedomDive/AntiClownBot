@@ -20,7 +20,6 @@ namespace AntiClownBot.SpecialChannels.Roulette
         {
             if (!Commands.TryGetValue(e.Message.Content.Split(' ').First(), out var command))
             {
-                await e.Message.RespondAsync("Чел, такой команды нет");
                 return;
             }
             var message = command.Execute(e, user);
