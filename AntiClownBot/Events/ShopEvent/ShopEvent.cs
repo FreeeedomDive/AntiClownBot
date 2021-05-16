@@ -26,7 +26,18 @@ namespace AntiClownBot.Events.ShopEvent
             await message.CreateReactionAsync(Utility.Emoji(":RainbowPls:"));
             await message.CreateReactionAsync(Utility.Emoji(":rice:"));
             await message.CreateReactionAsync(Utility.Emoji(":HACKERJAMS:"));
-            Config.Market.ShopMessageId = message.Id;
+            var secondmessage = await DiscordClient
+                .Guilds[277096298761551872]
+                .GetChannel(838477706643374090)
+                .SendMessageAsync(BackStory2());
+            await secondmessage.CreateReactionAsync(Utility.Emoji(":dog:"));
+            await secondmessage.CreateReactionAsync(Utility.Emoji(":RainbowPls:"));
+            await secondmessage.CreateReactionAsync(Utility.Emoji(":rice:"));
+            await secondmessage.CreateReactionAsync(Utility.Emoji(":HACKERJAMS:"));
+            await secondmessage.CreateReactionAsync(Utility.Emoji(":BONK:"));
+            await secondmessage.CreateReactionAsync(Utility.Emoji(":cykaPls:"));
+            Config.Market.ShopBuyMessageId = message.Id;
+            Config.Market.ShopSellMessageId = secondmessage.Id;
             Config.Save();
             await Task.Delay(40 * 60 * 1000);
             Config.Market = null;
@@ -41,6 +52,16 @@ namespace AntiClownBot.Events.ShopEvent
                    $"{Utility.Emoji(":RainbowPls:")} - кошка жена\n" +
                    $"{Utility.Emoji(":rice:")} - миска рис\n" +
                    $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет";
+        }
+        protected string BackStory2()
+        {
+            return "Продавайте свои предметы!\n" +
+                   $"{Utility.Emoji(":dog:")} - собака жена +500\n" +
+                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена +500\n" +
+                   $"{Utility.Emoji(":rice:")} - миска рис +500\n" +
+                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет +500\n" +
+                   $"{Utility.Emoji(":BONK:")} - нефритовый стержень -2000\n" +
+                   $"{Utility.Emoji(":cykaPls:")} - {Utility.ItemToString(InventoryItem.CommunismPoster)} -2000";
         }
     }
 }

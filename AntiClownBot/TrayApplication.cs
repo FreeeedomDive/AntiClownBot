@@ -362,9 +362,9 @@ namespace AntiClownBot
                     _config.CurrentLottery.Join(user);
                 }
                 
-                if (_config.Market != null && _config.Market.ShopMessageId == e.Message.Id)
+                if (_config.Market != null && _config.Market.ShopBuyMessageId == e.Message.Id)
                 {
-                    Shop.BuyResult marketResult;
+                    Shop.TransactionResult marketResult;
                     switch (emojiName)
                     {
                         case "dog":
@@ -384,7 +384,38 @@ namespace AntiClownBot
                         default:
                             return;
                     }
-                    if (marketResult.Status == Shop.BuyStatus.Success)
+                    if (marketResult.Status == Shop.TransactionStatus.Success)
+                        await e.Message.RespondAsync(marketResult.Result);
+                }
+                if(_config.Market != null && _config.Market.ShopSellMessageId == e.Message.Id)
+                {
+                    Shop.TransactionResult marketResult;
+                    switch (emojiName)
+                    {
+                        case "dog":
+                        case "🐶":
+                            marketResult = _config.Market.SellItem(InventoryItem.DogWife, user);
+                            break;
+                        case "RainbowPls":
+                            marketResult = _config.Market.SellItem(InventoryItem.CatWife, user);
+                            break;
+                        case "rice":
+                        case "🍚":
+                            marketResult = _config.Market.SellItem(InventoryItem.RiceBowl, user);
+                            break;
+                        case "HACKERJAMS":
+                            marketResult = _config.Market.SellItem(InventoryItem.Gigabyte, user);
+                            break;
+                        case "cykaPls":
+                            marketResult = _config.Market.SellItem(InventoryItem.CommunismPoster, user);
+                            break;
+                        case "BONK":
+                            marketResult = _config.Market.SellItem(InventoryItem.JadeRod, user);
+                            break;
+                        default:
+                            return;
+                    }
+                    if (marketResult.Status == Shop.TransactionStatus.Success)
                         await e.Message.RespondAsync(marketResult.Result);
                 }
                 
