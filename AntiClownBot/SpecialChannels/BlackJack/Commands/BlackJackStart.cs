@@ -30,8 +30,11 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
             {
                 return "Ты не принимаешь участие в игре";
             }
-            Config.CurrentBlackJack.StartTimer();
-            return Config.CurrentBlackJack.StartRound();
+            
+            var message =  Config.CurrentBlackJack.StartRound();
+            if(Config.CurrentBlackJack.IsActive)
+                Config.CurrentBlackJack.StartTimer();
+            return message;
         }
     }
 }
