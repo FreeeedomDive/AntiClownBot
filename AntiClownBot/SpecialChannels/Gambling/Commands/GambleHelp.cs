@@ -17,7 +17,7 @@ namespace AntiClownBot.SpecialChannels.Gambling.Commands
             Config = configuration;
             DiscordClient = client;
         }
-        public string Name => "current";
+        public string Name => "help";
 
         public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {

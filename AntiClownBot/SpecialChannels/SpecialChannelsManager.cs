@@ -21,7 +21,8 @@ namespace AntiClownBot.SpecialChannels
                 {843051370168320002, new GamblingParser(client, configuration) },
                 {843051438594064384, new RollDiceParser(client, configuration) },
                 {843051483892023316, new RouletteParser(client, configuration) },
-                {843051525931532298, new SlotParser(client,configuration) }
+                {843051525931532298, new SlotParser(client,configuration) },
+                {843029569573486623, new SlotParser(client,configuration) }
             };
         }
         public bool GetChannelByName(ulong name, out SpecialChannelParser parser)
@@ -45,7 +46,7 @@ namespace AntiClownBot.SpecialChannels
                 await e.Message.RespondAsync($"Я хз что происходит, но {e.Channel.Id} канала не существует");
                 return;
             }
-            if (e.Message.Content == "help")
+            if (e.Message.Content.StartsWith("help"))
             {
                 await e.Message.RespondAsync(parser.Help(e));
                 return;
