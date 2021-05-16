@@ -37,11 +37,12 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
             {
                 return "Уже нельзя удваивать ставку";
             }
-
+            Config.CurrentBlackJack.StopTimer();
             var result = Config.CurrentBlackJack.GetCard(true, Config.CurrentBlackJack.Players.Peek());
             switch (result.Status)
             {
                 case Models.BlackJack.GetResultStatus.Ok:
+                    Config.CurrentBlackJack.StartTimer();
                     return result.Message;
                 case Models.BlackJack.GetResultStatus.NextPlayer:
                     var player = Config.CurrentBlackJack.Players.Dequeue();
@@ -52,6 +53,7 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
                     }
                     else
                     {
+                        Config.CurrentBlackJack.StartTimer();
                         return (result.Message +
                                                      $"\n{Config.CurrentBlackJack.Players.Peek().Name}, твоя очередь");
                     }

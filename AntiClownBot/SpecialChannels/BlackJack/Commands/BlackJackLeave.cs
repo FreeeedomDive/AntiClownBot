@@ -25,8 +25,17 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
             {
                 return "Ты не принимаешь участие в игре";
             }
-
-            return (Config.CurrentBlackJack.Leave(user));
+            if(Config.CurrentBlackJack.Players.First().UserId == user.DiscordId)
+            {
+                Config.CurrentBlackJack.StopTimer();
+            }
+            var message = (Config.CurrentBlackJack.Leave(user));
+            if(Config.CurrentBlackJack.Players.First().IsDealer)
+            {
+                Config.CurrentBlackJack.StopTimer();
+                message += Config.CurrentBlackJack.MakeResult();
+            }
+            return message;
         }
     }
 }

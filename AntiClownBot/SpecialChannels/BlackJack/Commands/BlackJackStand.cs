@@ -35,14 +35,14 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
             {
                 return "Не твой ход";
             }
-
+            Config.CurrentBlackJack.StopTimer();
             var player = Config.CurrentBlackJack.Players.Dequeue();
             Config.CurrentBlackJack.Players.Enqueue(player);
             if (Config.CurrentBlackJack.Players.Peek().IsDealer)
             {
                 return (Config.CurrentBlackJack.MakeResult());
             }
-
+            Config.CurrentBlackJack.StartTimer();
             return $"{Config.CurrentBlackJack.Players.Peek().Name}, твой ход";
         }
     }
