@@ -31,7 +31,8 @@ namespace AntiClownBot.Models.Shop
             {new CatWife(), new List<ulong>()},
             {new DogWife(), new List<ulong>()},
             {new Gigabyte(), new List<ulong>()},
-            {new RiceBowl(), new List<ulong>()}
+            {new RiceBowl(), new List<ulong>()},
+            {new LootBox(), new List<ulong>() }
         };
 
         public ulong ShopSellMessageId;

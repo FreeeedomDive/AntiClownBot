@@ -112,7 +112,14 @@ namespace AntiClownBot
             config.DailyStatistics.ChangeUserCredits(DiscordUsername, -item.Price);
             config.Save();
         }
-
+        public string Use(Item item)
+        {
+            if(Items[item] < 1)
+            {
+                return $"{DiscordUsername} не иметь {item.Name}";
+            }
+            return item.Use(this);
+        }
         public bool HasDodgedPidor()
         {
             return Randomizer.GetRandomNumberBetween(0, 100) <

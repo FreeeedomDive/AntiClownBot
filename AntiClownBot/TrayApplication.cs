@@ -373,6 +373,9 @@ namespace AntiClownBot
                         case "HACKERJAMS":
                             marketResult = _config.Market.BuyItem(new Gigabyte(), user);
                             break;
+                        case "PepegaCredit":
+                            marketResult = _config.Market.BuyItem(new LootBox(), user);
+                            break;
                         default:
                             return;
                     }

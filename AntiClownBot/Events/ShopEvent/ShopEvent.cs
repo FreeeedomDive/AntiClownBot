@@ -27,6 +27,7 @@ namespace AntiClownBot.Events.ShopEvent
             await message.CreateReactionAsync(Utility.Emoji(":RainbowPls:"));
             await message.CreateReactionAsync(Utility.Emoji(":rice:"));
             await message.CreateReactionAsync(Utility.Emoji(":HACKERJAMS:"));
+            await message.CreateReactionAsync(Utility.Emoji(":PepegaCredit:"));
             var secondmessage = await DiscordClient
                 .Guilds[277096298761551872]
                 .GetChannel(838477706643374090)
@@ -52,7 +53,8 @@ namespace AntiClownBot.Events.ShopEvent
                    $"{Utility.Emoji(":dog:")} - собака жена {new DogWife().Price}\n" +
                    $"{Utility.Emoji(":RainbowPls:")} - кошка жена {new CatWife().Price}\n" +
                    $"{Utility.Emoji(":rice:")} - миска рис {new RiceBowl().Price}\n" +
-                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {new Gigabyte().Price}";
+                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {new Gigabyte().Price}\n" +
+                   $"{Utility.Emoji(":PepegaCredit:")} - лутбокс {new LootBox().Price}";
         }
         protected string BackStory2()
         {
