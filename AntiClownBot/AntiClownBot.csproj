@@ -197,6 +197,7 @@
     <Compile Include="Commands\OtherCommands\AllCommandsCommand.cs" />
     <Compile Include="Commands\OtherCommands\HelpCommand.cs" />
     <Compile Include="Commands\OtherCommands\IpCommand.cs" />
+    <Compile Include="Commands\OtherCommands\UseCommand.cs" />
     <Compile Include="Commands\RandomSelectCommands\RollCommand.cs" />
     <Compile Include="Commands\RandomSelectCommands\SelectCommand.cs" />
     <Compile Include="Commands\SocialRatingCommands\RatingCommand.cs" />

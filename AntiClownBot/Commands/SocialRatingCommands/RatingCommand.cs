@@ -46,6 +46,8 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 $"{new RiceBowl().Name}: {user.Items[new RiceBowl()]}";
             var gigabyteCount =
                 $"{new Gigabyte().Name}: {user.Items[new Gigabyte()]}";
+            var lootBoxCount =
+                $"{new LootBox().Name}: {user.Items[new LootBox()]}";
             var jadeRodCount =
                 $"{new JadeRod().Name}: {user.Items[new JadeRod()]}";
             var communismPosterCount =
@@ -104,6 +106,18 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                     .Append(" ".Repeat(maxSpaceCount - gigabyteCount.Length))
                     .Append(
                         $"{Constants.CooldownDecreaseChanceByOneGigabyte}% шанс срабатывания каждого гигабайт на понижение кулдаун на {(int) (Constants.CooldownDecreaseByOneGigabyteItem * 100)}%");
+            }
+
+            stringBuilder
+                .Append("\n")
+                .Append(lootBoxCount);
+
+            if (user.Items[new LootBox()] != 0)
+            {
+                stringBuilder
+                    .Append(" ".Repeat(maxSpaceCount - lootBoxCount.Length))
+                    .Append(
+                        "коробки добыча, открыть и получить случайный предмет");
             }
 
             stringBuilder

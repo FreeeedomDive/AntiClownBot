@@ -18,12 +18,14 @@ namespace AntiClownBot.Commands.OtherCommands
         public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             var args = e.Message.Content.Split(' ').ToList();
-            if (args.Count != 2)
+            if (args.Count < 2)
             {
                 await e.Message.RespondAsync("Нормально команду пиши");
                 return;
             }
-            var item = AllItems.GetAllItems().Where(i => i.Name == args[1]).FirstOrDefault();
+
+            var itemToUse = args.Skip(1);
+            var item = AllItems.GetAllItems().FirstOrDefault(i => i.Name == string.Join(" ", itemToUse));
             if (item == null)
             {
                 await e.Message.RespondAsync("Такого предмета не существует");

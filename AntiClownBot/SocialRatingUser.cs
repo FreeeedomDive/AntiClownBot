@@ -19,8 +19,9 @@ namespace AntiClownBot
                 item.Equals(new DogWife()) ||
                 item.Equals(new CatWife()) ||
                 item.Equals(new Gigabyte()) ||
-                item.Equals(new RiceBowl()))
-            .Select(key => Items[key] * 1000).Sum();
+                item.Equals(new RiceBowl()) ||
+                item.Equals(new LootBox()))
+            .Select(key => Items[key] * key.Price).Sum();
 
         public DateTime NextTribute;
 
@@ -118,6 +119,8 @@ namespace AntiClownBot
             {
                 return $"{DiscordUsername} не иметь {item.Name}";
             }
+
+            Items[item]--;
             return item.Use(this);
         }
         public bool HasDodgedPidor()
