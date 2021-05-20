@@ -49,20 +49,20 @@ namespace AntiClownBot.Events.ShopEvent
             return "Магазин ОТКРЫТЬСЯ!\n" +
                    "Но покупать каждый 'предмет' только 1 раз!\n" +
                    "Магазин работать 40 минут\n" +
-                   $"{Utility.Emoji(":dog:")} - собака жена {DogWife.Price}\n" +
-                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена {CatWife.Price}\n" +
-                   $"{Utility.Emoji(":rice:")} - миска рис {RiceBowl.Price}\n" +
-                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {Gigabyte.Price}";
+                   $"{Utility.Emoji(":dog:")} - собака жена {new DogWife().Price}\n" +
+                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена {new CatWife().Price}\n" +
+                   $"{Utility.Emoji(":rice:")} - миска рис {new RiceBowl().Price}\n" +
+                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {new Gigabyte().Price}";
         }
         protected string BackStory2()
         {
             return "Продавайте свои предметы!\n" +
-                   $"{Utility.Emoji(":dog:")} - собака жена {DogWife.Price/2}\n" +
-                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена {CatWife.Price/2}\n" +
-                   $"{Utility.Emoji(":rice:")} - миска рис {RiceBowl.Price/2}\n" +
-                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {Gigabyte.Price/2}\n" +
-                   $"{Utility.Emoji(":BONK:")} - нефритовый стержень {JadeRod.Price/2}\n" +
-                   $"{Utility.Emoji(":cykaPls:")} - коммунистический плакат {CommunismPoster.Price/2}";
+                   $"{Utility.Emoji(":dog:")} - собака жена {new DogWife().Price/2}\n" +
+                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена {new CatWife().Price/2}\n" +
+                   $"{Utility.Emoji(":rice:")} - миска рис {new RiceBowl().Price/2}\n" +
+                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {new Gigabyte().Price/2}\n" +
+                   $"{Utility.Emoji(":BONK:")} - нефритовый стержень {new JadeRod().Price/2}\n" +
+                   $"{Utility.Emoji(":cykaPls:")} - коммунистический плакат {new CommunismPoster().Price/2}";
         }
     }
 }

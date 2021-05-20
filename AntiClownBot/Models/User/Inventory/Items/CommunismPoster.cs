@@ -8,7 +8,7 @@ namespace AntiClownBot.Models.User.Inventory.Items
 {
     public class CommunismPoster : Item
     {
-        public static new string Name => "Коммунистический плакат";
-        public static new int Price => -4000;
+        public override string Name => "Коммунистический плакат";
+        public override int Price => -4000;
     }
 }

@@ -8,7 +8,7 @@ namespace AntiClownBot.Models.User.Inventory.Items
 {
     public class RiceBowl : Item
     {
-        public static new string Name => "Рис миска";
-        public static new int Price => 1000;
+        public override string Name => "Рис миска";
+        public override int Price => 1000;
     }
 }

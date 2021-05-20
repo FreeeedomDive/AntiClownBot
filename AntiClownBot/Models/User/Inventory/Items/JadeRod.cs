@@ -8,7 +8,7 @@ namespace AntiClownBot.Models.User.Inventory.Items
 {
     public class JadeRod : Item
     {
-        public static new string Name => "Нефритовый стержень";
-        public static new int Price => -4000;
+        public override string Name => "Нефритовый стержень";
+        public override int Price => -4000;
     }
 }

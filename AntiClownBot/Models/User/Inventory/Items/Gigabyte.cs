@@ -8,7 +8,7 @@ namespace AntiClownBot.Models.User.Inventory.Items
 {
     public class Gigabyte : Item
     {
-        public static new string Name => "Гигабайт интернет";
-        public static new int Price => 1000;
+        public override string Name => "Гигабайт интернет";
+        public override int Price => 1000;
     }
 }

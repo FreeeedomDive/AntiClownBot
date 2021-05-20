@@ -39,17 +39,17 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
             var stringBuilder = new StringBuilder();
             var catWifeCount =
-                $"{CatWife.Name}: {user.Items[new CatWife()]}";
+                $"{new CatWife().Name}: {user.Items[new CatWife()]}";
             var dogWifeCount =
-                $"{DogWife.Name}: {user.Items[new DogWife()]}";
+                $"{new DogWife().Name}: {user.Items[new DogWife()]}";
             var riceBowlCount =
-                $"{RiceBowl.Name}: {user.Items[new RiceBowl()]}";
+                $"{new RiceBowl().Name}: {user.Items[new RiceBowl()]}";
             var gigabyteCount =
-                $"{Gigabyte.Name}: {user.Items[new Gigabyte()]}";
+                $"{new Gigabyte().Name}: {user.Items[new Gigabyte()]}";
             var jadeRodCount =
-                $"{JadeRod.Name}: {user.Items[new JadeRod()]}";
+                $"{new JadeRod().Name}: {user.Items[new JadeRod()]}";
             var communismPosterCount =
-                $"{CommunismPoster.Name}: {user.Items[new CommunismPoster()]}";
+                $"{new CommunismPoster().Name}: {user.Items[new CommunismPoster()]}";
             const int maxSpaceCount = 35;
             stringBuilder
                 .Append($"```Паспорт гражданин {member.Username}")

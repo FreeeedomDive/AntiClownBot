@@ -8,7 +8,7 @@ namespace AntiClownBot.Models.User.Inventory.Items
 {
     public class CatWife : Item
     {
-        public static new string Name => "Кошка-жена";
-        public static new int Price => 1000;
+        public override string Name => "Кошка-жена";
+        public override int Price => 1000;
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using AntiClownBot.Models.BlackJack;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using DSharpPlus.EventArgs;
+using Emzi0767;
 
 namespace AntiClownBot
 {
@@ -36,21 +36,8 @@ namespace AntiClownBot
 
         public static string KeyValuePairToString<T1,T2>(KeyValuePair<T1,T2> pair)
         {
-            return $"{pair.Key} : {pair.Value}";
-        }
-        public static string ItemToString(InventoryItem item)
-        {
-            return item switch
-            {
-                InventoryItem.CatWife => "кошка-жена",
-                InventoryItem.DogWife => "собака-жена",
-                InventoryItem.RiceBowl => "рис миска",
-                InventoryItem.Gigabyte => "гигабайт интернет",
-                InventoryItem.JadeRod => "нефритовый стержень",
-                InventoryItem.CommunismPoster => "коммунистический плакат",
-                InventoryItem.None => "",
-                _ => throw new ArgumentOutOfRangeException(nameof(item), item, null)
-            };
+            var (key, value) = pair;
+            return $"{key} : {value}";
         }
 
         public static int CardToInt(Card card)

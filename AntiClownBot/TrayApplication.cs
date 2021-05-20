@@ -18,10 +18,11 @@ using AntiClownBot.Models.Shop;
 using EventHandler = AntiClownBot.Events.EventHandler;
 using AntiClownBot.SpecialChannels;
 using AntiClownBot.Models.User.Inventory.Items;
+using Microsoft.Extensions.Logging;
 
 namespace AntiClownBot
 {
-    public class TrayApplication : ApplicationContext
+    public class TrayApplication
     {
         private readonly NotifyIcon _trayIcon;
         private DiscordClient _discord;
@@ -37,17 +38,6 @@ namespace AntiClownBot
 
         public TrayApplication()
         {
-            _trayIcon = new NotifyIcon
-            {
-                Text = @"AntiClown Discord Bot",
-                Icon = new Icon("peepoclown.ico"),
-                Visible = true,
-                ContextMenu = new ContextMenu(new[]
-                {
-                    new MenuItem("Exit", Exit)
-                })
-            };
-
             _config = Configuration.GetConfiguration();
             _config.CheckCurrentDay();
 
@@ -59,7 +49,8 @@ namespace AntiClownBot
             _discord = new DiscordClient(new DiscordConfiguration
             {
                 Token = "NzYwODc5NjI5NTA5ODUzMjI0.X3SeYA.JLxxQ2gUiFcF9MZyYegkhaDUhqE",
-                TokenType = TokenType.Bot
+                TokenType = TokenType.Bot,
+                MinimumLogLevel = LogLevel.Debug
             });
 
             _commandsManager = new CommandsManager(_discord, _config);
@@ -604,12 +595,6 @@ namespace AntiClownBot
 
             var result = sb.ToString();
             return result.Contains("anime");
-        }
-
-        private void Exit(object sender, EventArgs e)
-        {
-            _trayIcon.Visible = false;
-            Environment.Exit(0);
         }
 
         private static async void AddLog(string content)

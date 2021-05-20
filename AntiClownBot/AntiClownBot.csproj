@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C093576B-0A56-4217-B629-84BC58E5BF1D}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>AntiClownBot</RootNamespace>
     <AssemblyName>AntiClownBot</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\User\DefaultUser.cs" />
+    <Compile Include="Models\User\Inventory\AllItems.cs" />
     <Compile Include="Models\User\Inventory\Item.cs" />
     <Compile Include="Models\User\Inventory\Items\CatWife.cs" />
     <Compile Include="Models\User\Inventory\Items\CommunismPoster.cs" />

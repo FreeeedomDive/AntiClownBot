@@ -7,65 +7,37 @@ using System.Text;
 
 namespace AntiClownBot
 {
-    public enum InventoryItem
-    {
-        CatWife,
-        DogWife,
-        RiceBowl,
-        Gigabyte,
-        JadeRod,
-        CommunismPoster,
-        None
-    }
-
     public class SocialRatingUser
     {
-        private static readonly List<InventoryItem> AllItems =
-            Enum.GetValues(typeof(InventoryItem)).Cast<InventoryItem>().Where(item => item != InventoryItem.None)
-                .ToList();
-
         public ulong DiscordId;
         public string DiscordUsername;
         public int SocialRating;
-        public readonly Dictionary<Item, int> Items;
+        public Dictionary<Item, int> Items;
+
         public int NetWorth => SocialRating + Items.Keys
             .Where(item =>
-                item == new DogWife() ||
-                item == new CatWife() ||
-                item == new Gigabyte() ||
-                item == new RiceBowl())
+                item.Equals(new DogWife()) ||
+                item.Equals(new CatWife()) ||
+                item.Equals(new Gigabyte()) ||
+                item.Equals(new RiceBowl()))
             .Select(key => Items[key] * 1000).Sum();
 
-        public readonly Dictionary<InventoryItem, int> UserItems;
         public DateTime NextTribute;
 
-        public SocialRatingUser()
-        {
-            Items = new Dictionary<Item, int>
-            {
-                {new CatWife(), UserItems[InventoryItem.CatWife] },
-                {new DogWife(), UserItems[InventoryItem.DogWife] },
-                {new RiceBowl(), UserItems[InventoryItem.RiceBowl] },
-                {new Gigabyte(), UserItems[InventoryItem.Gigabyte] },
-                {new JadeRod(), UserItems[InventoryItem.JadeRod] },
-                {new CommunismPoster(), UserItems[InventoryItem.CommunismPoster] },
-                {new LootBox(), 0 }
-            };
-        }
         public SocialRatingUser(ulong id, string name)
         {
             DiscordId = id;
             DiscordUsername = name;
             SocialRating = Constants.DefaultSocialRating;
             NextTribute = DateTime.MinValue;
-            UserItems = new Dictionary<InventoryItem, int>
+            Items = new Dictionary<Item, int>
             {
-                {InventoryItem.CatWife, 0},
-                {InventoryItem.DogWife, 0},
-                {InventoryItem.RiceBowl, 0},
-                {InventoryItem.Gigabyte, 0},
-                {InventoryItem.JadeRod, 0},
-                {InventoryItem.CommunismPoster, 0}
+                {new DogWife(), 0},
+                {new CatWife(), 0},
+                {new Gigabyte(), 0},
+                {new RiceBowl(), 0},
+                {new JadeRod(), 0},
+                {new CommunismPoster(), 0}
             };
         }
 
@@ -155,7 +127,8 @@ namespace AntiClownBot
             var gigabyteWorked = 0;
             var jadeRodWorked = 0;
 
-            for (var i = 0; i < Items[new Gigabyte()]; i++)
+            var gigabyteCount = Items[new Gigabyte()];
+            for (var i = 0; i < gigabyteCount; i++)
             {
                 if (!(Randomizer.GetRandomNumberBetween(0, 100) <
                       Constants.CooldownDecreaseChanceByOneGigabyte)) continue;
@@ -163,7 +136,8 @@ namespace AntiClownBot
                 cooldown *= 1 - Constants.CooldownDecreaseByOneGigabyteItem;
             }
 
-            for (var i = 0; i < Items[new JadeRod()]; i++)
+            var jadeRodCount = Items[new JadeRod()];
+            for (var i = 0; i < jadeRodCount; i++)
             {
                 if (!(Randomizer.GetRandomNumberBetween(0, 100) < Constants.CooldownIncreaseChanceByOneJade)) continue;
                 jadeRodWorked++;

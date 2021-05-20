@@ -17,29 +17,35 @@ namespace AntiClownBot.Models.Shop
             LimitReached,
             NotEnoughItems
         }
+
         public class TransactionResult
         {
             public TransactionStatus Status;
             public string Result;
         }
+
         public ulong ShopBuyMessageId;
+
         private Dictionary<Item, List<ulong>> itemsToBuy = new Dictionary<Item, List<ulong>>
         {
-            {new CatWife(), new List<ulong>() },
-            {new DogWife(), new List<ulong>() },
-            {new Gigabyte(), new List<ulong>() },
-            {new RiceBowl(), new List<ulong>() }
+            {new CatWife(), new List<ulong>()},
+            {new DogWife(), new List<ulong>()},
+            {new Gigabyte(), new List<ulong>()},
+            {new RiceBowl(), new List<ulong>()}
         };
+
         public ulong ShopSellMessageId;
+
         private Dictionary<Item, List<ulong>> itemsToSell = new Dictionary<Item, List<ulong>>
         {
-            {new CatWife(), new List<ulong>() },
-            {new DogWife(), new List<ulong>() },
-            {new Gigabyte(), new List<ulong>() },
-            {new RiceBowl(), new List<ulong>() },
-            {new JadeRod() , new List<ulong>() },
-            {new CommunismPoster(), new List<ulong>() }
+            {new CatWife(), new List<ulong>()},
+            {new DogWife(), new List<ulong>()},
+            {new Gigabyte(), new List<ulong>()},
+            {new RiceBowl(), new List<ulong>()},
+            {new JadeRod(), new List<ulong>()},
+            {new CommunismPoster(), new List<ulong>()}
         };
+
         public TransactionResult BuyItem(Item item, SocialRatingUser user)
         {
             if (itemsToBuy[item].Contains(user.DiscordId))
@@ -50,6 +56,7 @@ namespace AntiClownBot.Models.Shop
                     Result = null
                 };
             }
+
             if (user.SocialRating < item.Price)
             {
                 return new TransactionResult
@@ -58,6 +65,7 @@ namespace AntiClownBot.Models.Shop
                     Result = null
                 };
             }
+
             itemsToBuy[item].Add(user.DiscordId);
             user.AddCustomItem(item);
             user.ChangeRating(-item.Price);
@@ -67,6 +75,7 @@ namespace AntiClownBot.Models.Shop
                 Result = $"{user.DiscordUsername} купил(а) {item.Name}"
             };
         }
+
         public TransactionResult SellItem(Item item, SocialRatingUser user)
         {
             if (itemsToSell[item].Contains(user.DiscordId))
@@ -77,7 +86,8 @@ namespace AntiClownBot.Models.Shop
                     Result = null
                 };
             }
-            if(user.Items[item] < 1)
+
+            if (user.Items[item] < 1)
             {
                 return new TransactionResult
                 {
@@ -85,7 +95,8 @@ namespace AntiClownBot.Models.Shop
                     Result = null
                 };
             }
-            if (user.SocialRating < -item.Price/2)
+
+            if (user.SocialRating < -item.Price / 2)
             {
                 return new TransactionResult
                 {
@@ -93,8 +104,9 @@ namespace AntiClownBot.Models.Shop
                     Result = null
                 };
             }
+
             itemsToSell[item].Add(user.DiscordId);
-            user.ChangeRating(item.Price/2);
+            user.ChangeRating(item.Price / 2);
             user.RemoveCustomItem(item);
             return new TransactionResult
             {
