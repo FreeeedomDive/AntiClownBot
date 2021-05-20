@@ -38,6 +38,7 @@ namespace AntiClownBot.Commands
             RegisterCommand("!lottery", new LotteryCommand(client, config));
 
             RegisterCommand("!lohotron", new LohotronCommand(client, config));
+            RegisterCommand("!use", new UseCommand(client, config));
         }
 
         private void RegisterCommand(string name, BaseCommand baseCommand)

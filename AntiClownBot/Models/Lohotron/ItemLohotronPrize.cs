@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AntiClownBot.Models.User.Inventory;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,8 @@ namespace AntiClownBot.Models.Lohotron
     public class ItemLohotronPrize : ILohotronPrize
     {
         public string Name { get => "Item";}
-        public InventoryItem Item;
-        public ItemLohotronPrize(InventoryItem item)
+        public Item Item;
+        public ItemLohotronPrize(Item item)
         {
             Item = item;
         }

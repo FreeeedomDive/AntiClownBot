@@ -17,10 +17,12 @@ using DSharpPlus.EventArgs;
 using AntiClownBot.Models.Shop;
 using EventHandler = AntiClownBot.Events.EventHandler;
 using AntiClownBot.SpecialChannels;
+using AntiClownBot.Models.User.Inventory.Items;
+using Microsoft.Extensions.Logging;
 
 namespace AntiClownBot
 {
-    public class TrayApplication : ApplicationContext
+    public class TrayApplication
     {
         private readonly NotifyIcon _trayIcon;
         private DiscordClient _discord;
@@ -36,17 +38,6 @@ namespace AntiClownBot
 
         public TrayApplication()
         {
-            _trayIcon = new NotifyIcon
-            {
-                Text = @"AntiClown Discord Bot",
-                Icon = new Icon("peepoclown.ico"),
-                Visible = true,
-                ContextMenu = new ContextMenu(new[]
-                {
-                    new MenuItem("Exit", Exit)
-                })
-            };
-
             _config = Configuration.GetConfiguration();
             _config.CheckCurrentDay();
 
@@ -58,7 +49,8 @@ namespace AntiClownBot
             _discord = new DiscordClient(new DiscordConfiguration
             {
                 Token = "NzYwODc5NjI5NTA5ODUzMjI0.X3SeYA.JLxxQ2gUiFcF9MZyYegkhaDUhqE",
-                TokenType = TokenType.Bot
+                TokenType = TokenType.Bot,
+                MinimumLogLevel = LogLevel.Debug
             });
 
             _commandsManager = new CommandsManager(_discord, _config);
@@ -369,17 +361,20 @@ namespace AntiClownBot
                     {
                         case "dog":
                         case "🐶":
-                            marketResult = _config.Market.BuyItem(InventoryItem.DogWife, user);
+                            marketResult = _config.Market.BuyItem(new DogWife(), user);
                             break;
                         case "RainbowPls":
-                            marketResult = _config.Market.BuyItem(InventoryItem.CatWife, user);
+                            marketResult = _config.Market.BuyItem(new CatWife(), user);
                             break;
                         case "rice":
                         case "🍚":
-                            marketResult = _config.Market.BuyItem(InventoryItem.RiceBowl, user);
+                            marketResult = _config.Market.BuyItem(new RiceBowl(), user);
                             break;
                         case "HACKERJAMS":
-                            marketResult = _config.Market.BuyItem(InventoryItem.Gigabyte, user);
+                            marketResult = _config.Market.BuyItem(new Gigabyte(), user);
+                            break;
+                        case "PepegaCredit":
+                            marketResult = _config.Market.BuyItem(new LootBox(), user);
                             break;
                         default:
                             return;
@@ -394,23 +389,23 @@ namespace AntiClownBot
                     {
                         case "dog":
                         case "🐶":
-                            marketResult = _config.Market.SellItem(InventoryItem.DogWife, user);
+                            marketResult = _config.Market.SellItem(new DogWife(), user);
                             break;
                         case "RainbowPls":
-                            marketResult = _config.Market.SellItem(InventoryItem.CatWife, user);
+                            marketResult = _config.Market.SellItem(new CatWife(), user);
                             break;
                         case "rice":
                         case "🍚":
-                            marketResult = _config.Market.SellItem(InventoryItem.RiceBowl, user);
+                            marketResult = _config.Market.SellItem(new RiceBowl(), user);
                             break;
                         case "HACKERJAMS":
-                            marketResult = _config.Market.SellItem(InventoryItem.Gigabyte, user);
+                            marketResult = _config.Market.SellItem(new Gigabyte(), user);
                             break;
                         case "cykaPls":
-                            marketResult = _config.Market.SellItem(InventoryItem.CommunismPoster, user);
+                            marketResult = _config.Market.SellItem(new CommunismPoster(), user);
                             break;
                         case "BONK":
-                            marketResult = _config.Market.SellItem(InventoryItem.JadeRod, user);
+                            marketResult = _config.Market.SellItem(new JadeRod(), user);
                             break;
                         default:
                             return;
@@ -603,12 +598,6 @@ namespace AntiClownBot
 
             var result = sb.ToString();
             return result.Contains("anime");
-        }
-
-        private void Exit(object sender, EventArgs e)
-        {
-            _trayIcon.Visible = false;
-            Environment.Exit(0);
         }
 
         private static async void AddLog(string content)

@@ -28,7 +28,7 @@ namespace AntiClownBot.Commands.Lohotron
                 case "Item":
                     var item = ((ItemLohotronPrize) prize).Item;
                     user.AddCustomItem(item);
-                    await e.Message.RespondAsync($"Ты получаешь {Utility.ItemToString(item)}");
+                    await e.Message.RespondAsync($"Ты получаешь {item.Name}");
                     return;
                 case "Nothing":
                     await e.Message.RespondAsync("Ты получаешь ничего!");

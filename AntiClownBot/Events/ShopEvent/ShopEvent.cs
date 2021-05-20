@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using AntiClownBot.Models.User.Inventory.Items;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AntiClownBot.Events.ShopEvent
@@ -26,6 +27,7 @@ namespace AntiClownBot.Events.ShopEvent
             await message.CreateReactionAsync(Utility.Emoji(":RainbowPls:"));
             await message.CreateReactionAsync(Utility.Emoji(":rice:"));
             await message.CreateReactionAsync(Utility.Emoji(":HACKERJAMS:"));
+            await message.CreateReactionAsync(Utility.Emoji(":PepegaCredit:"));
             var secondmessage = await DiscordClient
                 .Guilds[277096298761551872]
                 .GetChannel(838477706643374090)
@@ -46,22 +48,23 @@ namespace AntiClownBot.Events.ShopEvent
         protected override string BackStory()
         {
             return "Магазин ОТКРЫТЬСЯ!\n" +
-                   "Всё по 1000! Но покупать каждый 'предмет' только 1 раз!\n" +
+                   "Но покупать каждый 'предмет' только 1 раз!\n" +
                    "Магазин работать 40 минут\n" +
-                   $"{Utility.Emoji(":dog:")} - собака жена\n" +
-                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена\n" +
-                   $"{Utility.Emoji(":rice:")} - миска рис\n" +
-                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет";
+                   $"{Utility.Emoji(":dog:")} - собака жена {new DogWife().Price}\n" +
+                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена {new CatWife().Price}\n" +
+                   $"{Utility.Emoji(":rice:")} - миска рис {new RiceBowl().Price}\n" +
+                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {new Gigabyte().Price}\n" +
+                   $"{Utility.Emoji(":PepegaCredit:")} - лутбокс {new LootBox().Price}";
         }
         protected string BackStory2()
         {
             return "Продавайте свои предметы!\n" +
-                   $"{Utility.Emoji(":dog:")} - собака жена +500\n" +
-                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена +500\n" +
-                   $"{Utility.Emoji(":rice:")} - миска рис +500\n" +
-                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет +500\n" +
-                   $"{Utility.Emoji(":BONK:")} - нефритовый стержень -2000\n" +
-                   $"{Utility.Emoji(":cykaPls:")} - {Utility.ItemToString(InventoryItem.CommunismPoster)} -2000";
+                   $"{Utility.Emoji(":dog:")} - собака жена {new DogWife().Price/2}\n" +
+                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена {new CatWife().Price/2}\n" +
+                   $"{Utility.Emoji(":rice:")} - миска рис {new RiceBowl().Price/2}\n" +
+                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {new Gigabyte().Price/2}\n" +
+                   $"{Utility.Emoji(":BONK:")} - нефритовый стержень {new JadeRod().Price/2}\n" +
+                   $"{Utility.Emoji(":cykaPls:")} - коммунистический плакат {new CommunismPoster().Price/2}";
         }
     }
 }

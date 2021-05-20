@@ -1,40 +1,28 @@
-﻿using System;
+﻿using AntiClownBot.Models.User.Inventory;
+using AntiClownBot.Models.User.Inventory.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace AntiClownBot
 {
-    public enum InventoryItem
-    {
-        CatWife,
-        DogWife,
-        RiceBowl,
-        Gigabyte,
-        JadeRod,
-        CommunismPoster,
-        None
-    }
-
     public class SocialRatingUser
     {
-        private static readonly List<InventoryItem> AllItems =
-            Enum.GetValues(typeof(InventoryItem)).Cast<InventoryItem>().Where(item => item != InventoryItem.None)
-                .ToList();
-
         public ulong DiscordId;
         public string DiscordUsername;
         public int SocialRating;
+        public Dictionary<Item, int> Items;
 
-        public int NetWorth => SocialRating + UserItems.Keys
+        public int NetWorth => SocialRating + Items.Keys
             .Where(item =>
-                item == InventoryItem.DogWife ||
-                item == InventoryItem.CatWife ||
-                item == InventoryItem.Gigabyte ||
-                item == InventoryItem.RiceBowl)
-            .Select(key => UserItems[key] * 1000).Sum();
+                item.Equals(new DogWife()) ||
+                item.Equals(new CatWife()) ||
+                item.Equals(new Gigabyte()) ||
+                item.Equals(new RiceBowl()) ||
+                item.Equals(new LootBox()))
+            .Select(key => Items[key] * key.Price).Sum();
 
-        public readonly Dictionary<InventoryItem, int> UserItems;
         public DateTime NextTribute;
 
         public SocialRatingUser(ulong id, string name)
@@ -43,14 +31,14 @@ namespace AntiClownBot
             DiscordUsername = name;
             SocialRating = Constants.DefaultSocialRating;
             NextTribute = DateTime.MinValue;
-            UserItems = new Dictionary<InventoryItem, int>
+            Items = new Dictionary<Item, int>
             {
-                {InventoryItem.CatWife, 0},
-                {InventoryItem.DogWife, 0},
-                {InventoryItem.RiceBowl, 0},
-                {InventoryItem.Gigabyte, 0},
-                {InventoryItem.JadeRod, 0},
-                {InventoryItem.CommunismPoster, 0}
+                {new DogWife(), 0},
+                {new CatWife(), 0},
+                {new Gigabyte(), 0},
+                {new RiceBowl(), 0},
+                {new JadeRod(), 0},
+                {new CommunismPoster(), 0}
             };
         }
 
@@ -66,59 +54,80 @@ namespace AntiClownBot
         public string LoseRandomItems(int count)
         {
             var stringBuilder = new StringBuilder();
+            var config = Configuration.GetConfiguration();
             while (count > 0)
             {
-                if (!UserItems.Any(item => item.Value > 0))
+                if (!Items.Any(item => item.Value > 0))
                 {
                     stringBuilder.Append($"У {DiscordUsername} нет предметов, удалять нечего");
                     Configuration.GetConfiguration().Save();
                     return stringBuilder.ToString();
                 }
 
-                var item = UserItems.Where(item => item.Value > 0).SelectRandomItem().Key;
-                UserItems[item]--;
-                stringBuilder.Append($"{DiscordUsername} теряет {Utility.ItemToString(item)}\n");
+                var item = Items.Where(item => item.Value > 0).SelectRandomItem().Key;
+                Items[item]--;
+                config.DailyStatistics.CreditsCollected -= item.Price;
+                config.DailyStatistics.ChangeUserCredits(DiscordUsername, -item.Price);
+                stringBuilder.Append($"{DiscordUsername} теряет {item.Name}\n");
                 count--;
             }
 
-            Configuration.GetConfiguration().Save();
+            config.Save();
             return stringBuilder.ToString();
         }
 
         public string AddRandomItems(int count)
         {
             var stringBuilder = new StringBuilder();
+            var config = Configuration.GetConfiguration();
             while (count > 0)
             {
-                var item = AllItems.SelectRandomItem();
-                UserItems[item]++;
-                stringBuilder.Append($"{DiscordUsername} получает {Utility.ItemToString(item)}\n");
+                var item = Items.SelectRandomItem().Key;
+                Items[item]++;
+                config.DailyStatistics.CreditsCollected += item.Price;
+                config.DailyStatistics.ChangeUserCredits(DiscordUsername, item.Price);
+                stringBuilder.Append($"{DiscordUsername} получает {item.Name}\n");
                 count--;
             }
 
-            Configuration.GetConfiguration().Save();
+            config.Save();
             return stringBuilder.ToString();
         }
 
-        public void AddCustomItem(InventoryItem item)
+        public void AddCustomItem(Item item)
         {
-            UserItems[item]++;
-            Configuration.GetConfiguration().Save();
+            Items[item]++;
+            var config = Configuration.GetConfiguration();
+            config.DailyStatistics.CreditsCollected += item.Price;
+            config.DailyStatistics.ChangeUserCredits(DiscordUsername, item.Price);
+            config.Save();
         }
 
-        public void RemoveCustomItem(InventoryItem item)
+        public void RemoveCustomItem(Item item)
         {
-            if (!UserItems.ContainsKey(item) || UserItems[item] <= 0) return;
+            if (Items[item] <= 0) return;
 
-            UserItems[item]--;
-            Configuration.GetConfiguration().Save();
+            Items[item]--;
+            var config = Configuration.GetConfiguration();
+            config.DailyStatistics.CreditsCollected -= item.Price;
+            config.DailyStatistics.ChangeUserCredits(DiscordUsername, -item.Price);
+            config.Save();
         }
+        public string Use(Item item)
+        {
+            if(Items[item] < 1)
+            {
+                return $"{DiscordUsername} не иметь {item.Name}";
+            }
 
+            Items[item]--;
+            return item.Use(this);
+        }
         public bool HasDodgedPidor()
         {
             return Randomizer.GetRandomNumberBetween(0, 100) <
                    Utility.LogarithmicDistribution(Constants.LogarithmicDistributionStartValueForDogWife,
-                       UserItems[InventoryItem.DogWife]);
+                       Items[new DogWife()]);
         }
 
         public (int, int) UpdateCooldown()
@@ -128,7 +137,8 @@ namespace AntiClownBot
             var gigabyteWorked = 0;
             var jadeRodWorked = 0;
 
-            for (var i = 0; i < UserItems[InventoryItem.Gigabyte]; i++)
+            var gigabyteCount = Items[new Gigabyte()];
+            for (var i = 0; i < gigabyteCount; i++)
             {
                 if (!(Randomizer.GetRandomNumberBetween(0, 100) <
                       Constants.CooldownDecreaseChanceByOneGigabyte)) continue;
@@ -136,7 +146,8 @@ namespace AntiClownBot
                 cooldown *= 1 - Constants.CooldownDecreaseByOneGigabyteItem;
             }
 
-            for (var i = 0; i < UserItems[InventoryItem.JadeRod]; i++)
+            var jadeRodCount = Items[new JadeRod()];
+            for (var i = 0; i < jadeRodCount; i++)
             {
                 if (!(Randomizer.GetRandomNumberBetween(0, 100) < Constants.CooldownIncreaseChanceByOneJade)) continue;
                 jadeRodWorked++;
