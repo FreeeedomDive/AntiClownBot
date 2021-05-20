@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using AntiClownBot.Models.User.Inventory.Items;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AntiClownBot.Events.ShopEvent
@@ -46,22 +47,22 @@ namespace AntiClownBot.Events.ShopEvent
         protected override string BackStory()
         {
             return "Магазин ОТКРЫТЬСЯ!\n" +
-                   "Всё по 1000! Но покупать каждый 'предмет' только 1 раз!\n" +
+                   "Но покупать каждый 'предмет' только 1 раз!\n" +
                    "Магазин работать 40 минут\n" +
-                   $"{Utility.Emoji(":dog:")} - собака жена\n" +
-                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена\n" +
-                   $"{Utility.Emoji(":rice:")} - миска рис\n" +
-                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет";
+                   $"{Utility.Emoji(":dog:")} - собака жена {DogWife.Price}\n" +
+                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена {CatWife.Price}\n" +
+                   $"{Utility.Emoji(":rice:")} - миска рис {RiceBowl.Price}\n" +
+                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {Gigabyte.Price}";
         }
         protected string BackStory2()
         {
             return "Продавайте свои предметы!\n" +
-                   $"{Utility.Emoji(":dog:")} - собака жена +500\n" +
-                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена +500\n" +
-                   $"{Utility.Emoji(":rice:")} - миска рис +500\n" +
-                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет +500\n" +
-                   $"{Utility.Emoji(":BONK:")} - нефритовый стержень -2000\n" +
-                   $"{Utility.Emoji(":cykaPls:")} - {Utility.ItemToString(InventoryItem.CommunismPoster)} -2000";
+                   $"{Utility.Emoji(":dog:")} - собака жена {DogWife.Price/2}\n" +
+                   $"{Utility.Emoji(":RainbowPls:")} - кошка жена {CatWife.Price/2}\n" +
+                   $"{Utility.Emoji(":rice:")} - миска рис {RiceBowl.Price/2}\n" +
+                   $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {Gigabyte.Price/2}\n" +
+                   $"{Utility.Emoji(":BONK:")} - нефритовый стержень {JadeRod.Price/2}\n" +
+                   $"{Utility.Emoji(":cykaPls:")} - коммунистический плакат {CommunismPoster.Price/2}";
         }
     }
 }

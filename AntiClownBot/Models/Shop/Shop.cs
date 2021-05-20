@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AntiClownBot.Models.User.Inventory;
+using AntiClownBot.Models.User.Inventory.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,46 +22,25 @@ namespace AntiClownBot.Models.Shop
             public TransactionStatus Status;
             public string Result;
         }
-        public class Product
-        {
-            public InventoryItem Item;
-            public int Price;
-        }
-        public static Dictionary<InventoryItem, int> BuyPrices = new Dictionary<InventoryItem, int>
-        {  
-            {InventoryItem.CatWife , 1000},
-            {InventoryItem.DogWife, 1000 },
-            {InventoryItem.Gigabyte, 1000 },
-            {InventoryItem.RiceBowl, 1000 }
-        };
-        public static Dictionary<InventoryItem, int> SellPrices = new Dictionary<InventoryItem, int>
-        {
-            {InventoryItem.CatWife , 500},
-            {InventoryItem.DogWife, 500 },
-            {InventoryItem.Gigabyte, 500 },
-            {InventoryItem.RiceBowl, 500 },
-            {InventoryItem.CommunismPoster, 2000 },
-            {InventoryItem.JadeRod, 2000 }
-        };
         public ulong ShopBuyMessageId;
-        private Dictionary<InventoryItem, List<ulong>> itemsToBuy = new Dictionary<InventoryItem, List<ulong>>
+        private Dictionary<Item, List<ulong>> itemsToBuy = new Dictionary<Item, List<ulong>>
         {
-            {InventoryItem.CatWife, new List<ulong>() },
-            {InventoryItem.DogWife, new List<ulong>() },
-            {InventoryItem.Gigabyte, new List<ulong>() },
-            {InventoryItem.RiceBowl, new List<ulong>() }
+            {new CatWife(), new List<ulong>() },
+            {new DogWife(), new List<ulong>() },
+            {new Gigabyte(), new List<ulong>() },
+            {new RiceBowl(), new List<ulong>() }
         };
         public ulong ShopSellMessageId;
-        private Dictionary<InventoryItem, List<ulong>> itemsToSell = new Dictionary<InventoryItem, List<ulong>>
+        private Dictionary<Item, List<ulong>> itemsToSell = new Dictionary<Item, List<ulong>>
         {
-            {InventoryItem.CatWife, new List<ulong>() },
-            {InventoryItem.DogWife, new List<ulong>() },
-            {InventoryItem.Gigabyte, new List<ulong>() },
-            {InventoryItem.RiceBowl, new List<ulong>() },
-            {InventoryItem.JadeRod , new List<ulong>() },
-            {InventoryItem.CommunismPoster, new List<ulong>() }
+            {new CatWife(), new List<ulong>() },
+            {new DogWife(), new List<ulong>() },
+            {new Gigabyte(), new List<ulong>() },
+            {new RiceBowl(), new List<ulong>() },
+            {new JadeRod() , new List<ulong>() },
+            {new CommunismPoster(), new List<ulong>() }
         };
-        public TransactionResult BuyItem(InventoryItem item, SocialRatingUser user)
+        public TransactionResult BuyItem(Item item, SocialRatingUser user)
         {
             if (itemsToBuy[item].Contains(user.DiscordId))
             {
@@ -69,7 +50,7 @@ namespace AntiClownBot.Models.Shop
                     Result = null
                 };
             }
-            if (user.SocialRating < BuyPrices[item])
+            if (user.SocialRating < item.Price)
             {
                 return new TransactionResult
                 {
@@ -79,14 +60,14 @@ namespace AntiClownBot.Models.Shop
             }
             itemsToBuy[item].Add(user.DiscordId);
             user.AddCustomItem(item);
-            user.ChangeRating(-BuyPrices[item]);
+            user.ChangeRating(-item.Price);
             return new TransactionResult
             {
                 Status = TransactionStatus.Success,
-                Result = $"{user.DiscordUsername} купил(а) {Utility.ItemToString(item)}"
+                Result = $"{user.DiscordUsername} купил(а) {item.Name}"
             };
         }
-        public TransactionResult SellItem(InventoryItem item, SocialRatingUser user)
+        public TransactionResult SellItem(Item item, SocialRatingUser user)
         {
             if (itemsToSell[item].Contains(user.DiscordId))
             {
@@ -96,7 +77,7 @@ namespace AntiClownBot.Models.Shop
                     Result = null
                 };
             }
-            if(user.UserItems[item] < 1)
+            if(user.Items[item] < 1)
             {
                 return new TransactionResult
                 {
@@ -104,32 +85,21 @@ namespace AntiClownBot.Models.Shop
                     Result = null
                 };
             }
-            if(item == InventoryItem.CommunismPoster || item == InventoryItem.JadeRod)
+            if (user.SocialRating < -item.Price/2)
             {
-                if(user.SocialRating < SellPrices[item])
-                {
-                    return new TransactionResult
-                    {
-                        Status = TransactionStatus.NotEnoughMoney,
-                        Result = null
-                    };
-                }
-                itemsToSell[item].Add(user.DiscordId);
-                user.ChangeRating(-SellPrices[item]);
-                user.RemoveCustomItem(item);
                 return new TransactionResult
                 {
-                    Status = TransactionStatus.Success,
-                    Result = $"{user.DiscordUsername} избавился(ась) от {Utility.ItemToString(item)}"
+                    Status = TransactionStatus.NotEnoughMoney,
+                    Result = null
                 };
             }
             itemsToSell[item].Add(user.DiscordId);
-            user.ChangeRating(SellPrices[item]);
+            user.ChangeRating(item.Price/2);
             user.RemoveCustomItem(item);
             return new TransactionResult
             {
                 Status = TransactionStatus.Success,
-                Result = $"{user.DiscordUsername} продал(а) {Utility.ItemToString(item)}"
+                Result = $"{user.DiscordUsername} продал(а) {item.Name}"
             };
         }
     }

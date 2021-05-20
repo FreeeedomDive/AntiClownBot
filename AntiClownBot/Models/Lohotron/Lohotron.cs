@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AntiClownBot.Models.User.Inventory.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,12 +18,12 @@ namespace AntiClownBot.Models.Lohotron
             new CreditsLohotronPrize(-200),
             new CreditsLohotronPrize(100),
             new CreditsLohotronPrize(200),
-            new ItemLohotronPrize(InventoryItem.CatWife),
-            new ItemLohotronPrize(InventoryItem.DogWife),
-            new ItemLohotronPrize(InventoryItem.Gigabyte),
-            new ItemLohotronPrize(InventoryItem.RiceBowl),
-            new ItemLohotronPrize(InventoryItem.CommunismPoster),
-            new ItemLohotronPrize(InventoryItem.JadeRod)
+            new ItemLohotronPrize(new CatWife()),
+            new ItemLohotronPrize(new DogWife()),
+            new ItemLohotronPrize(new Gigabyte()),
+            new ItemLohotronPrize(new RiceBowl()),
+            new ItemLohotronPrize(new CommunismPoster()),
+            new ItemLohotronPrize(new JadeRod())
         };
 
         private static readonly Wheel Wheel =

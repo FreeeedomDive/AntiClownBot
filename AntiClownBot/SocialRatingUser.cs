@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AntiClownBot.Models.User.Inventory;
+using AntiClownBot.Models.User.Inventory.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,18 +27,31 @@ namespace AntiClownBot
         public ulong DiscordId;
         public string DiscordUsername;
         public int SocialRating;
-
-        public int NetWorth => SocialRating + UserItems.Keys
+        public readonly Dictionary<Item, int> Items;
+        public int NetWorth => SocialRating + Items.Keys
             .Where(item =>
-                item == InventoryItem.DogWife ||
-                item == InventoryItem.CatWife ||
-                item == InventoryItem.Gigabyte ||
-                item == InventoryItem.RiceBowl)
-            .Select(key => UserItems[key] * 1000).Sum();
+                item == new DogWife() ||
+                item == new CatWife() ||
+                item == new Gigabyte() ||
+                item == new RiceBowl())
+            .Select(key => Items[key] * 1000).Sum();
 
         public readonly Dictionary<InventoryItem, int> UserItems;
         public DateTime NextTribute;
 
+        public SocialRatingUser()
+        {
+            Items = new Dictionary<Item, int>
+            {
+                {new CatWife(), UserItems[InventoryItem.CatWife] },
+                {new DogWife(), UserItems[InventoryItem.DogWife] },
+                {new RiceBowl(), UserItems[InventoryItem.RiceBowl] },
+                {new Gigabyte(), UserItems[InventoryItem.Gigabyte] },
+                {new JadeRod(), UserItems[InventoryItem.JadeRod] },
+                {new CommunismPoster(), UserItems[InventoryItem.CommunismPoster] },
+                {new LootBox(), 0 }
+            };
+        }
         public SocialRatingUser(ulong id, string name)
         {
             DiscordId = id;
@@ -66,59 +81,71 @@ namespace AntiClownBot
         public string LoseRandomItems(int count)
         {
             var stringBuilder = new StringBuilder();
+            var config = Configuration.GetConfiguration();
             while (count > 0)
             {
-                if (!UserItems.Any(item => item.Value > 0))
+                if (!Items.Any(item => item.Value > 0))
                 {
                     stringBuilder.Append($"У {DiscordUsername} нет предметов, удалять нечего");
                     Configuration.GetConfiguration().Save();
                     return stringBuilder.ToString();
                 }
 
-                var item = UserItems.Where(item => item.Value > 0).SelectRandomItem().Key;
-                UserItems[item]--;
-                stringBuilder.Append($"{DiscordUsername} теряет {Utility.ItemToString(item)}\n");
+                var item = Items.Where(item => item.Value > 0).SelectRandomItem().Key;
+                Items[item]--;
+                config.DailyStatistics.CreditsCollected -= item.Price;
+                config.DailyStatistics.ChangeUserCredits(DiscordUsername, -item.Price);
+                stringBuilder.Append($"{DiscordUsername} теряет {item.Name}\n");
                 count--;
             }
 
-            Configuration.GetConfiguration().Save();
+            config.Save();
             return stringBuilder.ToString();
         }
 
         public string AddRandomItems(int count)
         {
             var stringBuilder = new StringBuilder();
+            var config = Configuration.GetConfiguration();
             while (count > 0)
             {
-                var item = AllItems.SelectRandomItem();
-                UserItems[item]++;
-                stringBuilder.Append($"{DiscordUsername} получает {Utility.ItemToString(item)}\n");
+                var item = Items.SelectRandomItem().Key;
+                Items[item]++;
+                config.DailyStatistics.CreditsCollected += item.Price;
+                config.DailyStatistics.ChangeUserCredits(DiscordUsername, item.Price);
+                stringBuilder.Append($"{DiscordUsername} получает {item.Name}\n");
                 count--;
             }
 
-            Configuration.GetConfiguration().Save();
+            config.Save();
             return stringBuilder.ToString();
         }
 
-        public void AddCustomItem(InventoryItem item)
+        public void AddCustomItem(Item item)
         {
-            UserItems[item]++;
-            Configuration.GetConfiguration().Save();
+            Items[item]++;
+            var config = Configuration.GetConfiguration();
+            config.DailyStatistics.CreditsCollected += item.Price;
+            config.DailyStatistics.ChangeUserCredits(DiscordUsername, item.Price);
+            config.Save();
         }
 
-        public void RemoveCustomItem(InventoryItem item)
+        public void RemoveCustomItem(Item item)
         {
-            if (!UserItems.ContainsKey(item) || UserItems[item] <= 0) return;
+            if (Items[item] <= 0) return;
 
-            UserItems[item]--;
-            Configuration.GetConfiguration().Save();
+            Items[item]--;
+            var config = Configuration.GetConfiguration();
+            config.DailyStatistics.CreditsCollected -= item.Price;
+            config.DailyStatistics.ChangeUserCredits(DiscordUsername, -item.Price);
+            config.Save();
         }
 
         public bool HasDodgedPidor()
         {
             return Randomizer.GetRandomNumberBetween(0, 100) <
                    Utility.LogarithmicDistribution(Constants.LogarithmicDistributionStartValueForDogWife,
-                       UserItems[InventoryItem.DogWife]);
+                       Items[new DogWife()]);
         }
 
         public (int, int) UpdateCooldown()
@@ -128,7 +155,7 @@ namespace AntiClownBot
             var gigabyteWorked = 0;
             var jadeRodWorked = 0;
 
-            for (var i = 0; i < UserItems[InventoryItem.Gigabyte]; i++)
+            for (var i = 0; i < Items[new Gigabyte()]; i++)
             {
                 if (!(Randomizer.GetRandomNumberBetween(0, 100) <
                       Constants.CooldownDecreaseChanceByOneGigabyte)) continue;
@@ -136,7 +163,7 @@ namespace AntiClownBot
                 cooldown *= 1 - Constants.CooldownDecreaseByOneGigabyteItem;
             }
 
-            for (var i = 0; i < UserItems[InventoryItem.JadeRod]; i++)
+            for (var i = 0; i < Items[new JadeRod()]; i++)
             {
                 if (!(Randomizer.GetRandomNumberBetween(0, 100) < Constants.CooldownIncreaseChanceByOneJade)) continue;
                 jadeRodWorked++;

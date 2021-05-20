@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AntiClownBot.Models.User.Inventory.Items;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
@@ -51,20 +52,20 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
             var tributeQuality = Randomizer.GetRandomNumberBetween(
                 Constants.MinTributeValue -
-                user.UserItems[InventoryItem.RiceBowl] * Constants.TributeDecreaseByOneRiceBowl,
+                user.Items[new RiceBowl()] * Constants.TributeDecreaseByOneRiceBowl,
                 Constants.MaxTributeValue +
-                user.UserItems[InventoryItem.RiceBowl] * Constants.TributeIncreaseByOneRiceBowl);
+                user.Items[new RiceBowl()] * Constants.TributeIncreaseByOneRiceBowl);
             var response = isAutomatic ? $"Автоматическое подношение для {user.DiscordUsername}\n" : "";
 
             var communismChance = Utility.LogarithmicDistribution(
-                Constants.LogarithmicDistributionStartValueForCommunism, user.UserItems[InventoryItem.CommunismPoster]);
+                Constants.LogarithmicDistributionStartValueForCommunism, user.Items[new CommunismPoster()]);
             var communism = Randomizer.GetRandomNumberBetween(0, 100) < communismChance;
 
             var sharedUser = user;
             if (communism)
             {
                 response += $"Произошел коммунизм {Utility.StringEmoji(":Pepega:")}\n";
-                sharedUser = Config.Users.Values.Where(u => u.UserItems[InventoryItem.CommunismPoster] != 0).SelectRandomItem();
+                sharedUser = Config.Users.Values.Where(u => u.Items[new CommunismPoster()] != 0).SelectRandomItem();
                 response += $"Разделение подношения с {sharedUser.DiscordUsername}\n";
                 tributeQuality /= 2;
             }
@@ -92,7 +93,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
             var chance = Utility.LogarithmicDistribution(
                 Constants.LogarithmicDistributionStartValueForCatWife,
-                user.UserItems[InventoryItem.CatWife]);
+                user.Items[new CatWife()]);
             var isNextTributeAutomatic = Randomizer.GetRandomNumberBetween(0, 100) < chance;
             if (isNextTributeAutomatic)
                 response +=

@@ -17,6 +17,7 @@ using DSharpPlus.EventArgs;
 using AntiClownBot.Models.Shop;
 using EventHandler = AntiClownBot.Events.EventHandler;
 using AntiClownBot.SpecialChannels;
+using AntiClownBot.Models.User.Inventory.Items;
 
 namespace AntiClownBot
 {
@@ -369,17 +370,17 @@ namespace AntiClownBot
                     {
                         case "dog":
                         case "🐶":
-                            marketResult = _config.Market.BuyItem(InventoryItem.DogWife, user);
+                            marketResult = _config.Market.BuyItem(new DogWife(), user);
                             break;
                         case "RainbowPls":
-                            marketResult = _config.Market.BuyItem(InventoryItem.CatWife, user);
+                            marketResult = _config.Market.BuyItem(new CatWife(), user);
                             break;
                         case "rice":
                         case "🍚":
-                            marketResult = _config.Market.BuyItem(InventoryItem.RiceBowl, user);
+                            marketResult = _config.Market.BuyItem(new RiceBowl(), user);
                             break;
                         case "HACKERJAMS":
-                            marketResult = _config.Market.BuyItem(InventoryItem.Gigabyte, user);
+                            marketResult = _config.Market.BuyItem(new Gigabyte(), user);
                             break;
                         default:
                             return;
@@ -394,23 +395,23 @@ namespace AntiClownBot
                     {
                         case "dog":
                         case "🐶":
-                            marketResult = _config.Market.SellItem(InventoryItem.DogWife, user);
+                            marketResult = _config.Market.SellItem(new DogWife(), user);
                             break;
                         case "RainbowPls":
-                            marketResult = _config.Market.SellItem(InventoryItem.CatWife, user);
+                            marketResult = _config.Market.SellItem(new CatWife(), user);
                             break;
                         case "rice":
                         case "🍚":
-                            marketResult = _config.Market.SellItem(InventoryItem.RiceBowl, user);
+                            marketResult = _config.Market.SellItem(new RiceBowl(), user);
                             break;
                         case "HACKERJAMS":
-                            marketResult = _config.Market.SellItem(InventoryItem.Gigabyte, user);
+                            marketResult = _config.Market.SellItem(new Gigabyte(), user);
                             break;
                         case "cykaPls":
-                            marketResult = _config.Market.SellItem(InventoryItem.CommunismPoster, user);
+                            marketResult = _config.Market.SellItem(new CommunismPoster(), user);
                             break;
                         case "BONK":
-                            marketResult = _config.Market.SellItem(InventoryItem.JadeRod, user);
+                            marketResult = _config.Market.SellItem(new JadeRod(), user);
                             break;
                         default:
                             return;

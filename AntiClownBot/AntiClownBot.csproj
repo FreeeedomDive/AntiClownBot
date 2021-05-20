@@ -150,6 +150,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\User\DefaultUser.cs" />
+    <Compile Include="Models\User\Inventory\Item.cs" />
+    <Compile Include="Models\User\Inventory\Items\CatWife.cs" />
+    <Compile Include="Models\User\Inventory\Items\CommunismPoster.cs" />
+    <Compile Include="Models\User\Inventory\Items\DogWife.cs" />
+    <Compile Include="Models\User\Inventory\Items\Gigabyte.cs" />
+    <Compile Include="Models\User\Inventory\Items\JadeRod.cs" />
+    <Compile Include="Models\User\Inventory\Items\LootBox.cs" />
+    <Compile Include="Models\User\Inventory\Items\RiceBowl.cs" />
     <Compile Include="SpecialChannels\BlackJack\BlackJackParser.cs" />
     <Compile Include="SpecialChannels\BlackJack\Commands\BlackJackDouble.cs" />
     <Compile Include="SpecialChannels\BlackJack\Commands\BlackJackHit.cs" />
