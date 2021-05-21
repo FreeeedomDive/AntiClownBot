@@ -37,6 +37,7 @@ namespace AntiClownBot
                 {new CatWife(), 0},
                 {new Gigabyte(), 0},
                 {new RiceBowl(), 0},
+                {new LootBox(), 0},
                 {new JadeRod(), 0},
                 {new CommunismPoster(), 0}
             };
