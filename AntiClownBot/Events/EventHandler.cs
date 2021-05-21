@@ -24,7 +24,8 @@ namespace AntiClownBot.Events
                 new RemoveCooldownEvent.RemoveCooldownEvent(),
                 new TransfusionEvent.TransfusionEvent(),
                 new LotteryEvent.LotteryEvent(),
-                new ShopEvent.ShopEvent()
+                new ShopEvent.ShopEvent(),
+                new GuessNumberEvent.GuessNumberEvent()
             };
         }
 

@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Roulette;
 using AntiClownBot.Models.Shop;
 using AntiClownBot.Models.DailyStatistics;
+using AntiClownBot.Models.GuessNumber;
 using AntiClownBot.Models.Lohotron;
 
 namespace AntiClownBot
@@ -41,6 +42,8 @@ namespace AntiClownBot
         [JsonIgnore]
         public BlackJack CurrentBlackJack = new BlackJack();
         public Lottery CurrentLottery;
+        [JsonIgnore] 
+        public GuessNumberGame CurrentGuessNumberGame;
 
         public bool AreTributesOpen = true;
 

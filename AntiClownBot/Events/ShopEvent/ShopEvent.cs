@@ -47,7 +47,7 @@ namespace AntiClownBot.Events.ShopEvent
 
         protected override string BackStory()
         {
-            return "Магазин ОТКРЫТЬСЯ!\n" +
+            return "@everyone Магазин ОТКРЫТЬСЯ!\n" +
                    "Но покупать каждый 'предмет' только 1 раз!\n" +
                    "Магазин работать 40 минут\n" +
                    $"{Utility.Emoji(":dog:")} - собака жена {new DogWife().Price}\n" +
