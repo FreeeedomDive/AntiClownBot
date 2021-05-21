@@ -24,7 +24,6 @@ namespace AntiClownBot
 {
     public class TrayApplication
     {
-        private readonly NotifyIcon _trayIcon;
         private DiscordClient _discord;
         private readonly Configuration _config;
         private CommandsManager _commandsManager;
