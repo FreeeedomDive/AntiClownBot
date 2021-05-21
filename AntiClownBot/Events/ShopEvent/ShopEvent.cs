@@ -54,7 +54,7 @@ namespace AntiClownBot.Events.ShopEvent
                    $"{Utility.Emoji(":RainbowPls:")} - кошка жена {new CatWife().Price}\n" +
                    $"{Utility.Emoji(":rice:")} - миска рис {new RiceBowl().Price}\n" +
                    $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {new Gigabyte().Price}\n" +
-                   $"{Utility.Emoji(":PepegaCredit:")} - лутбокс {new LootBox().Price}";
+                   $"{Utility.Emoji(":PepegaCredit:")} - Добыча коробка {new LootBox().Price}";
         }
         protected string BackStory2()
         {
