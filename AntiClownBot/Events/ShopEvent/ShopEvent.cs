@@ -47,14 +47,14 @@ namespace AntiClownBot.Events.ShopEvent
 
         protected override string BackStory()
         {
-            return "Магазин ОТКРЫТЬСЯ!\n" +
+            return "@everyone Магазин ОТКРЫТЬСЯ!\n" +
                    "Но покупать каждый 'предмет' только 1 раз!\n" +
                    "Магазин работать 40 минут\n" +
                    $"{Utility.Emoji(":dog:")} - собака жена {new DogWife().Price}\n" +
                    $"{Utility.Emoji(":RainbowPls:")} - кошка жена {new CatWife().Price}\n" +
                    $"{Utility.Emoji(":rice:")} - миска рис {new RiceBowl().Price}\n" +
                    $"{Utility.Emoji(":HACKERJAMS:")} - гигабайт интернет {new Gigabyte().Price}\n" +
-                   $"{Utility.Emoji(":PepegaCredit:")} - лутбокс {new LootBox().Price}";
+                   $"{Utility.Emoji(":PepegaCredit:")} - Добыча коробка {new LootBox().Price}";
         }
         protected string BackStory2()
         {

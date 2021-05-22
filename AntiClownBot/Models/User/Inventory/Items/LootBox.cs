@@ -15,7 +15,7 @@ namespace AntiClownBot.Models.User.Inventory.Items
         {
             var item = user.Items.Keys.SelectRandomItem();
             user.AddCustomItem(item);
-            return $"{user.DiscordUsername} получил из \" Добыча коробка \" {item.Name}";
+            return $"{user.DiscordUsername} получил из \"Добыча коробка\" {item.Name}";
         }
     }
 }

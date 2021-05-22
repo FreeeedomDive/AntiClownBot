@@ -411,6 +411,28 @@ namespace AntiClownBot
                     if (marketResult.Status == Shop.TransactionStatus.Success)
                         await e.Message.RespondAsync(marketResult.Result);
                 }
+
+                if (_config.CurrentGuessNumberGame != null &&
+                    _config.CurrentGuessNumberGame.GuessNumberGameMessageId == e.Message.Id)
+                {
+                    switch (emojiName)
+                    {
+                        case "1️⃣":
+                            _config.CurrentGuessNumberGame.Join(user, 1);
+                            break;
+                        case "2️⃣":
+                            _config.CurrentGuessNumberGame.Join(user, 2);
+                            break;
+                        case "3️⃣":
+                            _config.CurrentGuessNumberGame.Join(user, 3);
+                            break;
+                        case "4️⃣":
+                            _config.CurrentGuessNumberGame.Join(user, 4);
+                            break;
+                        default:
+                            return;
+                    }
+                }
                 
                 var username = "unknown";
                 try
@@ -600,7 +622,7 @@ namespace AntiClownBot
 
         private static async void AddLog(string content)
         {
-            using var file = new StreamWriter("log.txt", true);
+            await using var file = new StreamWriter("log.txt", true);
             await file.WriteLineAsync($"{DateTime.Now} | {content}");
         }
     }
