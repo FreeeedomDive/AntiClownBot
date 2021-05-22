@@ -99,8 +99,12 @@ namespace AntiClownBot
         {
             Items[item]++;
             var config = Configuration.GetConfiguration();
-            config.DailyStatistics.CreditsCollected += item.Price;
-            config.DailyStatistics.ChangeUserCredits(DiscordUsername, item.Price);
+            if (item.Price > 0)
+            {
+                config.DailyStatistics.CreditsCollected += item.Price;
+                config.DailyStatistics.ChangeUserCredits(DiscordUsername, item.Price);
+            }
+
             config.Save();
         }
 
@@ -110,8 +114,12 @@ namespace AntiClownBot
 
             Items[item]--;
             var config = Configuration.GetConfiguration();
-            config.DailyStatistics.CreditsCollected -= item.Price;
-            config.DailyStatistics.ChangeUserCredits(DiscordUsername, -item.Price);
+            if (item.Price > 0)
+            {
+                config.DailyStatistics.CreditsCollected -= item.Price;
+                config.DailyStatistics.ChangeUserCredits(DiscordUsername, -item.Price);
+            }
+
             config.Save();
         }
         public string Use(Item item)
