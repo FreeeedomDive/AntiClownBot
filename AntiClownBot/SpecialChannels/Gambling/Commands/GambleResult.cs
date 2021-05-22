@@ -37,8 +37,9 @@ namespace AntiClownBot.SpecialChannels.Gambling.Commands
                     user.ChangeRating(-30);
                     return $"Ты кто такой, чел? Держи -30 {Utility.StringEmoji(":PogOff:")}";
                 case GambleBetResult.SuccessfulResult:
+                    var tempMessage = Config.CurrentGamble.Result;
                     Config.CurrentGamble = null;
-                    return Config.CurrentGamble.Result;
+                    return message;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
