@@ -36,32 +36,28 @@ namespace AntiClownBot.Models.GuessNumber
         public async void MakeResult()
         {
             IsJoinable = false;
-            await Utility.Client
-                .Guilds[277096298761551872]
-                .GetChannel(838477706643374090)
-                .SendMessageAsync($"Правильный ответ {generatedNumber}!");
             var count = 0;
+            var sb = new StringBuilder($"Правильный ответ {generatedNumber}!\n");
             foreach (var pair in Users)
             {
                 if (pair.Value == generatedNumber)
                 {
                     var user = Configuration.GetConfiguration().Users[pair.Key];
                     user.AddCustomItem(new LootBox());
-                    await Utility.Client
-                        .Guilds[277096298761551872]
-                        .GetChannel(838477706643374090)
-                        .SendMessageAsync($"{user.DiscordUsername} получает Добыча коробка!");
+                    sb.Append($"\n{user.DiscordUsername} получает Добыча коробка!");
                     count++;
                 }
             }
 
             if (count == 0)
             {
-                await Utility.Client
-                    .Guilds[277096298761551872]
-                    .GetChannel(838477706643374090)
-                    .SendMessageAsync($"Никто не угадал {Utility.Emoji(":PogOff:")}!");
+                sb.Append($"\nНикто не угадал {Utility.Emoji(":PogOff:")}!");
             }
+            
+            await Utility.Client
+                .Guilds[277096298761551872]
+                .GetChannel(838477706643374090)
+                .SendMessageAsync(sb.ToString());
         }
     }
 }

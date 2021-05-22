@@ -31,21 +31,13 @@ namespace AntiClownBot
             DiscordUsername = name;
             SocialRating = Constants.DefaultSocialRating;
             NextTribute = DateTime.MinValue;
-            Items = new Dictionary<Item, int>
-            {
-                {new DogWife(), 0},
-                {new CatWife(), 0},
-                {new Gigabyte(), 0},
-                {new RiceBowl(), 0},
-                {new LootBox(), 0},
-                {new JadeRod(), 0},
-                {new CommunismPoster(), 0}
-            };
+            Items = AllItems.GetAllItems().ToDictionary(item => item, _ => 0);
         }
 
         public void ChangeRating(int rating)
         {
             SocialRating += rating;
+            Transactions.TransactionLog.AddLog(this, $"изменение рейтинга на {rating}");
             var config = Configuration.GetConfiguration();
             config.DailyStatistics.CreditsCollected += rating;
             config.DailyStatistics.ChangeUserCredits(DiscordUsername, rating);
@@ -122,16 +114,18 @@ namespace AntiClownBot
 
             config.Save();
         }
+
         public string Use(Item item)
         {
-            if(Items[item] < 1)
+            if (Items[item] < 1)
             {
                 return $"{DiscordUsername} не иметь {item.Name}";
             }
 
-            Items[item]--;
+            RemoveCustomItem(item);
             return item.Use(this);
         }
+
         public bool HasDodgedPidor()
         {
             return Randomizer.GetRandomNumberBetween(0, 100) <

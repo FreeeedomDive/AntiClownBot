@@ -40,10 +40,12 @@ namespace AntiClownBot.Events
 
         private async void HandleNextEvent()
         {
-            const double minHoursToSleep = 1;
-            const double maxHoursToSleep = 3;
+            var firstLaunch = false;
             while (true)
             {
+                var minHoursToSleep = firstLaunch ? 0.05 : 1;
+                var maxHoursToSleep = firstLaunch ? 0.05 : 3;
+                firstLaunch = false;
                 var sleepTime = Randomizer.GetRandomNumberBetween(
                     (int)(minHoursToSleep * 60 * 60 * 1000),
                     (int)(maxHoursToSleep * 60 * 60 * 1000)
