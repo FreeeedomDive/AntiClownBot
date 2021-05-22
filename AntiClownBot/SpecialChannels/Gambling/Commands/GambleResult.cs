@@ -39,7 +39,7 @@ namespace AntiClownBot.SpecialChannels.Gambling.Commands
                 case GambleBetResult.SuccessfulResult:
                     var tempMessage = Config.CurrentGamble.Result;
                     Config.CurrentGamble = null;
-                    return message;
+                    return tempMessage;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
