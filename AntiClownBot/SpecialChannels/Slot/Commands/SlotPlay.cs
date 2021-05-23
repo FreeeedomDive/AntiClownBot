@@ -34,7 +34,7 @@ namespace AntiClownBot.SpecialChannels.Slot.Commands
 
             var cornerSmile = Utility.StringEmoji(":white_large_square:");
             var result = slotMachine.Play(bet);
-            var textCells = string.Join(" ", result.Cells
+            var textCells = string.Join("\n", result.Cells
                 .Select((c, i) =>
                     (i == 1 ? Utility.StringEmoji(":arrow_forward:") : cornerSmile) + 
                     string.Join(" ",c.Select(c2 => Utility.StringEmoji(c2.Emoji))) + 
