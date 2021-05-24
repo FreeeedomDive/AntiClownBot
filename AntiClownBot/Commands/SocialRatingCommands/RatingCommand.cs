@@ -46,7 +46,8 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 .Append("\n")
                 .Append($"Общий рейтинг: {user.NetWorth}")
                 .Append("\n")
-                .Append(String.Join("\n", user.Items.Select(kvp => $"{kvp.Key.Name}: {kvp.Value}")));
+                .Append(String.Join("\n", user.Items.Select(kvp => $"{kvp.Key.Name}: {kvp.Value}")))
+                .Append("```");
             await e.Message.RespondAsync(stringBuilder.ToString());
         }
 
