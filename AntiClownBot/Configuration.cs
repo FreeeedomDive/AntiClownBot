@@ -14,6 +14,7 @@ using AntiClownBot.Models.Shop;
 using AntiClownBot.Models.DailyStatistics;
 using AntiClownBot.Models.GuessNumber;
 using AntiClownBot.Models.Lohotron;
+using AntiClownBot.Models.User.Stats;
 
 namespace AntiClownBot
 {
@@ -95,6 +96,11 @@ namespace AntiClownBot
                 return _instance;
             }
             _instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
+            foreach (var user in _instance.Users.Values)
+            {
+                user.Stats = new UserStats();
+                user.Stats.RecalculateAllStats(user);
+            }
             _instance.DailyStatistics ??= new DailyStatistics();
             _instance.DailyScamMachine ??= new Lohotron();
             _instance.AreTributesOpen = true;
