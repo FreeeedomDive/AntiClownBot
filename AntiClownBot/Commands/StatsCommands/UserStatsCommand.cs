@@ -26,7 +26,7 @@ namespace AntiClownBot.Commands.StatsCommands
                 .Append($"Шанс уклониться от 5 букв: {user.Stats.PidorEvadeChance}%\n")
                 .Append(
                     $"Подношение от {Constants.MinTributeValue - user.Stats.TributeLowerExtendBorder} до {Constants.MaxTributeValue + user.Stats.TributeUpperExtendBorder}\n")
-                .Append($"Шанс уменьшить подготовка подношение : {Constants.CooldownDecreaseChanceByOneGigabyte + user.Stats.CooldownDecreaseChanceExtend}% {user.Stats.CooldownDecreaseTryCount} раз на {Constants.CooldownDecreaseByOneGigabyteItem*100}%\n")
+                .Append($"Шанс уменьшить подготовка подношение : {Constants.CooldownDecreaseChanceByOneGigabyte + user.Stats.CooldownDecreaseChanceExtend}% {user.Stats.CooldownDecreaseTryCount} раз на {(int)(Constants.CooldownDecreaseByOneGigabyteItem*100)}%\n")
                 .Append($"Шанс увеличить подготовка подношение : {Constants.CooldownIncreaseChanceByOneJade + user.Stats.CooldownIncreaseChanceExtend}% {user.Stats.CooldownIncreaseTryCount} раз в {Constants.CooldownIncreaseByOneJade} раз\n")
                 .Append($"Шанс разделить награда за подношение с другим владелец Коммунистический плакат: {user.Stats.TributeSplitChance}%")
                 .Append("```");
