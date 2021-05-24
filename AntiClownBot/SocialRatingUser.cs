@@ -89,8 +89,7 @@ namespace AntiClownBot
         public bool HasDodgedPidor()
         {
             return Randomizer.GetRandomNumberBetween(0, 100) <
-                   Utility.LogarithmicDistribution(Constants.LogarithmicDistributionStartValueForDogWife,
-                       Items[new DogWife()]);
+                   Stats.PidorEvadeChance;
         }
 
         public (int, int) UpdateCooldown()
@@ -99,20 +98,17 @@ namespace AntiClownBot
 
             var gigabyteWorked = 0;
             var jadeRodWorked = 0;
-
-            var gigabyteCount = Items[new Gigabyte()];
-            for (var i = 0; i < gigabyteCount; i++)
+            
+            for (var i = 0; i < Stats.CooldownDecreaseTryCount; i++)
             {
                 if (!(Randomizer.GetRandomNumberBetween(0, 100) <
-                      Constants.CooldownDecreaseChanceByOneGigabyte)) continue;
+                      Constants.CooldownDecreaseChanceByOneGigabyte + Stats.CooldownDecreaseChanceExtend)) continue;
                 gigabyteWorked++;
                 cooldown *= 1 - Constants.CooldownDecreaseByOneGigabyteItem;
             }
-
-            var jadeRodCount = Items[new JadeRod()];
-            for (var i = 0; i < jadeRodCount; i++)
+            for (var i = 0; i < Stats.CooldownIncreaseTryCount; i++)
             {
-                if (!(Randomizer.GetRandomNumberBetween(0, 100) < Constants.CooldownIncreaseChanceByOneJade)) continue;
+                if (!(Randomizer.GetRandomNumberBetween(0, 100) < Constants.CooldownIncreaseChanceByOneJade + Stats.CooldownIncreaseChanceExtend)) continue;
                 jadeRodWorked++;
                 cooldown *= Constants.CooldownIncreaseByOneJade;
             }

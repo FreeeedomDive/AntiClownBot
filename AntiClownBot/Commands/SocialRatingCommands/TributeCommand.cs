@@ -52,14 +52,11 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
             var tributeQuality = Randomizer.GetRandomNumberBetween(
                 Constants.MinTributeValue -
-                user.Items[new RiceBowl()] * Constants.TributeDecreaseByOneRiceBowl,
+                user.Stats.TributeLowerExtendBorder,
                 Constants.MaxTributeValue +
-                user.Items[new RiceBowl()] * Constants.TributeIncreaseByOneRiceBowl);
+                user.Stats.TributeUpperExtendBorder);
             var response = isAutomatic ? $"Автоматическое подношение для {user.DiscordUsername}\n" : "";
-
-            var communismChance = Utility.LogarithmicDistribution(
-                Constants.LogarithmicDistributionStartValueForCommunism, user.Items[new CommunismPoster()]);
-            var communism = Randomizer.GetRandomNumberBetween(0, 100) < communismChance;
+            var communism = Randomizer.GetRandomNumberBetween(0, 100) < user.Stats.TributeSplitChance;
 
             var sharedUser = user;
             if (communism)
@@ -90,11 +87,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 response += gigabyteWorked > 0 && jadeRodWorked > 0 ? " и " : "";
                 response += jadeRodWorked > 0 ? $"нефритовый стержень x{jadeRodWorked}" : "";
             }
-
-            var chance = Utility.LogarithmicDistribution(
-                Constants.LogarithmicDistributionStartValueForCatWife,
-                user.Items[new CatWife()]);
-            var isNextTributeAutomatic = Randomizer.GetRandomNumberBetween(0, 100) < chance;
+            var isNextTributeAutomatic = Randomizer.GetRandomNumberBetween(0, 100) < user.Stats.TributeAutoChance;
             if (isNextTributeAutomatic)
                 response +=
                     $"\nКошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}";
