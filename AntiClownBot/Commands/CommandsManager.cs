@@ -24,6 +24,7 @@ namespace AntiClownBot.Commands
             RegisterCommand("!rating", new RatingCommand(client, config));
             RegisterCommand("!when", new WhenCommand(client, config));
             
+            RegisterCommand("!mystats", new UserStatsCommand(client, config));
             RegisterCommand("!stats", new EmojiStatsCommand(client, config));
             RegisterCommand("!pidor", new PidorStatsCommand(client, config));
 
