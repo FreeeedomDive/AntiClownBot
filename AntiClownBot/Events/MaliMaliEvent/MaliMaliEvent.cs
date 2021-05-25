@@ -36,13 +36,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
             {
                 await vnc.SendSpeakingAsync(true);
 
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "ffmpeg",
-                    Arguments = @"-i ""malimali.mp3"" -ac 2 -f s16le -ar 48000 pipe:1",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false
-                };
+                await PlaySound(vnc, "zapret.mp3");
 
                 var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates
                     .Where(kvp => kvp.Value.Channel.Id == channel.Id).ToList();
@@ -63,7 +57,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
                     foreach (var (key, value) in voiceUsers.Where(u => u.Value.User.Id != Constants.BotId))
                     {
                         if (value.Channel != voiceChannel) continue;
-                        
+
                         var member = DiscordClient
                             .Guilds[277096298761551872].GetMemberAsync(key);
                         await member.Result.ModifyAsync(model => model.Muted = false);
@@ -73,14 +67,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
                     }
                 }).Start();
 
-                var ffmpeg = Process.Start(psi);
-                var ffout = ffmpeg.StandardOutput.BaseStream;
-
-                var txStream = vnc.GetTransmitSink();
-
-                await ffout.CopyToAsync(txStream);
-                await txStream.FlushAsync();
-                await vnc.WaitForPlaybackFinishAsync();
+                await PlaySound(vnc, "malimali.mp3");
             }
             catch (Exception ex)
             {
@@ -102,6 +89,28 @@ namespace AntiClownBot.Events.MaliMaliEvent
                 $"{Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")} MALI MALI {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")}\n" +
                 $"{Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")} MALI MALI {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")}\n" +
                 $"{Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")} MALI MALI {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")}";
+        }
+
+        private static async Task PlaySound(VoiceNextConnection vnc, string filename)
+        {
+            NLogWrapper.GetDefaultLogger().Info($"начинаем {filename}");
+            var psi = new ProcessStartInfo
+            {
+                FileName = "ffmpeg",
+                Arguments = $@"-i ""{filename}"" -ac 2 -f s16le -ar 48000 pipe:1",
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            };
+
+            var ffmpeg = Process.Start(psi);
+            var ffout = ffmpeg.StandardOutput.BaseStream;
+
+            var txStream = vnc.GetTransmitSink();
+
+            await ffout.CopyToAsync(txStream);
+            await txStream.FlushAsync();
+            await vnc.WaitForPlaybackFinishAsync();
+            NLogWrapper.GetDefaultLogger().Info($"гг {filename}");
         }
     }
 }
