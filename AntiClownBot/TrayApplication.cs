@@ -17,6 +17,7 @@ using AntiClownBot.Models.Shop;
 using EventHandler = AntiClownBot.Events.EventHandler;
 using AntiClownBot.SpecialChannels;
 using AntiClownBot.Models.User.Inventory.Items;
+using DSharpPlus.VoiceNext;
 using NLog;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
@@ -30,6 +31,7 @@ namespace AntiClownBot
         private readonly Configuration _config;
         private CommandsManager _commandsManager;
         private SpecialChannelsManager _specialChannelsManager;
+        private static VoiceNextExtension voice;
 
         private ulong _lastReactionMessageId;
         private ulong _lastReactionUserId;
@@ -54,10 +56,11 @@ namespace AntiClownBot
                 MinimumLogLevel = LogLevel.Debug,
                 Intents = DiscordIntents.All
             });
-
+            voice = _discord.UseVoiceNext();
             _commandsManager = new CommandsManager(_discord, _config);
             _specialChannelsManager = new SpecialChannelsManager(_discord, _config);
             Utility.Client = _discord;
+            Utility.Voice = _discord.GetVoiceNext();
 
             _discord.VoiceStateUpdated += async (client, e) =>
             {

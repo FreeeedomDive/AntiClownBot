@@ -5,6 +5,7 @@ using System.Text;
 using AntiClownBot.Models.BlackJack;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using DSharpPlus.VoiceNext;
 using Emzi0767;
 
 namespace AntiClownBot
@@ -12,6 +13,7 @@ namespace AntiClownBot
     public static class Utility
     {
         public static DiscordClient Client;
+        public static VoiceNextExtension Voice;
 
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) => items.OrderBy(_ => Randomizer.GetRandomNumberBetween(0, 1000000));
 
