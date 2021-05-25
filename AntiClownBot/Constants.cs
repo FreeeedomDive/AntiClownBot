@@ -2,6 +2,8 @@
 {
     public static class Constants
     {
+        public const ulong BotId = 760879629509853224;
+        
         // стандартный кулдаун подношения
         public const double DefaultCooldown = 60 * 60 * 1000d;
         
