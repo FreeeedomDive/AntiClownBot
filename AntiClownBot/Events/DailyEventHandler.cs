@@ -50,7 +50,6 @@ namespace AntiClownBot.Events
 
         private void HandleEvents(object sender, System.Timers.ElapsedEventArgs e)
         {
-            AddLog($"!!!Timer stopped!!!");
             timer.Stop();
             foreach (var dailyEvent in _dailyEvents)
             {
@@ -58,12 +57,6 @@ namespace AntiClownBot.Events
             }
 
             StartTimer();
-        }
-
-        private static async void AddLog(string content)
-        {
-            using var file = new StreamWriter("log.txt", true);
-            await file.WriteLineAsync($"{DateTime.Now} | {content}");
         }
     }
 }

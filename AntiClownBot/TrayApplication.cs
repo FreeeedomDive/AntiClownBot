@@ -17,12 +17,15 @@ using AntiClownBot.Models.Shop;
 using EventHandler = AntiClownBot.Events.EventHandler;
 using AntiClownBot.SpecialChannels;
 using AntiClownBot.Models.User.Inventory.Items;
-using Microsoft.Extensions.Logging;
+using NLog;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace AntiClownBot
 {
     public class TrayApplication
     {
+        private static readonly Logger Logger = NLogWrapper.GetDefaultLogger();
+        
         private DiscordClient _discord;
         private readonly Configuration _config;
         private CommandsManager _commandsManager;
@@ -48,13 +51,35 @@ namespace AntiClownBot
             {
                 Token = "NzYwODc5NjI5NTA5ODUzMjI0.X3SeYA.JLxxQ2gUiFcF9MZyYegkhaDUhqE",
                 TokenType = TokenType.Bot,
-                MinimumLogLevel = LogLevel.Debug
+                MinimumLogLevel = LogLevel.Debug,
+                Intents = DiscordIntents.All
             });
 
             _commandsManager = new CommandsManager(_discord, _config);
             _specialChannelsManager = new SpecialChannelsManager(_discord, _config);
             Utility.Client = _discord;
 
+            _discord.VoiceStateUpdated += async (client, e) =>
+            {
+                if (e.Channel.Users.Count() == 1)
+                {
+                    AddLog("someone is alone");
+                    new Thread(async () =>
+                    {
+                        await Task.Delay(5 * 60 * 1000);
+                        var chlen = await _discord.Guilds[277096298761551872].GetMemberAsync(e.User.Id);
+                        var channel = await _discord.GetChannelAsync(e.Channel.Id);
+                        if (chlen.VoiceState.Channel.Users.ToList().Count == 1)
+                        {
+                            await chlen.ModifyAsync(async model =>
+                            {
+                                var result = await _discord.GetChannelAsync(689120451984621605);
+                                model.VoiceChannel = result;
+                            });
+                        }
+                    }).Start();
+                }
+            };
             _discord.MessageCreated += async (client, e) =>
             {
                 if (e.Author.IsBot) return;
@@ -72,7 +97,7 @@ namespace AntiClownBot
                     _config.Users.Add(e.Author.Id, user);
                     _config.Save();
                 }
-                
+
 
                 if (message.StartsWith("!"))
                 {
@@ -342,7 +367,7 @@ namespace AntiClownBot
                     await member.GrantRoleAsync(role);
                     return;
                 }
-                
+
                 if (emojiName == "NOTED"
                     && _config.CurrentLottery != null
                     && _config.CurrentLottery.LotteryMessageId == e.Message.Id
@@ -351,7 +376,7 @@ namespace AntiClownBot
                 {
                     _config.CurrentLottery.Join(user);
                 }
-                
+
                 if (_config.Market != null && _config.Market.ShopBuyMessageId == e.Message.Id)
                 {
                     Shop.TransactionResult marketResult;
@@ -377,10 +402,12 @@ namespace AntiClownBot
                         default:
                             return;
                     }
+
                     if (marketResult.Status == Shop.TransactionStatus.Success)
                         await e.Message.RespondAsync(marketResult.Result);
                 }
-                if(_config.Market != null && _config.Market.ShopSellMessageId == e.Message.Id)
+
+                if (_config.Market != null && _config.Market.ShopSellMessageId == e.Message.Id)
                 {
                     Shop.TransactionResult marketResult;
                     switch (emojiName)
@@ -408,6 +435,7 @@ namespace AntiClownBot
                         default:
                             return;
                     }
+
                     if (marketResult.Status == Shop.TransactionStatus.Success)
                         await e.Message.RespondAsync(marketResult.Result);
                 }
@@ -433,7 +461,7 @@ namespace AntiClownBot
                             return;
                     }
                 }
-                
+
                 var username = "unknown";
                 try
                 {
@@ -620,10 +648,9 @@ namespace AntiClownBot
             return result.Contains("anime");
         }
 
-        private static async void AddLog(string content)
+        private static void AddLog(string content)
         {
-            await using var file = new StreamWriter("log.txt", true);
-            await file.WriteLineAsync($"{DateTime.Now} | {content}");
+            Logger.Info(content);
         }
     }
 }

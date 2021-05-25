@@ -16,6 +16,10 @@ namespace AntiClownBot.Models.User.Inventory
             return "Это нельзя использовать";
         }
 
+        public virtual void OnItemAddOrRemove(SocialRatingUser user)
+        {
+            return;
+        }
         public override string ToString() => Name;
 
         public override bool Equals(object obj)

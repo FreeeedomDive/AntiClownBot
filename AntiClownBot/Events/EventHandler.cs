@@ -69,10 +69,9 @@ namespace AntiClownBot.Events
             }
         }
 
-        private static async void AddLog(string content)
+        private static void AddLog(string content)
         {
-            using var file = new StreamWriter("log.txt", true);
-            await file.WriteLineAsync($"{DateTime.Now} | {content}");
+            NLogWrapper.GetDefaultLogger().Info(content);
         }
     }
 }

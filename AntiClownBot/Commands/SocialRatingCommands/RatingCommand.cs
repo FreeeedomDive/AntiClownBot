@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AntiClownBot.Models.User.Inventory.Items;
@@ -16,7 +17,6 @@ namespace AntiClownBot.Commands.SocialRatingCommands
         public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             var member = await e.Guild.GetMemberAsync(user.DiscordId);
-
 //             var r1 = user.UserItems[InventoryItem.CatWife];
 //             var r2 = user.UserItems[InventoryItem.DogWife];
 //             var r3 = user.UserItems[InventoryItem.RiceBowl];
@@ -38,21 +38,6 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
 
             var stringBuilder = new StringBuilder();
-            var catWifeCount =
-                $"{new CatWife().Name}: {user.Items[new CatWife()]}";
-            var dogWifeCount =
-                $"{new DogWife().Name}: {user.Items[new DogWife()]}";
-            var riceBowlCount =
-                $"{new RiceBowl().Name}: {user.Items[new RiceBowl()]}";
-            var gigabyteCount =
-                $"{new Gigabyte().Name}: {user.Items[new Gigabyte()]}";
-            var lootBoxCount =
-                $"{new LootBox().Name}: {user.Items[new LootBox()]}";
-            var jadeRodCount =
-                $"{new JadeRod().Name}: {user.Items[new JadeRod()]}";
-            var communismPosterCount =
-                $"{new CommunismPoster().Name}: {user.Items[new CommunismPoster()]}";
-            const int maxSpaceCount = 35;
             stringBuilder
                 .Append($"```Паспорт гражданин {member.Username}")
                 .Append("\n")
@@ -60,94 +45,8 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 .Append("\n")
                 .Append($"Общий рейтинг: {user.NetWorth}")
                 .Append("\n")
-                .Append(catWifeCount);
-            if (user.Items[new CatWife()] != 0)
-            {
-                stringBuilder
-                    .Append(" ".Repeat(maxSpaceCount - catWifeCount.Length))
-                    .Append(
-                        $"{Utility.LogarithmicDistribution(Constants.LogarithmicDistributionStartValueForCatWife, user.Items[new CatWife()])}% шанс автоматический подношение");
-            }
-
-            stringBuilder
-                .Append("\n")
-                .Append(dogWifeCount);
-
-            if (user.Items[new DogWife()] != 0)
-            {
-                stringBuilder
-                    .Append(" ".Repeat(maxSpaceCount - dogWifeCount.Length))
-                    .Append(
-                        $"{Utility.LogarithmicDistribution(Constants.LogarithmicDistributionStartValueForDogWife, user.Items[new DogWife()])}% шанс уклониться от PIDOR");
-            }
-
-            stringBuilder
-                .Append("\n")
-                .Append(riceBowlCount);
-
-            if (user.Items[new RiceBowl()] != 0)
-            {
-                stringBuilder
-                    .Append(" ".Repeat(maxSpaceCount - riceBowlCount.Length))
-                    .Append("диапазон получение рейтинг с подношение: ")
-                    .Append(
-                        $"от {Constants.MinTributeValue - Constants.TributeDecreaseByOneRiceBowl * user.Items[new RiceBowl()]} ")
-                    .Append(
-                        $"до {Constants.MaxTributeValue + Constants.TributeIncreaseByOneRiceBowl * user.Items[new RiceBowl()]}");
-            }
-
-            stringBuilder
-                .Append("\n")
-                .Append(gigabyteCount);
-
-            if (user.Items[new Gigabyte()] != 0)
-            {
-                stringBuilder
-                    .Append(" ".Repeat(maxSpaceCount - gigabyteCount.Length))
-                    .Append(
-                        $"{Constants.CooldownDecreaseChanceByOneGigabyte}% шанс срабатывания каждого гигабайт на понижение кулдаун на {(int) (Constants.CooldownDecreaseByOneGigabyteItem * 100)}%");
-            }
-
-            stringBuilder
-                .Append("\n")
-                .Append(lootBoxCount);
-
-            if (user.Items[new LootBox()] != 0)
-            {
-                stringBuilder
-                    .Append(" ".Repeat(maxSpaceCount - lootBoxCount.Length))
-                    .Append(
-                        "коробки добыча, открыть и получить случайный предмет");
-            }
-
-            stringBuilder
-                .Append("\n")
-                .Append(jadeRodCount);
-
-            if (user.Items[new JadeRod()] != 0)
-            {
-                stringBuilder
-                    .Append(" ".Repeat(maxSpaceCount - jadeRodCount.Length))
-                    .Append(
-                        $"{Constants.CooldownIncreaseChanceByOneJade}% шанс срабатывания каждого стержень на увеличение кулдаун в {Constants.CooldownIncreaseByOneJade} раза");
-            }
-
-            stringBuilder
-                .Append("\n")
-                .Append(communismPosterCount);
-
-            if (user.Items[new CommunismPoster()] != 0)
-            {
-                stringBuilder
-                    .Append(" ".Repeat(maxSpaceCount - communismPosterCount.Length))
-                    .Append(
-                        $"{Utility.LogarithmicDistribution(Constants.LogarithmicDistributionStartValueForCommunism, user.Items[new CommunismPoster()])}% ")
-                    .Append("шанс разделить подношение пополам с кто-то другой");
-            }
-
-            stringBuilder
-                .Append("\n```");
-
+                .Append(String.Join("\n", user.Items.Select(kvp => $"{kvp.Key.Name}: {kvp.Value}")))
+                .Append("```");
             await e.Message.RespondAsync(stringBuilder.ToString());
         }
 

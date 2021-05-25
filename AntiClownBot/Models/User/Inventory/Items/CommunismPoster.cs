@@ -10,5 +10,9 @@ namespace AntiClownBot.Models.User.Inventory.Items
     {
         public override string Name => "Коммунистический плакат";
         public override int Price => -4000;
+        public override void OnItemAddOrRemove(SocialRatingUser user)
+        {
+            user.Stats.RecalculateTributeSplitChance(user);
+        }
     }
 }
