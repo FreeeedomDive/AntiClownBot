@@ -73,7 +73,7 @@ namespace AntiClownBot
                         await Task.Delay(5 * 60 * 1000);
                         var chlen = await _discord.Guilds[277096298761551872].GetMemberAsync(e.User.Id);
                         var channel = await _discord.GetChannelAsync(e.Channel.Id);
-                        if (chlen.VoiceState.Channel.Users.ToList().Count == 1)
+                        if (chlen.VoiceState.Channel != null && chlen.VoiceState.Channel.Users.ToList().Count == 1)
                         {
                             await chlen.ModifyAsync(async model =>
                             {
