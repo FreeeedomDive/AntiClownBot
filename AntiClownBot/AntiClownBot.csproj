@@ -54,5 +54,8 @@
     <None Update="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="malimali.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
