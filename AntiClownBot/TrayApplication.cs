@@ -54,7 +54,22 @@ namespace AntiClownBot
             _commandsManager = new CommandsManager(_discord, _config);
             _specialChannelsManager = new SpecialChannelsManager(_discord, _config);
             Utility.Client = _discord;
-
+            _discord.VoiceStateUpdated += async (client, e) =>
+            {
+                if (e.Channel.Users.Count() == 1)
+                {
+                    await Task.Delay(10 * 60 * 1000);
+                    var users = _discord.GetChannelAsync(e.Channel.Id).Result.Users.ToList();
+                    if (users.Count() == 1)
+                    {
+                        _ = users.First().ModifyAsync(model =>
+                          {
+                              var result = _discord.GetChannelAsync(689120451984621605).Result;
+                              model.VoiceChannel = result;
+                          });
+                    }
+                }
+            };
             _discord.MessageCreated += async (client, e) =>
             {
                 if (e.Author.IsBot) return;
