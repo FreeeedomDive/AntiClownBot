@@ -29,7 +29,10 @@ namespace AntiClownBot.Events.MuteEveryoneEvent
                 {
                     var member = DiscordClient
                         .Guilds[277096298761551872].GetMemberAsync(user.Key);
-                    await member.Result.ModifyAsync(model => { model.Muted = true; });
+                    await member.Result.ModifyAsync(model => { model.Muted = true;
+                        model.VoiceChannel = DiscordClient.Guilds[277096298761551872]
+                            .GetChannel(689120451984621605);
+                    });
                 }
             }
         }
