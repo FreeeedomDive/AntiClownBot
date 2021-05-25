@@ -62,6 +62,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
                             .Guilds[277096298761551872].GetMemberAsync(key);
                         await member.Result.ModifyAsync(model => model.Muted = false);
 
+                        if (!Config.Users.ContainsKey(value.User.Id)) continue;
                         var socialUser = Config.Users[value.User.Id];
                         socialUser.ChangeRating(Randomizer.GetRandomNumberBetween(100, 150));
                     }
