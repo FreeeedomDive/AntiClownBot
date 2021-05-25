@@ -17,7 +17,6 @@ namespace AntiClownBot.Commands.SocialRatingCommands
         public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             var member = await e.Guild.GetMemberAsync(user.DiscordId);
-
 //             var r1 = user.UserItems[InventoryItem.CatWife];
 //             var r2 = user.UserItems[InventoryItem.DogWife];
 //             var r3 = user.UserItems[InventoryItem.RiceBowl];
