@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DSharpPlus.Net.Models;
 
 namespace AntiClownBot.Events.MuteEveryoneEvent
 {
@@ -28,7 +29,7 @@ namespace AntiClownBot.Events.MuteEveryoneEvent
                 {
                     var member = DiscordClient
                         .Guilds[277096298761551872].GetMemberAsync(user.Key);
-                    await member.Result.SetMuteAsync(true, "event");
+                    await member.Result.ModifyAsync(model => { model.Muted = true; });
                 }
             }
         }
