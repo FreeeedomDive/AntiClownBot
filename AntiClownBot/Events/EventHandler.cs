@@ -25,8 +25,7 @@ namespace AntiClownBot.Events
                 new TransfusionEvent.TransfusionEvent(),
                 new LotteryEvent.LotteryEvent(),
                 new ShopEvent.ShopEvent(),
-                new GuessNumberEvent.GuessNumberEvent(),
-                new MuteEveryoneEvent.MuteEveryoneEvent()
+                new GuessNumberEvent.GuessNumberEvent()
             };
         }
 
@@ -70,10 +69,9 @@ namespace AntiClownBot.Events
             }
         }
 
-        private static async void AddLog(string content)
+        private static void AddLog(string content)
         {
-            using var file = new StreamWriter("log.txt", true);
-            await file.WriteLineAsync($"{DateTime.Now} | {content}");
+            NLogWrapper.GetDefaultLogger().Info(content);
         }
     }
 }

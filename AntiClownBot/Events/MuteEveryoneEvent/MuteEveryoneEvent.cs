@@ -17,7 +17,7 @@ namespace AntiClownBot.Events.MuteEveryoneEvent
                 .GetChannel(838477706643374090)
                 .SendMessageAsync(text);
             var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates
-                .Where(kvp => kvp.Value.Channel != null);
+                .Where(kvp => kvp.Value.Channel != null).ToList();
             if (!voiceUsers.Any())
             {
                 return;
