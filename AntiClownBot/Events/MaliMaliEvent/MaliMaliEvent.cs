@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,9 +35,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
 
             try
             {
-                await vnc.SendSpeakingAsync(true);
-
-                await PlaySound(vnc, "zapret.mp3");
+                await PlaySound("zapret.mp3");
 
                 var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates
                     .Where(kvp => kvp.Value.Channel.Id == channel.Id).ToList();
@@ -67,7 +66,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
                     }
                 }).Start();
 
-                await PlaySound(vnc, "malimali.mp3");
+                await PlaySound("malimali.mp3");
             }
             catch (Exception ex)
             {
@@ -91,26 +90,58 @@ namespace AntiClownBot.Events.MaliMaliEvent
                 $"{Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")} MALI MALI {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")}";
         }
 
-        private static async Task PlaySound(VoiceNextConnection vnc, string filename)
+        private static async Task PlaySound(string filename)
         {
-            NLogWrapper.GetDefaultLogger().Info($"начинаем {filename}");
-            var psi = new ProcessStartInfo
+            var vnext = Utility.Voice;
+            var vnc = vnext.GetConnection(Utility.Client.Guilds[277096298761551872]);
+            if (vnc == null)
             {
-                FileName = "ffmpeg",
-                Arguments = $@"-i ""{filename}"" -ac 2 -f s16le -ar 48000 pipe:1",
-                RedirectStandardOutput = true,
-                UseShellExecute = false
-            };
+                NLogWrapper.GetDefaultLogger().Info($"Бот не подключен");
+                return;
+            }
 
-            var ffmpeg = Process.Start(psi);
-            var ffout = ffmpeg.StandardOutput.BaseStream;
+            if (!File.Exists(filename))
+            {
+                NLogWrapper.GetDefaultLogger().Info($"Нет файла {filename}");
+                return;
+            }
 
-            var txStream = vnc.GetTransmitSink();
+            while (vnc.IsPlaying)
+                await vnc.WaitForPlaybackFinishAsync();
+            Exception exc = null;
+            NLogWrapper.GetDefaultLogger().Info($"Начинаем проигрывать {filename}");
 
-            await ffout.CopyToAsync(txStream);
-            await txStream.FlushAsync();
-            await vnc.WaitForPlaybackFinishAsync();
-            NLogWrapper.GetDefaultLogger().Info($"гг {filename}");
+            try
+            {
+                await vnc.SendSpeakingAsync(true);
+
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "ffmpeg.exe",
+                    Arguments = $@"-i ""{filename}"" -ac 2 -f s16le -ar 48000 pipe:1 -loglevel quiet",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                };
+                var ffmpeg = Process.Start(psi);
+                var ffout = ffmpeg.StandardOutput.BaseStream;
+
+                var txStream = vnc.GetTransmitSink();
+                await ffout.CopyToAsync(txStream);
+                await txStream.FlushAsync();
+                await vnc.WaitForPlaybackFinishAsync();
+            }
+            catch (Exception ex)
+            {
+                exc = exc;
+            }
+            finally
+            {
+                await vnc.SendSpeakingAsync(false);
+                NLogWrapper.GetDefaultLogger().Info($"Закончили проигрывать {filename}");
+            }
+
+            if (exc != null)
+                NLogWrapper.GetDefaultLogger().Info($"Выскочило исключение {exc.GetType()}: {exc.Message}");
         }
     }
 }
