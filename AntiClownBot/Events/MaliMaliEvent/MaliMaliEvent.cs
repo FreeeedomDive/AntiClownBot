@@ -38,7 +38,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
                 await PlaySound("zapret.mp3");
 
                 var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates
-                    .Where(kvp => kvp.Value.Channel.Id == channel.Id).ToList();
+                    .Where(kvp => !kvp.Value.User.IsBot && kvp.Value.Channel.Id == channel.Id).ToList();
                 foreach (var user in voiceUsers.Where(u => u.Value.User.Id != Constants.BotId))
                 {
                     if (user.Value.Channel == channel)
@@ -57,12 +57,14 @@ namespace AntiClownBot.Events.MaliMaliEvent
                     {
                         if (value.Channel != voiceChannel) continue;
 
-                        var member = DiscordClient
+                        var member = await DiscordClient
                             .Guilds[277096298761551872].GetMemberAsync(key);
-                        await member.Result.ModifyAsync(model => model.Muted = false);
-
-                        if (!Config.Users.ContainsKey(value.User.Id)) continue;
-                        var socialUser = Config.Users[value.User.Id];
+                        await member.ModifyAsync(model => model.Muted = false);
+                        
+                        if (member.IsBot) continue;
+                        var socialUser = Config.Users.ContainsKey(value.User.Id)
+                            ? Config.Users[value.User.Id]
+                            : new SocialRatingUser(member.Id, member.Username);
                         socialUser.ChangeRating(Randomizer.GetRandomNumberBetween(100, 150));
                     }
                 }).Start();
@@ -133,7 +135,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
             }
             catch (Exception ex)
             {
-                exc = exc;
+                exc = ex;
             }
             finally
             {
