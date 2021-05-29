@@ -11,6 +11,7 @@ namespace AntiClownBot.Events.DailyEvents
         public override int EventCooldown => 10 * 1000;
         public override async void ExecuteAsync()
         {
+            Config.EventPossibleTimes["dailystats"] = DateTime.Now.AddMilliseconds(EventCooldown);
             var text = BackStory();
             await DiscordClient
                 .Guilds[277096298761551872]

@@ -14,6 +14,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
         public override int EventCooldown => 10 * 60 * 1000;
         public override async void ExecuteAsync()
         {
+            Config.EventPossibleTimes["malimali"] = DateTime.Now.AddMilliseconds(EventCooldown);
             var channels = DiscordClient.Guilds[277096298761551872].Channels.Values
                 .Where(ch => ch.Type == ChannelType.Voice && ch.Users.ToList().Count > 0).ToList();
             if (channels.Count == 0)

@@ -23,7 +23,7 @@ namespace AntiClownBot.SpecialChannels.Dev
             return "Команды:\n" +
                    "runevent \n" +
                    "Параметры:\n" +
-                   "closetributes/dailystats/guessnumber/lottery/malimali/opentributes/payouts/removecooldown/shop";
+                   "closetributes/dailystats/guessnumber/lottery/malimali/opentributes/payouts/removecooldown/shop/transfusion";
         }
 
         public override async void Parse(MessageCreateEventArgs e, SocialRatingUser user)

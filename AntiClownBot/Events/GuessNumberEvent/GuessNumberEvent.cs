@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AntiClownBot.Models.GuessNumber;
 
@@ -14,6 +11,7 @@ namespace AntiClownBot.Events.GuessNumberEvent
         {
             if (Config.CurrentGuessNumberGame != null)
                 return;
+            Config.EventPossibleTimes["guessnumber"] = DateTime.Now.AddMilliseconds(EventCooldown);
             var text = BackStory();
             var message = await DiscordClient
                 .Guilds[277096298761551872]

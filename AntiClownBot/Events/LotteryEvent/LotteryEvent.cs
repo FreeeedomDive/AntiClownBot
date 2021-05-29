@@ -1,4 +1,6 @@
-﻿namespace AntiClownBot.Events.LotteryEvent
+﻿using System;
+
+namespace AntiClownBot.Events.LotteryEvent
 {
     class LotteryEvent : BaseEvent
     {
@@ -7,6 +9,7 @@
         {
             if (Config.CurrentLottery != null)
                 return;
+            Config.EventPossibleTimes["lottery"] = DateTime.Now.AddMilliseconds(EventCooldown);
             Config.CurrentLottery = new Models.Lottery.Lottery();
             Config.Save();
             var text = BackStory();

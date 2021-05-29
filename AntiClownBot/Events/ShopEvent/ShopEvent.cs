@@ -1,4 +1,5 @@
-﻿using AntiClownBot.Models.User.Inventory.Items;
+﻿using System;
+using AntiClownBot.Models.User.Inventory.Items;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,6 +21,7 @@ namespace AntiClownBot.Events.ShopEvent
         {
             if (Config.Market != null)
                 return;
+            Config.EventPossibleTimes["shop"] = DateTime.Now.AddMilliseconds(EventCooldown);
             Config.Market = new Models.Shop.Shop();
             var text = BackStory();
             var message = await DiscordClient

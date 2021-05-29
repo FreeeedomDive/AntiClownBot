@@ -107,7 +107,8 @@ namespace AntiClownBot
                 {"opentributes", DateTime.Now},
                 {"payouts", DateTime.Now},
                 {"removecooldown", DateTime.Now},
-                {"shop", DateTime.Now}
+                {"shop", DateTime.Now},
+                {"transfusion", DateTime.Now}
             };
             foreach (var user in _instance.Users.Values)
             {

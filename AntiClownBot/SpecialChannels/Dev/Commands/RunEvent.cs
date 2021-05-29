@@ -13,6 +13,7 @@ using AntiClownBot.Events.LotteryEvent;
 using AntiClownBot.Events.MaliMaliEvent;
 using AntiClownBot.Events.RemoveCooldownEvent;
 using AntiClownBot.Events.ShopEvent;
+using AntiClownBot.Events.TransfusionEvent;
 using DSharpPlus;
 using EventHandler = AntiClownBot.Events.EventHandler;
 
@@ -33,7 +34,8 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
             new OpenTributesEvent(),
             new PayoutsDailyEvent(),
             new RemoveCooldownEvent(),
-            new ShopEvent()
+            new ShopEvent(),
+            new TransfusionEvent()
         };
         public RunEvent(DiscordClient client, Configuration configuration)
         {
@@ -75,6 +77,9 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
                 case "shop":
                     eventToHandle = _events[8];
                     break;
+                case "transfusion":
+                    eventToHandle = _events[9];
+                    break;
                 default:
                     eventToHandle = null;
                     break;
@@ -94,8 +99,6 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
             {
                 EventHandler.NextEventPossibleTime = tempTime;
             }
-
-            Config.EventPossibleTimes[eventName] = tempTime;
             eventToHandle.ExecuteAsync();
             return "Ивент был запущен успешно";
         }

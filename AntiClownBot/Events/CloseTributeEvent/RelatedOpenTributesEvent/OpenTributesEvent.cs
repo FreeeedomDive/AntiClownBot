@@ -1,4 +1,5 @@
-﻿using DSharpPlus;
+﻿using System;
+using DSharpPlus;
 
 namespace AntiClownBot.Events.CloseTributeEvent.RelatedOpenTributesEvent
 {
@@ -7,6 +8,7 @@ namespace AntiClownBot.Events.CloseTributeEvent.RelatedOpenTributesEvent
         public override int EventCooldown => 1000;
         public override void ExecuteAsync()
         {
+            Config.EventPossibleTimes["opentributes"] = DateTime.Now.AddMilliseconds(EventCooldown);
             TellBackStory();
             Config.OpenTributes();
         }
