@@ -59,7 +59,8 @@ namespace AntiClownBot.Events
                 await Task.Delay(sleepTime);
                 while (NextEventPossibleTime > DateTime.Now)
                 {
-                    await Task.Delay(NextEventPossibleTime.Millisecond - DateTime.Now.Millisecond);
+                    NLogWrapper.GetDefaultLogger().Info("Ожидание кулдауна эвента");
+                    await Task.Delay((int)(NextEventPossibleTime - DateTime.Now).TotalMilliseconds);
                 }
                 if (NextEvents.Count == 0)
                 {
