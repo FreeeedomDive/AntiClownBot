@@ -15,7 +15,8 @@ namespace AntiClownBot.SpecialChannels.Dev
         {
             Commands = new List<ICommand>
             {
-                new RunEvent(client, configuration)
+                new RunEvent(client, configuration),
+                new PlayMusic(client, configuration)
             }.ToDictionary(x => x.Name);
         }
         public override string Help(MessageCreateEventArgs e)
@@ -23,7 +24,8 @@ namespace AntiClownBot.SpecialChannels.Dev
             return "Команды:\n" +
                    "runevent \n" +
                    "Параметры:\n" +
-                   "closetributes/dailystats/guessnumber/lottery/malimali/opentributes/payouts/removecooldown/shop/transfusion";
+                   "closetributes/dailystats/guessnumber/lottery/malimali/opentributes/payouts/removecooldown/shop/transfusion\n" +
+                   "play {filename}";
         }
 
         public override async void Parse(MessageCreateEventArgs e, SocialRatingUser user)

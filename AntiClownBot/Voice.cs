@@ -12,6 +12,7 @@ namespace AntiClownBot
     {
         public static VoiceNextExtension VoiceExtension;
         private static object locker = new();
+        public static VoiceTransmitSink TxStream;
 
         public static bool TryConnect(DiscordChannel channel, out VoiceNextConnection connection)
         {
@@ -24,7 +25,7 @@ namespace AntiClownBot
             return true;
         }
 
-        private static Queue<string> _soundQueue = new Queue<string>();
+        public static Queue<string> _soundQueue = new Queue<string>();
         public static async void PlaySound(string soundname)
         {
             var vnc = VoiceExtension.GetConnection(Utility.Client.Guilds[277096298761551872]);
@@ -67,9 +68,9 @@ namespace AntiClownBot
                 var ffmpeg = Process.Start(psi);
                 var ffout = ffmpeg.StandardOutput.BaseStream;
 
-                var txStream = vnc.GetTransmitSink();
-                await ffout.CopyToAsync(txStream);
-                await txStream.FlushAsync();
+                TxStream = vnc.GetTransmitSink();
+                await ffout.CopyToAsync(TxStream);
+                await TxStream.FlushAsync();
                 await vnc.WaitForPlaybackFinishAsync();
             }
             catch (Exception ex)

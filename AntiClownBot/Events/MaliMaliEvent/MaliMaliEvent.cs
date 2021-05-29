@@ -30,6 +30,10 @@ namespace AntiClownBot.Events.MaliMaliEvent
 
             try
             {
+                if (Voice.TxStream != null)
+                {
+                    Voice.TxStream.Dispose();
+                }
                 Voice.PlaySound("zapret.mp3");
 
                 var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates.Where(kvp =>
