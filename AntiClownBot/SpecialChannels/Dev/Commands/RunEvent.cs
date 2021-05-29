@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AntiClownBot.Events;
 using AntiClownBot.Events.CloseTributeEvent;
@@ -99,7 +100,13 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
             {
                 EventHandler.NextEventPossibleTime = tempTime;
             }
-            eventToHandle.ExecuteAsync();
+
+            var thread = new Thread(_ =>
+            {
+                eventToHandle.ExecuteAsync();
+            });
+            thread.IsBackground = true;
+            thread.Start();
             return "Ивент был запущен успешно";
         }
     }
