@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using DSharpPlus.Entities;
 using DSharpPlus.VoiceNext;
 
@@ -10,7 +11,7 @@ namespace AntiClownBot
     static class Voice
     {
         public static VoiceNextExtension VoiceExtension;
-        private static object locker;
+        private static object locker = new();
 
         public static bool TryConnect(DiscordChannel channel, out VoiceNextConnection connection)
         {
@@ -86,6 +87,10 @@ namespace AntiClownBot
                     {
                         PlaySound(_soundQueue.Dequeue());
                     }
+                    else
+                    {
+                        Disconnect();
+                    }
                 }
 
             }
@@ -101,9 +106,19 @@ namespace AntiClownBot
                 return;
             }
 
-            while (vnc.IsPlaying)
+            await Task.Delay(60*1000);
+            lock (locker)
             {
-                await vnc.WaitForPlaybackFinishAsync();
+                if (_soundQueue.Count > 0 && !vnc.IsPlaying)
+                {
+                    PlaySound(_soundQueue.Dequeue());
+                    return;
+                }
+            }
+
+            if (vnc.IsPlaying)
+            {
+                return;
             }
             vnc.Disconnect();
         }
