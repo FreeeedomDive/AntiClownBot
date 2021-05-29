@@ -44,7 +44,7 @@ namespace AntiClownBot.Events
 
         private async void HandleNextEvent()
         {
-            var firstLaunch = true;
+            var firstLaunch = false;
             while (true)
             {
                 var minHoursToSleep = firstLaunch ? 0.005 : 1;

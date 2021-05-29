@@ -13,6 +13,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
     {
         protected readonly Configuration Config;
         protected readonly DiscordClient DiscordClient;
+
         public ConnectToChannel(DiscordClient client, Configuration configuration)
         {
             Config = configuration;
@@ -39,9 +40,15 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
             {
                 return "Это не голосовой канал";
             }
+
             new Thread(() =>
             {
-                Voice.TryConnect(channel, out var connection);
+                if (Voice.TryConnect(channel, out var connection)) 
+                    return;
+                if (connection.TargetChannel.Id == channel.Id) 
+                    return;
+                connection.Disconnect();
+                Voice.TryConnect(channel, out connection);
             })
             {
                 IsBackground = true

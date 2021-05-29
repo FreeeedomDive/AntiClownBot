@@ -65,6 +65,7 @@ namespace AntiClownBot
             _discord.VoiceStateUpdated += async (client, e) =>
             {
                 if (e.User.IsBot) return;
+                if (e.Channel == null) return;
                 if (e.Channel.Users.Count() == 1)
                 {
                     AddLog("someone is alone");
