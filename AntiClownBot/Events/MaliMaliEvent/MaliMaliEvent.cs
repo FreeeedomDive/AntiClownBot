@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,11 +54,14 @@ namespace AntiClownBot.Events.MaliMaliEvent
                     {
                         if (value.Channel != voiceChannel) continue;
 
-                        var member = DiscordClient
+                        var member = await DiscordClient
                             .Guilds[277096298761551872].GetMemberAsync(key);
-                        await member.Result.ModifyAsync(model => model.Muted = false);
+                        await member.ModifyAsync(model => model.Muted = false);
 
-                        var socialUser = Config.Users[value.User.Id];
+                        if (member.IsBot) continue;
+                        var socialUser = Config.Users.ContainsKey(value.User.Id)
+                            ? Config.Users[value.User.Id]
+                            : new SocialRatingUser(member.Id, member.Username);
                         socialUser.ChangeRating(Randomizer.GetRandomNumberBetween(100, 150));
                     }
                 }).Start();

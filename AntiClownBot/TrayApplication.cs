@@ -532,15 +532,6 @@ namespace AntiClownBot
                 _config.RemoveEmoji(emojiName);
             };
 
-            _discord.PresenceUpdated += (client, args) =>
-            {
-                var user = args.User;
-                var name = args.Activity.Name;
-                AddLog($"User {user.Username} is {args.Activity.ActivityType} {name}");
-
-                return Task.CompletedTask;
-            };
-
             // for changelogs
             // new Thread(async () =>
             // {
