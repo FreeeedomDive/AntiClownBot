@@ -64,10 +64,6 @@ namespace AntiClownBot.Events.MaliMaliEvent
             {
                 NLogWrapper.GetDefaultLogger().Error(ex.Message);
             }
-            finally
-            {
-                Voice.Disconnect();
-            }
         }
 
         protected override string BackStory()
