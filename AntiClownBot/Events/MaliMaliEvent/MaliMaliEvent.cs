@@ -12,6 +12,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
     public class MaliMaliEvent : BaseEvent
     {
         public override int EventCooldown => 10 * 60 * 1000;
+
         public override async void ExecuteAsync()
         {
             Config.EventPossibleTimes["malimali"] = DateTime.Now.AddMilliseconds(EventCooldown);
@@ -30,10 +31,8 @@ namespace AntiClownBot.Events.MaliMaliEvent
 
             try
             {
-                if (Voice.TxStream != null)
-                {
-                    Voice.TxStream.Dispose();
-                }
+                Voice.StopPlaying();
+                while (vnc.IsPlaying) await vnc.WaitForPlaybackFinishAsync();
                 Voice.PlaySound("zapret.mp3");
 
                 var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates.Where(kvp =>

@@ -10,9 +10,13 @@ namespace AntiClownBot
 {
     static class Voice
     {
+        public static VoiceNextConnection Connection;
         public static VoiceNextExtension VoiceExtension;
         private static object locker = new();
         public static VoiceTransmitSink TxStream;
+        public static Stream FfOut;
+
+        public static Queue<string> SoundQueue = new Queue<string>();
 
         public static bool TryConnect(DiscordChannel channel, out VoiceNextConnection connection)
         {
@@ -22,10 +26,9 @@ namespace AntiClownBot
                 return false;
             }
             connection = VoiceExtension.ConnectAsync(channel).Result;
+            Connection = connection;
             return true;
         }
-
-        public static Queue<string> _soundQueue = new Queue<string>();
         public static async void PlaySound(string soundname)
         {
             var vnc = VoiceExtension.GetConnection(Utility.Client.Guilds[277096298761551872]);
@@ -46,7 +49,7 @@ namespace AntiClownBot
                 if (vnc.IsPlaying)
                 {
                     NLogWrapper.GetDefaultLogger().Info($"Добавлен в очередь {soundname}");
-                    _soundQueue.Enqueue(soundname);
+                    SoundQueue.Enqueue(soundname);
                     return;
                 }
             }
@@ -56,6 +59,7 @@ namespace AntiClownBot
 
             try
             {
+                await Connection.ResumeAsync();
                 await vnc.SendSpeakingAsync(true);
 
                 var psi = new ProcessStartInfo
@@ -66,10 +70,10 @@ namespace AntiClownBot
                     UseShellExecute = false
                 };
                 var ffmpeg = Process.Start(psi);
-                var ffout = ffmpeg.StandardOutput.BaseStream;
+                FfOut = ffmpeg.StandardOutput.BaseStream;
 
                 TxStream = vnc.GetTransmitSink();
-                await ffout.CopyToAsync(TxStream);
+                await FfOut.CopyToAsync(TxStream);
                 await TxStream.FlushAsync();
                 await vnc.WaitForPlaybackFinishAsync();
             }
@@ -85,18 +89,25 @@ namespace AntiClownBot
                     NLogWrapper.GetDefaultLogger().Info($"Выскочило исключение {exc.GetType()}: {exc.Message}");
                 lock (locker)
                 {
-                    if (_soundQueue.Count > 0)
+                    if (SoundQueue.Count > 0)
                     {
-                        PlaySound(_soundQueue.Dequeue());
+                        NLogWrapper.GetDefaultLogger().Info($"Играю некст трек");
+                        PlaySound(SoundQueue.Dequeue());
                     }
                     else
                     {
+                        NLogWrapper.GetDefaultLogger().Info($"Ливаю нахуй");
                         Disconnect();
                     }
                 }
 
             }
 
+        }
+
+        public static void StopPlaying()
+        {
+            SoundQueue.Clear();
         }
 
         public static async void Disconnect()
@@ -111,9 +122,9 @@ namespace AntiClownBot
             await Task.Delay(60*1000);
             lock (locker)
             {
-                if (_soundQueue.Count > 0 && !vnc.IsPlaying)
+                if (SoundQueue.Count > 0 && !vnc.IsPlaying)
                 {
-                    PlaySound(_soundQueue.Dequeue());
+                    PlaySound(SoundQueue.Dequeue());
                     return;
                 }
             }

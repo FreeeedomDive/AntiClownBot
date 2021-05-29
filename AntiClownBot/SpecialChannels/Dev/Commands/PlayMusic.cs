@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DSharpPlus;
 
@@ -22,14 +23,22 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
 
         public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
-            var fileName = e.Message.Content.Split(' ').Skip(1).First();
+            var fileName = string.Join(" ", e.Message.Content.Split(' ').Skip(1));
             if (!File.Exists(fileName))
             {
                 return "Такого файла нет, чел";
             }
 
-            Voice.TryConnect(e.Channel, out var vnc);
-            Voice.PlaySound(fileName);
+            var member = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(user.DiscordId).Result;
+            if (member.VoiceState == null || member.VoiceState.Channel == null) return "Чел, в (к)анал зайди";
+            new Thread(() =>
+            {
+                Voice.TryConnect(member.VoiceState.Channel, out var vnc);
+                Voice.PlaySound(fileName);
+            })
+            {
+                IsBackground = true
+            }.Start();
             return "Дело сделано";
         }
     }
