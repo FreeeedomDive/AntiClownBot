@@ -6,6 +6,11 @@ namespace AntiClownBot
     {
         static void Main()
         {
+            AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
+            {
+                var message = $"{eventArgs.Exception.Message}\n{eventArgs.Exception.StackTrace}";
+                NLogWrapper.GetDefaultLogger().Error(message);
+            };
             var app = new TrayApplication();
         }
     }
