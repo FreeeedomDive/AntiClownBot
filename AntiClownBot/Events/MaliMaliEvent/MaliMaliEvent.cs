@@ -29,8 +29,12 @@ namespace AntiClownBot.Events.MaliMaliEvent
             {
                 Voice.PlaySound("zapret.mp3");
 
-                var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates
-                    .Where(kvp => kvp.Value.Channel.Id == channel.Id).ToList();
+                var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates.Where(kvp =>
+                        kvp.Value?.User != null &&
+                        kvp.Value.Channel is not null &&
+                        !kvp.Value.User.IsBot &&
+                        kvp.Value.Channel.Id == channel.Id)
+                    .ToList();
                 foreach (var user in voiceUsers.Where(u => u.Value.User.Id != Constants.BotId))
                 {
                     if (user.Value.Channel == channel)

@@ -44,6 +44,7 @@ namespace AntiClownBot
             {
                 if (vnc.IsPlaying)
                 {
+                    NLogWrapper.GetDefaultLogger().Info($"Добавлен в очередь {soundname}");
                     _soundQueue.Enqueue(soundname);
                     return;
                 }
