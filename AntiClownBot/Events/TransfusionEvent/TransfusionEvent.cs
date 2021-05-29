@@ -1,9 +1,12 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 
 namespace AntiClownBot.Events.TransfusionEvent
 {
     public class TransfusionEvent : BaseEvent
     {
+        public override int EventCooldown => 1000;
+
         public override void ExecuteAsync()
         {
             SocialRatingUser theRichestUser = null;

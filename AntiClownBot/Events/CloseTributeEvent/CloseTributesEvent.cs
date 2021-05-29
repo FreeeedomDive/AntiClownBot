@@ -6,6 +6,7 @@ namespace AntiClownBot.Events.CloseTributeEvent
 {
     public class CloseTributesEvent : BaseEvent
     {
+        public override int EventCooldown => 1000;
         public CloseTributesEvent()
         {
             RelatedEvents = new List<BaseEvent>

@@ -2,8 +2,11 @@
 {
     class LotteryEvent : BaseEvent
     {
+        public override int EventCooldown => 30 * 60 * 1000;
         public override async void ExecuteAsync()
         {
+            if (Config.CurrentLottery != null)
+                return;
             Config.CurrentLottery = new Models.Lottery.Lottery();
             Config.Save();
             var text = BackStory();

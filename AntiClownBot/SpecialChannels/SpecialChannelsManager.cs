@@ -6,6 +6,7 @@ using AntiClownBot.SpecialChannels.Slot;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 using System.Collections.Generic;
+using AntiClownBot.SpecialChannels.Dev;
 
 namespace AntiClownBot.SpecialChannels
 {
@@ -22,7 +23,8 @@ namespace AntiClownBot.SpecialChannels
                 {843051438594064384, new RollDiceParser(client, configuration) },
                 {843051483892023316, new RouletteParser(client, configuration) },
                 {843051525931532298, new SlotParser(client,configuration) },
-                {843029569573486623, new SlotParser(client,configuration) }
+                {843029569573486623, new SlotParser(client,configuration) },
+                {848100451949608970, new DevParser(client, configuration)}
             };
         }
         public bool GetChannelByName(ulong name, out SpecialChannelParser parser)

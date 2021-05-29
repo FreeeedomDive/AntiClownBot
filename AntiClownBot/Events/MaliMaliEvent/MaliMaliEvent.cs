@@ -11,6 +11,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
 {
     public class MaliMaliEvent : BaseEvent
     {
+        public override int EventCooldown => 10 * 60 * 1000;
         public override async void ExecuteAsync()
         {
             var channels = DiscordClient.Guilds[277096298761551872].Channels.Values

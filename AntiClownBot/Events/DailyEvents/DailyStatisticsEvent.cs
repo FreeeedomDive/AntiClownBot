@@ -8,6 +8,7 @@ namespace AntiClownBot.Events.DailyEvents
 {
     public class DailyStatisticsEvent : BaseEvent
     {
+        public override int EventCooldown => 10 * 1000;
         public override async void ExecuteAsync()
         {
             var text = BackStory();
