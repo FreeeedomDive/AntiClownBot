@@ -28,7 +28,9 @@ namespace AntiClownBot.SpecialChannels.Dev
                    "runevent \n" +
                    "Параметры:\n" +
                    "closetributes/dailystats/guessnumber/lottery/malimali/opentributes/payouts/removecooldown/shop/transfusion\n" +
-                   "play {filename}";
+                   "play {filename}\n" +
+                   "connect {channel}/disconect\n+" +
+                   "send {channel} {content}";
         }
 
         public override async void Parse(MessageCreateEventArgs e, SocialRatingUser user)
