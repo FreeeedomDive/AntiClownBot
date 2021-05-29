@@ -28,11 +28,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
                 return "Такого файла нет, чел";
             }
 
-            if (!Voice.TryConnect(e.Channel, out var vnc))
-            {
-                Voice.Disconnect();
-                Voice.TryConnect(e.Channel, out vnc);
-            }
+            Voice.TryConnect(e.Channel, out var vnc);
             Voice.PlaySound(fileName);
             return "Дело сделано";
         }
