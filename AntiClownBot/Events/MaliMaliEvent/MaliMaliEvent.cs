@@ -17,7 +17,7 @@ namespace AntiClownBot.Events.MaliMaliEvent
         {
             Config.EventPossibleTimes["malimali"] = DateTime.Now.AddMilliseconds(EventCooldown);
             var channels = DiscordClient.Guilds[277096298761551872].Channels.Values
-                .Where(ch => ch.Type == ChannelType.Voice && ch.Users.ToList().Count > 0).ToList();
+                .Where(ch => ch.Type == ChannelType.Voice && ch.Users.ToList().Count > 1).ToList();
             if (channels.Count == 0)
             {
                 SendMessageToChannel($"Никто не пришел на MALI-MALI-фанвстречу {Utility.StringEmoji(":BibleThump:")}");
