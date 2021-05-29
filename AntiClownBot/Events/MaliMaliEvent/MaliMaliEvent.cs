@@ -27,8 +27,12 @@ namespace AntiClownBot.Events.MaliMaliEvent
             TellBackStory();
 
             var channel = channels.SelectRandomItem();
-            Voice.TryConnect(channel, out var vnc);
-
+            if (!Voice.TryConnect(channel, out var vnc))
+            {
+                vnc.Disconnect();
+                Voice.TryConnect(channel, out vnc);
+            }
+            
             try
             {
                 Voice.StopPlaying();
