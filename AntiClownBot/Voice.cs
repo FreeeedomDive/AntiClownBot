@@ -59,7 +59,6 @@ namespace AntiClownBot
 
             try
             {
-                await Connection.ResumeAsync();
                 await vnc.SendSpeakingAsync(true);
 
                 var psi = new ProcessStartInfo

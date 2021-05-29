@@ -16,7 +16,9 @@ namespace AntiClownBot.SpecialChannels.Dev
             Commands = new List<ICommand>
             {
                 new RunEvent(client, configuration),
-                new PlayMusic(client, configuration)
+                new PlayMusic(client, configuration),
+                new ConnectToChannel(client, configuration),
+                new Disconnect(client, configuration)
             }.ToDictionary(x => x.Name);
         }
         public override string Help(MessageCreateEventArgs e)
