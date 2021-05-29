@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
@@ -38,12 +39,13 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
             {
                 return "Это не голосовой канал";
             }
-
-            if (!Voice.TryConnect(channel, out var connection))
+            new Thread(() =>
             {
-                return "Бот уже есть в другом канале";
-            }
-
+                Voice.TryConnect(channel, out var connection);
+            })
+            {
+                IsBackground = true
+            }.Start();
             return "Зашёл по кайфу";
         }
     }
