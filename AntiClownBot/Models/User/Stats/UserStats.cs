@@ -12,13 +12,23 @@ namespace AntiClownBot.Models.User.Stats
         public int TributeUpperExtendBorder { get; private set; }
         public int TributeLowerExtendBorder { get; private set; }
         public int TributeAutoChance { get; private set; }
+        public int ExtraTributeAutoChance { get; private set; }
         public int PidorEvadeChance { get; private set; }
+        public int ExtraPidorEvadeChance { get; private set; }
         public int CooldownDecreaseChanceExtend { get; private set; }
         public int CooldownDecreaseTryCount { get; private set; }
         public int CooldownIncreaseChanceExtend { get; private set; }
         public int CooldownIncreaseTryCount { get; private set; }
         public int TributeSplitChance { get; private set; }
+        public int ExtraTributeSplitChance { get; private set; }
+        public int Luck { get; private set; }
 
+        private readonly int[] _standartChanceDistribution = new[] {8, 8, 4, 4, 4};
+
+        private void RecalculateLuck()
+        {
+            Luck = ExtraTributeAutoChance + ExtraPidorEvadeChance - ExtraTributeSplitChance;
+        }
         public void RecalculateTributeBorders(SocialRatingUser user)
         {
             TributeUpperExtendBorder = user.Items[new RiceBowl()]*5;
@@ -27,12 +37,52 @@ namespace AntiClownBot.Models.User.Stats
 
         public void RecalculateTributeAutoChance(SocialRatingUser user)
         {
-            TributeAutoChance = Utility.LogarithmicDistribution(16, user.Items[new CatWife()]);
+            TributeAutoChance = 0;
+            var count = user.Items[new CatWife()];
+            var distrCount = 0;
+            while (distrCount < _standartChanceDistribution.Length && count > 0)
+            {
+                TributeAutoChance += _standartChanceDistribution[distrCount];
+                distrCount++;
+                count--;
+            }
+
+            TributeAutoChance += count * 2;
+            if (TributeAutoChance > 60)
+            {
+                ExtraTributeAutoChance = TributeAutoChance - 60;
+                TributeAutoChance = 60;
+            }
+            else
+            {
+                ExtraTributeAutoChance = 0;
+            }
+            RecalculateLuck();
         }
 
         public void RecalculatePidorEvadeChance(SocialRatingUser user)
         {
-            PidorEvadeChance = Utility.LogarithmicDistribution(16, user.Items[new DogWife()]);
+            PidorEvadeChance = 0;
+            var count = user.Items[new DogWife()];
+            var distrCount = 0;
+            while (distrCount < _standartChanceDistribution.Length && count > 0)
+            {
+                PidorEvadeChance += _standartChanceDistribution[distrCount];
+                distrCount++;
+                count--;
+            }
+
+            PidorEvadeChance += count * 2;
+            if (PidorEvadeChance > 60)
+            {
+                ExtraPidorEvadeChance = PidorEvadeChance - 60;
+                PidorEvadeChance = 60;
+            }
+            else
+            {
+                ExtraPidorEvadeChance = 0;
+            }
+            RecalculateLuck();
         }
 
         public void RecalculateCooldownDecreaseTryCount(SocialRatingUser user)
@@ -47,7 +97,19 @@ namespace AntiClownBot.Models.User.Stats
 
         public void RecalculateTributeSplitChance(SocialRatingUser user)
         {
-            TributeSplitChance = Utility.LogarithmicDistribution(4, user.Items[new CommunismPoster()]);
+            TributeSplitChance = 0;
+            var count = user.Items[new CommunismPoster()];
+            TributeSplitChance += count * 2;
+            if (TributeSplitChance > 60)
+            {
+                ExtraTributeSplitChance = TributeSplitChance - 60;
+                TributeSplitChance = 60;
+            }
+            else
+            {
+                ExtraTributeSplitChance = 0;
+            }
+            RecalculateLuck();
         }
 
         public void RecalculateAllStats(SocialRatingUser user)
