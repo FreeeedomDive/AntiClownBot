@@ -24,21 +24,13 @@ namespace AntiClownBot.Events.MaliMaliEvent
             TellBackStory();
 
             var channel = channels.SelectRandomItem();
-            var vnext = Utility.Voice;
-            var vnc = vnext.GetConnection(DiscordClient.Guilds[277096298761551872]);
-            if (vnc != null)
-            {
-                return;
-            }
-
-            vnc = await vnext.ConnectAsync(channel);
+            Voice.TryConnect(channel, out var vnc);
 
             try
             {
-                await PlaySound("zapret.mp3");
+                Voice.PlaySound("zapret.mp3");
 
-                var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates
-                    .Where(kvp =>
+                var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates.Where(kvp =>
                         kvp.Value?.User != null &&
                         kvp.Value.Channel is not null &&
                         !kvp.Value.User.IsBot &&
@@ -74,16 +66,11 @@ namespace AntiClownBot.Events.MaliMaliEvent
                     }
                 }).Start();
 
-                await PlaySound("malimali.mp3");
+                Voice.PlaySound("malimali.mp3");
             }
             catch (Exception ex)
             {
                 NLogWrapper.GetDefaultLogger().Error(ex.Message);
-            }
-            finally
-            {
-                await vnc.SendSpeakingAsync(false);
-                vnc.Disconnect();
             }
         }
 
@@ -96,60 +83,6 @@ namespace AntiClownBot.Events.MaliMaliEvent
                 $"{Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")} MALI MALI {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")}\n" +
                 $"{Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")} MALI MALI {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")}\n" +
                 $"{Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")} MALI MALI {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":pomLeft:")} {Utility.StringEmoji(":FLOPPA:")} {Utility.StringEmoji(":pomRight:")} {Utility.StringEmoji(":pomRight:")}";
-        }
-
-        private static async Task PlaySound(string filename)
-        {
-            var vnext = Utility.Voice;
-            var vnc = vnext.GetConnection(Utility.Client.Guilds[277096298761551872]);
-            if (vnc == null)
-            {
-                NLogWrapper.GetDefaultLogger().Info($"Бот не подключен");
-                return;
-            }
-
-            if (!File.Exists(filename))
-            {
-                NLogWrapper.GetDefaultLogger().Info($"Нет файла {filename}");
-                return;
-            }
-
-            while (vnc.IsPlaying)
-                await vnc.WaitForPlaybackFinishAsync();
-            Exception exc = null;
-            NLogWrapper.GetDefaultLogger().Info($"Начинаем проигрывать {filename}");
-
-            try
-            {
-                await vnc.SendSpeakingAsync(true);
-
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "ffmpeg.exe",
-                    Arguments = $@"-i ""{filename}"" -ac 2 -f s16le -ar 48000 pipe:1 -loglevel quiet",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false
-                };
-                var ffmpeg = Process.Start(psi);
-                var ffout = ffmpeg.StandardOutput.BaseStream;
-
-                var txStream = vnc.GetTransmitSink();
-                await ffout.CopyToAsync(txStream);
-                await txStream.FlushAsync();
-                await vnc.WaitForPlaybackFinishAsync();
-            }
-            catch (Exception ex)
-            {
-                exc = ex;
-            }
-            finally
-            {
-                await vnc.SendSpeakingAsync(false);
-                NLogWrapper.GetDefaultLogger().Info($"Закончили проигрывать {filename}");
-            }
-
-            if (exc != null)
-                NLogWrapper.GetDefaultLogger().Info($"Выскочило исключение {exc.GetType()}: {exc.Message}");
         }
     }
 }

@@ -60,7 +60,7 @@ namespace AntiClownBot
             _commandsManager = new CommandsManager(_discord, _config);
             _specialChannelsManager = new SpecialChannelsManager(_discord, _config);
             Utility.Client = _discord;
-            Utility.Voice = _discord.GetVoiceNext();
+            Voice.VoiceExtension = _discord.GetVoiceNext();
 
             _discord.VoiceStateUpdated += async (client, e) =>
             {

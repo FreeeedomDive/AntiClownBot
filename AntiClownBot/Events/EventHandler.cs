@@ -41,12 +41,11 @@ namespace AntiClownBot.Events
 
         private async void HandleNextEvent()
         {
-            var firstLaunch = false;
+            var firstLaunch = true;
             while (true)
             {
-                var minHoursToSleep = firstLaunch ? 0.05 : 1;
-                var maxHoursToSleep = firstLaunch ? 0.05 : 3;
-                firstLaunch = false;
+                var minHoursToSleep = firstLaunch ? 0.005 : 1;
+                var maxHoursToSleep = firstLaunch ? 0.005 : 3;
                 var sleepTime = Randomizer.GetRandomNumberBetween(
                     (int)(minHoursToSleep * 60 * 60 * 1000),
                     (int)(maxHoursToSleep * 60 * 60 * 1000)
@@ -57,8 +56,9 @@ namespace AntiClownBot.Events
                 await Task.Delay(sleepTime);
                 if (NextEvents.Count == 0)
                 {
-                    NextEvents.Enqueue(_allEvents.SelectRandomItem());
+                    NextEvents.Enqueue(firstLaunch ? new MaliMaliEvent.MaliMaliEvent() : _allEvents.SelectRandomItem());
                 }
+                firstLaunch = false;
 
                 var currentEvent = NextEvents.Dequeue();
                 Configuration.GetConfiguration().DailyStatistics.EventsCount++;

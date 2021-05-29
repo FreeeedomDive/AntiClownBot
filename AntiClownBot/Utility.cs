@@ -13,7 +13,6 @@ namespace AntiClownBot
     public static class Utility
     {
         public static DiscordClient Client;
-        public static VoiceNextExtension Voice;
 
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) => items.OrderBy(_ => Randomizer.GetRandomNumberBetween(0, 1000000));
 
