@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.ComponentModel.Composition" Version="6.0.0-preview.4.21253.7" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.6.0-preview3.19128.7" />
+    <PackageReference Include="VideoLibrary" Version="3.1.2" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DSharpPlus" Version="4.0.1" />
