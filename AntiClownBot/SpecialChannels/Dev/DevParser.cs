@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AntiClownBot.Commands.OtherCommands;
 using AntiClownBot.SpecialChannels.Dev.Commands;
 using DSharpPlus;
 
@@ -20,8 +21,7 @@ namespace AntiClownBot.SpecialChannels.Dev
                 new ConnectToChannel(client, configuration),
                 new Disconnect(client, configuration),
                 new MessageCommand(client, configuration),
-                new PlayMusicInDirectory(client, configuration),
-                new PlayYoutubeVideo(client, configuration)
+                new PlayMusicInDirectory(client, configuration)
             }.ToDictionary(x => x.Name);
         }
         public override string Help(MessageCreateEventArgs e)

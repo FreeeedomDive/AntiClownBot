@@ -99,9 +99,7 @@ namespace AntiClownBot
                         Disconnect();
                     }
                 }
-
             }
-
         }
 
         public static void StopPlaying()

@@ -22,6 +22,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
 
         public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
+            Voice.SoundQueue.Clear();
             var vnc = Voice.VoiceExtension.GetConnection(Utility.Client.Guilds[277096298761551872]);
             vnc.Disconnect();
             return "Ну я вышел, и чё";

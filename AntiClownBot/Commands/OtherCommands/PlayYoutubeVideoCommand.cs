@@ -5,22 +5,15 @@ using DSharpPlus;
 using DSharpPlus.EventArgs;
 using VideoLibrary;
 
-namespace AntiClownBot.SpecialChannels.Dev.Commands
+namespace AntiClownBot.Commands.OtherCommands
 {
-    public class PlayYoutubeVideo : ICommand
+    public class PlayYoutubeVideoCommand : BaseCommand
     {
-        protected readonly Configuration Config;
-        protected readonly DiscordClient DiscordClient;
-
-        public PlayYoutubeVideo(DiscordClient client, Configuration configuration)
+        public PlayYoutubeVideoCommand(DiscordClient client, Configuration configuration): base(client, configuration)
         {
-            Config = configuration;
-            DiscordClient = client;
         }
 
-        public string Name => "playyt";
-
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
             const string dir = "./youtube";
             if (!Directory.Exists(dir))
@@ -54,8 +47,10 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
             {
                 IsBackground = true
             }.Start();
-            return "Обрабатываю...";
+            e.Message.RespondAsync("Обрабатываю...");
         }
+
+        public override string Help() => "Запуск музыки с ютуба";
 
         private async void Play(MessageCreateEventArgs e, SocialRatingUser user, string filename)
         {
