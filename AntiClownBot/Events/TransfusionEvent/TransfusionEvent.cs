@@ -1,11 +1,15 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 
 namespace AntiClownBot.Events.TransfusionEvent
 {
     public class TransfusionEvent : BaseEvent
     {
+        public override int EventCooldown => 1000;
+
         public override void ExecuteAsync()
         {
+            Config.EventPossibleTimes["transfusion"] = DateTime.Now.AddMilliseconds(EventCooldown);
             SocialRatingUser theRichestUser = null;
             var maxRating = -1;
             foreach (var user in Config.Users.Values)

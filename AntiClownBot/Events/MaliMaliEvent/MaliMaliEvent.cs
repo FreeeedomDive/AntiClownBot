@@ -11,10 +11,13 @@ namespace AntiClownBot.Events.MaliMaliEvent
 {
     public class MaliMaliEvent : BaseEvent
     {
+        public override int EventCooldown => 10 * 60 * 1000;
+
         public override async void ExecuteAsync()
         {
+            Config.EventPossibleTimes["malimali"] = DateTime.Now.AddMilliseconds(EventCooldown);
             var channels = DiscordClient.Guilds[277096298761551872].Channels.Values
-                .Where(ch => ch.Type == ChannelType.Voice && ch.Users.ToList().Count > 0).ToList();
+                .Where(ch => ch.Type == ChannelType.Voice && ch.Users.ToList().Count > 1).ToList();
             if (channels.Count == 0)
             {
                 SendMessageToChannel($"Никто не пришел на MALI-MALI-фанвстречу {Utility.StringEmoji(":BibleThump:")}");
@@ -24,10 +27,16 @@ namespace AntiClownBot.Events.MaliMaliEvent
             TellBackStory();
 
             var channel = channels.SelectRandomItem();
-            Voice.TryConnect(channel, out var vnc);
-
+            if (!Voice.TryConnect(channel, out var vnc))
+            {
+                vnc.Disconnect();
+                Voice.TryConnect(channel, out vnc);
+            }
+            
             try
             {
+                Voice.StopPlaying();
+                while (vnc.IsPlaying) await vnc.WaitForPlaybackFinishAsync();
                 Voice.PlaySound("zapret.mp3");
 
                 var voiceUsers = DiscordClient.Guilds[277096298761551872].VoiceStates.Where(kvp =>

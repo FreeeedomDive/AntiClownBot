@@ -4,8 +4,10 @@ namespace AntiClownBot.Events.RemoveCooldownEvent
 {
     public class RemoveCooldownEvent: BaseEvent
     {
+        public override int EventCooldown => 1000;
         public override void ExecuteAsync()
         {
+            Config.EventPossibleTimes["removecooldown"] = DateTime.Now.AddMilliseconds(EventCooldown);
             TellBackStory();
             
             foreach (var user in Config.Users.Values)
