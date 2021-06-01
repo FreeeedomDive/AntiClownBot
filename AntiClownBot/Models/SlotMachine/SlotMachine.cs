@@ -49,7 +49,7 @@ namespace AntiClownBot.Models.SlotMachine
         public SlotMachineResult Play(int bet)
         {
             var cells = GetRandomCells().ToList();
-            var win = CalcWin(cells[1], bet);
+            var win = CalcWin(cells.Select(c => c[1]), bet);
             var result = new SlotMachineResult(cells, win);
             return result;
         }
