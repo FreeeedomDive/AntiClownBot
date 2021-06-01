@@ -37,16 +37,18 @@ namespace AntiClownBot.SpecialChannels.Slot.Commands
             var resultText = new StringBuilder();
             for (var i = 0; i < 3; i++)
             {
-                var smiles = result.Cells.Select(c => c[i]);
-                resultText.Append(i == 1 ? Utility.StringEmoji(":arrow_forward:") : cornerSmile)
-                    .Append(Utility.StringEmoji(string.Join(" ", smiles)))
+                var i1 = i;
+                var smiles = result.Cells.Select(c => c[i1]);
+                resultText.Append('\n')
+                    .Append(i == 1 ? Utility.StringEmoji(":arrow_forward:") : cornerSmile)
+                    .Append(string.Join(" ", smiles.Select(e => Utility.StringEmoji(e.Emoji))))
                     .Append(i == 1 ? Utility.StringEmoji(":arrow_backward:") : cornerSmile);
             }
             
             var resultRatingChange = result.Win - bet;
             user.ChangeRating(resultRatingChange);
 
-            return "Кручу верчу богатство принести хочу:\n" + resultText + 
+            return "Кручу верчу богатство принести хочу:" + resultText + 
                    "\nВыигрыш: " + result.Win + 
                    "\nБаланс: " + user.SocialRating;
         }
