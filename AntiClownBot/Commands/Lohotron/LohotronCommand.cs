@@ -13,7 +13,7 @@ namespace AntiClownBot.Commands.Lohotron
         {
             if (Config.DailyScamMachine.UsersId.Contains(user.DiscordId))
             {
-                await e.Message.RespondAsync("Ты уже пользовался Лохотроном");
+                await e.Message.RespondAsync($"Чел, 2 раза нельзя! {Utility.Emoji(":peepoFinger:")}");
                 return;
             }
             var prize = Config.DailyScamMachine.Play();
@@ -31,7 +31,7 @@ namespace AntiClownBot.Commands.Lohotron
                     await e.Message.RespondAsync($"Ты получаешь {item.Name}");
                     return;
                 case "Nothing":
-                    await e.Message.RespondAsync("Ты получаешь ничего!");
+                    await e.Message.RespondAsync($"Ты получаешь {Utility.Emoji(":peepoFinger:")}!");
                     return;
                 default:
                     await e.Message.RespondAsync("Какой-то кал, всё сломалось");

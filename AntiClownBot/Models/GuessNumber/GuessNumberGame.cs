@@ -51,7 +51,7 @@ namespace AntiClownBot.Models.GuessNumber
 
             if (count == 0)
             {
-                sb.Append($"\nНикто не угадал {Utility.Emoji(":PogOff:")}!");
+                sb.Append($"\nНикто не угадал {Utility.Emoji(":peepoFinger:")}!");
             }
             
             await Utility.Client
