@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AntiClownBot.Commands;
-using AntiClownBot.Commands.SocialRatingCommands;
 using AntiClownBot.Events;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using DSharpPlus.EventArgs;
 using AntiClownBot.Models.Shop;
 using EventHandler = AntiClownBot.Events.EventHandler;
 using AntiClownBot.SpecialChannels;
@@ -26,12 +22,11 @@ namespace AntiClownBot
     public class TrayApplication
     {
         private static readonly Logger Logger = NLogWrapper.GetDefaultLogger();
-        
+
         private DiscordClient _discord;
         private readonly Configuration _config;
         private CommandsManager _commandsManager;
         private SpecialChannelsManager _specialChannelsManager;
-        private static VoiceNextExtension voice;
 
         private ulong _lastReactionMessageId;
         private ulong _lastReactionUserId;
@@ -56,13 +51,12 @@ namespace AntiClownBot
                 MinimumLogLevel = LogLevel.Debug,
                 Intents = DiscordIntents.All
             });
-            voice = _discord.UseVoiceNext();
             _commandsManager = new CommandsManager(_discord, _config);
             _specialChannelsManager = new SpecialChannelsManager(_discord, _config);
             Utility.Client = _discord;
             Voice.VoiceExtension = _discord.GetVoiceNext();
 
-            _discord.VoiceStateUpdated += async (client, e) =>
+            _discord.VoiceStateUpdated += async (_, e) =>
             {
                 if (e.User.IsBot) return;
                 if (e.Channel == null) return;
@@ -85,7 +79,8 @@ namespace AntiClownBot
                     }).Start();
                 }
             };
-            _discord.MessageCreated += async (client, e) =>
+
+            _discord.MessageCreated += async (_, e) =>
             {
                 if (e.Author.IsBot) return;
 
@@ -134,7 +129,7 @@ namespace AntiClownBot
                     await e.Message.CreateReactionAsync(emotes[index]);
                 }
 
-                if (message.Length > 0 && message[message.Length - 1] == '?')
+                if (message.Length > 0 && message[^1] == '?')
                 {
                     if (message.Contains("когда"))
                     {
@@ -320,7 +315,7 @@ namespace AntiClownBot
                 }
             };
 
-            _discord.TypingStarted += async (client, e) =>
+            _discord.TypingStarted += async (_, e) =>
             {
                 var user = e.User;
                 if (user.Id != _lastPidorId) return;
@@ -336,7 +331,7 @@ namespace AntiClownBot
                 _lastPidorId = 0;
             };
 
-            _discord.GuildMemberAdded += async (client, e) =>
+            _discord.GuildMemberAdded += async (_, e) =>
             {
                 if (e.Member.IsBot)
                 {
@@ -348,7 +343,28 @@ namespace AntiClownBot
                 }
             };
 
-            _discord.MessageReactionAdded += async (client, e) =>
+            _discord.GuildEmojisUpdated += async (_, e) =>
+            {
+                if (e.EmojisAfter.Count > e.EmojisBefore.Count)
+                {
+                    var messageBuilder =
+                        new StringBuilder($"Смотрите, че админ высрал {Utility.Emoji(":point_right:")}");
+                    foreach (var (key, emoji) in e.EmojisAfter)
+                    {
+                        if (!e.EmojisBefore.ContainsKey(key))
+                        {
+                            messageBuilder.Append($" {emoji}");
+                        }
+                    }
+
+                    await Utility.Client
+                        .Guilds[277096298761551872]
+                        .GetChannel(838477706643374090)
+                        .SendMessageAsync(messageBuilder.ToString());
+                }
+            };
+
+            _discord.MessageReactionAdded += async (_, e) =>
             {
                 if (e.User.IsBot) return;
 
@@ -365,21 +381,23 @@ namespace AntiClownBot
                     _config.Save();
                 }
 
-                if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
+                switch (emojiName)
                 {
-                    var member = await e.Guild.GetMemberAsync(e.User.Id);
-                    var role = e.Guild.GetRole(838794615334633502);
-                    await member.GrantRoleAsync(role);
-                    return;
-                }
-
-                if (emojiName == "NOTED"
-                    && _config.CurrentLottery != null
-                    && _config.CurrentLottery.LotteryMessageId == e.Message.Id
-                    && _config.CurrentLottery.IsJoinable
-                    && !_config.CurrentLottery.Participants.Contains(e.User.Id))
-                {
-                    _config.CurrentLottery.Join(user);
+                    case "PogOff" when e.Message.Id == 838796516696391720:
+                    {
+                        var member = await e.Guild.GetMemberAsync(e.User.Id);
+                        var role = e.Guild.GetRole(838794615334633502);
+                        await member.GrantRoleAsync(role);
+                        return;
+                    }
+                    case "NOTED" when
+                        _config.CurrentLottery != null &&
+                        _config.CurrentLottery.LotteryMessageId == e.Message.Id &&
+                        _config.CurrentLottery.IsJoinable &&
+                        !_config.CurrentLottery.Participants.Contains(e.User.Id):
+                        
+                        _config.CurrentLottery.Join(user);
+                        break;
                 }
 
                 if (_config.Market != null && _config.Market.ShopBuyMessageId == e.Message.Id)
@@ -409,7 +427,7 @@ namespace AntiClownBot
                     }
 
                     if (marketResult.Status == Shop.TransactionStatus.Success)
-                        await e.Message.RespondAsync(marketResult.Result);
+                        await e.Message.Channel.SendMessageAsync(marketResult.Result);
                 }
 
                 if (_config.Market != null && _config.Market.ShopSellMessageId == e.Message.Id)
@@ -442,7 +460,7 @@ namespace AntiClownBot
                     }
 
                     if (marketResult.Status == Shop.TransactionStatus.Success)
-                        await e.Message.RespondAsync(marketResult.Result);
+                        await e.Message.Channel.SendMessageAsync(marketResult.Result);
                 }
 
                 if (_config.CurrentGuessNumberGame != null &&
@@ -506,7 +524,7 @@ namespace AntiClownBot
                 _lastReactionEmote = emojiName;
             };
 
-            _discord.MessageReactionRemoved += async (client, e) =>
+            _discord.MessageReactionRemoved += async (_, e) =>
             {
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
