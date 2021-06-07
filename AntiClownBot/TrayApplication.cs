@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AntiClownBot.Commands;
-using AntiClownBot.Commands.SocialRatingCommands;
 using AntiClownBot.Events;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using DSharpPlus.EventArgs;
 using AntiClownBot.Models.Shop;
 using EventHandler = AntiClownBot.Events.EventHandler;
 using AntiClownBot.SpecialChannels;
@@ -31,7 +27,6 @@ namespace AntiClownBot
         private readonly Configuration _config;
         private CommandsManager _commandsManager;
         private SpecialChannelsManager _specialChannelsManager;
-        private static VoiceNextExtension voice;
 
         private ulong _lastReactionMessageId;
         private ulong _lastReactionUserId;
@@ -56,13 +51,13 @@ namespace AntiClownBot
                 MinimumLogLevel = LogLevel.Debug,
                 Intents = DiscordIntents.All
             });
-            voice = _discord.UseVoiceNext();
             _commandsManager = new CommandsManager(_discord, _config);
             _specialChannelsManager = new SpecialChannelsManager(_discord, _config);
             Utility.Client = _discord;
+            _discord.UseVoiceNext();
             Voice.VoiceExtension = _discord.GetVoiceNext();
 
-            _discord.VoiceStateUpdated += async (client, e) =>
+            _discord.VoiceStateUpdated += async (_, e) =>
             {
                 if (e.User.IsBot) return;
                 if (e.Channel == null) return;
@@ -85,7 +80,29 @@ namespace AntiClownBot
                     }).Start();
                 }
             };
-            _discord.MessageCreated += async (client, e) =>
+            
+            _discord.GuildEmojisUpdated += async (_, e) =>
+            {
+                if (e.EmojisAfter.Count > e.EmojisBefore.Count)
+                {
+                    var messageBuilder =
+                        new StringBuilder($"Смотрите, че админ высрал {Utility.Emoji(":point_right:")}");
+                    foreach (var (key, emoji) in e.EmojisAfter)
+                    {
+                        if (!e.EmojisBefore.ContainsKey(key))
+                        {
+                            messageBuilder.Append($" {emoji}");
+                        }
+                    }
+
+                    await Utility.Client
+                        .Guilds[277096298761551872]
+                        .GetChannel(838477706643374090)
+                        .SendMessageAsync(messageBuilder.ToString());
+                }
+            };
+            
+            _discord.MessageCreated += async (_, e) =>
             {
                 if (e.Author.IsBot) return;
 
@@ -122,7 +139,7 @@ namespace AntiClownBot
                 var randomMessageRating = Randomizer.GetRandomNumberBetween(-4, 11);
                 user.ChangeRating(randomMessageRating);
 
-                CheckStats(message);
+                CheckEmojiInMessage(message);
 
                 var pidor = Randomizer.GetRandomNumberBetween(0, 25);
                 message = message.ToLower();
@@ -320,7 +337,7 @@ namespace AntiClownBot
                 }
             };
 
-            _discord.TypingStarted += async (client, e) =>
+            _discord.TypingStarted += async (_, e) =>
             {
                 var user = e.User;
                 if (user.Id != _lastPidorId) return;
@@ -336,7 +353,7 @@ namespace AntiClownBot
                 _lastPidorId = 0;
             };
 
-            _discord.GuildMemberAdded += async (client, e) =>
+            _discord.GuildMemberAdded += async (_, e) =>
             {
                 if (e.Member.IsBot)
                 {
@@ -348,7 +365,7 @@ namespace AntiClownBot
                 }
             };
 
-            _discord.MessageReactionAdded += async (client, e) =>
+            _discord.MessageReactionAdded += async (_, e) =>
             {
                 if (e.User.IsBot) return;
 
@@ -506,7 +523,7 @@ namespace AntiClownBot
                 _lastReactionEmote = emojiName;
             };
 
-            _discord.MessageReactionRemoved += async (client, e) =>
+            _discord.MessageReactionRemoved += async (_, e) =>
             {
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
@@ -547,19 +564,6 @@ namespace AntiClownBot
             await Task.Delay(-1);
         }
 
-        private async void ChangeLog()
-        {
-            // tell to others about last changes
-            var channel = _discord.Guilds[277096298761551872].GetChannel(838477706643374090);
-            var changeLog = @$"{Utility.StringEmoji(":monkaX:")} ВНИМАНИЕ {Utility.StringEmoji(":monkaX:")}
-С днем лотереи!
-Сегодня примерно каждые полчаса будет запускаться лотерея, в которой вы можете принять участие!
-Забирайте большие выигрыши очков social rating!
-Вы можете выиграть до 7500 рейтинга за одну лотерею!
-Команда '!help lottery' для подробной информации...";
-            await _discord.SendMessageAsync(channel, changeLog);
-        }
-
         private async void ReactToAppeal(DiscordChannel channel)
         {
             var pool = new[]
@@ -573,7 +577,7 @@ namespace AntiClownBot
             await channel.SendMessageAsync(pool[Randomizer.GetRandomNumberBetween(0, pool.Length)]);
         }
 
-        private void CheckStats(string message = "default zalupa")
+        private void CheckEmojiInMessage(string message)
         {
             const string pattern = "<a?:(\\S+?):\\d+>";
             var regex = new Regex(pattern);
