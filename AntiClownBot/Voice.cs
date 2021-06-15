@@ -95,7 +95,7 @@ namespace AntiClownBot
                     }
                     else
                     {
-                        NLogWrapper.GetDefaultLogger().Info($"Ливаю нахуй");
+                        NLogWrapper.GetDefaultLogger().Info($"Ливну через минуту");
                         Disconnect();
                     }
                 }
@@ -128,8 +128,10 @@ namespace AntiClownBot
 
             if (vnc.IsPlaying)
             {
+                NLogWrapper.GetDefaultLogger().Info($"Бля, чёт играет, ливать не буду");
                 return;
             }
+            NLogWrapper.GetDefaultLogger().Info($"Ливаю");
             vnc.Disconnect();
         }
     }
