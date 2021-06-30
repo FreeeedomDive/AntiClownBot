@@ -7,7 +7,6 @@ namespace AntiClownBot.Events.ShopEvent
 {
     public class ShopEvent : BaseEvent
     {
-        public override int EventCooldown => 41 * 60 * 1000;
         public override void ExecuteAsync()
         {
             var thread = new Thread(Run)
@@ -21,7 +20,6 @@ namespace AntiClownBot.Events.ShopEvent
         {
             if (Config.Market != null)
                 return;
-            Config.EventPossibleTimes["shop"] = DateTime.Now.AddMilliseconds(EventCooldown);
             Config.Market = new Models.Shop.Shop();
             var text = BackStory();
             var message = await DiscordClient

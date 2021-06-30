@@ -13,13 +13,11 @@ namespace AntiClownBot.Events
         public Queue<BaseEvent> NextEvents;
 
         private readonly List<BaseEvent> _allEvents;
-        public static DateTime NextEventPossibleTime;
 
         public EventHandler(DiscordClient client)
         {
             BaseEvent.SetDiscordClient(client);
             NextEvents = new Queue<BaseEvent>();
-            NextEventPossibleTime = DateTime.Now;
             _allEvents = new List<BaseEvent>
             {
                 new CloseTributesEvent(),
@@ -35,7 +33,6 @@ namespace AntiClownBot.Events
 
         public void Start()
         {
-            NextEventPossibleTime = DateTime.Now;
             var thread = new Thread(HandleNextEvent)
             {
                 IsBackground = true
@@ -58,11 +55,6 @@ namespace AntiClownBot.Events
                 AddLog(
                     $"Следующий эвент в {Utility.NormalizeTime(nextEventTime)}, через {Utility.GetTimeDiff(nextEventTime)}");
                 await Task.Delay(sleepTime);
-                while (NextEventPossibleTime > DateTime.Now)
-                {
-                    NLogWrapper.GetDefaultLogger().Info("Ожидание кулдауна эвента");
-                    await Task.Delay((int)(NextEventPossibleTime - DateTime.Now).TotalMilliseconds);
-                }
                 if (NextEvents.Count == 0)
                 {
                     NextEvents.Enqueue(firstLaunch ? new MaliMaliEvent.MaliMaliEvent() : _allEvents.SelectRandomItem());

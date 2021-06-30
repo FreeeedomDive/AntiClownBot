@@ -9,7 +9,6 @@ namespace AntiClownBot.Events.MuteEveryoneEvent
 {
     public class MuteEveryoneEvent : BaseEvent
     {
-        public override int EventCooldown => 2* 60 *1000;
         public override async void ExecuteAsync()
         {
             var text = BackStory();

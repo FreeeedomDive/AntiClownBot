@@ -95,17 +95,6 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
             {
                 return "Такого ивента нет";
             }
-
-            if (Config.EventPossibleTimes[eventName] > DateTime.Now)
-            {
-                return "Кулдаун для этого ивента не прошёл";
-            }
-            var tempTime = DateTime.Now.AddMilliseconds(eventToHandle.EventCooldown);
-            if (tempTime > EventHandler.NextEventPossibleTime)
-            {
-                EventHandler.NextEventPossibleTime = tempTime;
-            }
-
             var thread = new Thread(_ =>
             {
                 eventToHandle.ExecuteAsync();

@@ -5,7 +5,6 @@ namespace AntiClownBot.Events.RaceEvent
 {
     public class RaceEvent: BaseEvent
     {
-        public override int EventCooldown => 0;
 
         public override async void ExecuteAsync()
         {

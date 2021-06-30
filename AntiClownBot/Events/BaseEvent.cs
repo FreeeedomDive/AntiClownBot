@@ -10,7 +10,6 @@ namespace AntiClownBot.Events
         protected readonly Configuration Config;
         protected static DiscordClient DiscordClient;
         public List<BaseEvent> RelatedEvents;
-        public abstract int EventCooldown { get; }
 
         protected BaseEvent()
         {

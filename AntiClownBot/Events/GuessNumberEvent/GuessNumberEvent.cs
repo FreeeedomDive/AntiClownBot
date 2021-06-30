@@ -6,12 +6,10 @@ namespace AntiClownBot.Events.GuessNumberEvent
 {
     public class GuessNumberEvent : BaseEvent
     {
-        public override int EventCooldown => 12 * 60 * 1000;
         public override async void ExecuteAsync()
         {
             if (Config.CurrentGuessNumberGame != null)
                 return;
-            Config.EventPossibleTimes["guessnumber"] = DateTime.Now.AddMilliseconds(EventCooldown);
             var text = BackStory();
             var message = await DiscordClient
                 .Guilds[277096298761551872]

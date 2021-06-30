@@ -25,7 +25,6 @@ namespace AntiClownBot
         public Dictionary<string, int> EmojiStatistics;
         public Dictionary<string, int> PidorStatistics;
         public Dictionary<ulong, SocialRatingUser> Users;
-        public Dictionary<string, DateTime> EventPossibleTimes;
 
         public DateTime TodayDate;
         public Dictionary<string, int> PidorOfTheDay;
@@ -113,20 +112,6 @@ namespace AntiClownBot
                 return _instance;
             }
             _instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
-            _instance.EventPossibleTimes = new Dictionary<string, DateTime>
-            {
-                {"closetributes", DateTime.Now},
-                {"dailystats", DateTime.Now},
-                {"guessnumber", DateTime.Now},
-                {"lottery", DateTime.Now},
-                {"malimali", DateTime.Now},
-                {"opentributes", DateTime.Now},
-                {"payouts", DateTime.Now},
-                {"removecooldown", DateTime.Now},
-                {"shop", DateTime.Now},
-                {"transfusion", DateTime.Now},
-                {"race", DateTime.Now}
-            };
             foreach (var user in _instance.Users.Values)
             {
                 user.Stats = new UserStats();
