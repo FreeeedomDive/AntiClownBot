@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using DSharpPlus;
+using DSharpPlus.Entities;
 
 namespace AntiClownBot.Events
 {
@@ -25,17 +27,9 @@ namespace AntiClownBot.Events
 
         protected abstract string BackStory();
 
-        protected void TellBackStory()
+        protected async Task<DiscordMessage> TellBackStory()
         {
-            SendMessageToChannel(BackStory());
-        }
-
-        protected async void SendMessageToChannel(string content)
-        {
-            await DiscordClient
-                .Guilds[277096298761551872]
-                .GetChannel(838477706643374090)
-                .SendMessageAsync(content); 
+            return await Utility.SendMessageToBotChannel(BackStory());
         }
 
         public bool HasRelatedEvents() => RelatedEvents.Count != 0;

@@ -12,6 +12,7 @@ using AntiClownBot.Events.DailyEvents;
 using AntiClownBot.Events.GuessNumberEvent;
 using AntiClownBot.Events.LotteryEvent;
 using AntiClownBot.Events.MaliMaliEvent;
+using AntiClownBot.Events.RaceEvent;
 using AntiClownBot.Events.RemoveCooldownEvent;
 using AntiClownBot.Events.ShopEvent;
 using AntiClownBot.Events.TransfusionEvent;
@@ -36,7 +37,8 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
             new PayoutsDailyEvent(),
             new RemoveCooldownEvent(),
             new ShopEvent(),
-            new TransfusionEvent()
+            new TransfusionEvent(),
+            new RaceEvent()
         };
         public RunEvent(DiscordClient client, Configuration configuration)
         {
@@ -80,6 +82,9 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
                     break;
                 case "transfusion":
                     eventToHandle = _events[9];
+                    break;
+                case "race":
+                    eventToHandle = _events[10];
                     break;
                 default:
                     eventToHandle = null;

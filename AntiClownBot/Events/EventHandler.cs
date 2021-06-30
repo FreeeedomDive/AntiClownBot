@@ -28,7 +28,8 @@ namespace AntiClownBot.Events
                 new LotteryEvent.LotteryEvent(),
                 new ShopEvent.ShopEvent(),
                 new GuessNumberEvent.GuessNumberEvent(),
-                new MaliMaliEvent.MaliMaliEvent()
+                new MaliMaliEvent.MaliMaliEvent(),
+                new RaceEvent.RaceEvent()
             };
         }
 

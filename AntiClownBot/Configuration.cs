@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using AntiClownBot.Models.BlackJack;
 using AntiClownBot.Models.Lottery;
 using DSharpPlus.Entities;
@@ -14,6 +15,7 @@ using AntiClownBot.Models.Shop;
 using AntiClownBot.Models.DailyStatistics;
 using AntiClownBot.Models.GuessNumber;
 using AntiClownBot.Models.Lohotron;
+using AntiClownBot.Models.Race;
 using AntiClownBot.Models.User.Stats;
 
 namespace AntiClownBot
@@ -45,6 +47,8 @@ namespace AntiClownBot
         public BlackJack CurrentBlackJack = new BlackJack();
         public Lottery CurrentLottery;
         [JsonIgnore] 
+        public RaceModel CurrentRace;
+        [JsonIgnore] 
         public GuessNumberGame CurrentGuessNumberGame;
 
         public bool AreTributesOpen = true;
@@ -52,6 +56,18 @@ namespace AntiClownBot
         private const string FileName = "config.json";
 
         private static Configuration _instance = null;
+
+        public async Task<SocialRatingUser> GetUser(ulong id)
+        {
+            if (Users.ContainsKey(id)) return Users[id];
+            var client = Utility.Client;
+            var member = await client.Guilds[Constants.GuildId].GetMemberAsync(id);
+            var user = new SocialRatingUser(id, member.Username);
+            Users.Add(id, user);
+            Save();
+
+            return user;
+        }
 
         private static Configuration GetNewConfiguration()
         {
@@ -108,7 +124,8 @@ namespace AntiClownBot
                 {"payouts", DateTime.Now},
                 {"removecooldown", DateTime.Now},
                 {"shop", DateTime.Now},
-                {"transfusion", DateTime.Now}
+                {"transfusion", DateTime.Now},
+                {"race", DateTime.Now}
             };
             foreach (var user in _instance.Users.Values)
             {

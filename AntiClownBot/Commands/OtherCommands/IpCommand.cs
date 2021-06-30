@@ -23,7 +23,7 @@ namespace AntiClownBot.Commands.OtherCommands
             using var tcpClient = new TcpClient();
             try
             {
-                var ip = File.ReadAllText("C:\\Minecraft\\Server 1.16 Clear\\server.txt");
+                var ip = await File.ReadAllTextAsync("C:\\Minecraft\\Server 1.17 Clear\\server.txt");
                 tcpClient.SendTimeout = 1000;
                 tcpClient.ReceiveTimeout = 1000;
                 await tcpClient.ConnectAsync("localhost", 25565);

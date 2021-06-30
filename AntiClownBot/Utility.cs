@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using AntiClownBot.Models.BlackJack;
 using DSharpPlus;
 using DSharpPlus.Entities;
@@ -14,7 +15,8 @@ namespace AntiClownBot
     {
         public static DiscordClient Client;
 
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) => items.OrderBy(_ => Randomizer.GetRandomNumberBetween(0, 1000000));
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items) =>
+            items.OrderBy(_ => Randomizer.GetRandomNumberBetween(0, 1000000));
 
         public static T SelectRandomItem<T>(this IEnumerable<T> items)
         {
@@ -33,9 +35,18 @@ namespace AntiClownBot
             return newQueue;
         }
 
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, Action<T> function)
+        {
+            foreach (var item in items)
+            {
+                function(item);
+                yield return item;
+            }
+        }
+
         public static string Repeat(this string s, int count) => string.Concat(Enumerable.Repeat(s, count));
 
-        public static string KeyValuePairToString<T1,T2>(KeyValuePair<T1,T2> pair)
+        public static string KeyValuePairToString<T1, T2>(KeyValuePair<T1, T2> pair)
         {
             var (key, value) = pair;
             return $"{key} : {value}";
@@ -68,6 +79,21 @@ namespace AntiClownBot
         public static string NormalizeTime(DateTime dateTime)
         {
             return $"{Normalize(dateTime.Hour)}:{Normalize(dateTime.Minute)}:{Normalize(dateTime.Second)}";
+        }
+
+        public static string NormalizeTime(int totalTime)
+        {
+            var ms = AddLeadingZeros(3, totalTime % 1000);
+            totalTime /= 1000;
+            var sec = AddLeadingZeros(2, totalTime % 60);
+            totalTime /= 60;
+            return $"{totalTime}:{sec}.{ms}";
+        }
+
+        public static string AddLeadingZeros(int totalNumbers, int time)
+        {
+            var leadingZerosCount = totalNumbers - time.ToString().Length;
+            return $"{"0".Repeat(leadingZerosCount)}{time}";
         }
 
         private static string Normalize(int number)
@@ -110,6 +136,14 @@ namespace AntiClownBot
             }
 
             return result;
+        }
+
+        public static async Task<DiscordMessage> SendMessageToBotChannel(string content)
+        {
+            return await Client
+                .Guilds[Constants.GuildId]
+                .GetChannel(Constants.BotChannelId)
+                .SendMessageAsync(content);
         }
     }
 }

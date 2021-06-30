@@ -7,7 +7,7 @@ namespace AntiClownBot.Events.TransfusionEvent
     {
         public override int EventCooldown => 1000;
 
-        public override void ExecuteAsync()
+        public override async void ExecuteAsync()
         {
             Config.EventPossibleTimes["transfusion"] = DateTime.Now.AddMilliseconds(EventCooldown);
             SocialRatingUser theRichestUser = null;
@@ -28,7 +28,7 @@ namespace AntiClownBot.Events.TransfusionEvent
                 exchangeUser = Config.Users.Values.SelectRandomItem();
             }
             
-            SendMessageToChannel("Я решил выделить немного кредитов рандомному челу, " +
+            await Utility.SendMessageToBotChannel("Я решил выделить немного кредитов рандомному челу, " +
                                  "но свой бюджет я тратить не буду, возьму из кармана самого богатого " +
                                  $"{Utility.StringEmoji(":MEGALUL:")} {Utility.StringEmoji(":point_right:")} {theRichestUser?.DiscordUsername}. " +
                                  $"Отдай {exchangeUser.DiscordUsername} {exchange} social credits");

@@ -21,7 +21,8 @@ namespace AntiClownBot.SpecialChannels.Dev
                 new ConnectToChannel(client, configuration),
                 new Disconnect(client, configuration),
                 new MessageCommand(client, configuration),
-                new PlayMusicInDirectory(client, configuration)
+                new PlayMusicInDirectory(client, configuration),
+                new GiveRating(client, configuration)
             }.ToDictionary(x => x.Name);
         }
         public override string Help(MessageCreateEventArgs e)

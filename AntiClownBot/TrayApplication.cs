@@ -86,7 +86,7 @@ namespace AntiClownBot
                 if (e.EmojisAfter.Count > e.EmojisBefore.Count)
                 {
                     var messageBuilder =
-                        new StringBuilder($"Смотрите, че админ высрал {Utility.Emoji(":point_right:")}");
+                        new StringBuilder($"{Utility.Emoji(":pepeLaugh:")} {Utility.Emoji(":point_right:")}");
                     foreach (var (key, emoji) in e.EmojisAfter)
                     {
                         if (!e.EmojisBefore.ContainsKey(key))
@@ -95,6 +95,26 @@ namespace AntiClownBot
                         }
                     }
 
+                    await Utility.Client
+                        .Guilds[277096298761551872]
+                        .GetChannel(838477706643374090)
+                        .SendMessageAsync(messageBuilder.ToString());
+                    return;
+                }
+                
+                if (e.EmojisBefore.Count > e.EmojisAfter.Count)
+                {
+                    var messageBuilder = new StringBuilder();
+                    foreach (var (key, emoji) in e.EmojisBefore)
+                    {
+                        if (!e.EmojisAfter.ContainsKey(key))
+                        {
+                            messageBuilder.Append($"{emoji} ");
+                        }
+                    }
+
+                    messageBuilder.Append($"удалили {Utility.Emoji(":BibleThump:")}");
+                    
                     await Utility.Client
                         .Guilds[277096298761551872]
                         .GetChannel(838477706643374090)
@@ -110,16 +130,7 @@ namespace AntiClownBot
 
                 AddLog($"{e.Author.Username}: {message}");
 
-                SocialRatingUser user;
-                if (_config.Users.ContainsKey(e.Author.Id))
-                    user = _config.Users[e.Author.Id];
-                else
-                {
-                    user = new SocialRatingUser(e.Author.Id, e.Author.Username);
-                    _config.Users.Add(e.Author.Id, user);
-                    _config.Save();
-                }
-
+                var user = await _config.GetUser(e.Author.Id);
 
                 if (message.StartsWith("!"))
                 {
@@ -372,15 +383,7 @@ namespace AntiClownBot
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
 
-                SocialRatingUser user;
-                if (_config.Users.ContainsKey(e.User.Id))
-                    user = _config.Users[e.User.Id];
-                else
-                {
-                    user = new SocialRatingUser(e.User.Id, e.User.Username);
-                    _config.Users.Add(e.User.Id, user);
-                    _config.Save();
-                }
+                var user = await _config.GetUser(e.User.Id);
 
                 if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
                 {
@@ -397,6 +400,11 @@ namespace AntiClownBot
                     && !_config.CurrentLottery.Participants.Contains(e.User.Id))
                 {
                     _config.CurrentLottery.Join(user);
+                }
+
+                if (emojiName == "monkaSTEER" && _config.CurrentRace is not null && _config.CurrentRace.JoinableMessageId == e.Message.Id)
+                {
+                    _config.CurrentRace.JoinRace(e.User.Id);
                 }
 
                 if (_config.Market != null && _config.Market.ShopBuyMessageId == e.Message.Id)
@@ -426,7 +434,7 @@ namespace AntiClownBot
                     }
 
                     if (marketResult.Status == Shop.TransactionStatus.Success)
-                        await e.Message.RespondAsync(marketResult.Result);
+                        await e.Message.Channel.SendMessageAsync(marketResult.Result);
                 }
 
                 if (_config.Market != null && _config.Market.ShopSellMessageId == e.Message.Id)

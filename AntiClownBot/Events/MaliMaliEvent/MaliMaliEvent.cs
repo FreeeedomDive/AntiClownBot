@@ -20,11 +20,11 @@ namespace AntiClownBot.Events.MaliMaliEvent
                 .Where(ch => ch.Type == ChannelType.Voice && ch.Users.ToList().Count > 1).ToList();
             if (channels.Count == 0)
             {
-                SendMessageToChannel($"Никто не пришел на MALI-MALI-фанвстречу {Utility.StringEmoji(":BibleThump:")}");
+                await Utility.SendMessageToBotChannel($"Никто не пришел на MALI-MALI-фанвстречу {Utility.StringEmoji(":BibleThump:")}");
                 return;
             }
 
-            TellBackStory();
+            await TellBackStory();
 
             var channel = channels.SelectRandomItem();
             if (!Voice.TryConnect(channel, out var vnc))
