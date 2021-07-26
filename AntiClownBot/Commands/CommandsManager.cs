@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AntiClownBot.Commands.F1;
+using AntiClownBot.Commands.Gaming;
 using AntiClownBot.Commands.Lottery;
 using AntiClownBot.Commands.OtherCommands;
 using AntiClownBot.Commands.RandomSelectCommands;
@@ -24,7 +25,6 @@ namespace AntiClownBot.Commands
             RegisterCommand("!rating", new RatingCommand(client, config));
             RegisterCommand("!when", new WhenCommand(client, config));
             
-            RegisterCommand("!mystats", new UserStatsCommand(client, config));
             RegisterCommand("!stats", new EmojiStatsCommand(client, config));
             RegisterCommand("!pidor", new PidorStatsCommand(client, config));
 
@@ -41,6 +41,8 @@ namespace AntiClownBot.Commands
 
             RegisterCommand("!lohotron", new LohotronCommand(client, config));
             RegisterCommand("!use", new UseCommand(client, config));
+            
+            RegisterCommand("!party", new BaseGamingCommand(client, config));
         }
 
         private void RegisterCommand(string name, BaseCommand baseCommand)

@@ -28,7 +28,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
                 return "Такого файла нет, чел";
             }
             
-            var extensions = new List<string> {".mp3", ".flac"};
+            var extensions = new List<string> {".mp3", ".flac", ".mp4"};
             var files = Directory
                 .GetFiles(directory, "*.*", SearchOption.AllDirectories)
                 .Where(f => extensions.IndexOf(Path.GetExtension(f)) >= 0)

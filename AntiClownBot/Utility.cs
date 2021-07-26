@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AntiClownBot.Models.BlackJack;
+using AntiClownBot.Models.User.Inventory.Items;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.VoiceNext;
@@ -34,12 +35,22 @@ namespace AntiClownBot
 
             return newQueue;
         }
-
+        
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, Action<T> function)
         {
             foreach (var item in items)
             {
                 function(item);
+                yield return item;
+            }
+        }
+
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, Action<T, int> function)
+        {
+            var i = 0;
+            foreach (var item in items)
+            {
+                function(item, i++);
                 yield return item;
             }
         }
@@ -144,6 +155,35 @@ namespace AntiClownBot
                 .Guilds[Constants.GuildId]
                 .GetChannel(Constants.BotChannelId)
                 .SendMessageAsync(content);
+        }
+
+        public static List<SocialRatingUser> GetCommunists() =>
+            Configuration
+                .GetConfiguration()
+                .Users
+                .Values
+                .Where(user => user.Items[new CommunismPoster()] > 0)
+                .ToList();
+
+        public static Dictionary<SocialRatingUser, int> GetCommunistsDictionary() =>
+            GetCommunists()
+                .ToDictionary(
+                    user => user,
+                    user => user.Items[new CommunismPoster()]
+                );
+
+        public static List<SocialRatingUser> GetDistributedCommunists()
+        {
+            var result = new List<SocialRatingUser>();
+            foreach (var (user, count) in GetCommunistsDictionary())
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    result.Add(user);
+                }
+            }
+
+            return result;
         }
     }
 }

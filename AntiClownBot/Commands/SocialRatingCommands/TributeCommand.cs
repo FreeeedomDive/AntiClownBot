@@ -24,12 +24,18 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
         private async void Tribute(MessageCreateEventArgs e, SocialRatingUser user, bool isAutomatic)
         {
+            var messageEmbedBuilder = new DiscordEmbedBuilder();
+            messageEmbedBuilder.WithTitle(isAutomatic
+                ? $"Автоматическое подношение для {user.DiscordUsername}"
+                : "Подношение");
+
             if (!Config.AreTributesOpen)
             {
-                var message = isAutomatic
-                    ? "Даже автоматические подношения от кошки-жены не принимаю, отъебитесь"
-                    : "Я занят, отъебись";
-                await e.Message.RespondAsync(message);
+                messageEmbedBuilder.WithColor(DiscordColor.Red);
+                messageEmbedBuilder.AddField($"Я ЗАНЯТ!!! {Utility.Emoji(":NOPERS:")}", isAutomatic
+                    ? "Приводи свою кошку-жену позже, а щас отъебись"
+                    : "Отъебись");
+                await e.Message.RespondAsync(messageEmbedBuilder.Build());
                 return;
             }
 
@@ -37,13 +43,17 @@ namespace AntiClownBot.Commands.SocialRatingCommands
             {
                 if (isAutomatic)
                 {
-                    await e.Message.RespondAsync(
+                    messageEmbedBuilder.WithColor(DiscordColor.Red);
+                    messageEmbedBuilder.AddField(Utility.StringEmoji(":NOPERS:"),
                         "Ты успеть принести подношение до твой кошачья жена, подношение от кошки не учитываться");
+                    await e.Message.RespondAsync(messageEmbedBuilder.Build());
                     return;
                 }
 
-                await e.Message.RespondAsync(
+                messageEmbedBuilder.WithColor(DiscordColor.Red);
+                messageEmbedBuilder.AddField(Utility.StringEmoji(":NOPERS:"),
                     $"Не злоупотребляй подношение император XI {Utility.StringEmoji(":PepegaGun:")}");
+                await e.Message.RespondAsync(messageEmbedBuilder.Build());
                 user.ChangeRating(-15);
                 return;
             }
@@ -55,46 +65,59 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 user.Stats.TributeLowerExtendBorder,
                 Constants.MaxTributeValue +
                 user.Stats.TributeUpperExtendBorder);
-            var response = isAutomatic ? $"Автоматическое подношение для {user.DiscordUsername}\n" : "";
             var communism = Randomizer.GetRandomNumberBetween(0, 100) < user.Stats.TributeSplitChance;
 
             var sharedUser = user;
             if (communism)
             {
-                response += $"Произошел коммунизм {Utility.StringEmoji(":Pepega:")}\n";
-                sharedUser = Config.Users.Values.Where(u => u.Items[new CommunismPoster()] != 0 && u.DiscordId != user.DiscordId).SelectRandomItem();
-                response += $"Разделение подношения с {sharedUser.DiscordUsername}\n";
+                sharedUser = Utility
+                    .GetDistributedCommunists()
+                    .Where(u => u.DiscordId != user.DiscordId)
+                    .SelectRandomItem();
+                messageEmbedBuilder.AddField($"Произошел коммунизм {Utility.StringEmoji(":cykaPls:")}",
+                    $"Разделение подношения с {sharedUser.DiscordUsername}");
                 tributeQuality /= 2;
             }
 
-            if (tributeQuality > 0)
+            switch (tributeQuality)
             {
-                response += $"Партия гордится вами!!!\n+{tributeQuality} social credit";
-            }
-            else if (tributeQuality < 0)
-            {
-                response += $"Ну и ну! Вы разочаровать партию!\n-{-tributeQuality} social credit";
-            }
-            else
-            {
-                response += "Партия не оценить ваших усилий";
+                case > 0:
+                    messageEmbedBuilder.WithColor(DiscordColor.Green);
+                    messageEmbedBuilder.AddField($"+{tributeQuality} social credit", 
+                        "Партия гордится вами!!!");
+                    break;
+                case < 0:
+                    messageEmbedBuilder.WithColor(DiscordColor.Red);
+                    messageEmbedBuilder.AddField($"-{-tributeQuality} social credit", 
+                        "Ну и ну! Вы разочаровать партию!");
+                    break;
+                default:
+                    messageEmbedBuilder.WithColor(DiscordColor.White);
+                    messageEmbedBuilder.AddField("Партия не оценить ваших усилий",
+                        $"{Utility.StringEmoji(":Starege:")} {Utility.StringEmoji(":Starege:")} {Utility.StringEmoji(":Starege:")}");
+                    break;
             }
 
             if (gigabyteWorked != 0 || jadeRodWorked != 0)
             {
-                response += "\nНа изменение кулдауна повлияли: ";
-                response += gigabyteWorked > 0 ? $"гигабайт интернет x{gigabyteWorked} " : "";
-                response += gigabyteWorked > 0 && jadeRodWorked > 0 ? " и " : "";
-                response += jadeRodWorked > 0 ? $"нефритовый стержень x{jadeRodWorked}" : "";
+                var changeString = "";
+                changeString += gigabyteWorked > 0 ? $"гигабайт интернет x{gigabyteWorked}" : "";
+                changeString += gigabyteWorked > 0 && jadeRodWorked > 0 ? " и " : "";
+                changeString += jadeRodWorked > 0 ? $"нефритовый стержень x{jadeRodWorked}" : "";
+                messageEmbedBuilder.AddField("Изменение кулдауна", changeString);
             }
+
             var isNextTributeAutomatic = Randomizer.GetRandomNumberBetween(0, 100) < user.Stats.TributeAutoChance;
             if (isNextTributeAutomatic)
-                response +=
-                    $"\nКошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}";
+            {
+                messageEmbedBuilder.AddField(
+                    $"{Utility.StringEmoji(":RainbowPls:")} Кошка-жена {Utility.StringEmoji(":RainbowPls:")}",
+                    $"Кошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}");
+            }
 
-            await e.Message.RespondAsync(response);
+            await e.Message.RespondAsync(messageEmbedBuilder.Build());
             user.ChangeRating(tributeQuality);
-            if(communism)
+            if (communism)
             {
                 sharedUser.ChangeRating(tributeQuality);
             }

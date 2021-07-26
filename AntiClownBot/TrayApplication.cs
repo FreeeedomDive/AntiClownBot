@@ -22,7 +22,7 @@ namespace AntiClownBot
     public class TrayApplication
     {
         private static readonly Logger Logger = NLogWrapper.GetDefaultLogger();
-        
+
         private DiscordClient _discord;
         private readonly Configuration _config;
         private CommandsManager _commandsManager;
@@ -57,30 +57,30 @@ namespace AntiClownBot
             _discord.UseVoiceNext();
             Voice.VoiceExtension = _discord.GetVoiceNext();
 
-            _discord.VoiceStateUpdated += async (_, e) =>
+            _discord.VoiceStateUpdated += (_, e) =>
             {
-                if (e.User.IsBot) return;
-                if (e.Channel == null) return;
-                if (e.Channel.Users.Count() == 1)
+                if (e.User.IsBot) return Task.CompletedTask;
+                if (e.Channel == null) return Task.CompletedTask;
+                if (e.Channel.Users.Count() != 1) return Task.CompletedTask;
+                
+                AddLog("someone is alone");
+                new Thread(async () =>
                 {
-                    AddLog("someone is alone");
-                    new Thread(async () =>
+                    await Task.Delay(5 * 60 * 1000);
+                    var chlen = await _discord.Guilds[277096298761551872].GetMemberAsync(e.User.Id);
+                    if (chlen.VoiceState.Channel != null && chlen.VoiceState.Channel.Users.ToList().Count == 1)
                     {
-                        await Task.Delay(5 * 60 * 1000);
-                        var chlen = await _discord.Guilds[277096298761551872].GetMemberAsync(e.User.Id);
-                        var channel = await _discord.GetChannelAsync(e.Channel.Id);
-                        if (chlen.VoiceState.Channel != null && chlen.VoiceState.Channel.Users.ToList().Count == 1)
+                        await chlen.ModifyAsync(async model =>
                         {
-                            await chlen.ModifyAsync(async model =>
-                            {
-                                var result = await _discord.GetChannelAsync(689120451984621605);
-                                model.VoiceChannel = result;
-                            });
-                        }
-                    }).Start();
-                }
+                            var result = await _discord.GetChannelAsync(689120451984621605);
+                            model.VoiceChannel = result;
+                        });
+                    }
+                }).Start();
+
+                return Task.CompletedTask;
             };
-            
+
             _discord.GuildEmojisUpdated += async (_, e) =>
             {
                 if (e.EmojisAfter.Count > e.EmojisBefore.Count)
@@ -101,7 +101,7 @@ namespace AntiClownBot
                         .SendMessageAsync(messageBuilder.ToString());
                     return;
                 }
-                
+
                 if (e.EmojisBefore.Count > e.EmojisAfter.Count)
                 {
                     var messageBuilder = new StringBuilder();
@@ -114,14 +114,14 @@ namespace AntiClownBot
                     }
 
                     messageBuilder.Append($"удалили {Utility.Emoji(":BibleThump:")}");
-                    
+
                     await Utility.Client
                         .Guilds[277096298761551872]
                         .GetChannel(838477706643374090)
                         .SendMessageAsync(messageBuilder.ToString());
                 }
             };
-            
+
             _discord.MessageCreated += async (_, e) =>
             {
                 if (e.Author.IsBot) return;
@@ -162,7 +162,7 @@ namespace AntiClownBot
                     await e.Message.CreateReactionAsync(emotes[index]);
                 }
 
-                if (message.Length > 0 && message[message.Length - 1] == '?')
+                if (message.Length > 0 && message[^1] == '?')
                 {
                     if (message.Contains("когда"))
                     {
@@ -385,26 +385,45 @@ namespace AntiClownBot
 
                 var user = await _config.GetUser(e.User.Id);
 
-                if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
+                switch (emojiName)
                 {
-                    var member = await e.Guild.GetMemberAsync(e.User.Id);
-                    var role = e.Guild.GetRole(838794615334633502);
-                    await member.GrantRoleAsync(role);
-                    return;
-                }
+                    case "YEP":
+                    {
+                        var isPartyExists = _config.OpenParties.TryGetValue(e.Message.Id, out var party);
+                        if (isPartyExists)
+                        {
+                            party.JoinParty(e.User.Id);
+                        }
 
-                if (emojiName == "NOTED"
-                    && _config.CurrentLottery != null
-                    && _config.CurrentLottery.LotteryMessageId == e.Message.Id
-                    && _config.CurrentLottery.IsJoinable
-                    && !_config.CurrentLottery.Participants.Contains(e.User.Id))
-                {
-                    _config.CurrentLottery.Join(user);
-                }
+                        break;
+                    }
+                    case "MEGALUL":
+                    {
+                        var isPartyExists = _config.OpenParties.TryGetValue(e.Message.Id, out var party);
+                        if (isPartyExists)
+                        {
+                            party.Destroy(e.User.Id);
+                        }
 
-                if (emojiName == "monkaSTEER" && _config.CurrentRace is not null && _config.CurrentRace.JoinableMessageId == e.Message.Id)
-                {
-                    _config.CurrentRace.JoinRace(e.User.Id);
+                        break;
+                    }
+                    case "PogOff" when e.Message.Id == 838796516696391720:
+                    {
+                        var member = await e.Guild.GetMemberAsync(e.User.Id);
+                        var role = e.Guild.GetRole(838794615334633502);
+                        await member.GrantRoleAsync(role);
+                        return;
+                    }
+                    case "NOTED" when _config.CurrentLottery != null &&
+                                      _config.CurrentLottery.LotteryMessageId == e.Message.Id &&
+                                      _config.CurrentLottery.IsJoinable &&
+                                      !_config.CurrentLottery.Participants.Contains(e.User.Id):
+                        _config.CurrentLottery.Join(user);
+                        break;
+                    case "monkaSTEER" when _config.CurrentRace is not null &&
+                                           _config.CurrentRace.JoinableMessageId == e.Message.Id:
+                        _config.CurrentRace.JoinRace(e.User.Id);
+                        break;
                 }
 
                 if (_config.Market != null && _config.Market.ShopBuyMessageId == e.Message.Id)
@@ -506,8 +525,7 @@ namespace AntiClownBot
 
                 _config.AddEmoji(emojiName);
 
-                if ((emojiName == "peepoClown" || emojiName == "roflanClownbalo" ||
-                     emojiName == "clownChamp") && e.User.Id == 423498706336088085)
+                if ((emojiName is "peepoClown" or "roflanClownbalo" or "clownChamp") && e.User.Id == 423498706336088085)
                 {
                     AddLog("Removed clown");
                     await e.Message.DeleteReactionAsync(emoji, e.User);
@@ -531,17 +549,36 @@ namespace AntiClownBot
                 _lastReactionEmote = emojiName;
             };
 
+            _discord.MessageDeleted += (_, e) =>
+            {
+                _config.DeleteObserver(e.Message);
+                return Task.CompletedTask;
+            };
+
             _discord.MessageReactionRemoved += async (_, e) =>
             {
                 var emoji = e.Emoji;
                 var emojiName = emoji.Name;
 
-                if (emojiName == "PogOff" && e.Message.Id == 838796516696391720)
+                switch (emojiName)
                 {
-                    var member = await e.Guild.GetMemberAsync(e.User.Id);
-                    var role = e.Guild.GetRole(838794615334633502);
-                    await member.RevokeRoleAsync(role);
-                    return;
+                    case "YEP":
+                    {
+                        var isPartyExists = _config.OpenParties.TryGetValue(e.Message.Id, out var party);
+                        if (isPartyExists)
+                        {
+                            party.LeaveParty(e.User.Id);
+                        }
+
+                        break;
+                    }
+                    case "PogOff" when e.Message.Id == 838796516696391720:
+                    {
+                        var member = await e.Guild.GetMemberAsync(e.User.Id);
+                        var role = e.Guild.GetRole(838794615334633502);
+                        await member.RevokeRoleAsync(role);
+                        return;
+                    }
                 }
 
                 var username = "unknown";

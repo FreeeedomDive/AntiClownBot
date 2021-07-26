@@ -13,10 +13,12 @@ using Newtonsoft.Json;
 using Roulette;
 using AntiClownBot.Models.Shop;
 using AntiClownBot.Models.DailyStatistics;
+using AntiClownBot.Models.Gaming;
 using AntiClownBot.Models.GuessNumber;
 using AntiClownBot.Models.Lohotron;
 using AntiClownBot.Models.Race;
 using AntiClownBot.Models.User.Stats;
+using DSharpPlus.EventArgs;
 
 namespace AntiClownBot
 {
@@ -34,21 +36,19 @@ namespace AntiClownBot
 
         public int PidorRoulette;
 
-        [JsonIgnore]
-        public RouletteGame Roulette = new RouletteGame();
+        [JsonIgnore] public RouletteGame Roulette = new RouletteGame();
 
-        [JsonIgnore]
-        public Shop Market;
+        [JsonIgnore] public Shop Market;
 
         public Lohotron DailyScamMachine;
         public Gamble CurrentGamble;
-        [JsonIgnore]
-        public BlackJack CurrentBlackJack = new BlackJack();
+        [JsonIgnore] public BlackJack CurrentBlackJack = new BlackJack();
         public Lottery CurrentLottery;
-        [JsonIgnore] 
-        public RaceModel CurrentRace;
-        [JsonIgnore] 
-        public GuessNumberGame CurrentGuessNumberGame;
+        [JsonIgnore] public RaceModel CurrentRace;
+        [JsonIgnore] public GuessNumberGame CurrentGuessNumberGame;
+
+        [JsonIgnore] public Dictionary<ulong, GameParty> OpenParties = new();
+        [JsonIgnore] private List<DiscordMessage> _partyObservers = new();
 
         public bool AreTributesOpen = true;
 
@@ -111,12 +111,14 @@ namespace AntiClownBot
                 _instance.Save();
                 return _instance;
             }
+
             _instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
             foreach (var user in _instance.Users.Values)
             {
                 user.Stats = new UserStats();
                 user.Stats.RecalculateAllStats(user);
             }
+
             _instance.DailyStatistics ??= new DailyStatistics();
             _instance.DailyScamMachine ??= new Lohotron();
             _instance.AreTributesOpen = true;
@@ -138,7 +140,7 @@ namespace AntiClownBot
         {
             var dict = Users
                 .ToDictionary(
-                    pair => pair.Value.DiscordUsername, 
+                    pair => pair.Value.DiscordUsername,
                     pair => pair.Value.NetWorth);
             return GetStatsForDict(dict, key => key);
         }
@@ -244,6 +246,53 @@ namespace AntiClownBot
         {
             AreTributesOpen = true;
             Save();
+        }
+
+        private DiscordEmbed GetPartiesEmbed()
+        {
+            var embedBuilder = new DiscordEmbedBuilder();
+            var partiesLinks = 
+                OpenParties
+                .Values
+                .ToDictionary(p => p,
+                    p =>
+                        @$"https://discord.com/channels/{Constants.GuildId}/{p.Message.ChannelId}/{p.Message.Id}");
+
+            embedBuilder.WithTitle("ТЕКУЩИЕ ПАТИ");
+            if (OpenParties.Count == 0)
+            {
+                embedBuilder.Color = new DSharpPlus.Entities.Optional<DiscordColor>(DiscordColor.DarkRed);
+                embedBuilder.AddField($"{Utility.Emoji(":BibleThump:")}", "Сейчас никто не играет");
+            }
+            else
+            {
+                embedBuilder.Color = new DSharpPlus.Entities.Optional<DiscordColor>(DiscordColor.DarkGreen);
+                // ToList нужен для срабатывания ленивого foreach, так как без вызова неленивого метода коллекция не будет пройдена в цикле
+                _ = partiesLinks.ForEach(
+                    (kv, i) => embedBuilder.AddField(
+                        $"{kv.Key.Description} - {kv.Key.Players.Count} / {kv.Key.MaxPlayersCount} игроков",
+                        @$"[Ссылка]({kv.Value})")).ToList();
+            }
+
+            return embedBuilder.Build();
+        }
+
+        public async void AddPartyObserverMessage(MessageCreateEventArgs e)
+        {
+            var message = await e.Message.RespondAsync(GetPartiesEmbed());
+            _partyObservers.Add(message);
+        }
+
+        public void DeleteObserver(DiscordMessage message)
+        {
+            if (!_partyObservers.Select(observer => observer.Id).ToList().Contains(message.Id)) return;
+            var deletableObserver = _partyObservers.First(observer => observer.Id == message.Id);
+            _partyObservers.Remove(deletableObserver);
+        }
+
+        public void UpdatePartyObservers()
+        {
+            _partyObservers.ForEach(async message => await message.ModifyAsync(GetPartiesEmbed()));
         }
     }
 }

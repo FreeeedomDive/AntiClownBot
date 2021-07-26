@@ -10,7 +10,10 @@ namespace AntiClownBot.Models.User.Inventory.Items
     {
         public override string Name => "Добыча коробка";
         public override int Price => 750;
-        
+        public override string Perks => "Получение случайный предмет";
+
+        public override string ItemStatsForUser(SocialRatingUser user) => $"{user.Items[this]} раз";
+
         public override string Use(SocialRatingUser user)
         {
             var item = user.Items.Keys.SelectRandomItem();

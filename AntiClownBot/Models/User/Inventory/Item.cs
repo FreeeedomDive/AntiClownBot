@@ -10,11 +10,14 @@ namespace AntiClownBot.Models.User.Inventory
     {
         public abstract string Name { get; }
         public abstract int Price { get; }
+        public abstract string Perks { get; }
 
         public virtual string Use(SocialRatingUser user)
         {
             return "Это нельзя использовать";
         }
+
+        public virtual string ItemStatsForUser(SocialRatingUser user) => "Нет статов для этого предмета";
 
         public virtual void OnItemAddOrRemove(SocialRatingUser user)
         {
