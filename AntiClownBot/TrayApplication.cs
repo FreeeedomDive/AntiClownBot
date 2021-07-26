@@ -551,7 +551,7 @@ namespace AntiClownBot
 
             _discord.MessageDeleted += (_, e) =>
             {
-                _config.DeleteObserver(e.Message);
+                _config.DeleteObserverIfExists(e.Message);
                 return Task.CompletedTask;
             };
 

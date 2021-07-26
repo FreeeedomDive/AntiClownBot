@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using AntiClownBot.Models.Gaming;
 using DSharpPlus;
-using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 
 namespace AntiClownBot.Commands.Gaming

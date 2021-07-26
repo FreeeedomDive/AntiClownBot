@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using AntiClownBot.Models.BlackJack;
 using AntiClownBot.Models.Lottery;
 using DSharpPlus.Entities;
-using AntiClownBot.Models.Gamble;
-using Emzi0767;
 using Newtonsoft.Json;
 using Roulette;
 using AntiClownBot.Models.Shop;
@@ -54,7 +52,7 @@ namespace AntiClownBot
 
         private const string FileName = "config.json";
 
-        private static Configuration _instance = null;
+        private static Configuration instance;
 
         public async Task<SocialRatingUser> GetUser(ulong id)
         {
@@ -104,26 +102,26 @@ namespace AntiClownBot
 
         public static Configuration GetConfiguration()
         {
-            if (_instance != null) return _instance;
+            if (instance != null) return instance;
             if (!File.Exists(FileName))
             {
-                _instance = GetNewConfiguration();
-                _instance.Save();
-                return _instance;
+                instance = GetNewConfiguration();
+                instance.Save();
+                return instance;
             }
 
-            _instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
-            foreach (var user in _instance.Users.Values)
+            instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
+            foreach (var user in instance.Users.Values)
             {
                 user.Stats = new UserStats();
                 user.Stats.RecalculateAllStats(user);
             }
 
-            _instance.DailyStatistics ??= new DailyStatistics();
-            _instance.DailyScamMachine ??= new Lohotron();
-            _instance.AreTributesOpen = true;
-            _instance.Save();
-            return _instance;
+            instance.DailyStatistics ??= new DailyStatistics();
+            instance.DailyScamMachine ??= new Lohotron();
+            instance.AreTributesOpen = true;
+            instance.Save();
+            return instance;
         }
 
         public string GetEmojiStats()
@@ -261,15 +259,15 @@ namespace AntiClownBot
             embedBuilder.WithTitle("ТЕКУЩИЕ ПАТИ");
             if (OpenParties.Count == 0)
             {
-                embedBuilder.Color = new DSharpPlus.Entities.Optional<DiscordColor>(DiscordColor.DarkRed);
+                embedBuilder.Color = new Optional<DiscordColor>(DiscordColor.DarkRed);
                 embedBuilder.AddField($"{Utility.Emoji(":BibleThump:")}", "Сейчас никто не играет");
             }
             else
             {
-                embedBuilder.Color = new DSharpPlus.Entities.Optional<DiscordColor>(DiscordColor.DarkGreen);
+                embedBuilder.Color = new Optional<DiscordColor>(DiscordColor.DarkGreen);
                 // ToList нужен для срабатывания ленивого foreach, так как без вызова неленивого метода коллекция не будет пройдена в цикле
                 _ = partiesLinks.ForEach(
-                    (kv, i) => embedBuilder.AddField(
+                    (kv) => embedBuilder.AddField(
                         $"{kv.Key.Description} - {kv.Key.Players.Count} / {kv.Key.MaxPlayersCount} игроков",
                         @$"[Ссылка]({kv.Value})")).ToList();
             }
@@ -283,7 +281,7 @@ namespace AntiClownBot
             _partyObservers.Add(message);
         }
 
-        public void DeleteObserver(DiscordMessage message)
+        public void DeleteObserverIfExists(DiscordMessage message)
         {
             if (!_partyObservers.Select(observer => observer.Id).ToList().Contains(message.Id)) return;
             var deletableObserver = _partyObservers.First(observer => observer.Id == message.Id);
