@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AntiClownBotApi.Models.Classes.Items;
+using AntiClownBotApi.Models.Items;
 
 namespace AntiClownBotApi.Models.ItemBuilders
 {
@@ -9,6 +10,13 @@ namespace AntiClownBotApi.Models.ItemBuilders
         private const int BaseChanceValue = 0;
         private int _autoTributeChance;
 
+        public CatWifeBuilder(Guid id, Rarity rarity, int price)
+        {
+            Id = id;
+            Rarity = rarity;
+            Price = price;
+        }
+        
         private static readonly Dictionary<Rarity, Func<int>> AutoTributeChanceGenerator = new()
         {
             {Rarity.Common, () => BaseChanceValue + Randomizer.GetRandomNumberBetweenIncludeRange(5, 8)},
@@ -18,7 +26,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             {Rarity.BlackMarket, () => BaseChanceValue + Randomizer.GetRandomNumberBetweenIncludeRange(21, 25)}
         };
 
-        public CatWifeBuilder WithAutoTributeChance()
+        public CatWifeBuilder WithRandomAutoTributeChance()
         {
             if (!IsRarityDefined()) throw new ArgumentException("Item rarity is not defined");
 
@@ -36,10 +44,10 @@ namespace AntiClownBotApi.Models.ItemBuilders
 
         public static CatWife CreateNew() =>
             new ItemBuilder()
-                .WithPrice()
-                .WithRarity()
+                .WithRandomRarity()
+                .WithPriceForSelectedRarity()
                 .AsCatWife()
-                .WithAutoTributeChance()
+                .WithRandomAutoTributeChance()
                 .Build();
     }
 }

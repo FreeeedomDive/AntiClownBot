@@ -13,8 +13,9 @@ namespace AntiClownBotApi.Database
         public DbSet<DbUserEmotes> UserEmotes { get; set; }
         public DbSet<DbUserEconomy> UserEconomies { get; set; }
         public DbSet<DbUserStats> UserStats { get; set; }
-        public DbSet<DbUserShop> ShopItems { get; set; }
+        public DbSet<DbShopItem> ShopItems { get; set; }
         public DbSet<DbUserShop> UserShops { get; set; }
+        public DbSet<DbTransaction> Transactions { get; set; }
 
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
@@ -31,7 +32,8 @@ namespace AntiClownBotApi.Database
         {
             modelBuilder.Entity<DbItem>()
                 .HasOne(i => i.User)
-                .WithMany(u => u.Items);
+                .WithMany(u => u.Items)
+                .HasForeignKey(i => i.UserId);
 
             modelBuilder.Entity<DbItemStats>()
                 .HasOne(s => s.Item)
@@ -45,12 +47,18 @@ namespace AntiClownBotApi.Database
 
             modelBuilder.Entity<DbShopItem>()
                 .HasOne(i => i.Shop)
-                .WithMany(s => s.Items);
+                .WithMany(s => s.Items)
+                .HasForeignKey(i => i.ShopId);
 
             modelBuilder.Entity<DbUserEconomy>()
                 .HasOne(e => e.User)
                 .WithOne(u => u.Economy)
                 .HasForeignKey<DbUserEconomy>(e => e.UserId);
+
+            modelBuilder.Entity<DbTransaction>()
+                .HasOne(e => e.UserEconomy)
+                .WithMany(u => u.Transactions)
+                .HasForeignKey(e => e.UserEconomyId);
 
             modelBuilder.Entity<DbUserStats>()
                 .HasOne(e => e.User)
@@ -59,17 +67,19 @@ namespace AntiClownBotApi.Database
 
             modelBuilder.Entity<DbUserEmotes>()
                 .HasOne(e => e.UserStats)
-                .WithMany(u => u.UsedEmotes);
+                .WithMany(u => u.UsedEmotes)
+                .HasForeignKey(ue => ue.StatsId);
 
             modelBuilder.Entity<DbEmote>()
                 .HasMany(e => e.EmoteStats)
-                .WithOne(e => e.Emote);
+                .WithOne(e => e.Emote)
+                .HasForeignKey(e => e.StatsId);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(
-                "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=roflanEbalo");
+                "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=roflanEbalo;Include Error Detail=true");
         }
     }
 }

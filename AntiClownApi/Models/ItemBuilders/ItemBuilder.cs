@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using AntiClownBotApi.Database.DBModels;
 using AntiClownBotApi.Models.Classes.Items;
 
 namespace AntiClownBotApi.Models.ItemBuilders
@@ -10,51 +10,42 @@ namespace AntiClownBotApi.Models.ItemBuilders
         protected int Price;
         protected Rarity Rarity;
 
-        private readonly Dictionary<Rarity, int> _prices = new()
-        {
-            {Rarity.Common, 1000},
-            {Rarity.Rare, 2500},
-            {Rarity.Epic, 4500},
-            {Rarity.Legendary, 10000},
-            {Rarity.BlackMarket, 20000}
-        };
-
-        private static Rarity GenerateRarity() => Randomizer.GetRandomNumberBetween(0, 1000000) switch
-        {
-            >= 0 and <= 666666 => Rarity.Common,
-            > 666666 and <= 930228 => Rarity.Rare,
-            > 930228 and <= 999000 => Rarity.Epic,
-            > 999000 and <= 999998 => Rarity.Legendary,
-            _ => Rarity.BlackMarket
-        };
-
         public ItemBuilder()
         {
             Id = Guid.NewGuid();
         }
 
-        public ItemBuilder WithRarity()
+        public ItemBuilder WithRandomRarity() => WithRarity(Utility.GenerateRarity());
+
+        public ItemBuilder WithRarity(Rarity rarity)
         {
-            Rarity = GenerateRarity();
+            Rarity = rarity;
 
             return this;
         }
 
-        public ItemBuilder WithPrice()
+        public ItemBuilder WithPriceForSelectedRarity()
         {
             if (!IsRarityDefined()) throw new ArgumentException("Item rarity is not defined");
-            
-            Price = _prices[Rarity];
+
+            Price = Utility.Prices[Rarity];
+
+            return this;
+        }
+
+        public ItemBuilder WithPrice(int price)
+        {
+            Price = price;
 
             return this;
         }
 
         #region Cast to specific item builders
 
-        public CatWifeBuilder AsCatWife() => this as CatWifeBuilder;
-        public DogWifeBuilder AsDogWife() => this as DogWifeBuilder;
-        public RiceBowlBuilder AsRiceBowl() => this as RiceBowlBuilder;
-        public InternetBuilder AsInternet() => this as InternetBuilder;
+        public CatWifeBuilder AsCatWife() => new(Id, Rarity, Price);
+        public DogWifeBuilder AsDogWife() => new(Id, Rarity, Price);
+        public RiceBowlBuilder AsRiceBowl() => new(Id, Rarity, Price);
+        public InternetBuilder AsInternet() => new(Id, Rarity, Price);
 
         #endregion
 

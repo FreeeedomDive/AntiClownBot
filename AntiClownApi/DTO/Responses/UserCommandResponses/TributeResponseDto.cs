@@ -11,4 +11,10 @@ namespace AntiClownBotApi.DTO.Responses.UserCommandResponses
         public bool IsCommunismActive { get; set; }
         public ulong SharedCommunistUserId { get; set; }
     }
+
+    public enum TributeResult
+    {
+        Success,
+        CooldownHasNotPassed
+    }
 }

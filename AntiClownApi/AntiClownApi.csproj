@@ -17,4 +17,12 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="config.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

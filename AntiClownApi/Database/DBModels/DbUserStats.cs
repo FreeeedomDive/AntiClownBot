@@ -6,10 +6,8 @@ namespace AntiClownBotApi.Database.DBModels
 {
     public class DbUserStats
     {
-        [Key]
-        public int Id { get; set; }
-        
         // primary key
+        [Key]
         public ulong UserId { get; set; }
         public DbUser User { get; set; }
         

@@ -1,16 +1,15 @@
 ﻿using System;
 using AntiClownBotApi.Constants;
 using AntiClownBotApi.Database.DBModels.DbItems;
-using AntiClownBotApi.Models.Items;
 
-namespace AntiClownBotApi.Models.Classes.Items
+namespace AntiClownBotApi.Models.Items
 {
-    public class CatWife: BaseItem
+    public class CatWife : BaseItem
     {
-        public CatWife(Guid id): base(id)
+        public CatWife(Guid id) : base(id)
         {
         }
-        
+
         public int AutoTributeChance { get; init; }
 
         public override string Name => StringConstants.CatWifeName;
@@ -28,17 +27,25 @@ namespace AntiClownBotApi.Models.Classes.Items
             };
         }
 
-        public static implicit operator DbItem(CatWife item) => new()
+        public override DbItem ToDbItem()
         {
-            Id = item.Id,
-            Rarity = item.Rarity,
-            ItemType = item.ItemType,
-            Price = item.Price,
-            Name = item.Name,
-            ItemStats = new DbItemStats()
+            var item = new DbItem()
             {
-                CatAutoTributeChance = item.AutoTributeChance
-            }
-        };
+                Id = Id,
+                Rarity = Rarity,
+                ItemType = ItemType,
+                Price = Price,
+                Name = Name
+            };
+            
+            item.ItemStats = new DbItemStats()
+            {
+                Item = item,
+                ItemId = item.Id,
+                CatAutoTributeChance = AutoTributeChance
+            };
+
+            return item;
+        }
     }
 }

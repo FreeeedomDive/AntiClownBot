@@ -11,6 +11,13 @@ namespace AntiClownBotApi.Models.ItemBuilders
 
         private int _lootBoxFindChance;
 
+        public DogWifeBuilder(Guid id, Rarity rarity, int price)
+        {
+            Id = id;
+            Rarity = rarity;
+            Price = price;
+        }
+        
         private static readonly Dictionary<Rarity, Func<int>> LootBoxFindChanceDistribution = new()
         {
             {Rarity.Common, () => BaseLootBoxFindChance + 0},
@@ -20,7 +27,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             {Rarity.BlackMarket, () => BaseLootBoxFindChance + Randomizer.GetRandomNumberBetweenIncludeRange(8, 10)}
         };
 
-        public DogWifeBuilder WithLootBoxFindChance()
+        public DogWifeBuilder WithRandomLootBoxFindChance()
         {
             if (!IsRarityDefined()) throw new ArgumentException("Item rarity is not defined");
 

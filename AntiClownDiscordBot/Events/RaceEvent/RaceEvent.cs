@@ -17,7 +17,7 @@ namespace AntiClownBot.Events.RaceEvent
             {
                 JoinableMessageId = joinableMessage.Id
             };
-            await Task.Delay(1 * 60 * 1000);
+            await Task.Delay(10 * 60 * 1000);
             Config.CurrentRace.StartRace();
         }
 
@@ -26,6 +26,6 @@ namespace AntiClownBot.Events.RaceEvent
                                                  "\nРаспределение рейтинга - 250, 180, 150, 120, 100, 80, 60, 40, 20, 10" +
                                                  "\nДля получения рейтинга обязательно нужно быть впереди меня" +
                                                  $"\nЖми {Utility.Emoji(":monkaSTEER:")}, чтобы участвовать." +
-                                                 "\nСтарт через 1 минуту\n";
+                                                 "\nСтарт через 10 минут\n";
     }
 }

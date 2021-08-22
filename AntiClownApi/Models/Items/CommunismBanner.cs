@@ -1,9 +1,8 @@
 ﻿using System;
 using AntiClownBotApi.Constants;
 using AntiClownBotApi.Database.DBModels.DbItems;
-using AntiClownBotApi.Models.Items;
 
-namespace AntiClownBotApi.Models.Classes.Items
+namespace AntiClownBotApi.Models.Items
 {
     public class CommunismBanner : BaseItem
     {
@@ -30,18 +29,26 @@ namespace AntiClownBotApi.Models.Classes.Items
             };
         }
 
-        public static implicit operator DbItem(CommunismBanner item) => new()
+        public override DbItem ToDbItem()
         {
-            Id = item.Id,
-            Rarity = item.Rarity,
-            ItemType = item.ItemType,
-            Price = item.Price,
-            Name = item.Name,
-            ItemStats = new DbItemStats()
+            var item = new DbItem()
             {
-                CommunismDivideChance = item.DivideChance,
-                CommunismStealChance = item.StealChance
-            }
-        };
+                Id = Id,
+                Rarity = Rarity,
+                ItemType = ItemType,
+                Price = Price,
+                Name = Name
+            };
+
+            item.ItemStats = new DbItemStats()
+            {
+                Item = item,
+                ItemId = item.Id,
+                CommunismDivideChance = DivideChance,
+                CommunismStealChance = StealChance
+            };
+
+            return item;
+        }
     }
 }

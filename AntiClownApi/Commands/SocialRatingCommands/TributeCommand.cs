@@ -10,12 +10,17 @@ namespace AntiClownBotApi.Commands.SocialRatingCommands
     {
         public BaseResponseDto Execute(BaseRequestDto dto)
         {
+            return MakeTribute(dto.UserId, false);
+        }
+
+        private TributeResponseDto MakeTribute(ulong userId, bool isAutomatic)
+        {
             var tribute = Randomizer.GetRandomNumberBetween(-50, 100);
-            UserDbController.ChangeUserRating(dto.Id, tribute, "test");
-            
+            UserDbController.ChangeUserBalance(userId, tribute, "Подношение");
+
             return new TributeResponseDto()
             {
-                UserId = dto.Id,
+                UserId = userId,
                 TributeQuality = tribute
             };
         }

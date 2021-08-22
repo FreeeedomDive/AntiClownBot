@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AntiClownBotApi.Models.Classes.Items;
+using AntiClownBotApi.Models.Items;
 
 namespace AntiClownBotApi.Models.ItemBuilders
 {
@@ -14,6 +15,13 @@ namespace AntiClownBotApi.Models.ItemBuilders
         private int _cooldownReduceTries;
         private int _cooldownReduceChance;
 
+        public InternetBuilder(Guid id, Rarity rarity, int price)
+        {
+            Id = id;
+            Rarity = rarity;
+            Price = price;
+        }
+        
         private static readonly Dictionary<Rarity, int> CooldownReducePercentDistribution = new()
         {
             {
@@ -86,7 +94,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             }
         };
 
-        public InternetBuilder WithCooldownReducePercent()
+        public InternetBuilder WithRandomCooldownReducePercent()
         {
             if (!IsRarityDefined()) throw new ArgumentException("Item rarity is not defined");
 
@@ -95,7 +103,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             return this;
         }
 
-        public InternetBuilder WithCooldownReduceTries()
+        public InternetBuilder WithRandomCooldownReduceTries()
         {
             if (!IsRarityDefined()) throw new ArgumentException("Item rarity is not defined");
 
@@ -104,7 +112,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             return this;
         }
 
-        public InternetBuilder WithCooldownReduceChance()
+        public InternetBuilder WithRandomCooldownReduceChance()
         {
             if (!IsRarityDefined()) throw new ArgumentException("Item rarity is not defined");
 

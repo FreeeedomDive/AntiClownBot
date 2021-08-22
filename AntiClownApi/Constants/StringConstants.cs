@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace AntiClownBotApi.Constants
 {
@@ -11,14 +12,20 @@ namespace AntiClownBotApi.Constants
         public const string JadeRodName = "Нефритовый стержень";
         public const string CommunismBannerName = "Коммунистический плакат";
 
-        public static readonly List<string> AllItemsNames = new()
+        public static readonly List<string> GoodItemNames = new()
         {
             CatWifeName,
             DogWifeName,
             InternetName,
-            RiceBowlName,
+            RiceBowlName
+        };
+
+        public static readonly List<string> BadItemNames = new()
+        {
             JadeRodName,
             CommunismBannerName
         };
+
+        public static readonly List<string> AllItemsNames = GoodItemNames.Union(BadItemNames).ToList();
     }
 }

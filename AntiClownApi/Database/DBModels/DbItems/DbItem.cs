@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using AntiClownBotApi.Models.Classes.Items;
 using AntiClownBotApi.Models.Items;
@@ -7,10 +8,10 @@ namespace AntiClownBotApi.Database.DBModels.DbItems
 {
     public class DbItem
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         // foreign key
+        public ulong UserId { get; set; }
         public DbUser User { get; set; }
         
         public string Name { get; set; }

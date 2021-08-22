@@ -24,7 +24,7 @@ namespace AntiClownBotApi
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "AntiClownApiAntiClownBotApi", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Best API ever", Version = "v1"});
             });
             
             var connection = Configuration.GetConnectionString("DefaultConnection");

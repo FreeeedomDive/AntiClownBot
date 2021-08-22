@@ -1,9 +1,8 @@
 ﻿using System;
 using AntiClownBotApi.Constants;
 using AntiClownBotApi.Database.DBModels.DbItems;
-using AntiClownBotApi.Models.Items;
 
-namespace AntiClownBotApi.Models.Classes.Items
+namespace AntiClownBotApi.Models.Items
 {
     public class Internet : BaseItem
     {
@@ -32,19 +31,27 @@ namespace AntiClownBotApi.Models.Classes.Items
             };
         }
 
-        public static implicit operator DbItem(Internet item) => new()
+        public override DbItem ToDbItem()
         {
-            Id = item.Id,
-            Rarity = item.Rarity,
-            ItemType = item.ItemType,
-            Price = item.Price,
-            Name = item.Name,
-            ItemStats = new DbItemStats()
+            var item = new DbItem()
             {
-                InternetSpeed = item.Speed,
-                InternetGigabytes = item.Gigabytes,
-                InternetPing = item.Ping
-            }
-        };
+                Id = Id,
+                Rarity = Rarity,
+                ItemType = ItemType,
+                Price = Price,
+                Name = Name
+            };
+
+            item.ItemStats = new DbItemStats()
+            {
+                Item = item,
+                ItemId = item.Id,
+                InternetSpeed = Speed,
+                InternetGigabytes = Gigabytes,
+                InternetPing = Ping
+            };
+
+            return item;
+        }
     }
 }

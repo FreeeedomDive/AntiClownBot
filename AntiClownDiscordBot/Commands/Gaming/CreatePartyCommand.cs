@@ -13,6 +13,11 @@ namespace AntiClownBot.Commands.Gaming
 
         public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
+            if (e.Channel.Id != 878002609217220619)
+            {
+                await e.Message.RespondAsync($"{Utility.Emoji(":Madge:")} {Utility.Emoji(":point_right:")} {e.Guild.GetChannel(878002609217220619).Mention}");
+                return;
+            }
             var args = e.Message.Content.Split(" ");
             if (args.Length == 1)
             {

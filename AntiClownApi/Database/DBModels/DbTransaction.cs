@@ -1,14 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AntiClownBotApi.Database.DBModels
 {
     public class DbTransaction
     {
-        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
         // foreign key
-        public ulong DbUserId { get; set; }
+        public ulong UserEconomyId { get; set; }
+        public DbUserEconomy UserEconomy { get; set; }
+        
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime DateTime { get; set; }
         
         public int RatingChange { get; set; }
         public string Description { get; set; }

@@ -11,12 +11,21 @@
         
         // максимальное количество предметов одного типа в инвентаре
         public const int MaximumItemsOfOneType = 3;
+
+        // максимальное количество предметов в магазине, доступных для покупки
+        public const int MaximumItemsInShop = 5;
         
         // стандартный кулдаун подношения
         public const double DefaultCooldown = 60 * 60 * 1000d;
+
+        // начальная цена реролла магазина
+        public const int DefaultReRollPrice = 200;
+
+        // увеличение цены реролла
+        public const int DefaultReRollPriceIncrease = 50;
         
         // стандартный начальный социальный рейтинг
-        public const int DefaultSocialRating = 500;
+        public const int DefaultScamCoins = 1000;
         
         // кулдаун уменьшается на 10% при срабатывании одного гигабайта
         public const double CooldownDecreaseByOneGigabyteItem = 0.1;

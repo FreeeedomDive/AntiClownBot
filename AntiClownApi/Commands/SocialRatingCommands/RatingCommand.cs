@@ -9,11 +9,11 @@ namespace AntiClownBotApi.Commands.SocialRatingCommands
     {
         public BaseResponseDto Execute(BaseRequestDto dto)
         {
-            var user = UserDbController.GetUserEconomy(dto.Id);
+            var user = UserDbController.GetUserEconomy(dto.UserId);
             return new RatingResponseDto()
             {
-                UserId = dto.Id,
-                SocialRating = user.Economy.SocialRating
+                UserId = dto.UserId,
+                SocialRating = user.Economy.ScamCoins
             };
         }
 

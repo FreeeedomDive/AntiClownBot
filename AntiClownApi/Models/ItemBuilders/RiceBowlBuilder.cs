@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AntiClownBotApi.Models.Classes.Items;
+using AntiClownBotApi.Models.Items;
 
 namespace AntiClownBotApi.Models.ItemBuilders
 {
@@ -12,6 +13,13 @@ namespace AntiClownBotApi.Models.ItemBuilders
         private int _tributeDecrease;
         private int _tributeIncrease;
 
+        public RiceBowlBuilder(Guid id, Rarity rarity, int price)
+        {
+            Id = id;
+            Rarity = rarity;
+            Price = price;
+        }
+        
         private static readonly Dictionary<Rarity, Func<int>> TributeDecreaseGenerator = new()
         {
             {Rarity.Common, () => BaseTributeDecrease + Randomizer.GetRandomNumberBetweenIncludeRange(0, 9)},
@@ -39,7 +47,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             {Rarity.BlackMarket, 10}
         };
 
-        public RiceBowlBuilder WithTributeDecrease()
+        public RiceBowlBuilder WithRandomTributeDecrease()
         {
             if (!IsRarityDefined()) throw new ArgumentException("Item rarity is not defined");
 
@@ -48,7 +56,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             return this;
         }
         
-        public RiceBowlBuilder WithIncreaseDecrease()
+        public RiceBowlBuilder WithRandomTributeIncrease()
         {
             if (!IsRarityDefined()) throw new ArgumentException("Item rarity is not defined");
 

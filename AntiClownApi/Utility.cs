@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AntiClownBotApi.Models.Classes.Items;
 
 namespace AntiClownBotApi
 {
@@ -27,12 +28,11 @@ namespace AntiClownBotApi
             return newQueue;
         }
         
-        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, Action<T> function)
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T> function)
         {
             foreach (var item in items)
             {
                 function(item);
-                yield return item;
             }
         }
 
@@ -115,5 +115,23 @@ namespace AntiClownBotApi
 
             return result;
         }
+        
+        public static readonly Dictionary<Rarity, int> Prices = new()
+        {
+            {Rarity.Common, 1000},
+            {Rarity.Rare, 2500},
+            {Rarity.Epic, 4500},
+            {Rarity.Legendary, 10000},
+            {Rarity.BlackMarket, 20000}
+        };
+
+        public static Rarity GenerateRarity() => Randomizer.GetRandomNumberBetween(0, 1000000) switch
+        {
+            >= 0 and <= 666666 => Rarity.Common,
+            > 666666 and <= 930228 => Rarity.Rare,
+            > 930228 and <= 999000 => Rarity.Epic,
+            > 999000 and <= 999998 => Rarity.Legendary,
+            _ => Rarity.BlackMarket
+        };
     }
 }

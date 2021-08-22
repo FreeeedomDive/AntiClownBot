@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AntiClownBotApi.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("/api/users")]
     public class UsersController : Controller
     {
         private readonly List<ICommand> _commands = new()
@@ -31,11 +31,11 @@ namespace AntiClownBotApi.Controllers
 
         [HttpPost, Route("{id}/tribute")]
         public TributeResponseDto Tribute(ulong id) =>
-            ExecuteCommand<TributeCommand, TributeResponseDto>(new BaseRequestDto(id));
+            ExecuteCommand<TributeCommand, TributeResponseDto>(new BaseRequestDto {UserId = id});
 
         [HttpGet, Route("{id}/rating")]
         public RatingResponseDto Rating(ulong id) =>
-            ExecuteCommand<RatingCommand, RatingResponseDto>(new BaseRequestDto(id));
+            ExecuteCommand<RatingCommand, RatingResponseDto>(new BaseRequestDto {UserId = id});
         
         
     }

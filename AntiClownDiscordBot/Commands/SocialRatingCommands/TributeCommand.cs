@@ -22,6 +22,11 @@ namespace AntiClownBot.Commands.SocialRatingCommands
 
         private async void Tribute(MessageCreateEventArgs e, SocialRatingUser user, bool isAutomatic)
         {
+            if (e.Channel.Id != 877994939240292442)
+            {
+                await e.Message.RespondAsync($"{Utility.Emoji(":Madge:")} {Utility.Emoji(":point_right:")} {e.Guild.GetChannel(877994939240292442).Mention}");
+                return;
+            }
             var messageEmbedBuilder = new DiscordEmbedBuilder();
             messageEmbedBuilder.WithTitle(isAutomatic
                 ? $"Автоматическое подношение для {user.DiscordUsername}"

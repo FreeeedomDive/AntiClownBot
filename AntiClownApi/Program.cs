@@ -1,15 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AntiClownBotApi.Database;
-using AntiClownBotApi.Database.DBModels;
-using AntiClownBotApi.Database.DBModels.DbItems;
-using AntiClownBotApi.Models.Classes.Items;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace AntiClownBotApi
 {
@@ -17,6 +7,7 @@ namespace AntiClownBotApi
     {
         public static void Main(string[] args)
         {
+            // Migration.MigrationProcess.StartMigration();
             CreateHostBuilder(args).Build().Run();
         }
 

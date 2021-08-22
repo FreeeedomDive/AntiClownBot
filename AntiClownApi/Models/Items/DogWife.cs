@@ -27,17 +27,25 @@ namespace AntiClownBotApi.Models.Items
             };
         }
 
-        public static implicit operator DbItem(DogWife item) => new()
+        public override DbItem ToDbItem()
         {
-            Id = item.Id,
-            Rarity = item.Rarity,
-            ItemType = item.ItemType,
-            Price = item.Price,
-            Name = item.Name,
-            ItemStats = new DbItemStats()
+            var item = new DbItem()
             {
-                DogLootBoxFindChance = item.LootBoxFindChance
-            }
-        };
+                Id = Id,
+                Rarity = Rarity,
+                ItemType = ItemType,
+                Price = Price,
+                Name = Name
+            };
+
+            item.ItemStats = new DbItemStats()
+            {
+                Item = item,
+                ItemId = item.Id,
+                DogLootBoxFindChance = LootBoxFindChance
+            };
+
+            return item;
+        }
     }
 }

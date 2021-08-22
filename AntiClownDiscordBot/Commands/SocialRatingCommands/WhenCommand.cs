@@ -9,15 +9,20 @@ namespace AntiClownBot.Commands.SocialRatingCommands
         {
         }
 
-        public override void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
         {
+            if (e.Channel.Id != 877994939240292442)
+            {
+                await e.Message.RespondAsync($"{Utility.Emoji(":Madge:")} {Utility.Emoji(":point_right:")} {e.Guild.GetChannel(877994939240292442).Mention}");
+                return;
+            }
             if (user.IsCooldownPassed())
             {
-                e.Message.RespondAsync("Кулдаун уже прошел");
+                await e.Message.RespondAsync("Кулдаун уже прошел");
                 return;
             }
 
-            e.Message.RespondAsync($"Следующий подношение император XI в {Utility.NormalizeTime(user.NextTribute)}, через {Utility.GetTimeDiff(user.NextTribute)}");
+            await e.Message.RespondAsync($"Следующий подношение император XI в {Utility.NormalizeTime(user.NextTribute)}, через {Utility.GetTimeDiff(user.NextTribute)}");
         }
 
         public override string Help()

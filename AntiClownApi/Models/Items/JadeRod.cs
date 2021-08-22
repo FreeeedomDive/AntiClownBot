@@ -13,7 +13,7 @@ namespace AntiClownBotApi.Models.Classes.Items
 
         public override string Name => StringConstants.JadeRodName;
         public override ItemType ItemType => ItemType.Negative;
-        
+
         public int Length { get; init; }
         public int Thickness { get; init; }
 
@@ -31,18 +31,25 @@ namespace AntiClownBotApi.Models.Classes.Items
             };
         }
 
-        public static implicit operator DbItem(JadeRod item) => new()
+        public override DbItem ToDbItem()
         {
-            Id = item.Id,
-            Rarity = item.Rarity,
-            ItemType = item.ItemType,
-            Price = item.Price,
-            Name = item.Name,
-            ItemStats = new DbItemStats()
+            var item = new DbItem()
             {
-                JadeRodLength = item.Length,
-                JadeRodThickness = item.Thickness
-            }
-        };
+                Id = Id,
+                Name = Name,
+                Rarity = Rarity,
+                ItemType = ItemType,
+                Price = Price
+            };
+            item.ItemStats = new DbItemStats()
+            {
+                Item = item,
+                ItemId = item.Id,
+                JadeRodLength = Length,
+                JadeRodThickness = Thickness
+            };
+
+            return item;
+        }
     }
 }

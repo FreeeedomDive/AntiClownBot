@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DSharpPlus.Entities;
@@ -18,7 +19,7 @@ namespace AntiClownBot.Models.Gaming
         public DiscordRole AttachedRole { get; set; }
 
         public DiscordMessage Message;
-        
+
         public GameParty()
         {
             Players = new List<ulong>();
@@ -29,6 +30,7 @@ namespace AntiClownBot.Models.Gaming
             if (Players.Contains(discordId)) return;
             Players.Add(discordId);
             UpdateMessage();
+            CreatePingIfFullParty();
             Configuration.GetConfiguration().UpdatePartyObservers();
         }
 
@@ -51,7 +53,7 @@ namespace AntiClownBot.Models.Gaming
         }
 
         private string RoleMention() => AttachedRole != null ? AttachedRole.Mention : "@here";
-        
+
         private async void UpdateMessage() => await Message.ModifyAsync(MessageContent());
 
         private string MessageContent()
@@ -72,10 +74,24 @@ namespace AntiClownBot.Models.Gaming
             return stringBuilder.ToString();
         }
 
+        private async void CreatePingIfFullParty()
+        {
+            if (Players.Count != MaxPlayersCount) return;
+            var readyPlayersMentions = Players.Take(MaxPlayersCount)
+                .Select(playerId => Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(playerId).Result.Mention);
+            var messageBuilder = new DiscordMessageBuilder
+            {
+                Content = $"НАБРАНО ПОЛНОЕ ПАТИ\n{string.Join("\n", readyPlayersMentions)}"
+            };
+            messageBuilder.WithAllowedMention(UserMention.All);
+            
+            await Message.RespondAsync(messageBuilder);
+        }
+
         public void Destroy(ulong userId)
         {
             if (userId != CreatorId) return;
-            
+
             var config = Configuration.GetConfiguration();
             config.OpenParties.Remove(Message.Id);
             _isOpened = false;
