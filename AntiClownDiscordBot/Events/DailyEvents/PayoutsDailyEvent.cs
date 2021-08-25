@@ -12,14 +12,15 @@ namespace AntiClownBot.Events.DailyEvents
                 .GetChannel(838477706643374090)
                 .SendMessageAsync(text);
 
-            var allUsers = UsersWrapper.GetAllUsers();
+            var allUsers = UsersApi.GetAllUsers();
 
-            UsersWrapper.BulkChangeUserBalance(allUsers.Users, 150, "Ежедневные выплаты");
+            UsersApi.BulkChangeUserBalance(allUsers.Users, 150, "Ежедневные выплаты");
+            UsersApi.DailyReset();
         }
 
         protected override string BackStory()
         {
-            return "Всем выплаты!!!";
+            return "Ежедневные выплаты!!! Сброс цены реролла в магазине и бесплатных распознавателей!!!";
         }
     }
 }

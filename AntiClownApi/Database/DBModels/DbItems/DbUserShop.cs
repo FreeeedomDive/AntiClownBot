@@ -23,7 +23,7 @@ namespace AntiClownBotApi.Database.DBModels.DbItems
             var shop = new DbUserShop()
             {
                 UserId = userId,
-                FreeItemReveals = 1,
+                FreeItemReveals = NumericConstants.FreeItemRevealsPerDay,
                 ReRollPrice = NumericConstants.DefaultReRollPrice,
                 Items = new List<DbShopItem>()
             };

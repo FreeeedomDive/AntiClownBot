@@ -6,7 +6,7 @@ using RestSharp;
 
 namespace ApiWrapper.Wrappers
 {
-    public class ShopWrapper: BaseWrapper
+    public class ShopApi: BaseApi
     {
         private static string WrapperUrl => "api/shop/";
 

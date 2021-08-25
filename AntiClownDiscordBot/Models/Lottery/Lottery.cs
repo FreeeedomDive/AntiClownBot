@@ -98,7 +98,7 @@ namespace AntiClownBot.Models.Lottery
                 {
                     var currentEmote = 7 - emotesToRoll;
                     var strBuilder = new StringBuilder();
-                    strBuilder.Append($"{member.Nickname}:\n");
+                    strBuilder.Append($"{member.ServerOrUsername()}:\n");
 
                     for (var rolledEmotes = 0; rolledEmotes < currentEmote; rolledEmotes++)
                     {
@@ -128,7 +128,7 @@ namespace AntiClownBot.Models.Lottery
                 }
 
                 var builder = new StringBuilder();
-                builder.Append($"{member.Nickname}:\n");
+                builder.Append($"{member.ServerOrUsername()}:\n");
                 builder.Append(string.Join(" ", user.Emotes.Select(emote => $"{Utility.StringEmoji($":{emote}:")}")));
 
                 builder.Append($"\nТы получил {user.Value} social credit!");

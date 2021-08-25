@@ -113,11 +113,5 @@ namespace AntiClownBotApi.Commands.UserCommands
             };
             thread.Start();
         }
-
-        public string Help()
-        {
-            return "Преподношение императору XI для увеличения (или уменьшения) своего социального рейтинга\n" +
-                   "Дефолтный кулдаун 1 час, понижается наличием интернета";
-        }
     }
 }

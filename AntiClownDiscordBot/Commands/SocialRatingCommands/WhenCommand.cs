@@ -18,7 +18,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 return;
             }
 
-            var result = ApiWrapper.Wrappers.UsersWrapper.WhenNextTribute(e.Author.Id);
+            var result = ApiWrapper.Wrappers.UsersApi.WhenNextTribute(e.Author.Id);
             var now = DateTime.Now;
             var cooldownHasPassed = now > result.NextTribute;
             

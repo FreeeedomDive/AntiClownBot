@@ -16,7 +16,7 @@ namespace AntiClownBotApi
 {
     public class Startup
     {
-        public const bool IsDevelopment = false;
+        public const bool IsDevelopment = true;
         
         public Startup(IConfiguration configuration)
         {

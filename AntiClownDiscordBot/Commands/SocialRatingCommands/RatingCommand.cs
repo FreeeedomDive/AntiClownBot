@@ -18,7 +18,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
         public override async void Execute(MessageCreateEventArgs e)
         {
             var member = Configuration.GetServerMember(e.Author.Id);
-            var response = ApiWrapper.Wrappers.UsersWrapper.Rating(e.Author.Id);
+            var response = ApiWrapper.Wrappers.UsersApi.Rating(e.Author.Id);
             var netWorth = response.ScamCoins + response.Inventory.Where(item => item.ItemType == ItemType.Positive)
                 .Select(item => item.Price).Sum();
 
@@ -27,9 +27,10 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 Color = member.Color
             };
 
+            var name = member.ServerOrUsername();
             embedBuilder.WithThumbnail(e.Author.AvatarUrl);
             embedBuilder.WithTitle(
-                $"ЧЕЛА РЕАЛЬНО ЗОВУТ {member.Nickname.ToUpper()}" +
+                $"ЧЕЛА РЕАЛЬНО ЗОВУТ {name.ToUpper()}" +
                 $" {Utility.Emoji(":aRolf:")}" +
                 $" {Utility.Emoji(":aRolf:")}" +
                 $" {Utility.Emoji(":aRolf:")}");

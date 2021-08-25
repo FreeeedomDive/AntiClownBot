@@ -22,7 +22,7 @@ namespace AntiClownBot.Models.Shop
 
         public async Task UpdateShopMessage()
         {
-            var newShop = ShopWrapper.UserShop(UserId);
+            var newShop = ShopApi.UserShop(UserId);
 
             var embed = CreateNewShopEmbed(newShop);
             await Message.ModifyAsync(embed);
@@ -98,30 +98,36 @@ namespace AntiClownBot.Models.Shop
 
         public async void RevealItem(int slot)
         {
-            var idResponse = ShopWrapper.ItemIdInSlot(UserId, slot);
+            var idResponse = ShopApi.ItemIdInSlot(UserId, slot);
             if (idResponse.HasError)
             {
                 await Message.RespondAsync($"{Member.Mention} {idResponse.Error}");
                 return;
             }
 
-            var revealResponse = ShopWrapper.ItemReveal(UserId, idResponse.ShopItemId);
+            var revealResponse = ShopApi.ItemReveal(UserId, idResponse.ShopItemId);
 
+            var responseBuilder = new DiscordMessageBuilder();
+            responseBuilder.WithAllowedMention(UserMention.All);
             switch (revealResponse.RevealResult)
             {
                 case Enums.RevealResult.Success:
                     break;
                 case Enums.RevealResult.NotEnoughMoney:
-                    await Message.RespondAsync($"{Member.Mention} недостаточно денег для распознавания предмета");
+                    responseBuilder.Content = $"{Member.Mention} недостаточно денег для распознавания предмета";
+                    await Message.RespondAsync(responseBuilder);
                     return;
                 case Enums.RevealResult.AlreadyRevealed:
-                    await Message.RespondAsync($"{Member.Mention} предмет уже распознан");
+                    responseBuilder.Content = $"{Member.Mention} предмет уже распознан";
+                    await Message.RespondAsync(responseBuilder);
                     return;
                 case Enums.RevealResult.AlreadyBought:
-                    await Message.RespondAsync($"{Member.Mention} предмет уже куплен");
+                    responseBuilder.Content = $"{Member.Mention} предмет уже куплен";
+                    await Message.RespondAsync(responseBuilder);
                     return;
                 case Enums.RevealResult.ItemDoesntExistInShop:
-                    await Message.RespondAsync($"{Member.Mention} такого предмета нет в магазине (wtf?)");
+                    responseBuilder.Content = $"{Member.Mention} такого предмета нет в магазине (wtf?)";
+                    await Message.RespondAsync(responseBuilder);
                     return;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -132,40 +138,46 @@ namespace AntiClownBot.Models.Shop
 
         public async void BuyItem(int slot)
         {
-            var idResponse = ApiWrapper.Wrappers.ShopWrapper.ItemIdInSlot(UserId, slot);
+            var idResponse = ApiWrapper.Wrappers.ShopApi.ItemIdInSlot(UserId, slot);
             if (idResponse.HasError)
             {
                 await Message.RespondAsync($"{Member.Mention} {idResponse.Error}");
                 return;
             }
 
-            var buyResponse = ApiWrapper.Wrappers.ShopWrapper.Buy(UserId, idResponse.ShopItemId);
+            var buyResponse = ApiWrapper.Wrappers.ShopApi.Buy(UserId, idResponse.ShopItemId);
 
+            var responseBuilder = new DiscordMessageBuilder();
+            responseBuilder.WithAllowedMention(UserMention.All);
             switch (buyResponse.BuyResult)
             {
                 case Enums.BuyResult.Success:
                     break;
                 case Enums.BuyResult.NotEnoughMoney:
-                    await Message.RespondAsync($"{Member.Mention} недостаточно денег для покупки предмета");
+                    responseBuilder.Content = $"{Member.Mention} недостаточно денег для покупки предмета";
+                    await Message.RespondAsync(responseBuilder);
                     return;
                 case Enums.BuyResult.AlreadyBought:
-                    await Message.RespondAsync($"{Member.Mention} предмет уже куплен");
+                    responseBuilder.Content = $"{Member.Mention} предмет уже куплен";
+                    await Message.RespondAsync(responseBuilder);
                     return;
                 case Enums.BuyResult.ItemDoesntExistInShop:
-                    await Message.RespondAsync($"{Member.Mention} такого предмета нет в магазине (wtf?)");
+                    responseBuilder.Content = $"{Member.Mention} такого предмета нет в магазине (wtf?)";
+                    await Message.RespondAsync(responseBuilder);
                     return;
                 case Enums.BuyResult.TooManyItemsOfSelectedType:
-                    await Message.RespondAsync(
-                        $"{Member.Mention} в инвентаре уже слишком много предметов данного типа (но я это уже сделал по-другому, хз как можно было получить такой ответ)");
+                    responseBuilder.Content = $"{Member.Mention} в инвентаре уже слишком много предметов данного типа (но я это уже сделал по-другому, хз как можно было получить такой ответ)";
+                    await Message.RespondAsync(responseBuilder);
                     return;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            var newItemResponse = ApiWrapper.Wrappers.UsersWrapper.GetItemById(UserId, buyResponse.ItemId);
+            var newItemResponse = ApiWrapper.Wrappers.UsersApi.GetItemById(UserId, buyResponse.ItemId);
             if (newItemResponse.Result != ItemResult.Success)
             {
-                await Message.RespondAsync($"{Member.Mention} хуйня {Utility.Emoji(":Starege:")}");
+                responseBuilder.Content = $"{Member.Mention} хуйня {Utility.Emoji(":Starege:")}";
+                await Message.RespondAsync(responseBuilder);
                 return;
             }
 
@@ -178,7 +190,7 @@ namespace AntiClownBot.Models.Shop
 
         public async void ReRoll()
         {
-            var rerollResult = ApiWrapper.Wrappers.ShopWrapper.ReRoll(UserId);
+            var rerollResult = ApiWrapper.Wrappers.ShopApi.ReRoll(UserId);
 
             if (rerollResult.ReRollResult == Enums.ReRollResult.NotEnoughMoney)
             {
@@ -195,7 +207,7 @@ namespace AntiClownBot.Models.Shop
         {
             var embedBuilder = new DiscordEmbedBuilder();
             embedBuilder.WithTitle(
-                $"Магазин пользователя {Member.Nickname} {Utility.Emoji(":PepegaCredit:")} {Utility.Emoji(":PepegaCredit:")} {Utility.Emoji(":PepegaCredit:")}");
+                $"Магазин пользователя {Member.ServerOrUsername()} {Utility.Emoji(":PepegaCredit:")} {Utility.Emoji(":PepegaCredit:")} {Utility.Emoji(":PepegaCredit:")}");
             embedBuilder.AddField("Баланс", $"{shop.Balance}", true);
             embedBuilder.AddField("Цена реролла магазина", $"{shop.ReRollPrice}", true);
             embedBuilder.AddField("Распознавание предмета", $"{shop.FreeItemReveals}", true);
@@ -231,9 +243,9 @@ namespace AntiClownBot.Models.Shop
         {
             {ApiWrapper.Models.Items.Rarity.Common, DiscordColor.Gray},
             {ApiWrapper.Models.Items.Rarity.Rare, DiscordColor.Blue},
-            {ApiWrapper.Models.Items.Rarity.Epic, DiscordColor.Violet},
-            {ApiWrapper.Models.Items.Rarity.Legendary, DiscordColor.Orange},
-            {ApiWrapper.Models.Items.Rarity.BlackMarket, DiscordColor.Magenta},
+            {ApiWrapper.Models.Items.Rarity.Epic, DiscordColor.Purple},
+            {ApiWrapper.Models.Items.Rarity.Legendary, DiscordColor.Red},
+            {ApiWrapper.Models.Items.Rarity.BlackMarket, DiscordColor.Yellow},
         };
     }
 

@@ -51,7 +51,7 @@ namespace AntiClownBot.Models.Gamble
 
         public GambleBetOptions MakeBid(ulong userId, string option, int bet)
         {
-            var user = ApiWrapper.Wrappers.UsersWrapper.Rating(userId);
+            var user = ApiWrapper.Wrappers.UsersApi.Rating(userId);
             
             var options = Bids.Keys.Where(o => o.Name == option).ToList();
             if (options.Count == 0) return GambleBetOptions.OptionDoesntExist;

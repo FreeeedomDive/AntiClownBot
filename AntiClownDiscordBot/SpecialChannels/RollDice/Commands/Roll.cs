@@ -36,7 +36,7 @@ namespace AntiClownBot.SpecialChannels.RollDice.Commands
             var member = Configuration.GetServerMember(e.Author.Id);
             
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append($"{member.Nickname}:\n");
+            stringBuilder.Append($"{member.ServerOrUsername()}:\n");
             var playerResult = 0;
             var imperatorResult = 0;
             for (var i = 0; i < 2; i++)
@@ -55,12 +55,12 @@ namespace AntiClownBot.SpecialChannels.RollDice.Commands
             if (playerResult > imperatorResult)
             {
                 Config.ChangeBalance(e.Author.Id, bet, "Победа в ролле");
-                stringBuilder.Append($"\n{member.Nickname} выиграл {bet}");
+                stringBuilder.Append($"\n{member.ServerOrUsername()} выиграл {bet}");
             }
             else
             {
                 Config.ChangeBalance(e.Author.Id, -bet, "Проигрыш в ролле");
-                stringBuilder.Append($"\n{member.Nickname} проиграл {bet}");
+                stringBuilder.Append($"\n{member.ServerOrUsername()} проиграл {bet}");
             }
             return stringBuilder.ToString();
         }

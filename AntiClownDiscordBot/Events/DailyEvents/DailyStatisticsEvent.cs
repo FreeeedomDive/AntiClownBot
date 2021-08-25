@@ -22,13 +22,11 @@ namespace AntiClownBot.Events.DailyEvents
         protected override string BackStory()
         {
             var (majorKey, majorValue) = Config.DailyStatistics.CreditsById.OrderBy(x => x.Value).Last();
-            var majorUserName = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(majorKey).Result;
+            var majorUserName = Configuration.GetServerMember(majorKey).ServerOrUsername();
             var (bomjKey, bomjValue) = Config.DailyStatistics.CreditsById.OrderBy(x => x.Value).First();
-            var bomjUserName = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(bomjKey).Result;
+            var bomjUserName = Configuration.GetServerMember(bomjKey).ServerOrUsername();
             
             return "Добрый вечер, Clown-City!\n" +
-                $"Вчерашний посчёт пидоров закончился на {Config.DailyStatistics.PidorCollected}\n" +
-                $"Спонсор каждого из них - Я!\n" +
                 $"Граждане наш Clown-City за день заработать {Config.DailyStatistics.CreditsCollected}\n" +
                 $"Мною было проводить {Config.DailyStatistics.EventsCount} событий\n" +
                 $"Мажор дня - {majorUserName} : {majorValue}\n" +

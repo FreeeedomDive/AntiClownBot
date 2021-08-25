@@ -7,6 +7,8 @@
         public const ulong GuildId = 277096298761551872;
 
         public const ulong BotChannelId = 838477706643374090;
+
+        public const ulong TributeChannelId = 877994939240292442;
         
         // стандартный кулдаун подношения
         public const double DefaultCooldown = 60 * 60 * 1000d;

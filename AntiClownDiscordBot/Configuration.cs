@@ -91,14 +91,14 @@ namespace AntiClownBot
         
         public void ChangeBalance(ulong userId, int rating, string reason)
         {
-            ApiWrapper.Wrappers.UsersWrapper.ChangeUserRating(userId, rating, reason);
+            ApiWrapper.Wrappers.UsersApi.ChangeUserRating(userId, rating, reason);
             DailyStatistics.CreditsCollected += rating;
             DailyStatistics.ChangeUserCredits(userId, rating);
             Configuration.GetConfiguration().Save();
         }
         
         public void BulkChangeBalance(ulong userId, int rating, string reason){
-            ApiWrapper.Wrappers.UsersWrapper.ChangeUserRating(userId, rating, reason);
+            ApiWrapper.Wrappers.UsersApi.ChangeUserRating(userId, rating, reason);
             DailyStatistics.CreditsCollected += rating;
             DailyStatistics.ChangeUserCredits(userId, rating);
             Configuration.GetConfiguration().Save();
@@ -109,7 +109,7 @@ namespace AntiClownBot
 
         public static int GetUserBalance(ulong userId)
         {
-            var result = ApiWrapper.Wrappers.UsersWrapper.Rating(userId);
+            var result = ApiWrapper.Wrappers.UsersApi.Rating(userId);
             return result.ScamCoins;
         }
 

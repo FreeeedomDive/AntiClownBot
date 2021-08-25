@@ -45,6 +45,7 @@ namespace AntiClownBot
             });
             _commandsManager = new CommandsManager(_discord, _config);
             _specialChannelsManager = new SpecialChannelsManager(_discord, _config);
+            BackendHandler.BackendMessagesLongPolling();
             Utility.Client = _discord;
             _discord.UseVoiceNext();
             Voice.VoiceExtension = _discord.GetVoiceNext();

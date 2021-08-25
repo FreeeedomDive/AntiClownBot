@@ -153,5 +153,10 @@ namespace AntiClownBot
                 .GetChannel(Constants.BotChannelId)
                 .SendMessageAsync(content);
         }
+
+        public static string ServerOrUsername(this DiscordMember member)
+        {
+            return member.Nickname ?? member.Username;
+        }
     }
 }

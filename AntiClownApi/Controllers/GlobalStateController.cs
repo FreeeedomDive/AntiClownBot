@@ -8,6 +8,12 @@ namespace AntiClownBotApi.Controllers
     [Route("/api/globalState")]
     public class GlobalStateController
     {
+        [HttpGet, Route("ping")]
+        public string Ping()
+        {
+            return "OK";
+        }
+        
         [HttpGet, Route("autoTributes")]
         public List<TributeResponseDto> GetAutoTributes()
         {

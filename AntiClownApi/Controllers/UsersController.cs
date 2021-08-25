@@ -41,7 +41,7 @@ namespace AntiClownBotApi.Controllers
         public WhenNextTributeResponseDto WhenNextTribute(ulong id) =>
             ExecuteCommand<WhenCommand, WhenNextTributeResponseDto>(new BaseRequestDto {UserId = id});
 
-        [HttpGet, Route("removeCooldowns")]
+        [HttpPost, Route("removeCooldowns")]
         public BaseResponseDto RemoveCooldowns() =>
             ExecuteCommand<RemoveCooldownsCommand, BaseResponseDto>(new BaseRequestDto());
 
@@ -69,5 +69,12 @@ namespace AntiClownBotApi.Controllers
 
         [HttpGet, Route("richest")]
         public ulong GetRichestUser() => UserDbController.GetRichestUser();
+
+        [HttpPost, Route("dailyReset")]
+        public void DailyReset()
+        {
+            ShopDbController.ResetFreeRevealsForAllUsers();
+            ShopDbController.ResetReRollPriceForAllUsers();
+        }
     }
 }

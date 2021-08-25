@@ -189,7 +189,7 @@ namespace AntiClownBotApi.Database.DBControllers
             using var database = new DatabaseContext();
             var user = GetUserWithShopUsingConnection(userId, database);
 
-            user.Shop.FreeItemReveals = Math.Max(1, user.Shop.FreeItemReveals);
+            user.Shop.FreeItemReveals = Math.Max(NumericConstants.FreeItemRevealsPerDay, user.Shop.FreeItemReveals);
             database.SaveChanges();
         }
 

@@ -8,7 +8,7 @@ namespace AntiClownBot.Events.RemoveCooldownEvent
         {
             TellBackStory();
             
-            ApiWrapper.Wrappers.UsersWrapper.RemoveCooldowns();
+            ApiWrapper.Wrappers.UsersApi.RemoveCooldowns();
         }
 
         protected override string BackStory()

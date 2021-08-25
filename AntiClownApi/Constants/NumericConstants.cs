@@ -28,5 +28,7 @@
         
         // конечное значение возможного получения рейтинга с подношения
         public const int MaxTributeValue = 100;
+
+        public const int FreeItemRevealsPerDay = 2;
     }
 }

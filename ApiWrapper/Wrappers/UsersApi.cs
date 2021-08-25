@@ -7,7 +7,7 @@ using RestSharp;
 
 namespace ApiWrapper.Wrappers
 {
-    public class UsersWrapper : BaseWrapper
+    public class UsersApi : BaseApi
     {
         private static string WrapperUrl => "api/users/";
 
@@ -81,7 +81,7 @@ namespace ApiWrapper.Wrappers
         {
             var client = new RestClient(BaseUrl);
             var request = new RestRequest($"{WrapperUrl}removeCooldowns");
-            client.Get(request);
+            client.Post(request);
         }
 
         public static ulong GetRichestUser()
@@ -99,6 +99,13 @@ namespace ApiWrapper.Wrappers
             var response = client.Get(request);
             var content = response.Content;
             return JsonConvert.DeserializeObject<ItemResponseDto>(content, new ItemConverter());
+        }
+
+        public static void DailyReset()
+        {
+            var client = new RestClient(BaseUrl);
+            var request = new RestRequest($"{WrapperUrl}dailyReset");
+            client.Post(request);
         }
     }
 }
