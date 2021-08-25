@@ -6,6 +6,7 @@ using AntiClownBot.SpecialChannels.Slot;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 using System.Collections.Generic;
+using AntiClownBot.Helpers;
 using AntiClownBot.SpecialChannels.Dev;
 
 namespace AntiClownBot.SpecialChannels

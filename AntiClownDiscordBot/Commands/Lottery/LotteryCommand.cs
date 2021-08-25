@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
 using System.Linq;
+using AntiClownBot.Helpers;
 
 namespace AntiClownBot.Commands.Lottery
 {

@@ -1,4 +1,6 @@
-﻿namespace AntiClownBot.Events.TransfusionEvent
+﻿using AntiClownBot.Helpers;
+
+namespace AntiClownBot.Events.TransfusionEvent
 {
     public class TransfusionEvent : BaseEvent
     {

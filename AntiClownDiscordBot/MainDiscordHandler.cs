@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AntiClownBot.Commands;
 using AntiClownBot.Events;
+using AntiClownBot.Helpers;
 using AntiClownBot.Models.Shop;
 using DSharpPlus;
 using DSharpPlus.Entities;

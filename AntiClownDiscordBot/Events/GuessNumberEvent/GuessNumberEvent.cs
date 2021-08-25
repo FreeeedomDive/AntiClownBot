@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AntiClownBot.Helpers;
 using AntiClownBot.Models.GuessNumber;
 
 namespace AntiClownBot.Events.GuessNumberEvent

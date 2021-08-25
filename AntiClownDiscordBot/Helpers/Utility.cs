@@ -7,7 +7,7 @@ using AntiClownBot.Models.BlackJack;
 using DSharpPlus;
 using DSharpPlus.Entities;
 
-namespace AntiClownBot
+namespace AntiClownBot.Helpers
 {
     public static class Utility
     {

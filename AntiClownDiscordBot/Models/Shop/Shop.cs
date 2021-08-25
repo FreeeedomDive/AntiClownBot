@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AntiClownBot.Helpers;
 using ApiWrapper.Models.Items;
 using ApiWrapper.Responses;
 using ApiWrapper.Responses.ShopResponses;
@@ -32,51 +33,17 @@ namespace AntiClownBot.Models.Shop
         {
             var loadingEmotes = new List<string>()
             {
-                $"{Utility.Emoji(":pigRoll:")}" +
-                $"{Utility.Emoji(":pigRoll:")}" +
-                $"{Utility.Emoji(":pigRoll:")}" +
-                $"{Utility.Emoji(":pigRoll:")}" +
                 $"{Utility.Emoji(":pigRoll:")}",
-
-                $"{Utility.Emoji(":Applecatrun:")}" +
-                $"{Utility.Emoji(":Applecatrun:")}" +
-                $"{Utility.Emoji(":Applecatrun:")}" +
-                $"{Utility.Emoji(":Applecatrun:")}" +
                 $"{Utility.Emoji(":Applecatrun:")}",
-
-                $"{Utility.Emoji(":SCAMMED:")}" +
-                $"{Utility.Emoji(":SCAMMED:")}" +
-                $"{Utility.Emoji(":SCAMMED:")}" +
-                $"{Utility.Emoji(":SCAMMED:")}" +
                 $"{Utility.Emoji(":SCAMMED:")}",
-
-                $"{Utility.Emoji(":COGGERS:")}" +
-                $"{Utility.Emoji(":COGGERS:")}" +
-                $"{Utility.Emoji(":COGGERS:")}" +
-                $"{Utility.Emoji(":COGGERS:")}" +
                 $"{Utility.Emoji(":COGGERS:")}",
-
-                $"{Utility.Emoji(":RainbowPls:")}" +
-                $"{Utility.Emoji(":RainbowPls:")}" +
-                $"{Utility.Emoji(":RainbowPls:")}" +
-                $"{Utility.Emoji(":RainbowPls:")}" +
                 $"{Utility.Emoji(":RainbowPls:")}",
-                
-                $"{Utility.Emoji(":PolarStrut:")}" +
-                $"{Utility.Emoji(":PolarStrut:")}" +
-                $"{Utility.Emoji(":PolarStrut:")}" +
-                $"{Utility.Emoji(":PolarStrut:")}" +
                 $"{Utility.Emoji(":PolarStrut:")}",
-                
-                $"{Utility.Emoji(":popCat:")}" +
-                $"{Utility.Emoji(":popCat:")}" +
-                $"{Utility.Emoji(":popCat:")}" +
-                $"{Utility.Emoji(":popCat:")}" +
                 $"{Utility.Emoji(":popCat:")}",
             };
             
             var loadingEmbedBuilder = new DiscordEmbedBuilder();
-            loadingEmbedBuilder.WithTitle($"Загрузка магазина... {loadingEmotes.SelectRandomItem()}");
+            loadingEmbedBuilder.WithTitle($"Загрузка магазина... {loadingEmotes.SelectRandomItem().Multiply(5)}");
 
             return loadingEmbedBuilder.Build();
         }

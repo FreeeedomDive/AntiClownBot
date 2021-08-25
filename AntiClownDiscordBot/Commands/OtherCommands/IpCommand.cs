@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using AntiClownBot.Helpers;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 

@@ -1,4 +1,6 @@
-﻿namespace AntiClownBot.Models.SlotMachine
+﻿using AntiClownBot.Helpers;
+
+namespace AntiClownBot.Models.SlotMachine
 {
     public class CherrySlotCell : ISlotCell
     {

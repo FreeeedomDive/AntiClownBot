@@ -1,5 +1,7 @@
 ﻿using System;
+using AntiClownBot.Helpers;
 using DSharpPlus;
+using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 
 namespace AntiClownBot.Commands.SocialRatingCommands
@@ -17,6 +19,9 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 await e.Message.RespondAsync($"{Utility.Emoji(":Madge:")} {Utility.Emoji(":point_right:")} {e.Guild.GetChannel(877994939240292442).Mention}");
                 return;
             }
+            
+            var embedBuilder = new DiscordEmbedBuilder();
+            embedBuilder.WithTitle("А когда же подношение???");
 
             var result = ApiWrapper.Wrappers.UsersApi.WhenNextTribute(e.Author.Id);
             var now = DateTime.Now;
@@ -24,11 +29,15 @@ namespace AntiClownBot.Commands.SocialRatingCommands
             
             if (cooldownHasPassed)
             {
-                await e.Message.RespondAsync("Кулдаун уже прошел");
+                embedBuilder.WithColor(DiscordColor.Green);
+                embedBuilder.AddField("Уже пора!!!", "Срочно нужно исполнить партийный долг " + Utility.Emoji(":flag_cn:").ToString().Multiply(3));
+                await e.Message.RespondAsync(embedBuilder.Build());
                 return;
             }
-
-            await e.Message.RespondAsync($"Следующий подношение император XI в {Utility.NormalizeTime(result.NextTribute)}, через {Utility.GetTimeDiff(result.NextTribute)}");
+            
+            embedBuilder.WithColor(DiscordColor.Red);
+            embedBuilder.AddField($"А подношение император XI через {Utility.GetTimeDiff(result.NextTribute)}", "Приходи не раньше чем {Utility.NormalizeTime(result.NextTribute)}");
+            await e.Message.RespondAsync(embedBuilder.Build());
         }
 
         public override string Help()

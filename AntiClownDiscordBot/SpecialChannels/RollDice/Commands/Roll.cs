@@ -2,6 +2,7 @@
 using DSharpPlus.EventArgs;
 using System.Linq;
 using System.Text;
+using AntiClownBot.Helpers;
 
 namespace AntiClownBot.SpecialChannels.RollDice.Commands
 {

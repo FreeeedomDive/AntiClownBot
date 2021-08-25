@@ -2,6 +2,7 @@
 using DSharpPlus.EventArgs;
 using System;
 using System.Linq;
+using AntiClownBot.Helpers;
 using AntiClownBot.Models.Gamble;
 
 namespace AntiClownBot.SpecialChannels.Gambling.Commands

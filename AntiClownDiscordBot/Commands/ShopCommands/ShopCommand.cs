@@ -1,4 +1,5 @@
-﻿using AntiClownBot.Models.Shop;
+﻿using AntiClownBot.Helpers;
+using AntiClownBot.Models.Shop;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 

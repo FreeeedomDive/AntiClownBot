@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using AntiClownBot.Helpers;
 using DSharpPlus.Entities;
 using DSharpPlus.VoiceNext;
 

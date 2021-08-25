@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using AntiClownBot.Helpers;
 using AntiClownBot.Models.BlackJack;
 using AntiClownBot.Models.Lottery;
 using DSharpPlus.Entities;

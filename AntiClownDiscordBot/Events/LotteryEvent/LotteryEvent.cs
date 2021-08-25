@@ -1,4 +1,5 @@
 ﻿using System;
+using AntiClownBot.Helpers;
 
 namespace AntiClownBot.Events.LotteryEvent
 {

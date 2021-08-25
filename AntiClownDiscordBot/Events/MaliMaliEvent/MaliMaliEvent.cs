@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AntiClownBot.Helpers;
 using DSharpPlus;
 using DSharpPlus.VoiceNext;
 

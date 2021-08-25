@@ -11,6 +11,7 @@ using DSharpPlus;
 using DSharpPlus.EventArgs;
 using AntiClownBot.Commands.Lohotron;
 using AntiClownBot.Commands.ShopCommands;
+using AntiClownBot.Helpers;
 
 namespace AntiClownBot.Commands
 {
