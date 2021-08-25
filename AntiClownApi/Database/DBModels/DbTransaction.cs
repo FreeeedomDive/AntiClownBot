@@ -12,7 +12,6 @@ namespace AntiClownBotApi.Database.DBModels
         public ulong UserEconomyId { get; set; }
         public DbUserEconomy UserEconomy { get; set; }
         
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime DateTime { get; set; }
         
         public int RatingChange { get; set; }

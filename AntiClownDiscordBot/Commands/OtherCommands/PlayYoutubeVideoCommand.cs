@@ -14,7 +14,7 @@ namespace AntiClownBot.Commands.OtherCommands
         {
         }
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
             DiscordMessage musicMessage = null;
             const string dir = "./youtube";
@@ -44,7 +44,7 @@ namespace AntiClownBot.Commands.OtherCommands
                     NLogWrapper.GetDefaultLogger().Info($"Скачиваю {fileName}");
                     await File.WriteAllBytesAsync(fileName, await video.GetBytesAsync());
                 }
-                Play(e, user, fileName);
+                Play(e, e.Author.Id, fileName);
                 await musicMessage.ModifyAsync("Добавлено в очередь");
             })
             {
@@ -55,9 +55,9 @@ namespace AntiClownBot.Commands.OtherCommands
 
         public override string Help() => "Запуск музыки с ютуба";
 
-        private async void Play(MessageCreateEventArgs e, SocialRatingUser user, string filename)
+        private async void Play(MessageCreateEventArgs e, ulong userId, string filename)
         {
-            var member = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(user.DiscordId).Result;
+            var member = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(userId).Result;
             if (member.VoiceState == null || member.VoiceState.Channel == null)
             {
                 await e.Message.RespondAsync("Чел, в (к)анал зайди");

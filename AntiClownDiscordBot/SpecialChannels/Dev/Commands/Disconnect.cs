@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
 
 namespace AntiClownBot.SpecialChannels.Dev.Commands
@@ -20,7 +15,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
 
         public string Name => "disconnect";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             Voice.SoundQueue.Clear();
             var vnc = Voice.VoiceExtension.GetConnection(Utility.Client.Guilds[277096298761551872]);

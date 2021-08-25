@@ -3,6 +3,7 @@ using System.Linq;
 using AntiClownBotApi.Constants;
 using AntiClownBotApi.Database.DBModels;
 using AntiClownBotApi.Database.DBModels.DbItems;
+using AntiClownBotApi.DTO.Responses;
 using AntiClownBotApi.Models.ItemBuilders;
 using AntiClownBotApi.Models.Items;
 using Microsoft.EntityFrameworkCore;
@@ -16,9 +17,9 @@ namespace AntiClownBotApi.Database.DBControllers
             return UserDbController.IsUserExist(userId)
                 ? database.Users
                     .Include(u => u.Economy)
-                    .Include(u => u.Shop)
-                    .Include(u => u.Items)
                     .Include(u => u.Shop.Items)
+                    .Include(u => u.Items)
+                    .ThenInclude(i => i.ItemStats)
                     .First(u => u.DiscordId == userId)
                 : UserDbController.CreateNewUserWithDbConnection(userId, database);
         }
@@ -43,6 +44,7 @@ namespace AntiClownBotApi.Database.DBControllers
                     .WithRandomCooldownReduceChance()
                     .WithRandomCooldownReducePercent()
                     .WithRandomCooldownReduceTries()
+                    .WithRandomDistributedStats()
                     .Build(),
                 StringConstants.RiceBowlName => item
                     .AsRiceBowl()
@@ -50,11 +52,14 @@ namespace AntiClownBotApi.Database.DBControllers
                     .WithRandomTributeDecrease()
                     .WithRandomDistributedStats()
                     .Build(),
-                // StringConstants.CommunismBannerName => item
-                //     .As()
-                //     .WithRandomAutoTributeChance()
-                //     .Build(),
-                // StringConstants.JadeRodName => item.AsCatWife().WithRandomAutoTributeChance().Build(),
+                StringConstants.CommunismBannerName => item
+                    .AsCommunismBanner()
+                    .WithRandomDistributedStats()
+                    .Build(),
+                StringConstants.JadeRodName => item
+                    .AsJadeRod()
+                    .WithRandomDistributedStats()
+                    .Build(),
                 _ => throw new ArgumentOutOfRangeException($"Invalid item name {shopItem.Name}")
             };
         }
@@ -133,7 +138,6 @@ namespace AntiClownBotApi.Database.DBControllers
             if (itemsOfType.Count == NumericConstants.MaximumItemsOfOneType)
             {
                 var itemToDelete = itemsOfType.OrderBy(i => i.Rarity).First();
-                database.ItemStats.Remove(itemToDelete.ItemStats);
                 user.Items.Remove(itemToDelete);
                 database.Items.Remove(itemToDelete);
             }
@@ -156,7 +160,7 @@ namespace AntiClownBotApi.Database.DBControllers
             if (user.Economy.ScamCoins < user.Shop.ReRollPrice)
                 return Enums.ReRollResult.NotEnoughMoney;
 
-            user.Shop = DbUserShop.GenerateNewShopForUser(userId);
+            user.Shop = DbUserShop.GenerateNewItemsForShop(user.Shop);
             UserDbController.ChangeUserBalanceWithConnection(userId, -user.Shop.ReRollPrice, "Реролл магазина", database);
             user.Shop.ReRollPrice += NumericConstants.DefaultReRollPriceIncrease;
             database.SaveChanges();

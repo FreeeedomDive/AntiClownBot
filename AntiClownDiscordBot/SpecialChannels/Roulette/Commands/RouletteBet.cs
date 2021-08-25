@@ -8,18 +8,20 @@ namespace AntiClownBot.SpecialChannels.Roulette.Commands
     {
         protected readonly Configuration Config;
         protected readonly DiscordClient DiscordClient;
+
         public RouletteBet(DiscordClient client, Configuration configuration)
         {
             Config = configuration;
             DiscordClient = client;
         }
+
         public string Name => "bet";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
-            var player = new RoulettePlayer(user.DiscordId);
+            var player = new RoulettePlayer(e.Author.Id);
 
-            var bet = GetBetByMessage(e.Message.Content, user);
+            var bet = GetBetByMessage(e.Message.Content, e.Author.Id);
             if (bet is null)
             {
                 return "чел ты хуйню написал";
@@ -32,14 +34,15 @@ namespace AntiClownBot.SpecialChannels.Roulette.Commands
 
             return messageText;
         }
-        private Bet GetBetByMessage(string message, SocialRatingUser user)
+
+        private Bet GetBetByMessage(string message, ulong userId)
         {
             var splitMessage = message.Split(' ');
 
             if (splitMessage.Length < 3) return null;
             if (!int.TryParse(splitMessage[1], out var betCount)) return null;
             if (!ParseBetType(splitMessage[2], out var betType)) return null;
-            if (betCount <= 0 || betCount > user.SocialRating) return null;
+            if (betCount <= 0 || betCount > Configuration.GetUserBalance(userId)) return null;
 
             var bet = new Bet()
             {

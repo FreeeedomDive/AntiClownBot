@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Sockets;
 using DSharpPlus;
-using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 
 namespace AntiClownBot.Commands.OtherCommands
@@ -18,7 +16,7 @@ namespace AntiClownBot.Commands.OtherCommands
         }
 
         [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
             var message = e.Message.Content;
             var parts = message.Split(' ');
@@ -28,7 +26,7 @@ namespace AntiClownBot.Commands.OtherCommands
             try
             {
                 const string serverPath = "C:\\Minecraft\\Server 1.17 Clear";
-                const bool isModded = false;
+                var isModded = Directory.Exists($"{serverPath}\\mods");
                 const string serverDescription = "Версия: 1.17 vanilla";
                 var ip = await File.ReadAllTextAsync($"{serverPath}\\server.txt");
                 var mods = new List<string>();

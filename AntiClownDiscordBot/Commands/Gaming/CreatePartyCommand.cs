@@ -11,7 +11,7 @@ namespace AntiClownBot.Commands.Gaming
         {
         }
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
             if (e.Channel.Id != 878002609217220619)
             {
@@ -27,7 +27,7 @@ namespace AntiClownBot.Commands.Gaming
 
             var party = new GameParty()
             {
-                CreatorId = user.DiscordId
+                CreatorId = e.Author.Id
             };
 
             switch (args[1].ToLower())

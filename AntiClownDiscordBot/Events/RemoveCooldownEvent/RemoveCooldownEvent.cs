@@ -8,12 +8,7 @@ namespace AntiClownBot.Events.RemoveCooldownEvent
         {
             TellBackStory();
             
-            foreach (var user in Config.Users.Values)
-            {
-                user.NextTribute = DateTime.Now;
-            }
-
-            Config.Save();
+            ApiWrapper.Wrappers.UsersWrapper.RemoveCooldowns();
         }
 
         protected override string BackStory()

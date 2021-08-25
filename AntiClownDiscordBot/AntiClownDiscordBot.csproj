@@ -52,6 +52,9 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ApiWrapper\ApiWrapper.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

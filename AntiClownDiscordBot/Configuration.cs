@@ -3,40 +3,31 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using AntiClownBot.Models.BlackJack;
 using AntiClownBot.Models.Lottery;
 using DSharpPlus.Entities;
 using Newtonsoft.Json;
 using Roulette;
-using AntiClownBot.Models.Shop;
 using AntiClownBot.Models.DailyStatistics;
+using AntiClownBot.Models.Gamble;
 using AntiClownBot.Models.Gaming;
 using AntiClownBot.Models.GuessNumber;
 using AntiClownBot.Models.Lohotron;
 using AntiClownBot.Models.Race;
-using AntiClownBot.Models.User.Stats;
+using AntiClownBot.Models.Shop;
 using DSharpPlus.EventArgs;
 
 namespace AntiClownBot
 {
     public class Configuration
     {
+        public const bool IsMaintenanceMode = false;
+        
         public Dictionary<string, int> EmojiStatistics;
-        public Dictionary<string, int> PidorStatistics;
-        public Dictionary<ulong, SocialRatingUser> Users;
-
         public DateTime TodayDate;
-        public Dictionary<string, int> PidorOfTheDay;
-        public ulong CurrentPidorOfTheDay;
-
         public DailyStatistics DailyStatistics;
 
-        public int PidorRoulette;
-
         [JsonIgnore] public RouletteGame Roulette = new RouletteGame();
-
-        [JsonIgnore] public Shop Market;
 
         public Lohotron DailyScamMachine;
         public Gamble CurrentGamble;
@@ -44,40 +35,21 @@ namespace AntiClownBot
         public Lottery CurrentLottery;
         [JsonIgnore] public RaceModel CurrentRace;
         [JsonIgnore] public GuessNumberGame CurrentGuessNumberGame;
-
         [JsonIgnore] public Dictionary<ulong, GameParty> OpenParties = new();
         [JsonIgnore] private DiscordMessage _partyObserver;
-
-        public bool AreTributesOpen = true;
+        [JsonIgnore] public Dictionary<ulong, Shop> Shops = new();
 
         private const string FileName = "config.json";
 
         private static Configuration instance;
-
-        public async Task<SocialRatingUser> GetUser(ulong id)
-        {
-            if (Users.ContainsKey(id)) return Users[id];
-            var client = Utility.Client;
-            var member = await client.Guilds[Constants.GuildId].GetMemberAsync(id);
-            var user = new SocialRatingUser(id, member.Username);
-            Users.Add(id, user);
-            Save();
-
-            return user;
-        }
 
         private static Configuration GetNewConfiguration()
         {
             return new Configuration
             {
                 EmojiStatistics = new Dictionary<string, int>(),
-                PidorStatistics = new Dictionary<string, int>(),
-                Users = new Dictionary<ulong, SocialRatingUser>(),
-                PidorOfTheDay = new Dictionary<string, int>(),
                 TodayDate = DateTime.Today,
-                CurrentPidorOfTheDay = 0,
-                DailyStatistics = new DailyStatistics(),
-                PidorRoulette = Randomizer.GetRandomNumberBetween(5, 40)
+                DailyStatistics = new DailyStatistics()
             };
         }
 
@@ -86,7 +58,6 @@ namespace AntiClownBot
             var today = DateTime.Today;
             if (TodayDate == today) return;
             TodayDate = today;
-            PidorOfTheDay = new Dictionary<string, int>();
             DailyStatistics = new DailyStatistics();
             DailyScamMachine = new Lohotron();
             Save();
@@ -111,36 +82,40 @@ namespace AntiClownBot
             }
 
             instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(FileName));
-            foreach (var user in instance.Users.Values)
-            {
-                user.Stats = new UserStats();
-                user.Stats.RecalculateAllStats(user);
-            }
 
             instance.DailyStatistics ??= new DailyStatistics();
             instance.DailyScamMachine ??= new Lohotron();
-            instance.AreTributesOpen = true;
             instance.Save();
             return instance;
+        }
+        
+        public void ChangeBalance(ulong userId, int rating, string reason)
+        {
+            ApiWrapper.Wrappers.UsersWrapper.ChangeUserRating(userId, rating, reason);
+            DailyStatistics.CreditsCollected += rating;
+            DailyStatistics.ChangeUserCredits(userId, rating);
+            Configuration.GetConfiguration().Save();
+        }
+        
+        public void BulkChangeBalance(ulong userId, int rating, string reason){
+            ApiWrapper.Wrappers.UsersWrapper.ChangeUserRating(userId, rating, reason);
+            DailyStatistics.CreditsCollected += rating;
+            DailyStatistics.ChangeUserCredits(userId, rating);
+            Configuration.GetConfiguration().Save();
+        }
+
+        public static DiscordMember GetServerMember(ulong userId) =>
+            Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(userId).Result;
+
+        public static int GetUserBalance(ulong userId)
+        {
+            var result = ApiWrapper.Wrappers.UsersWrapper.Rating(userId);
+            return result.ScamCoins;
         }
 
         public string GetEmojiStats()
         {
             return GetStatsForDict(EmojiStatistics, key => Utility.Emoji($":{key}:"));
-        }
-
-        public string GetPidorStats()
-        {
-            return GetStatsForDict(PidorStatistics, key => key);
-        }
-
-        public string GetSocialRatingStats()
-        {
-            var dict = Users
-                .ToDictionary(
-                    pair => pair.Value.DiscordUsername,
-                    pair => pair.Value.NetWorth);
-            return GetStatsForDict(dict, key => key);
         }
 
         private static string GetStatsForDict(Dictionary<string, int> dict, Func<string, string> func)
@@ -166,22 +141,6 @@ namespace AntiClownBot
             }
 
             return sb.ToString();
-        }
-
-        public void AddPidor(string username)
-        {
-            DailyStatistics.PidorCollected++;
-            AddRecordToDictionary(PidorStatistics, username);
-            CheckCurrentDay();
-            AddRecordToDictionary(PidorOfTheDay, username);
-        }
-
-        public bool IsPidorOfTheDay(string username)
-        {
-            var list = PidorOfTheDay.ToList();
-            list.Sort((pair1, pair2) => -pair1.Value.CompareTo(pair2.Value));
-            if (list.Count < 1) return false;
-            return list[0].Key == username;
         }
 
         public void AddEmoji(string emoji)
@@ -217,32 +176,6 @@ namespace AntiClownBot
                 EmojiStatistics[emoji] = value - 1;
             }
 
-            Save();
-        }
-
-        public void DecreasePidorRoulette()
-        {
-            PidorRoulette--;
-            Save();
-        }
-
-        public bool IsPidor()
-        {
-            if (PidorRoulette > 0) return false;
-            PidorRoulette = Randomizer.GetRandomNumberBetween(5, 40);
-            Save();
-            return true;
-        }
-
-        public void CloseTributes()
-        {
-            AreTributesOpen = false;
-            Save();
-        }
-
-        public void OpenTributes()
-        {
-            AreTributesOpen = true;
             Save();
         }
 

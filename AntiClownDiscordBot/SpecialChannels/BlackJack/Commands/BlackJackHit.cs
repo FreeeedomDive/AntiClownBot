@@ -16,9 +16,9 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
         }
         public string Name => "hit";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
-            if (Config.CurrentBlackJack.Players.All(player => player.Name != user.DiscordUsername))
+            if (Config.CurrentBlackJack.Players.All(player => player.UserId != e.Author.Id))
             {
                 return "Ты не принимаешь участие в игре";
             }
@@ -28,7 +28,7 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
                 return "Раунд еще не начался";
             }
 
-            if (Config.CurrentBlackJack.Players.Peek().Name != user.DiscordUsername)
+            if (Config.CurrentBlackJack.Players.Peek().UserId != e.Author.Id)
             {
                 return "Не твой ход";
             }

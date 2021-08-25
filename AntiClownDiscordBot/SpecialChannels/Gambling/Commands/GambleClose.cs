@@ -14,7 +14,7 @@ namespace AntiClownBot.SpecialChannels.Gambling.Commands
         }
         public string Name => "close";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             if(Config.CurrentGamble == null)
             {

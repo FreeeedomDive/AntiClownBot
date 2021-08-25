@@ -1,28 +1,23 @@
-﻿using AntiClownBot.Models.User.Inventory.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace AntiClownBot.Models.Lohotron
 {
     public class Lohotron
     {
-        public List<ulong> UsersId = new();
+        public readonly List<ulong> UsersId = new();
 
         private static readonly ILohotronPrize[] AllPrizes =
         {
             new DefaultLohotronPrize(),
             new CreditsLohotronPrize(100),
             new CreditsLohotronPrize(200),
-            new ItemLohotronPrize(new CatWife()),
-            new ItemLohotronPrize(new DogWife()),
-            new ItemLohotronPrize(new Gigabyte()),
-            new ItemLohotronPrize(new RiceBowl()),
-            new ItemLohotronPrize(new CommunismPoster()),
-            new ItemLohotronPrize(new JadeRod()),
-            new ItemLohotronPrize(new LootBox())
+            new CreditsLohotronPrize(500),
+            new CreditsLohotronPrize(500),
+            new CreditsLohotronPrize(500),
+            new CreditsLohotronPrize(500),
+            new CreditsLohotronPrize(-500),
+            new CreditsLohotronPrize(-500),
+            new CreditsLohotronPrize(1),
         };
 
         private static readonly Wheel Wheel =

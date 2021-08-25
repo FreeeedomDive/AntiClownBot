@@ -11,7 +11,7 @@ namespace AntiClownBot.Commands.OtherCommands
             _manager = manager;
         }
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
             var message = e.Message.Content;
             var messageArgs = message.Split(' ');

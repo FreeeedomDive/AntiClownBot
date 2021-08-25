@@ -1,35 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
-using AntiClownBot.Models.User.Inventory.Items;
-using DSharpPlus;
 
 namespace AntiClownBot.Models.GuessNumber
 {
     public class GuessNumberGame
     {
-        public ulong GuessNumberGameMessageId;
-        public Dictionary<ulong, int> Users;
+        public readonly ulong GuessNumberGameMessageMessageId;
+        public readonly Dictionary<ulong, int> Users;
         public bool IsJoinable;
-        private int generatedNumber;
+        private readonly int _generatedNumber;
 
-        public void Join(SocialRatingUser user, int number)
+        public void Join(ulong userId, int number)
         {
-            if (Users.ContainsKey(user.DiscordId) || !IsJoinable)
+            if (Users.ContainsKey(userId) || !IsJoinable)
             {
                 return;
             }
 
-            Users.Add(user.DiscordId, number);
+            Users.Add(userId, number);
         }
 
-        public GuessNumberGame(ulong id)
+        public GuessNumberGame(ulong messageId)
         {
-            generatedNumber = Randomizer.GetRandomNumberBetween(1, 6);
+            _generatedNumber = Randomizer.GetRandomNumberBetween(1, 6);
             Users = new Dictionary<ulong, int>();
-            GuessNumberGameMessageId = id;
+            GuessNumberGameMessageMessageId = messageId;
             IsJoinable = true;
         }
 
@@ -37,16 +32,16 @@ namespace AntiClownBot.Models.GuessNumber
         {
             IsJoinable = false;
             var count = 0;
-            var sb = new StringBuilder($"Правильный ответ {generatedNumber}!\n");
+            var sb = new StringBuilder($"Правильный ответ {_generatedNumber}!\n");
             foreach (var pair in Users)
             {
-                if (pair.Value == generatedNumber)
-                {
-                    var user = Configuration.GetConfiguration().Users[pair.Key];
-                    user.AddCustomItem(new LootBox());
-                    sb.Append($"\n{user.DiscordUsername} получает Добыча коробка!");
-                    count++;
-                }
+                if (pair.Value != _generatedNumber) continue;
+                
+                //TODO - временное решение, пока нет идей с реализацией лутбоксов
+                Configuration.GetConfiguration().ChangeBalance(pair.Key, 500, "Угаданное число в эвенте");
+                var member = await Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(pair.Key);
+                sb.Append($"\n{member.Nickname} получает 500 Scam-койнов!");
+                count++;
             }
 
             if (count == 0)

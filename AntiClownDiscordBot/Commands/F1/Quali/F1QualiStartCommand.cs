@@ -19,7 +19,7 @@ namespace AntiClownBot.Commands.F1.Quali
         }
         public string Name => "start";
 
-        public string Execute(SocialRatingUser user, List<string> optionLines)
+        public string Execute(ulong userId, List<string> optionLines)
         {
             if (Config.CurrentGamble != null)
             {
@@ -44,7 +44,7 @@ namespace AntiClownBot.Commands.F1.Quali
                 {
                     return $"Значение {splittedline[0]} не является типом int";
                 }
-                if(position < 1 || position > 20)
+                if(position is < 1 or > 20)
                 {
                     return "Позиция не может быть меньше 1 или больше 20";
                 }
@@ -79,7 +79,7 @@ namespace AntiClownBot.Commands.F1.Quali
                     options.Add(new GambleOption(tuples[count].Item1, 1.8));
                 }
             }
-            Config.CurrentGamble = new Gamble(gambleName, user.DiscordId, GambleType.WithCustomRatio, options);
+            Config.CurrentGamble = new Gamble(gambleName, userId, GambleType.WithCustomRatio, options);
             Config.Save();
             return $"Начата ставка \"{Config.CurrentGamble.GambleName}\"";
         }

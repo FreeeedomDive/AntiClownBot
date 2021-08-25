@@ -1,10 +1,6 @@
 ﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AntiClownBot.Commands.Lottery
 {
@@ -14,17 +10,17 @@ namespace AntiClownBot.Commands.Lottery
         {
         }
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
-            if (Config.CurrentLottery == null || !Config.CurrentLottery.IsJoinable)
+            if (Config.CurrentLottery is not {IsJoinable: true})
                 return;
-            if (Config.CurrentLottery.Participants.Contains(user.DiscordId))
+            if (Config.CurrentLottery.Participants.Contains(e.Author.Id))
             {
                 await e.Message.RespondAsync("Ты уже участвуешь");
                 return;
             }
 
-            var message = Config.CurrentLottery.Join(user);
+            var message = Config.CurrentLottery.Join(e.Author.Id);
             await e.Message.RespondAsync(message);
         }
 

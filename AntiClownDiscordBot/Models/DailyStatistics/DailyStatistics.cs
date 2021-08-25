@@ -11,16 +11,16 @@ namespace AntiClownBot.Models.DailyStatistics
         public int CreditsCollected;
         public int PidorCollected;
         public int EventsCount;
-        public Dictionary<string, int> CreditsById;
+        public Dictionary<ulong, int> CreditsById;
 
         public DailyStatistics()
         {
             CreditsCollected = 0;
             PidorCollected = 0;
             EventsCount = 0;
-            CreditsById = new Dictionary<string, int>();
+            CreditsById = new Dictionary<ulong, int>();
         }
-        public void ChangeUserCredits(string id, int count)
+        public void ChangeUserCredits(ulong id, int count)
         {
             if(!CreditsById.ContainsKey(id))
             {

@@ -16,7 +16,7 @@ namespace AntiClownBot.SpecialChannels.Gambling.Commands
         }
         public string Name => "start";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             if (Config.CurrentGamble != null)
             {

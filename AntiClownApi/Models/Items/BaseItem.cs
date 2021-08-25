@@ -1,7 +1,6 @@
 ﻿using System;
-using AntiClownBotApi.Database.DBModels;
+using AntiClownBotApi.Constants;
 using AntiClownBotApi.Database.DBModels.DbItems;
-using AntiClownBotApi.Models.Classes.Items;
 
 namespace AntiClownBotApi.Models.Items
 {
@@ -19,5 +18,16 @@ namespace AntiClownBotApi.Models.Items
         public int Price { get; set; }
 
         public abstract DbItem ToDbItem();
+
+        public static BaseItem FromDbItem(DbItem item) => item.Name switch
+        {
+            StringConstants.CatWifeName => (CatWife) item,
+            StringConstants.DogWifeName => (DogWife) item,
+            StringConstants.RiceBowlName => (RiceBowl) item,
+            StringConstants.InternetName => (Internet) item,
+            StringConstants.JadeRodName => (JadeRod) item,
+            StringConstants.CommunismBannerName => (CommunismBanner) item,
+            _ => throw new ArgumentOutOfRangeException(nameof(item))
+        };
     }
 }

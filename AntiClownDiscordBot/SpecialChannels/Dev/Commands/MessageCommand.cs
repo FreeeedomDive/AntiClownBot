@@ -20,19 +20,19 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
 
         public string Name => "send";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             var args = e.Message.Content.Split(' ').Skip(1).ToList();
             if (args.Count < 2)
                 return "Так дела не делаются";
             if (!ulong.TryParse(args.First(), out var channelId))
             {
-                return "найс канал, чел";
+                return "Найс канал, чел";
             }
 
             if (!DiscordClient.Guilds[Constants.GuildId].Channels.ContainsKey(channelId))
             {
-                return "да нет такого канала";
+                return "Нет такого канала";
             }
             var message = string.Join(" ", args.Skip(1));
             var channel = DiscordClient.Guilds[Constants.GuildId].Channels[channelId];
@@ -42,7 +42,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
             }
 
             channel.SendMessageAsync(message);
-            return "отправил";
+            return "Отправил";
         }
     }
 }

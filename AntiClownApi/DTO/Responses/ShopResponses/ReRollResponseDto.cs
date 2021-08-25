@@ -1,6 +1,4 @@
-﻿using AntiClownBotApi.Constants;
-
-namespace AntiClownBotApi.DTO.Responses.ShopResponses
+﻿namespace AntiClownBotApi.DTO.Responses.ShopResponses
 {
     public class ReRollResponseDto: BaseResponseDto
     {

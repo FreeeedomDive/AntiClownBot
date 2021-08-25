@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using AntiClownBotApi.Constants;
-using AntiClownBotApi.Models.Classes.Items;
+using AntiClownBotApi.Models.Items;
 
 namespace AntiClownBotApi.Database.DBModels.DbItems
 {
@@ -25,13 +25,17 @@ namespace AntiClownBotApi.Database.DBModels.DbItems
         public static DbShopItem GenerateNewShopItem(DbUserShop shop)
         {
             var rarity = Utility.GenerateRarity();
+            var possibleItems = new List<string>();
+            foreach (var goodItem in StringConstants.GoodItemNames)
+            {
+                possibleItems.AddRange(Enumerable.Repeat(goodItem, 5));
+            }
+
+            possibleItems.AddRange(StringConstants.BadItemNames);
+
             return new DbShopItem()
             {
-                Name = StringConstants
-                    .GoodItemNames
-                    .SelectMany(item => Enumerable.Repeat(item, 5))
-                    .Union(StringConstants.BadItemNames)
-                    .SelectRandomItem(),
+                Name = possibleItems.SelectRandomItem(),
                 Rarity = rarity,
                 Price = Utility.Prices[rarity],
                 Shop = shop,

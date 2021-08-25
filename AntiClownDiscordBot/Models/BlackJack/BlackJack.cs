@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Text;
 using System.Timers;
-using DSharpPlus;
-using DSharpPlus.Entities;
 
 namespace AntiClownBot.Models.BlackJack
 {
@@ -46,12 +44,11 @@ namespace AntiClownBot.Models.BlackJack
         {
             _timer.Stop();
         }
-        private async void Kick(object sender, System.Timers.ElapsedEventArgs e)
+        private async void Kick(object sender, ElapsedEventArgs e)
         {
             var player = Players.Dequeue();
-            _configuration.Users[player.UserId].ChangeRating(-50);
-            _configuration.Save();
-            var message = $"{player.Name} исключён за бездействие и теряет 50 ClownCoins\n";
+            _configuration.ChangeBalance(player.UserId, -50, "Кик за бездействие в блекджеке");
+            var message = $"{player.Name} исключён за бездействие и теряет 50 ScamCoins\n";
             
             if (Players.First().IsDealer)
                 message += MakeResult();
@@ -61,36 +58,40 @@ namespace AntiClownBot.Models.BlackJack
                 .GetChannel(843065708023382036)
                 .SendMessageAsync(message);
         }
-        public string Join(SocialRatingUser user)
+        public string Join(ulong userId)
         {
-            Players.Enqueue(new Player {UserId = user.DiscordId, Value = 0, Name = user.DiscordUsername});
-            return $"{user.DiscordUsername} присоединился к игре {Utility.StringEmoji(":peepoArrive:")}";
+            var member = Configuration.GetServerMember(userId);
+            Players.Enqueue(new Player {UserId = userId, Value = 0, Name = member.Nickname});
+            return $"{member.Nickname} присоединился к игре {Utility.StringEmoji(":peepoArrive:")}";
         }
 
-        public string Leave(SocialRatingUser user)
+        public string Leave(ulong userId)
         {
             _configuration ??= Configuration.GetConfiguration();
-            if(Players.First().UserId == user.DiscordId)
+            if(Players.First().UserId == userId)
             {
                 StopTimer();
-                if(IsActive)user.ChangeRating(Players.First().IsDouble ? -100 : -50);
-                Players.Dequeue();
+                if(IsActive)
+                {
+                    _configuration.ChangeBalance(userId, -50, "Выход из активной игры блекджека");
+                }
+                var p = Players.Dequeue();
                 if(IsActive)StartTimer();
-                return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}\n";
+                return $"{p.Name} вышел из игры {Utility.StringEmoji(":peepoLeave:")}\n";
             }
-            var potentialRemovableUser = Players.Where(p => user.DiscordId.Equals(p.UserId)).ToList();
+            var potentialRemovableUser = Players.Where(p => userId.Equals(p.UserId)).ToList();
             if (potentialRemovableUser.Count == 0)
                 return "Ты и так не участвовал в игре";
             var player = potentialRemovableUser[0];
             Players = Players.WithoutItem(player);
             if (IsActive)
-                _configuration.Users[player.UserId].ChangeRating(player.IsDouble ? -100 : -50);
-            return $"{user.DiscordUsername} вышел из игры {Utility.StringEmoji(":peepoLeave:")}\n";
+                _configuration.ChangeBalance(player.UserId, player.IsDouble ? -100 : -50, "Выход из активной игры блекджека");
+            return $"{player.Name} вышел из игры {Utility.StringEmoji(":peepoLeave:")}\n";
         }
 
         public GetResult GetCard(bool isDouble, Player player)
         {
-            var card = CurrentDeck.Cards[CurrentDeck.Cards.Count - 1];
+            var card = CurrentDeck.Cards[^1];
             if (card == Card.Ace && player.Value > 10)
             {
                 player.Value += 1;
@@ -135,10 +136,10 @@ namespace AntiClownBot.Models.BlackJack
             var tempQueueWithoutPoorPlayers = new Queue<Player>();
             foreach (var player in Players)
             {
-                if (!player.IsDealer && _configuration.Users[player.UserId].SocialRating < 50)
+                if (!player.IsDealer && Configuration.GetUserBalance(player.UserId) < 50)
                 {
                     stringBuilder.Append(
-                        $"{_configuration.Users[player.UserId].DiscordUsername} оказался слишком бедным и кикнут из этой игры\n");
+                        $"{player.Name} оказался слишком бедным и кикнут из этой игры\n");
                     continue;
                 }
 
@@ -196,12 +197,12 @@ namespace AntiClownBot.Models.BlackJack
                 {
                     if (player.IsDouble)
                     {
-                        _configuration.Users[player.UserId].ChangeRating(-100);
+                        _configuration.ChangeBalance(player.UserId, -100, "Проигрыш с double в блекджек");
                         strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                     }
                     else
                     {
-                        _configuration.Users[player.UserId].ChangeRating(-50);
+                        _configuration.ChangeBalance(player.UserId, -50, "Проигрыш в блекджек");
                         strBuilder.Append($"{player.Name} проебал 50 очков\n");
                     }
                 }
@@ -215,31 +216,31 @@ namespace AntiClownBot.Models.BlackJack
                     {
                         if (player.IsDouble)
                         {
-                            _configuration.Users[player.UserId].ChangeRating(-100);
+                            _configuration.ChangeBalance(player.UserId, -100, "Проигрыш в блекджек");
                             strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                         }
                         else
                         {
-                            _configuration.Users[player.UserId].ChangeRating(-50);
+                            _configuration.ChangeBalance(player.UserId, -50, "Проигрыш в блекджек");
                             strBuilder.Append($"{player.Name} проебал 50 очков\n");
                         }
                     }
                 }
                 else if (player.IsBlackJack)
                 {
-                    _configuration.Users[player.UserId].ChangeRating(75);
+                    _configuration.ChangeBalance(player.UserId, 75, "Выигрыш в блекджек");
                     strBuilder.Append($"{player.Name} выиграл BlackJack и получил 75 очков\n");
                 }
                 else if (dealer.Value > 21 || player.Value > dealer.Value)
                 {
                     if (player.IsDouble)
                     {
-                        _configuration.Users[player.UserId].ChangeRating(100);
+                        _configuration.ChangeBalance(player.UserId, 100, "Выигрыш в блекджек");
                         strBuilder.Append($"{player.Name} с удвоенной ставкой выиграл 100 очков\n");
                     }
                     else
                     {
-                        _configuration.Users[player.UserId].ChangeRating(50);
+                        _configuration.ChangeBalance(player.UserId, 50, "Выигрыш в блекджек");
                         strBuilder.Append($"{player.Name} выиграл 50 очков\n");
                     }
                 }
@@ -247,12 +248,12 @@ namespace AntiClownBot.Models.BlackJack
                 {
                     if (player.IsDouble)
                     {
-                        _configuration.Users[player.UserId].ChangeRating(-100);
+                        _configuration.ChangeBalance(player.UserId, -100, "Проигрыш в блекджек");
                         strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                     }
                     else
                     {
-                        _configuration.Users[player.UserId].ChangeRating(-50);
+                        _configuration.ChangeBalance(player.UserId, -50, "Проигрыш в блекджек");
                         strBuilder.Append($"{player.Name} проебал 50 очков\n");
                     }
                 }

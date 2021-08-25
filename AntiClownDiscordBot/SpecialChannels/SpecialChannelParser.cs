@@ -16,7 +16,7 @@ namespace AntiClownBot.SpecialChannels
             DiscordClient = client;
             Config = configuration;
         }
-        public abstract void Parse(MessageCreateEventArgs e, SocialRatingUser user);
+        public abstract void Parse(MessageCreateEventArgs e);
         public abstract string Help(MessageCreateEventArgs e);
     }
 }

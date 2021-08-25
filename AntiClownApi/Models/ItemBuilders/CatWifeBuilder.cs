@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AntiClownBotApi.Models.Classes.Items;
 using AntiClownBotApi.Models.Items;
 
 namespace AntiClownBotApi.Models.ItemBuilders

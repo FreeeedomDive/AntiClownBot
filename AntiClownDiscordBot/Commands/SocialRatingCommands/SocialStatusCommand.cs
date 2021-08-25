@@ -9,9 +9,9 @@ namespace AntiClownBot.Commands.SocialRatingCommands
         {
         }
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
-            await e.Message.RespondAsync(Config.GetSocialRatingStats());
+            await e.Message.RespondAsync($"{Utility.Emoji(":NOPERS:")} {Utility.Emoji(":NOPERS:")} {Utility.Emoji(":NOPERS:")}");
         }
 
         public override string Help()

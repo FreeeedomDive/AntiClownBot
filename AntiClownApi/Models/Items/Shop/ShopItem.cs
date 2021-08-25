@@ -1,5 +1,4 @@
 ﻿using System;
-using AntiClownBotApi.Models.Classes.Items;
 
 namespace AntiClownBotApi.Models.Items.Shop
 {
@@ -11,7 +10,5 @@ namespace AntiClownBotApi.Models.Items.Shop
         public Rarity Rarity { get; set; }
         public int Price { get; set; }
         public bool IsRevealed { get; set; }
-        
-        
     }
 }

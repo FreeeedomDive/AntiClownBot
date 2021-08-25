@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 
@@ -22,10 +18,10 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
 
         public string Name => "connect";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             var args = string.Join(" ", e.Message.Content.Split(' ').Skip(1));
-            if (!ulong.TryParse(args, out ulong id))
+            if (!ulong.TryParse(args, out var id))
             {
                 return "Что ты тут высрал?";
             }

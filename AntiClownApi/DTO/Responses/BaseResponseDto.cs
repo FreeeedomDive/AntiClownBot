@@ -1,6 +1,6 @@
 ﻿namespace AntiClownBotApi.DTO.Responses
 {
-    public abstract class BaseResponseDto
+    public class BaseResponseDto
     {
         public ulong UserId { get; set; }
         public bool HasError { get; set; } = false;

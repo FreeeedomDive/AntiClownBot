@@ -14,7 +14,7 @@ namespace AntiClownBot.SpecialChannels.Gambling.Commands
         }
         public string Name => "current";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             return Config.CurrentGamble != null ? Config.CurrentGamble.ToString() : "В данный момент нет активной ставки";
         }

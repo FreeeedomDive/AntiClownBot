@@ -1,9 +1,8 @@
 ﻿using System;
 using AntiClownBotApi.Constants;
 using AntiClownBotApi.Database.DBModels.DbItems;
-using AntiClownBotApi.Models.Items;
 
-namespace AntiClownBotApi.Models.Classes.Items
+namespace AntiClownBotApi.Models.Items
 {
     public class JadeRod : BaseItem
     {

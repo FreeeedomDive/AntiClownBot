@@ -1,4 +1,4 @@
-﻿namespace AntiClownBotApi.Models.Classes.Items
+﻿namespace AntiClownBotApi.Models.Items
 {
     public enum Rarity
     {

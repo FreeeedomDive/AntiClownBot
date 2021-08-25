@@ -2,6 +2,7 @@
 using DSharpPlus.EventArgs;
 using System;
 using System.Linq;
+using AntiClownBot.Models.Gamble;
 
 namespace AntiClownBot.SpecialChannels.Gambling.Commands
 {
@@ -16,11 +17,11 @@ namespace AntiClownBot.SpecialChannels.Gambling.Commands
         }
         public string Name => "gamble";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             if (Config.CurrentGamble == null)
             {
-                user.ChangeRating(-15);
+                Config.ChangeBalance(e.Author.Id, -15, "Ставки нет, а чел лудоманыч...");
                 return "В данный момент нет активной ставки, лудоман ебучий";
             }
 
@@ -35,29 +36,24 @@ namespace AntiClownBot.SpecialChannels.Gambling.Commands
             var betParsed = int.TryParse(messageArgs.Last(), out var bet);
             if (!betParsed)
             {
-                user.ChangeRating(-15);
+                Config.ChangeBalance(e.Author.Id, -15, "Чел написал что-то левое вместо размера ставки");
                 return $"Вместо ставки ты высрал какую-то хуйню, держи -15 {Utility.StringEmoji(":Pepega:")}";
             }
 
             if (bet <= 0)
             {
-                user.ChangeRating(-50);
+                Config.ChangeBalance(e.Author.Id, -50, "Чел попробовал ввести отрицательную ставку");
                 return $"Ты серьезно думал меня наебать? Держи -50 {Utility.StringEmoji(":Pepega:")}";
             }
-            var result = Config.CurrentGamble.MakeBid(user, option, bet);
-            switch (result)
+            var result = Config.CurrentGamble.MakeBid(e.Author.Id, option, bet);
+            return result switch
             {
-                case GambleBetOptions.OptionDoesntExist:
-                    return "Такого варианта не существует";
-                case GambleBetOptions.NotEnoughRating:
-                    return "Ты слишком лох, чтобы ставить такую сумму";
-                case GambleBetOptions.SuccessfulBet:
-                    return "Принята ставка";
-                case GambleBetOptions.SuccessfulRaise:
-                    return "Принято увеличение ставки";
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                GambleBetOptions.OptionDoesntExist => "Такого варианта не существует",
+                GambleBetOptions.NotEnoughRating => "Ты слишком лох, чтобы ставить такую сумму",
+                GambleBetOptions.SuccessfulBet => "Принята ставка",
+                GambleBetOptions.SuccessfulRaise => "Принято увеличение ставки",
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

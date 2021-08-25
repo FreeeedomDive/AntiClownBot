@@ -42,33 +42,27 @@ namespace AntiClownBot.Events.MaliMaliEvent
                         !kvp.Value.User.IsBot &&
                         kvp.Value.Channel.Id == channel.Id)
                     .ToList();
-                foreach (var user in voiceUsers.Where(u => u.Value.User.Id != Constants.BotId))
+                foreach (var (userId, voiceState) in voiceUsers.Where(u => u.Value.User.Id != Constants.BotId))
                 {
-                    if (user.Value.Channel == channel)
-                    {
-                        var member = DiscordClient
-                            .Guilds[277096298761551872].GetMemberAsync(user.Key);
-                        await member.Result.ModifyAsync(model => model.Muted = true);
-                    }
+                    if (voiceState.Channel != channel) continue;
+                    var member = DiscordClient
+                        .Guilds[277096298761551872].GetMemberAsync(userId);
+                    await member.Result.ModifyAsync(model => model.Muted = true);
                 }
 
                 new Thread(async () =>
                 {
-                    var voiceChannel = channel;
                     await Task.Delay(60 * 1000);
                     foreach (var (key, value) in voiceUsers.Where(u => u.Value.User.Id != Constants.BotId))
                     {
-                        if (value.Channel != voiceChannel) continue;
+                        if (value.Channel != channel) continue;
 
                         var member = await DiscordClient
                             .Guilds[277096298761551872].GetMemberAsync(key);
                         await member.ModifyAsync(model => model.Muted = false);
 
                         if (member.IsBot) continue;
-                        var socialUser = Config.Users.ContainsKey(value.User.Id)
-                            ? Config.Users[value.User.Id]
-                            : new SocialRatingUser(member.Id, member.Username);
-                        socialUser.ChangeRating(Randomizer.GetRandomNumberBetween(100, 150));
+                        Config.ChangeBalance(member.Id, Randomizer.GetRandomNumberBetween(100, 150), "MALI-MALI");
                     }
                 }).Start();
 

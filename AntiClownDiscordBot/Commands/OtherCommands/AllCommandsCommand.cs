@@ -13,7 +13,7 @@ namespace AntiClownBot.Commands.OtherCommands
             _manager = manager;
         }
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
             await e.Message.RespondAsync($"Доступные команды:\n{string.Join("\n", _manager.AllCommands)}");
         }

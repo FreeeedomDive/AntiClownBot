@@ -19,17 +19,17 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
         }
         public string Name => "leave";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
-            if (Config.CurrentBlackJack.Players.All(player => player.Name != user.DiscordUsername))
+            if (Config.CurrentBlackJack.Players.All(player => player.UserId != e.Author.Id))
             {
                 return "Ты не принимаешь участие в игре";
             }
-            if(Config.CurrentBlackJack.Players.First().UserId == user.DiscordId)
+            if(Config.CurrentBlackJack.Players.First().UserId == e.Author.Id)
             {
                 Config.CurrentBlackJack.StopTimer();
             }
-            var message = (Config.CurrentBlackJack.Leave(user));
+            var message = (Config.CurrentBlackJack.Leave(e.Author.Id));
             if (Config.CurrentBlackJack.Players.First().IsDealer && Config.CurrentBlackJack.IsActive)
             {
                 Config.CurrentBlackJack.StopTimer();

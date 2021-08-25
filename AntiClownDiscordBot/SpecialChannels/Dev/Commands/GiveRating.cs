@@ -16,18 +16,14 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
         }
         public string Name => "give";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             var messageArgs = e.Message.Content.Split();
             if (messageArgs.Length != 3) return "хуйня";
             var userIdParsed = ulong.TryParse(messageArgs[1], out var userId);
             if (!userIdParsed) return "хуйня";
-            var member = e.Guild.GetMemberAsync(userId).Result;
-            var rewardedUser = Config.Users.ContainsKey(userId)
-                ? Config.Users[userId]
-                : new SocialRatingUser(userId, member.Username);
             var reward = int.Parse(messageArgs[2]);
-            rewardedUser.ChangeRating(reward);
+            Config.ChangeBalance(userId, reward, "Один из разработчиков так захотел");
 
             return "done";
         }

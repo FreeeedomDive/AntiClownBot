@@ -11,7 +11,7 @@ namespace AntiClownBot
                 var message = $"{eventArgs.Exception.Message}\n{eventArgs.Exception.StackTrace}";
                 NLogWrapper.GetDefaultLogger().Error(message);
             };
-            var app = new TrayApplication();
+            var app = new MainDiscordHandler();
         }
     }
 }

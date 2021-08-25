@@ -10,7 +10,7 @@ namespace AntiClownBot.Commands.StatsCommands
         {
         }
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
             await e.Message.RespondAsync(Config.GetEmojiStats());
         }

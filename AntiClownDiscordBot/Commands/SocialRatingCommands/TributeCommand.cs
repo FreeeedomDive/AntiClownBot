@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using ApiWrapper.Models.Items;
+using ApiWrapper.Responses.UserCommandResponses;
+using ApiWrapper.Wrappers;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
@@ -15,83 +17,50 @@ namespace AntiClownBot.Commands.SocialRatingCommands
         {
         }
 
-        public override void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
-            Tribute(e, user, false);
-        }
-
-        private async void Tribute(MessageCreateEventArgs e, SocialRatingUser user, bool isAutomatic)
-        {
-            if (e.Channel.Id != 877994939240292442)
+            if (e.Channel.Id != 877994939240292442 && e.Channel.Id != 879784704696549498)
             {
                 await e.Message.RespondAsync($"{Utility.Emoji(":Madge:")} {Utility.Emoji(":point_right:")} {e.Guild.GetChannel(877994939240292442).Mention}");
                 return;
             }
-            var messageEmbedBuilder = new DiscordEmbedBuilder();
-            messageEmbedBuilder.WithTitle(isAutomatic
-                ? $"Автоматическое подношение для {user.DiscordUsername}"
-                : "Подношение");
             
-            if (!Config.AreTributesOpen)
-            {
-                messageEmbedBuilder.WithColor(DiscordColor.Red);
-                messageEmbedBuilder.AddField($"Я ЗАНЯТ!!! {Utility.Emoji(":NOPERS:")}", isAutomatic
-                    ? "Приводи свою кошку-жену позже, а щас отъебись"
-                    : "Отъебись");
-                await e.Message.RespondAsync(messageEmbedBuilder.Build());
-                return;
-            }
-            
-            if (!user.IsCooldownPassed())
-            {
-                if (isAutomatic)
-                {
-                    messageEmbedBuilder.WithColor(DiscordColor.Red);
-                    messageEmbedBuilder.AddField(Utility.StringEmoji(":NOPERS:"),
-                        "Ты успеть принести подношение до твой кошачья жена, подношение от кошки не учитываться");
-                    await e.Message.RespondAsync(messageEmbedBuilder.Build());
-                    return;
-                }
+            var tributeResult = ApiWrapper.Wrappers.UsersWrapper.Tribute(e.Author.Id);
+            var embed = MakeEmbedForTribute(tributeResult);
+            await e.Message.RespondAsync(embed);
+        }
 
+        public static DiscordEmbed MakeEmbedForTribute(TributeResponseDto response)
+        {
+            var member = Configuration.GetServerMember(response.UserId);
+            var messageEmbedBuilder = new DiscordEmbedBuilder();
+            messageEmbedBuilder.WithTitle($"Подношение {member.Nickname}");
+            
+            if (response.Result == TributeResult.CooldownHasNotPassed)
+            {
                 messageEmbedBuilder.WithColor(DiscordColor.Red);
                 messageEmbedBuilder.AddField(Utility.StringEmoji(":NOPERS:"),
                     $"Не злоупотребляй подношение император XI {Utility.StringEmoji(":PepegaGun:")}");
-                await e.Message.RespondAsync(messageEmbedBuilder.Build());
-                user.ChangeRating(-15);
-                return;
+                return messageEmbedBuilder.Build();
             }
 
-            var (gigabyteWorked, jadeRodWorked) = user.UpdateCooldown();
-
-            var tributeQuality = Randomizer.GetRandomNumberBetween(
-                Constants.MinTributeValue -
-                user.Stats.TributeLowerExtendBorder,
-                Constants.MaxTributeValue +
-                user.Stats.TributeUpperExtendBorder);
-            var communism = Randomizer.GetRandomNumberBetween(0, 100) < user.Stats.TributeSplitChance;
-
-            var sharedUser = user;
-            if (communism)
+            if (response.IsCommunismActive)
             {
-                sharedUser = Utility
-                    .GetDistributedCommunists()
-                    .Where(u => u.DiscordId != user.DiscordId)
-                    .SelectRandomItem();
+                var sharedUser = Configuration.GetServerMember(response.SharedCommunistUserId);
                 messageEmbedBuilder.AddField($"Произошел коммунизм {Utility.StringEmoji(":cykaPls:")}",
-                    $"Разделение подношения с {sharedUser.DiscordUsername}");
-                tributeQuality /= 2;
+                    $"Разделение подношения с {sharedUser.Nickname}");
             }
-
-            switch (tributeQuality)
+            
+            switch (response.TributeQuality)
             {
                 case > 0:
                     messageEmbedBuilder.WithColor(DiscordColor.Green);
-                    messageEmbedBuilder.AddField($"+{tributeQuality} social credit", 
+                    messageEmbedBuilder.AddField($"+{response.TributeQuality} scam coins", 
                         "Партия гордится вами!!!");
                     break;
                 case < 0:
                     messageEmbedBuilder.WithColor(DiscordColor.Red);
-                    messageEmbedBuilder.AddField($"-{-tributeQuality} social credit", 
+                    messageEmbedBuilder.AddField($"{response.TributeQuality} scam coins", 
                         "Ну и ну! Вы разочаровать партию!");
                     break;
                 default:
@@ -101,47 +70,43 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                     break;
             }
 
-            if (gigabyteWorked != 0 || jadeRodWorked != 0)
+            if (response.CooldownModifiers.Count > 0)
             {
-                var changeString = "";
-                changeString += gigabyteWorked > 0 ? $"гигабайт интернет x{gigabyteWorked}" : "";
-                changeString += gigabyteWorked > 0 && jadeRodWorked > 0 ? " и " : "";
-                changeString += jadeRodWorked > 0 ? $"нефритовый стержень x{jadeRodWorked}" : "";
-                messageEmbedBuilder.AddField("Изменение кулдауна", changeString);
+                var modifiers = response
+                    .CooldownModifiers
+                    .Select(kv =>
+                    {
+                        var (baseItem, count) = kv;
+                        var item = UsersWrapper.GetItemById(response.UserId, baseItem).Item;
+                        var percent = item switch
+                        {
+                            Internet internet => internet.Ping,
+                            JadeRod jadeRod => jadeRod.Thickness,
+                            _ => 0
+                        };
+                            
+                        var sign = item.ItemType == ItemType.Positive ? "-" : "+";
+                        return $"{item.Rarity} {item.Name} ({sign}{percent}%) : x{count}";
+                    });
+                
+                messageEmbedBuilder.AddField($"Модификаторы кулдауна", 
+                    string.Join("\n", modifiers));
             }
 
-            var isNextTributeAutomatic = Randomizer.GetRandomNumberBetween(0, 100) < user.Stats.TributeAutoChance;
-            if (isNextTributeAutomatic)
+            if (response.IsNextTributeAutomatic)
             {
                 messageEmbedBuilder.AddField(
                     $"{Utility.StringEmoji(":RainbowPls:")} Кошка-жена {Utility.StringEmoji(":RainbowPls:")}",
                     $"Кошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}");
             }
 
-            await e.Message.RespondAsync(messageEmbedBuilder.Build());
-            user.ChangeRating(tributeQuality);
-            if (communism)
-            {
-                sharedUser.ChangeRating(tributeQuality);
-            }
-
-            if (!isNextTributeAutomatic) return;
-
-            var thread = new Thread(async () =>
-            {
-                await Task.Delay((int) (user.NextTribute - DateTime.Now).TotalMilliseconds + 1000);
-                Tribute(e, user, true);
-            })
-            {
-                IsBackground = true
-            };
-            thread.Start();
+            return messageEmbedBuilder.Build();
         }
 
         public override string Help()
         {
             return
-                "Преподношение императору XI для увеличения (или уменьшения) своего социального рейтинга\nДефолтный кулдаун 1 час, понижается наличием гигабайтов интернета";
+                "Преподношение императору XI для увеличения (или уменьшения) своего баланса скам койнов\nДефолтный кулдаун 1 час, понижается наличием интернета";
         }
     }
 }

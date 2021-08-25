@@ -1,7 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using AntiClownBotApi.Models.Classes.Items;
 using AntiClownBotApi.Models.Items;
 
 namespace AntiClownBotApi.Database.DBModels.DbItems

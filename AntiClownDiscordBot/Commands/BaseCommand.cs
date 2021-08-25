@@ -14,7 +14,7 @@ namespace AntiClownBot.Commands
             Config = configuration;
         }
 
-        public abstract void Execute(MessageCreateEventArgs e, SocialRatingUser user);
+        public abstract void Execute(MessageCreateEventArgs e);
         public abstract string Help();
     }
 }

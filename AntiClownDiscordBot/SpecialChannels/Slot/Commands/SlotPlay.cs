@@ -21,13 +21,13 @@ namespace AntiClownBot.SpecialChannels.Slot.Commands
         public string Name => "play";
         private SlotMachine slotMachine = new();
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             var splitMessage = e.Message.Content.Split(' ');
             if (splitMessage.Length != 2
                 || !int.TryParse(splitMessage[1], out var bet)
                 || bet <= 4
-                || bet > user.SocialRating)
+                || bet > Configuration.GetUserBalance(e.Author.Id))
             {
                 return "чел ты кого наебать вздумал";
             }
@@ -46,11 +46,11 @@ namespace AntiClownBot.SpecialChannels.Slot.Commands
             }
             
             var resultRatingChange = result.Win - bet;
-            user.ChangeRating(resultRatingChange);
+            Config.ChangeBalance(e.Author.Id, resultRatingChange, "Слоты");
 
             return "Кручу верчу богатство принести хочу:" + resultText + 
                    "\nВыигрыш: " + result.Win + 
-                   "\nБаланс: " + user.SocialRating;
+                   "\nБаланс: " + Configuration.GetUserBalance(e.Author.Id);
         }
     }
 }

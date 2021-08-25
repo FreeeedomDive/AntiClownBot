@@ -20,7 +20,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
         
         public string Name => "playdir";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             var directory = string.Join(" ", e.Message.Content.Split(' ').Skip(1));
             if (!Directory.Exists(directory))
@@ -34,7 +34,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
                 .Where(f => extensions.IndexOf(Path.GetExtension(f)) >= 0)
                 .OrderBy(_ => Randomizer.GetRandomNumberBetween(0, 1000000));
 
-            var member = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(user.DiscordId).Result;
+            var member = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(e.Author.Id).Result;
             if (member.VoiceState == null || member.VoiceState.Channel == null) return "Чел, в (к)анал зайди";
             new Thread(() =>
             {

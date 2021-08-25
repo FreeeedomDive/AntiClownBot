@@ -14,5 +14,6 @@ namespace AntiClownBotApi.Database.DBModels
         public int ScamCoins { get; set; }
         public DateTime NextTribute { get; set; }
         public List<DbTransaction> Transactions { get; set; }
+        public int LootBoxes { get; set; }
     }
 }

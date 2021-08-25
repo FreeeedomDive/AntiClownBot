@@ -27,7 +27,7 @@ namespace AntiClownBot.Models.Race
         private Configuration _config;
         private List<Driver> _drivers;
         private TrackModel _currentTrack;
-        private bool _isFinished = false;
+        private bool _isFinished;
 
         private const int TotalLaps = 5;
         private const int TotalSectorsPerLap = 50;
@@ -78,16 +78,16 @@ namespace AntiClownBot.Models.Race
             JoinRace(Constants.BotId);
         }
 
-        public async void JoinRace(ulong id)
+        public async void JoinRace(ulong userId)
         {
             if (!_isJoinable) return;
 
-            var user = await _config.GetUser(id);
-            if (_drivers.Any(d => d.DiscordId == id)) return;
+            if (_drivers.Any(d => d.DiscordId == userId)) return;
 
             var driver = _drivers.Where(d => !d.IsUser).SelectRandomItem();
-            driver.DiscordId = user.DiscordId;
-            driver.Username = user.DiscordUsername;
+            var member = Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(userId).Result;
+            driver.DiscordId = userId;
+            driver.Username = member.Nickname;
             driver.IsUser = true;
 
             await _mainRaceMessage.ModifyAsync(GetStartingGrid());
@@ -136,8 +136,8 @@ namespace AntiClownBot.Models.Race
                 var result = $"{pos}.\t{emoji}";
                 if (!d.IsUser) return result;
 
-                var user = _config.GetUser(d.DiscordId).Result;
-                result += $"\t - {user.DiscordUsername}";
+                var member = Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(d.DiscordId).Result;
+                result += $"\t - {member.Nickname}";
 
                 return result;
             });
@@ -287,14 +287,14 @@ namespace AntiClownBot.Models.Race
                 var result = $"{pos}.\t{d.UsableEmoji}";
                 if (!d.IsUser) return result;
 
-                var user = _config.GetUser(d.DiscordId).Result;
-                result += $"\t{user.DiscordUsername}";
+                var user = Configuration.GetServerMember(d.DiscordId);
+                result += $"\t{user.Nickname}";
 
                 if (pos < botPosition && pos <= 10)
                 {
                     var pts = points[i];
-                    user.ChangeRating(pts);
-                    result += $"\t+{pts} social rating";
+                    _config.ChangeBalance(d.DiscordId, pts, $"{pos} место в гонке");
+                    result += $"\t+{pts} scam coins";
                 }
 
                 if (pos >= d.StartPosition) return result;

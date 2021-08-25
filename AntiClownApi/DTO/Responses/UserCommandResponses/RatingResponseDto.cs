@@ -1,7 +1,12 @@
-﻿namespace AntiClownBotApi.DTO.Responses.UserCommandResponses
+﻿using System.Collections.Generic;
+using AntiClownBotApi.Models.Items;
+
+namespace AntiClownBotApi.DTO.Responses.UserCommandResponses
 {
     public class RatingResponseDto: BaseResponseDto
     {
-        public int SocialRating { get; set; }
+        public int ScamCoins { get; set; }
+        
+        public List<BaseItem> Inventory { get; set; }
     }
 }

@@ -1,119 +1,245 @@
-﻿using AntiClownBot.Models.User.Inventory;
-using AntiClownBot.Models.User.Inventory.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using ApiWrapper.Models.Items;
+using ApiWrapper.Responses;
+using ApiWrapper.Responses.ShopResponses;
+using ApiWrapper.Responses.UserCommandResponses;
+using ApiWrapper.Wrappers;
+using DSharpPlus.Entities;
 
 namespace AntiClownBot.Models.Shop
 {
     public class Shop
     {
-        public enum TransactionStatus
+        public ulong UserId { get; init; }
+        public DiscordMessage Message { get; init; }
+        public DiscordMember Member { get; init; }
+        public Instrument CurrentInstrument { get; set; } = Instrument.Buying;
+
+        private Dictionary<int, string> _boughtItemsInfo = new();
+
+        public async Task UpdateShopMessage()
         {
-            Success,
-            NotEnoughMoney,
-            LimitReached,
-            NotEnoughItems
+            var newShop = ShopWrapper.UserShop(UserId);
+
+            var embed = CreateNewShopEmbed(newShop);
+            await Message.ModifyAsync(embed);
         }
 
-        public class TransactionResult
+        public static DiscordEmbed CreateLoadingEmbed()
         {
-            public TransactionStatus Status;
-            public string Result;
+            var loadingEmotes = new List<string>()
+            {
+                $"{Utility.Emoji(":pigRoll:")}" +
+                $"{Utility.Emoji(":pigRoll:")}" +
+                $"{Utility.Emoji(":pigRoll:")}" +
+                $"{Utility.Emoji(":pigRoll:")}" +
+                $"{Utility.Emoji(":pigRoll:")}",
+
+                $"{Utility.Emoji(":Applecatrun:")}" +
+                $"{Utility.Emoji(":Applecatrun:")}" +
+                $"{Utility.Emoji(":Applecatrun:")}" +
+                $"{Utility.Emoji(":Applecatrun:")}" +
+                $"{Utility.Emoji(":Applecatrun:")}",
+
+                $"{Utility.Emoji(":SCAMMED:")}" +
+                $"{Utility.Emoji(":SCAMMED:")}" +
+                $"{Utility.Emoji(":SCAMMED:")}" +
+                $"{Utility.Emoji(":SCAMMED:")}" +
+                $"{Utility.Emoji(":SCAMMED:")}",
+
+                $"{Utility.Emoji(":COGGERS:")}" +
+                $"{Utility.Emoji(":COGGERS:")}" +
+                $"{Utility.Emoji(":COGGERS:")}" +
+                $"{Utility.Emoji(":COGGERS:")}" +
+                $"{Utility.Emoji(":COGGERS:")}",
+
+                $"{Utility.Emoji(":RainbowPls:")}" +
+                $"{Utility.Emoji(":RainbowPls:")}" +
+                $"{Utility.Emoji(":RainbowPls:")}" +
+                $"{Utility.Emoji(":RainbowPls:")}" +
+                $"{Utility.Emoji(":RainbowPls:")}",
+                
+                $"{Utility.Emoji(":PolarStrut:")}" +
+                $"{Utility.Emoji(":PolarStrut:")}" +
+                $"{Utility.Emoji(":PolarStrut:")}" +
+                $"{Utility.Emoji(":PolarStrut:")}" +
+                $"{Utility.Emoji(":PolarStrut:")}",
+                
+                $"{Utility.Emoji(":popCat:")}" +
+                $"{Utility.Emoji(":popCat:")}" +
+                $"{Utility.Emoji(":popCat:")}" +
+                $"{Utility.Emoji(":popCat:")}" +
+                $"{Utility.Emoji(":popCat:")}",
+            };
+            
+            var loadingEmbedBuilder = new DiscordEmbedBuilder();
+            loadingEmbedBuilder.WithTitle($"Загрузка магазина... {loadingEmotes.SelectRandomItem()}");
+
+            return loadingEmbedBuilder.Build();
         }
 
-        public ulong ShopBuyMessageId;
-
-        private Dictionary<Item, List<ulong>> itemsToBuy = new Dictionary<Item, List<ulong>>
+        public void HandleItemInSlot(int slot)
         {
-            {new CatWife(), new List<ulong>()},
-            {new DogWife(), new List<ulong>()},
-            {new Gigabyte(), new List<ulong>()},
-            {new RiceBowl(), new List<ulong>()},
-            {new LootBox(), new List<ulong>() }
+            switch (CurrentInstrument)
+            {
+                case Instrument.Buying:
+                    BuyItem(slot);
+                    return;
+                case Instrument.Revealing:
+                    RevealItem(slot);
+                    return;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public async void RevealItem(int slot)
+        {
+            var idResponse = ShopWrapper.ItemIdInSlot(UserId, slot);
+            if (idResponse.HasError)
+            {
+                await Message.RespondAsync($"{Member.Mention} {idResponse.Error}");
+                return;
+            }
+
+            var revealResponse = ShopWrapper.ItemReveal(UserId, idResponse.ShopItemId);
+
+            switch (revealResponse.RevealResult)
+            {
+                case Enums.RevealResult.Success:
+                    break;
+                case Enums.RevealResult.NotEnoughMoney:
+                    await Message.RespondAsync($"{Member.Mention} недостаточно денег для распознавания предмета");
+                    return;
+                case Enums.RevealResult.AlreadyRevealed:
+                    await Message.RespondAsync($"{Member.Mention} предмет уже распознан");
+                    return;
+                case Enums.RevealResult.AlreadyBought:
+                    await Message.RespondAsync($"{Member.Mention} предмет уже куплен");
+                    return;
+                case Enums.RevealResult.ItemDoesntExistInShop:
+                    await Message.RespondAsync($"{Member.Mention} такого предмета нет в магазине (wtf?)");
+                    return;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            await UpdateShopMessage();
+        }
+
+        public async void BuyItem(int slot)
+        {
+            var idResponse = ApiWrapper.Wrappers.ShopWrapper.ItemIdInSlot(UserId, slot);
+            if (idResponse.HasError)
+            {
+                await Message.RespondAsync($"{Member.Mention} {idResponse.Error}");
+                return;
+            }
+
+            var buyResponse = ApiWrapper.Wrappers.ShopWrapper.Buy(UserId, idResponse.ShopItemId);
+
+            switch (buyResponse.BuyResult)
+            {
+                case Enums.BuyResult.Success:
+                    break;
+                case Enums.BuyResult.NotEnoughMoney:
+                    await Message.RespondAsync($"{Member.Mention} недостаточно денег для покупки предмета");
+                    return;
+                case Enums.BuyResult.AlreadyBought:
+                    await Message.RespondAsync($"{Member.Mention} предмет уже куплен");
+                    return;
+                case Enums.BuyResult.ItemDoesntExistInShop:
+                    await Message.RespondAsync($"{Member.Mention} такого предмета нет в магазине (wtf?)");
+                    return;
+                case Enums.BuyResult.TooManyItemsOfSelectedType:
+                    await Message.RespondAsync(
+                        $"{Member.Mention} в инвентаре уже слишком много предметов данного типа (но я это уже сделал по-другому, хз как можно было получить такой ответ)");
+                    return;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            var newItemResponse = ApiWrapper.Wrappers.UsersWrapper.GetItemById(UserId, buyResponse.ItemId);
+            if (newItemResponse.Result != ItemResult.Success)
+            {
+                await Message.RespondAsync($"{Member.Mention} хуйня {Utility.Emoji(":Starege:")}");
+                return;
+            }
+
+            var info =
+                $"{string.Join("\n", newItemResponse.Item.Description().Select(kv => $"{kv.Key}\n\t{kv.Value}"))}";
+            _boughtItemsInfo[slot] = info;
+
+            await UpdateShopMessage();
+        }
+
+        public async void ReRoll()
+        {
+            var rerollResult = ApiWrapper.Wrappers.ShopWrapper.ReRoll(UserId);
+
+            if (rerollResult.ReRollResult == Enums.ReRollResult.NotEnoughMoney)
+            {
+                await Message.RespondAsync($"{Member.Mention} недостаточно денег для реролла");
+                return;
+            }
+
+            _boughtItemsInfo.Clear();
+            await Message.ModifyAsync(CreateLoadingEmbed());
+            await UpdateShopMessage();
+        }
+
+        private DiscordEmbed CreateNewShopEmbed(UserShopResponseDto shop)
+        {
+            var embedBuilder = new DiscordEmbedBuilder();
+            embedBuilder.WithTitle(
+                $"Магазин пользователя {Member.Nickname} {Utility.Emoji(":PepegaCredit:")} {Utility.Emoji(":PepegaCredit:")} {Utility.Emoji(":PepegaCredit:")}");
+            embedBuilder.AddField("Баланс", $"{shop.Balance}", true);
+            embedBuilder.AddField("Цена реролла магазина", $"{shop.ReRollPrice}", true);
+            embedBuilder.AddField("Распознавание предмета", $"{shop.FreeItemReveals}", true);
+            var itemIndex = 1;
+            var maxRarity = shop.Items.OrderByDescending(item => item.Rarity).First().Rarity;
+            embedBuilder.WithColor(Color[maxRarity]);
+            foreach (var shopItem in shop.Items)
+            {
+                var itemContent = shopItem.IsOwned
+                    ? "КУПЛЕН" + (_boughtItemsInfo.ContainsKey(itemIndex) ? $"\n{_boughtItemsInfo[itemIndex]}" : "")
+                    : $"Редкость: {Rarity[shopItem.Rarity]}\n" +
+                      $"Цена: {shopItem.Price}";
+                embedBuilder.AddField(
+                    $"{itemIndex}. " + (shopItem.IsRevealed ? shopItem.Name :
+                        shopItem.IsOwned ? shopItem.Name : "Нераспознанный предмет"),
+                    itemContent);
+                itemIndex++;
+            }
+
+            return embedBuilder.Build();
+        }
+
+        private static readonly Dictionary<Rarity, string> Rarity = new()
+        {
+            {ApiWrapper.Models.Items.Rarity.Common, "Обычная"},
+            {ApiWrapper.Models.Items.Rarity.Rare, "Редкая"},
+            {ApiWrapper.Models.Items.Rarity.Epic, "Эпическая"},
+            {ApiWrapper.Models.Items.Rarity.Legendary, "Легендарная"},
+            {ApiWrapper.Models.Items.Rarity.BlackMarket, "С черного рынка"},
         };
 
-        public ulong ShopSellMessageId;
-
-        private Dictionary<Item, List<ulong>> itemsToSell = new Dictionary<Item, List<ulong>>
+        private static readonly Dictionary<Rarity, DiscordColor> Color = new()
         {
-            {new CatWife(), new List<ulong>()},
-            {new DogWife(), new List<ulong>()},
-            {new Gigabyte(), new List<ulong>()},
-            {new RiceBowl(), new List<ulong>()},
-            {new JadeRod(), new List<ulong>()},
-            {new CommunismPoster(), new List<ulong>()}
+            {ApiWrapper.Models.Items.Rarity.Common, DiscordColor.Gray},
+            {ApiWrapper.Models.Items.Rarity.Rare, DiscordColor.Blue},
+            {ApiWrapper.Models.Items.Rarity.Epic, DiscordColor.Violet},
+            {ApiWrapper.Models.Items.Rarity.Legendary, DiscordColor.Orange},
+            {ApiWrapper.Models.Items.Rarity.BlackMarket, DiscordColor.Magenta},
         };
+    }
 
-        public TransactionResult BuyItem(Item item, SocialRatingUser user)
-        {
-            if (itemsToBuy[item].Contains(user.DiscordId))
-            {
-                return new TransactionResult
-                {
-                    Status = TransactionStatus.LimitReached,
-                    Result = null
-                };
-            }
-
-            if (user.SocialRating < item.Price)
-            {
-                return new TransactionResult
-                {
-                    Status = TransactionStatus.NotEnoughMoney,
-                    Result = null
-                };
-            }
-
-            itemsToBuy[item].Add(user.DiscordId);
-            user.AddCustomItem(item);
-            user.ChangeRating(-item.Price);
-            return new TransactionResult
-            {
-                Status = TransactionStatus.Success,
-                Result = $"{user.DiscordUsername} купил(а) {item.Name}"
-            };
-        }
-
-        public TransactionResult SellItem(Item item, SocialRatingUser user)
-        {
-            if (itemsToSell[item].Contains(user.DiscordId))
-            {
-                return new TransactionResult
-                {
-                    Status = TransactionStatus.LimitReached,
-                    Result = null
-                };
-            }
-
-            if (user.Items[item] < 1)
-            {
-                return new TransactionResult
-                {
-                    Status = TransactionStatus.NotEnoughItems,
-                    Result = null
-                };
-            }
-
-            if (user.SocialRating < -item.Price / 2)
-            {
-                return new TransactionResult
-                {
-                    Status = TransactionStatus.NotEnoughMoney,
-                    Result = null
-                };
-            }
-
-            itemsToSell[item].Add(user.DiscordId);
-            user.ChangeRating(item.Price / 2);
-            user.RemoveCustomItem(item);
-            return new TransactionResult
-            {
-                Status = TransactionStatus.Success,
-                Result = $"{user.DiscordUsername} продал(а) {item.Name}"
-            };
-        }
+    public enum Instrument
+    {
+        Buying,
+        Revealing
     }
 }

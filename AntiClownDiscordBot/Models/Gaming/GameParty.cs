@@ -58,14 +58,15 @@ namespace AntiClownBot.Models.Gaming
 
         private string MessageContent()
         {
-            var config = Configuration.GetConfiguration();
             var stringBuilder = new StringBuilder();
             stringBuilder.Append($"{RoleMention()} СБОР ПАТИ {Description}").Append('\n');
             for (var i = 0; i < Math.Max(MaxPlayersCount, Players.Count); i++)
             {
                 var position = i < MaxPlayersCount ? $"{i + 1}. " : "В ОЧЕРЕДИ - ";
                 stringBuilder.Append(position);
-                var player = i < Players.Count ? config.Users[Players[i]].DiscordUsername : "";
+                var player = i < Players.Count
+                    ? Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(Players[i]).Result.Nickname
+                    : "";
                 stringBuilder.Append(player).Append('\n');
             }
 
@@ -84,7 +85,7 @@ namespace AntiClownBot.Models.Gaming
                 Content = $"НАБРАНО ПОЛНОЕ ПАТИ\n{string.Join("\n", readyPlayersMentions)}"
             };
             messageBuilder.WithAllowedMention(UserMention.All);
-            
+
             await Message.RespondAsync(messageBuilder);
         }
 

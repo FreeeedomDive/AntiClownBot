@@ -19,14 +19,14 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
         }
         public string Name => "start";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             if (Config.CurrentBlackJack.IsActive)
             {
                 return "Раунд уже начался";
             }
 
-            if (Config.CurrentBlackJack.Players.All(player => player.Name != user.DiscordUsername))
+            if (Config.CurrentBlackJack.Players.All(player => player.UserId != e.Author.Id))
             {
                 return "Ты не принимаешь участие в игре";
             }

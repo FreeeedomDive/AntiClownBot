@@ -9,6 +9,7 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
     {
         protected readonly Configuration Config;
         protected readonly DiscordClient DiscordClient;
+
         public BlackJackJoin(DiscordClient client, Configuration configuration)
         {
             Config = configuration;
@@ -17,21 +18,21 @@ namespace AntiClownBot.SpecialChannels.BlackJack.Commands
 
         public string Name => "join";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
-            if (Config.CurrentBlackJack.Players.Any(player => player.Name == user.DiscordUsername))
+            if (Config.CurrentBlackJack.Players.Any(player => player.UserId != e.Author.Id))
             {
                 return ("Ты уже принимаешь участие в игре");
             }
-            if(Config.CurrentBlackJack.IsActive)
+
+            if (Config.CurrentBlackJack.IsActive)
             {
                 return "Раунд уже начался";
             }
-            if(Config.CurrentBlackJack.Players.Count > 4)
-            {
-                return "Невозможно присоединиться, так как стол уже полон";
-            }
-            return Config.CurrentBlackJack.Join(user);
+
+            return Config.CurrentBlackJack.Players.Count > 4
+                ? "Невозможно присоединиться, так как стол уже полон"
+                : Config.CurrentBlackJack.Join(e.Author.Id);
         }
     }
 }

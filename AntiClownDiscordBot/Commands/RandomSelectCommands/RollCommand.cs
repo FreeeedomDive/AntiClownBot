@@ -10,7 +10,7 @@ namespace AntiClownBot.Commands.RandomSelectCommands
         {
         }
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
             var message = e.Message.Content;
             var messageArgs = message.Split(' ');
@@ -31,7 +31,7 @@ namespace AntiClownBot.Commands.RandomSelectCommands
                 (a, b) = (b, a);
             }
 
-            await e.Message.RespondAsync($"{Randomizer.GetRandomNumberBetween(a, b + 1)}");
+            await e.Message.RespondAsync($"{Randomizer.GetRandomNumberBetweenIncludeRange(a, b)}");
         }
 
         public override string Help()

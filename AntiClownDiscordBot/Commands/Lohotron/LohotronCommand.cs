@@ -9,26 +9,21 @@ namespace AntiClownBot.Commands.Lohotron
         public LohotronCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
         }
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
-            if (Config.DailyScamMachine.UsersId.Contains(user.DiscordId))
+            if (Config.DailyScamMachine.UsersId.Contains(e.Author.Id))
             {
                 await e.Message.RespondAsync($"Чел, 2 раза нельзя! {Utility.Emoji(":peepoFinger:")}");
                 return;
             }
             var prize = Config.DailyScamMachine.Play();
-            Config.DailyScamMachine.UsersId.Add(user.DiscordId);
+            Config.DailyScamMachine.UsersId.Add(e.Author.Id);
             switch (prize.Name)
             {
                 case "Credits":
                     var count = ((CreditsLohotronPrize) prize).Count;
-                    user.ChangeRating(count);
+                    Config.ChangeBalance(e.Author.Id, count, "Лохотрон");
                     await e.Message.RespondAsync($"Ты получаешь {count} social credits");
-                    return;
-                case "Item":
-                    var item = ((ItemLohotronPrize) prize).Item;
-                    user.AddCustomItem(item);
-                    await e.Message.RespondAsync($"Ты получаешь {item.Name}");
                     return;
                 case "Nothing":
                     await e.Message.RespondAsync($"Ты получаешь {Utility.Emoji(":peepoFinger:")}!");
@@ -41,7 +36,7 @@ namespace AntiClownBot.Commands.Lohotron
 
         public override string Help()
         {
-            return "Ежедневно крутите лохотрон(1 раз)";
+            return "Ежедневно крутите лохотрон (1 раз)";
         }
     }
 }

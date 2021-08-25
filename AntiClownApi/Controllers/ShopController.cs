@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using AntiClownBotApi.Constants;
-using AntiClownBotApi.Database;
 using AntiClownBotApi.Database.DBControllers;
+using AntiClownBotApi.DTO.Responses;
 using AntiClownBotApi.DTO.Responses.ShopResponses;
 using Microsoft.AspNetCore.Mvc;
 

@@ -20,7 +20,7 @@ namespace AntiClownBot.Commands.F1
             }.ToDictionary(x => x.Name);
         }
         
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
             var message = e.Message.Content;
             var messageArgs = message.Split(' ').Skip(1).ToList();
@@ -34,7 +34,7 @@ namespace AntiClownBot.Commands.F1
                 await e.Message.RespondAsync("Чел, такой команды нет");
                 return;
             }
-            var result = parser.Parse(user, message.Split('\n').ToList());
+            var result = parser.Parse(e.Author.Id, message.Split('\n').ToList());
             await e.Message.RespondAsync(result);
         }
 
@@ -45,7 +45,7 @@ namespace AntiClownBot.Commands.F1
                 "quali : возвращает информацию о данном блоке команд\n" +
                 "quali start : принимает 20 строк с форматом {Место} {Имя} {Время от 1 места} и возвращает их с коэффициентами\n" +
                 "Далее взаимодействуйте как с стандартной ставкой\n";
-                
+            
         }
     }
 }

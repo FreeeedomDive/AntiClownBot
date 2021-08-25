@@ -1,6 +1,4 @@
 ﻿using System;
-using AntiClownBotApi.Constants;
-using AntiClownBotApi.Database;
 
 namespace AntiClownBotApi.DTO.Responses.ShopResponses
 {

@@ -1,10 +1,8 @@
 ﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AntiClownBot.Models.Gamble;
 
 namespace AntiClownBot.SpecialChannels.Gambling.Commands
 {
@@ -19,7 +17,7 @@ namespace AntiClownBot.SpecialChannels.Gambling.Commands
         }
         public string Name => "result";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             if (Config.CurrentGamble == null)
             {
@@ -34,7 +32,7 @@ namespace AntiClownBot.SpecialChannels.Gambling.Commands
                 case GambleBetResult.OptionDoesntExist:
                     return "Одного из вариантов не существует, он не может быть верным";
                 case GambleBetResult.UserIsNotAuthor:
-                    user.ChangeRating(-30);
+                    Config.ChangeBalance(e.Author.Id, -30, "Чел пытается закрыть ставку, которую создал не он");
                     return $"Ты кто такой, чел? Держи -30 {Utility.StringEmoji(":PogOff:")}";
                 case GambleBetResult.SuccessfulResult:
                     var tempMessage = Config.CurrentGamble.Result;

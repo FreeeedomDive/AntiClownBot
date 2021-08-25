@@ -24,7 +24,7 @@ namespace AntiClownBot.Commands.F1
             }.ToDictionary(x => x.Name);
         }
         public string Name => "quali";
-        public string Parse(SocialRatingUser user, List<string> lines)
+        public string Parse(ulong userId, List<string> lines)
         {
             var args = lines[0].Split(' ').Skip(2).ToList();
             if (!args.Any())
@@ -37,7 +37,7 @@ namespace AntiClownBot.Commands.F1
             {
                 return "Чел, такой команды нет";
             }
-            return command.Execute(user, lines.Skip(1).ToList());
+            return command.Execute(userId, lines.Skip(1).ToList());
         }
     }
 }

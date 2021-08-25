@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using AntiClownBot.Events.CloseTributeEvent;
 using DSharpPlus;
 
 namespace AntiClownBot.Events
@@ -20,11 +18,9 @@ namespace AntiClownBot.Events
             NextEvents = new Queue<BaseEvent>();
             _allEvents = new List<BaseEvent>
             {
-                new CloseTributesEvent(),
                 new RemoveCooldownEvent.RemoveCooldownEvent(),
                 new TransfusionEvent.TransfusionEvent(),
                 new LotteryEvent.LotteryEvent(),
-                new ShopEvent.ShopEvent(),
                 new GuessNumberEvent.GuessNumberEvent(),
                 new MaliMaliEvent.MaliMaliEvent(),
                 new RaceEvent.RaceEvent()

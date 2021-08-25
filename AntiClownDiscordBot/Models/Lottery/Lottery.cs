@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,12 +67,13 @@ namespace AntiClownBot.Models.Lottery
 
         public Queue<ulong> Participants;
 
-        public string Join(SocialRatingUser user)
+        public string Join(ulong userId)
         {
             _configuration ??= Configuration.GetConfiguration();
-            Participants.Enqueue(user.DiscordId);
+            Participants.Enqueue(userId);
             _configuration.Save();
-            return $"{user.DiscordUsername} теперь участвует в лотерее";
+            var member = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(userId).Result;
+            return $"{member.Nickname} теперь участвует в лотерее";
         }
 
         private async void StartEvent()
@@ -85,7 +85,8 @@ namespace AntiClownBot.Models.Lottery
             IsJoinable = false;
             foreach (var user in Start())
             {
-                var lastMessage = $"{user.User.DiscordUsername}:\n";
+                var member = Configuration.GetServerMember(user.UserId);
+                var lastMessage = $"{member.Nickname}:\n";
 
                 var message = await DiscordClient
                     .Guilds[277096298761551872]
@@ -97,7 +98,7 @@ namespace AntiClownBot.Models.Lottery
                 {
                     var currentEmote = 7 - emotesToRoll;
                     var strBuilder = new StringBuilder();
-                    strBuilder.Append($"{user.User.DiscordUsername}:\n");
+                    strBuilder.Append($"{member.Nickname}:\n");
 
                     for (var rolledEmotes = 0; rolledEmotes < currentEmote; rolledEmotes++)
                     {
@@ -127,11 +128,11 @@ namespace AntiClownBot.Models.Lottery
                 }
 
                 var builder = new StringBuilder();
-                builder.Append($"{user.User.DiscordUsername}:\n");
+                builder.Append($"{member.Nickname}:\n");
                 builder.Append(string.Join(" ", user.Emotes.Select(emote => $"{Utility.StringEmoji($":{emote}:")}")));
 
                 builder.Append($"\nТы получил {user.Value} social credit!");
-                user.User.ChangeRating(user.Value);
+                _configuration.ChangeBalance(user.UserId, user.Value, "Лотерея");
 
                 await message.ModifyAsync(builder.ToString());
                 _configuration.Save();
@@ -147,7 +148,7 @@ namespace AntiClownBot.Models.Lottery
             var allEmotes = Enum.GetValues(typeof(LotteryEmote)).Cast<LotteryEmote>().ToList();
             while (Participants.Count != 0)
             {
-                var user = _configuration.Users[Participants.Dequeue()];
+                var user = Participants.Dequeue();
                 var emotes = new LotteryEmote[7];
                 var tempDictionary = new Dictionary<LotteryEmote, int>();
                 for (var i = 0; i < 7; i++)
@@ -168,7 +169,7 @@ namespace AntiClownBot.Models.Lottery
 
                 yield return new LotteryUser
                 {
-                    User = user,
+                    UserId = user,
                     Emotes = emotes,
                     Value = value
                 };
@@ -177,7 +178,7 @@ namespace AntiClownBot.Models.Lottery
 
         public class LotteryUser
         {
-            public SocialRatingUser User;
+            public ulong UserId;
             public LotteryEmote[] Emotes;
             public int Value;
         }
@@ -224,9 +225,7 @@ namespace AntiClownBot.Models.Lottery
                 2 => EmoteToInt(emote) * 5,
                 3 => EmoteToInt(emote) * 10,
                 4 => EmoteToInt(emote) * 50,
-                5 => EmoteToInt(emote) * 100,
-                6 => EmoteToInt(emote) * 100,
-                7 => EmoteToInt(emote) * 100,
+                >= 5 => EmoteToInt(emote) * 100,
                 _ => 0
             };
         }

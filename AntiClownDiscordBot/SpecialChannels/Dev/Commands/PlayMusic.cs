@@ -21,7 +21,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
         }
         public string Name => "play";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             var fileName = string.Join(" ", e.Message.Content.Split(' ').Skip(1));
             if (!File.Exists(fileName))
@@ -29,7 +29,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
                 return "Такого файла нет, чел";
             }
 
-            var member = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(user.DiscordId).Result;
+            var member = Configuration.GetServerMember(e.Author.Id);
             if (member.VoiceState == null || member.VoiceState.Channel == null) return "Чел, в (к)анал зайди";
             new Thread(() =>
             {

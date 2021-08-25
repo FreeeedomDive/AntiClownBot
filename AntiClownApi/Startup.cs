@@ -1,3 +1,5 @@
+using System;
+using AntiClownBotApi.Converters;
 using AntiClownBotApi.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,11 +8,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace AntiClownBotApi
 {
     public class Startup
     {
+        public const bool IsDevelopment = false;
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -21,12 +28,13 @@ namespace AntiClownBotApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new BaseItemConverter()));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Best API ever", Version = "v1"});
             });
-            
+
             var connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
         }
@@ -34,7 +42,7 @@ namespace AntiClownBotApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() && IsDevelopment)
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
@@ -44,7 +52,7 @@ namespace AntiClownBotApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseWebSockets();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

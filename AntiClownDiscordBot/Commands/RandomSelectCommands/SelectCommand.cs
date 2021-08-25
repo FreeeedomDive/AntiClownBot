@@ -10,7 +10,7 @@ namespace AntiClownBot.Commands.RandomSelectCommands
         {
         }
 
-        public override async void Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public override async void Execute(MessageCreateEventArgs e)
         {
             var message = e.Message.Content;
             var lines = message.Split('\n');

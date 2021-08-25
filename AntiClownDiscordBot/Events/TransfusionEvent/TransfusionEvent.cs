@@ -1,38 +1,29 @@
-﻿using System;
-using System.Configuration;
-
-namespace AntiClownBot.Events.TransfusionEvent
+﻿namespace AntiClownBot.Events.TransfusionEvent
 {
     public class TransfusionEvent : BaseEvent
     {
 
         public override async void ExecuteAsync()
         {
-            SocialRatingUser theRichestUser = null;
-            var maxRating = -1;
-            foreach (var user in Config.Users.Values)
-            {
-                if (user.NetWorth > maxRating)
-                {
-                    maxRating = user.NetWorth;
-                    theRichestUser = user;
-                }
-            }
+            var theRichestUser = ApiWrapper.Wrappers.UsersWrapper.GetRichestUser();
 
             var exchange = Randomizer.GetRandomNumberBetween(50, 100);
             var exchangeUser = theRichestUser;
             while (exchangeUser == theRichestUser)
             {
-                exchangeUser = Config.Users.Values.SelectRandomItem();
+                exchangeUser = ApiWrapper.Wrappers.UsersWrapper.GetAllUsers().Users.SelectRandomItem();
             }
+
+            var richestMember = Configuration.GetServerMember(theRichestUser);
+            var exchangeMember = Configuration.GetServerMember(exchangeUser);
             
             await Utility.SendMessageToBotChannel("Я решил выделить немного кредитов рандомному челу, " +
                                  "но свой бюджет я тратить не буду, возьму из кармана самого богатого " +
-                                 $"{Utility.StringEmoji(":MEGALUL:")} {Utility.StringEmoji(":point_right:")} {theRichestUser?.DiscordUsername}. " +
-                                 $"Отдай {exchangeUser.DiscordUsername} {exchange} social credits");
+                                 $"{Utility.StringEmoji(":MEGALUL:")} {Utility.StringEmoji(":point_right:")} {richestMember.Nickname}. " +
+                                 $"Отдай {exchangeMember.Nickname} {exchange} social credits");
 
-            theRichestUser?.ChangeRating(-exchange);
-            exchangeUser.ChangeRating(exchange);
+            Config.ChangeBalance(theRichestUser, -exchange, "Эвент перекачки");
+            Config.ChangeBalance(exchangeUser, exchange, "Эвент перекачки");
         }
 
         protected override string BackStory()

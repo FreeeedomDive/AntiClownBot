@@ -17,7 +17,7 @@ namespace AntiClownBot.SpecialChannels.Roulette.Commands
         }
         public string Name => "play";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             var playResult = Config.Roulette.Play();
             var message = new StringBuilder();
@@ -32,16 +32,16 @@ namespace AntiClownBot.SpecialChannels.Roulette.Commands
 
             foreach (var (player, winPoints) in playResult.WinPoints)
             {
-                Config.Users.TryGetValue(player.Id, out var nick);
-                message.Append("\n")
-                    .Append(nick?.DiscordUsername)
+                var member = e.Guild.GetMemberAsync(player.Id).Result;
+                message.Append('\n')
+                    .Append(member.Nickname)
                     .Append(": ")
                     .Append(winPoints);
 
                 var resultWinPoints =
                     -playResult.Bets.FirstOrDefault(b => b.Key.Equals(player)).Value + winPoints;
 
-                nick.ChangeRating(resultWinPoints);
+                Config.ChangeBalance(player.Id, resultWinPoints, "Рулетка");
             }
 
             return message.ToString();

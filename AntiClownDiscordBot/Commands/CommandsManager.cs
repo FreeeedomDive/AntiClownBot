@@ -10,6 +10,7 @@ using AntiClownBot.Commands.StatsCommands;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 using AntiClownBot.Commands.Lohotron;
+using AntiClownBot.Commands.ShopCommands;
 
 namespace AntiClownBot.Commands
 {
@@ -24,9 +25,9 @@ namespace AntiClownBot.Commands
             RegisterCommand("!socialstatus", new SocialStatusCommand(client, config));
             RegisterCommand("!rating", new RatingCommand(client, config));
             RegisterCommand("!when", new WhenCommand(client, config));
+            RegisterCommand("!shop", new ShopCommand(client, config));
             
             RegisterCommand("!stats", new EmojiStatsCommand(client, config));
-            RegisterCommand("!pidor", new PidorStatsCommand(client, config));
 
             RegisterCommand("!roll", new RollCommand(client, config));
             RegisterCommand("!select", new SelectCommand(client, config));
@@ -34,7 +35,7 @@ namespace AntiClownBot.Commands
             RegisterCommand("!ip", new IpCommand(client, config));
             RegisterCommand("!help", new HelpCommand(client, config, this));
             RegisterCommand("!allcommands", new AllCommandsCommand(client, config, this));
-            RegisterCommand("!play", new PlayYoutubeVideoCommand(client, config));
+            RegisterCommand("!playyt", new PlayYoutubeVideoCommand(client, config));
 
             RegisterCommand("!f1", new F1CommandParser(client, config));
             RegisterCommand("!lottery", new LotteryCommand(client, config));
@@ -64,14 +65,19 @@ namespace AntiClownBot.Commands
 
         public IEnumerable<string> AllCommands => _commands.Keys.OrderBy(key => key);
 
-        public async void ExecuteCommand(string name, MessageCreateEventArgs e, SocialRatingUser user)
+        public async void ExecuteCommand(string name, MessageCreateEventArgs e)
         {
+            if (Configuration.IsMaintenanceMode && e.Author.Id != 259306088040628224)
+            {
+                await e.Message.RespondAsync($"Пока не отвечаю {Utility.Emoji(":NOPERS:")}");
+                return;
+            }
             if (!GetCommandByName(name, out var command))
             {
                 await e.Message.RespondAsync($"Нет команды с именем {name}");
                 return;
             }
-            command.Execute(e, user);
+            command.Execute(e);
         }
     }
 }

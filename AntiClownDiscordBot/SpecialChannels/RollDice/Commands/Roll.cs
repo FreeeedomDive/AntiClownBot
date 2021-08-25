@@ -1,10 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.EventArgs;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AntiClownBot.SpecialChannels.RollDice.Commands
 {
@@ -19,7 +16,7 @@ namespace AntiClownBot.SpecialChannels.RollDice.Commands
         }
         public string Name => "roll";
 
-        public string Execute(MessageCreateEventArgs e, SocialRatingUser user)
+        public string Execute(MessageCreateEventArgs e)
         {
             var args = e.Message.Content.Split(' ').Skip(1).ToList();
             if (args.Count != 1)
@@ -31,12 +28,15 @@ namespace AntiClownBot.SpecialChannels.RollDice.Commands
             {
                 return "Нормально пиши. чел";
             }
-            if (user.SocialRating - bet < -1000)
+            if (Configuration.GetUserBalance(e.Author.Id) - bet < -1000)
             {
                 return "Долг больше 1к";
             }
+
+            var member = Configuration.GetServerMember(e.Author.Id);
+            
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append($"{user.DiscordUsername}:\n");
+            stringBuilder.Append($"{member.Nickname}:\n");
             var playerResult = 0;
             var imperatorResult = 0;
             for (var i = 0; i < 2; i++)
@@ -54,13 +54,13 @@ namespace AntiClownBot.SpecialChannels.RollDice.Commands
             }
             if (playerResult > imperatorResult)
             {
-                user.ChangeRating(bet);
-                stringBuilder.Append($"\n{user.DiscordUsername} выиграл {bet} и теперь имеет {user.SocialRating} кредитов.");
+                Config.ChangeBalance(e.Author.Id, bet, "Победа в ролле");
+                stringBuilder.Append($"\n{member.Nickname} выиграл {bet}");
             }
             else
             {
-                user.ChangeRating(-bet);
-                stringBuilder.Append($"\n{user.DiscordUsername} проиграл {bet} и теперь имеет {user.SocialRating} кредитов.");
+                Config.ChangeBalance(e.Author.Id, -bet, "Проигрыш в ролле");
+                stringBuilder.Append($"\n{member.Nickname} проиграл {bet}");
             }
             return stringBuilder.ToString();
         }

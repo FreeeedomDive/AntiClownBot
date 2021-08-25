@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using AntiClownBotApi.Constants;
+using AntiClownBotApi.Database.DBControllers;
 using AntiClownBotApi.Database.DBModels.DbItems;
+using AntiClownBotApi.Models.Items;
 
 namespace AntiClownBotApi.Database.DBModels
 {
@@ -15,27 +17,61 @@ namespace AntiClownBotApi.Database.DBModels
         public DbUserShop Shop { get; set; }
         public DbUserStats Stats { get; set; }
 
-        public Dictionary<int, int> UpdateCooldown()
+        public Dictionary<Guid, int> UpdateCooldown()
         {
-            var result = new Dictionary<int, int>();
+            var result = new Dictionary<Guid, int>();
 
             var cooldown = Items
                 .Where(item => item.Name.Equals(StringConstants.InternetName))
                 .SelectMany(item => Enumerable.Repeat(item, item.ItemStats.InternetGigabytes))
-                .Aggregate(NumericConstants.DefaultCooldown, (currentCooldown, item) =>
-                    currentCooldown * Randomizer.GetRandomNumberBetween(0, 100) < item.ItemStats.InternetPing
-                        ? (100d - item.ItemStats.InternetSpeed) / 100
-                        : 1);
+                .Aggregate(NumericConstants.DefaultCooldown, (currentCooldown, dbItem) =>
+                {
+                    var item = (Internet) dbItem;
+                    
+                    if (Randomizer.GetRandomNumberBetween(0, 100) >= item.Ping)
+                        return currentCooldown;
+
+                    if (result.ContainsKey(item.Id))
+                    {
+                        result[item.Id]++;
+                    }
+                    else
+                    {
+                        result.Add(item.Id, 1);
+                    }
+
+                    return currentCooldown * (100d - item.Speed) / 100;
+                });
             
             cooldown = Items
                 .Where(item => item.Name.Equals(StringConstants.JadeRodName))
-                .Aggregate(cooldown, (currentCooldown, item) =>
-                    currentCooldown * Randomizer.GetRandomNumberBetween(0, 100) < item.ItemStats.JadeRodLength
-                        ? (100d + item.ItemStats.JadeRodThickness) / 100
-                        : 1);
+                .SelectMany(item => Enumerable.Repeat(item, item.ItemStats.JadeRodLength))
+                .Aggregate(cooldown, (currentCooldown, dbItem) =>
+                {
+                    var item = (JadeRod) dbItem;
+                    
+                    if (Randomizer.GetRandomNumberBetween(0, 100) >= NumericConstants.CooldownIncreaseChanceByOneJade)
+                        return currentCooldown;
 
-            Economy.NextTribute = DateTime.Now.AddMilliseconds(cooldown);
+                    if (result.ContainsKey(item.Id))
+                    {
+                        result[item.Id]++;
+                    }
+                    else
+                    {
+                        result.Add(item.Id, 1);
+                    }
+
+                    return currentCooldown * (100d + dbItem.ItemStats.JadeRodThickness) / 100;
+                });
+            
+            UserDbController.UpdateUserTributeCooldown(DiscordId, (int)cooldown);
             return result;
+        }
+        
+        public bool IsCooldownPassed()
+        {
+            return DateTime.Now > Economy.NextTribute;
         }
     }
 }

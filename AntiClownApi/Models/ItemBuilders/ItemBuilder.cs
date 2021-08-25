@@ -1,6 +1,5 @@
 ﻿using System;
-using AntiClownBotApi.Database.DBModels;
-using AntiClownBotApi.Models.Classes.Items;
+using AntiClownBotApi.Models.Items;
 
 namespace AntiClownBotApi.Models.ItemBuilders
 {
@@ -46,6 +45,8 @@ namespace AntiClownBotApi.Models.ItemBuilders
         public DogWifeBuilder AsDogWife() => new(Id, Rarity, Price);
         public RiceBowlBuilder AsRiceBowl() => new(Id, Rarity, Price);
         public InternetBuilder AsInternet() => new(Id, Rarity, Price);
+        public JadeRodBuilder AsJadeRod() => new(Id, Rarity, Price);
+        public CommunismBannerBuilder AsCommunismBanner() => new(Id, Rarity, Price);
 
         #endregion
 

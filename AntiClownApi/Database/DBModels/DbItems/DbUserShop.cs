@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using AntiClownBotApi.Constants;
 
@@ -28,6 +27,18 @@ namespace AntiClownBotApi.Database.DBModels.DbItems
                 ReRollPrice = NumericConstants.DefaultReRollPrice,
                 Items = new List<DbShopItem>()
             };
+            for (var i = 0; i < NumericConstants.MaximumItemsInShop; i++)
+            {
+                shop.Items.Add(DbShopItem.GenerateNewShopItem(shop));
+            }
+
+            return shop;
+        }
+
+        public static DbUserShop GenerateNewItemsForShop(DbUserShop shop)
+        {
+            shop.Items.Clear();
+            
             for (var i = 0; i < NumericConstants.MaximumItemsInShop; i++)
             {
                 shop.Items.Add(DbShopItem.GenerateNewShopItem(shop));

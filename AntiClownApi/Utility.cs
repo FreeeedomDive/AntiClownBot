@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AntiClownBotApi.Models.Classes.Items;
+using AntiClownBotApi.Constants;
+using AntiClownBotApi.Database.DBControllers;
+using AntiClownBotApi.Database.DBModels;
+using AntiClownBotApi.Models.Items;
 
 namespace AntiClownBotApi
 {
@@ -133,5 +136,31 @@ namespace AntiClownBotApi
             > 999000 and <= 999998 => Rarity.Legendary,
             _ => Rarity.BlackMarket
         };
+        
+        public static List<DbUser> GetCommunists() =>
+            UserDbController.GetAllUsersWithEconomyAndItems()
+                .Where(user => user.Items.Any(item => item.Name.Equals(StringConstants.CommunismBannerName)))
+                .ToList();
+
+        public static Dictionary<DbUser, int> GetCommunistsDictionary() =>
+            GetCommunists()
+                .ToDictionary(
+                    user => user,
+                    user => user.Items.Count(item => item.Name.Equals(StringConstants.CommunismBannerName))
+                );
+
+        public static List<DbUser> GetDistributedCommunists()
+        {
+            var result = new List<DbUser>();
+            foreach (var (user, count) in GetCommunistsDictionary())
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    result.Add(user);
+                }
+            }
+
+            return result;
+        }
     }
 }
