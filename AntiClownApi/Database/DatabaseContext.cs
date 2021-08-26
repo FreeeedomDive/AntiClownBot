@@ -1,6 +1,8 @@
-﻿using AntiClownBotApi.Database.DBModels;
+﻿using System.IO;
+using AntiClownBotApi.Database.DBModels;
 using AntiClownBotApi.Database.DBModels.DbItems;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace AntiClownBotApi.Database
 {
@@ -75,10 +77,16 @@ namespace AntiClownBotApi.Database
                 .WithOne(e => e.Emote)
                 .HasForeignKey(e => e.StatsId);
         }
-
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(Utility.GetPosgreSqlConfigureStringFromFile());
+            if (optionsBuilder.IsConfigured) return;
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+            var connectionString = configuration.GetConnectionString("PostgreSql");
+            optionsBuilder.UseNpgsql(connectionString);
         }
     }
 }

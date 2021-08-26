@@ -1,6 +1,8 @@
 using System;
 using AntiClownBotApi.Converters;
 using AntiClownBotApi.Database;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -35,8 +37,10 @@ namespace AntiClownBotApi
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Best API ever", Version = "v1"});
             });
 
-            var connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection));
+            var connection = Configuration.GetConnectionString("PostgreSql");
+            
+            services.AddHangfire(config =>
+                config.UsePostgreSqlStorage(connection));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +58,9 @@ namespace AntiClownBotApi
             app.UseRouting();
             app.UseWebSockets();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            
+            app.UseHangfireServer();
+            app.UseHangfireDashboard();
         }
     }
 }
