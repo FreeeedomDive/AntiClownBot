@@ -4,5 +4,5 @@
 bin/
 obj/
 AntiClownApi/config.json
-start.bat
 AntiClownApi/bdConfig.json
+start.bat
