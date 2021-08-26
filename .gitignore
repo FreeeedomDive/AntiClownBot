@@ -1,8 +1,8 @@
+AntiClownApi/bdConfig.json
 .idea/
 .vs/
 *.user
 bin/
 obj/
 AntiClownApi/config.json
-AntiClownApi/bdConfig.json
 start.bat
