@@ -51,9 +51,7 @@ namespace AntiClownBot.Helpers
                 yield return item;
             }
         }
-
-        public static string Repeat(this string s, int count) => string.Concat(Enumerable.Repeat(s, count));
-
+        
         public static string KeyValuePairToString<T1, T2>(KeyValuePair<T1, T2> pair)
         {
             var (key, value) = pair;
@@ -101,7 +99,7 @@ namespace AntiClownBot.Helpers
         public static string AddLeadingZeros(int totalNumbers, int time)
         {
             var leadingZerosCount = totalNumbers - time.ToString().Length;
-            return $"{"0".Repeat(leadingZerosCount)}{time}";
+            return $"{"0".Multiply(leadingZerosCount)}{time}";
         }
 
         private static string Normalize(int number)
