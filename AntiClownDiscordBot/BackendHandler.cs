@@ -19,7 +19,7 @@ namespace AntiClownBot
                 var isServerWorking = GlobalStateApi.IsBackendWorking();
                 if (!isServerWorking)
                 {
-                    var admin = await Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(259306088040628224);
+                    var admin = Configuration.GetServerMember(259306088040628224);
                     var messageBuilder = new DiscordMessageBuilder
                     {
                         Content = $"{admin.Mention} кажется, сервер прилёг {Utility.Emoji(":monkaX:")}"

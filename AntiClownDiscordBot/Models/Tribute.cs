@@ -13,7 +13,8 @@ namespace AntiClownBot.Models
         {
             var member = Configuration.GetServerMember(response.UserId);
             var messageEmbedBuilder = new DiscordEmbedBuilder();
-            messageEmbedBuilder.WithTitle($"Подношение {member.Nickname}");
+            var tributeTitle = response.IsTributeAutomatic ? "Подношение кошки-жены" : "Подношение";
+            messageEmbedBuilder.WithTitle($"{tributeTitle} {member.ServerOrUserName()}");
             
             if (response.Result == TributeResult.CooldownHasNotPassed)
             {

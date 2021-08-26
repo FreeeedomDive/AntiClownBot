@@ -66,7 +66,7 @@ namespace AntiClownBot.Models.Gaming
                 var position = i < MaxPlayersCount ? $"{i + 1}. " : "В ОЧЕРЕДИ - ";
                 stringBuilder.Append(position);
                 var player = i < Players.Count
-                    ? Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(Players[i]).Result.Nickname
+                    ? Configuration.GetServerMember(Players[i]).ServerOrUserName()
                     : "";
                 stringBuilder.Append(player).Append('\n');
             }
@@ -80,7 +80,7 @@ namespace AntiClownBot.Models.Gaming
         {
             if (Players.Count != MaxPlayersCount) return;
             var readyPlayersMentions = Players.Take(MaxPlayersCount)
-                .Select(playerId => Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(playerId).Result.Mention);
+                .Select(playerId => Configuration.GetServerMember(playerId).Mention);
             var messageBuilder = new DiscordMessageBuilder
             {
                 Content = $"НАБРАНО ПОЛНОЕ ПАТИ\n{string.Join("\n", readyPlayersMentions)}"

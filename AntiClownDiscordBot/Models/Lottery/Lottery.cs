@@ -73,8 +73,8 @@ namespace AntiClownBot.Models.Lottery
             _configuration ??= Configuration.GetConfiguration();
             Participants.Enqueue(userId);
             _configuration.Save();
-            var member = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(userId).Result;
-            return $"{member.Nickname} теперь участвует в лотерее";
+            var member = Configuration.GetServerMember(userId);
+            return $"{member.ServerOrUserName()} теперь участвует в лотерее";
         }
 
         private async void StartEvent()

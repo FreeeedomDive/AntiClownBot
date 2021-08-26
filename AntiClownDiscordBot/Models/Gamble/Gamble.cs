@@ -117,7 +117,7 @@ namespace AntiClownBot.Models.Gamble
             {
                 foreach (var incorrectUser in incorrectUsers)
                 {
-                    var member = Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(incorrectUser.DiscordId).Result;
+                    var member = Configuration.GetServerMember(incorrectUser.DiscordId);
                     config.ChangeBalance(incorrectUser.DiscordId, -incorrectUser.Bet, "Проигрыш в ставке");
                     sb.Append($"{member.Nickname}: -{incorrectUser.Bet}\n");
                 }
@@ -130,7 +130,7 @@ namespace AntiClownBot.Models.Gamble
             var ratio = (double) (totalIncorrectPoints + totalCorrectPoints) / totalCorrectPoints;
             foreach (var correctUser in correctUsers)
             {
-                var member = Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(correctUser.DiscordId).Result;
+                var member = Configuration.GetServerMember(correctUser.DiscordId);
                 var win = (int) Math.Floor(correctUser.Bet * ratio - correctUser.Bet);
                 config.ChangeBalance(correctUser.DiscordId, win, "Победа в ставке");
                 sb.Append($"{member.Nickname}: +{win}\n");
@@ -138,7 +138,7 @@ namespace AntiClownBot.Models.Gamble
 
             foreach (var incorrectUser in incorrectUsers)
             {
-                var member = Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(incorrectUser.DiscordId).Result;
+                var member = Configuration.GetServerMember(incorrectUser.DiscordId);
                 config.ChangeBalance(incorrectUser.DiscordId, incorrectUser.Bet, "Проигрыш в ставке");
                 sb.Append($"{member.Nickname}: -{incorrectUser.Bet}\n");
             }
@@ -167,7 +167,7 @@ namespace AntiClownBot.Models.Gamble
             {
                 foreach (var correctUser in Bids[correctOption])
                 {
-                    var member = Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(correctUser.DiscordId).Result;
+                    var member = Configuration.GetServerMember(correctUser.DiscordId);
                     var win = (int) Math.Floor(correctUser.Bet * correctOption.Ratio - correctUser.Bet);
                     pointsWon += win;
                     config.ChangeBalance(correctUser.DiscordId, win, "Победа в ставке");
@@ -181,7 +181,7 @@ namespace AntiClownBot.Models.Gamble
             {
                 foreach (var incorrectUser in Bids[incorrectOption])
                 {
-                    var member = Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(incorrectUser.DiscordId).Result;
+                    var member = Configuration.GetServerMember(incorrectUser.DiscordId);
                     pointsLost += incorrectUser.Bet;
                     config.ChangeBalance(incorrectUser.DiscordId, -incorrectUser.Bet, "Победа в ставке");
                     sb.Append($"{member.Nickname}: -{incorrectUser.Bet}\n");

@@ -22,7 +22,8 @@ namespace AntiClownBotApi.Controllers
             new RatingCommand(),
             new ChangeUserBalanceCommand(),
             new BulkChangeUserBalanceCommand(),
-            new WhenCommand()
+            new WhenCommand(),
+            new RemoveCooldownsCommand()
         };
 
         private TResponse ExecuteCommand<TCommand, TResponse>(BaseRequestDto requestDto)

@@ -34,7 +34,7 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
                 .Where(f => extensions.IndexOf(Path.GetExtension(f)) >= 0)
                 .OrderBy(_ => Randomizer.GetRandomNumberBetween(0, 1000000));
 
-            var member = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(e.Author.Id).Result;
+            var member = Configuration.GetServerMember(e.Author.Id);
             if (member.VoiceState == null || member.VoiceState.Channel == null) return "Чел, в (к)анал зайди";
             new Thread(() =>
             {
