@@ -57,7 +57,7 @@ namespace AntiClownBot.Commands.OtherCommands
 
         private async void Play(MessageCreateEventArgs e, ulong userId, string filename)
         {
-            var member = DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(userId).Result;
+            var member = await DiscordClient.Guilds[Constants.GuildId].GetMemberAsync(userId);
             if (member.VoiceState == null || member.VoiceState.Channel == null)
             {
                 await e.Message.RespondAsync("Чел, в (к)анал зайди");

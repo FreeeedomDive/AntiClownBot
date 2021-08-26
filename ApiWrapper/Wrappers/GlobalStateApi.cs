@@ -14,7 +14,7 @@ namespace ApiWrapper.Wrappers
         {
             var client = new RestClient(BaseUrl);
             var request = new RestRequest($"{WrapperUrl}autoTributes");
-            var response = client.Post(request);
+            var response = client.Get(request);
             var content = response.Content;
             return JsonConvert.DeserializeObject<List<TributeResponseDto>>(content, new ItemConverter());
         }

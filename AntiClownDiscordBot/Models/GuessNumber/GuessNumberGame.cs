@@ -40,7 +40,7 @@ namespace AntiClownBot.Models.GuessNumber
                 
                 //TODO - временное решение, пока нет идей с реализацией лутбоксов
                 Configuration.GetConfiguration().ChangeBalance(pair.Key, 500, "Угаданное число в эвенте");
-                var member = await Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(pair.Key);
+                var member = Configuration.GetServerMember(pair.Key);
                 sb.Append($"\n{member.Nickname} получает 500 Scam-койнов!");
                 count++;
             }

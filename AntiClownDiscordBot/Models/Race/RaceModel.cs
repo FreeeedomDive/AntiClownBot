@@ -86,9 +86,9 @@ namespace AntiClownBot.Models.Race
             if (_drivers.Any(d => d.DiscordId == userId)) return;
 
             var driver = _drivers.Where(d => !d.IsUser).SelectRandomItem();
-            var member = Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(userId).Result;
+            var member = Configuration.GetServerMember(userId).ServerOrUserName();
             driver.DiscordId = userId;
-            driver.Username = member.Nickname;
+            driver.Username = member;
             driver.IsUser = true;
 
             await _mainRaceMessage.ModifyAsync(GetStartingGrid());
@@ -137,8 +137,8 @@ namespace AntiClownBot.Models.Race
                 var result = $"{pos}.\t{emoji}";
                 if (!d.IsUser) return result;
 
-                var member = Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(d.DiscordId).Result;
-                result += $"\t - {member.Nickname}";
+                var member = Configuration.GetServerMember(d.DiscordId);
+                result += $"\t - {member.ServerOrUserName()}";
 
                 return result;
             });
