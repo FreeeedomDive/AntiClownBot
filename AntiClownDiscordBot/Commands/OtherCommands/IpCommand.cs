@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
 using AntiClownBot.Helpers;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
@@ -29,7 +32,7 @@ namespace AntiClownBot.Commands.OtherCommands
                 const string serverPath = "C:\\Minecraft\\Server 1.17 Clear";
                 var isModded = Directory.Exists($"{serverPath}\\mods");
                 const string serverDescription = "Версия: 1.17 vanilla";
-                var ip = await File.ReadAllTextAsync($"{serverPath}\\server.txt");
+                var ip = await GetRealIp();
                 var mods = new List<string>();
                 if (isModded)
                 {
@@ -38,8 +41,8 @@ namespace AntiClownBot.Commands.OtherCommands
                 }
                 tcpClient.SendTimeout = 1000;
                 tcpClient.ReceiveTimeout = 1000;
-                await tcpClient.ConnectAsync("localhost", 25565);
-                var messageContent = $"IP: {ip}\n{serverDescription}";
+                await tcpClient.ConnectAsync("192.168.1.134", 1505);
+                var messageContent = $"IP: {ip}:1505\n{serverDescription}";
                 if (isModded)
                 {
                     messageContent += $"\nУстановленные моды:\n{string.Join("\n", mods)}";
@@ -59,6 +62,19 @@ namespace AntiClownBot.Commands.OtherCommands
                 await respondMessage.ModifyAsync($"Сервер не запущен\n{admin.Mention} запусти сервак!!!");
             }
         }
+
+        private static async Task<string> GetRealIp()
+        {
+            const string apiUrl = "https://api.ipify.org";
+            var request = (HttpWebRequest)WebRequest.Create(apiUrl);
+            var response = (HttpWebResponse)request.GetResponse();
+
+            using var stream = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            return await stream.ReadToEndAsync();
+        }
+
+        private static async Task<string> GetNgrokIpFromFile(string serverDirectory) =>
+            await File.ReadAllTextAsync($"{serverDirectory}\\server.txt");
 
         public override string Help()
         {
