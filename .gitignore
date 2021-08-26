@@ -4,3 +4,4 @@
 bin/
 obj/
 AntiClownApi/config.json
+start.bat

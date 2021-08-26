@@ -62,8 +62,8 @@ namespace AntiClownBot.Models.BlackJack
         public string Join(ulong userId)
         {
             var member = Configuration.GetServerMember(userId);
-            Players.Enqueue(new Player {UserId = userId, Value = 0, Name = member.ServerOrUsername()});
-            return $"{member.ServerOrUsername()} присоединился к игре {Utility.StringEmoji(":peepoArrive:")}";
+            Players.Enqueue(new Player {UserId = userId, Value = 0, Name = member.ServerOrUserName()});
+            return $"{member.ServerOrUserName()} присоединился к игре {Utility.StringEmoji(":peepoArrive:")}";
         }
 
         public string Leave(ulong userId)

@@ -8,7 +8,7 @@
     <RootNamespace>AntiClownBot</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>peepoclown.ico</ApplicationIcon>
+    <ApplicationIcon>antiPeepoClownDiscord.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Configuration" />

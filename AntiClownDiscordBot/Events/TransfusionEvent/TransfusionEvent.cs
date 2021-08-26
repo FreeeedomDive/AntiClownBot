@@ -21,8 +21,8 @@ namespace AntiClownBot.Events.TransfusionEvent
             
             await Utility.SendMessageToBotChannel("Я решил выделить немного кредитов рандомному челу, " +
                                  "но свой бюджет я тратить не буду, возьму из кармана самого богатого " +
-                                 $"{Utility.StringEmoji(":MEGALUL:")} {Utility.StringEmoji(":point_right:")} {richestMember.ServerOrUsername()}. " +
-                                 $"Отдай {exchangeMember.ServerOrUsername()} {exchange} social credits");
+                                 $"{Utility.StringEmoji(":MEGALUL:")} {Utility.StringEmoji(":point_right:")} {richestMember.ServerOrUserName()}. " +
+                                 $"Отдай {exchangeMember.ServerOrUserName()} {exchange} social credits");
 
             Config.ChangeBalance(theRichestUser, -exchange, "Эвент перекачки");
             Config.ChangeBalance(exchangeUser, exchange, "Эвент перекачки");

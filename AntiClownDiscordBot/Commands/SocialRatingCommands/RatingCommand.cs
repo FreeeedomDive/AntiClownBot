@@ -28,7 +28,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 Color = member.Color
             };
 
-            var name = member.ServerOrUsername();
+            var name = member.ServerOrUserName();
             embedBuilder.WithThumbnail(e.Author.AvatarUrl);
             embedBuilder.WithTitle(
                 $"ЧЕЛА РЕАЛЬНО ЗОВУТ {name.ToUpper()}" +
@@ -83,7 +83,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 StringConstants.InternetName => new Dictionary<string, string>()
                 {
                     {
-                        "Шанс уменьшения кулдауна во время одной попытки",
+                        "Уменьшение кулдауна в процентах",
                         $"{string.Join("\t", items.Where(i => i.Name == itemType).Select(i => (Internet) i).Select(i => $"{i.Speed}%"))}"
                     },
                     {
@@ -91,7 +91,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                         $"{items.Where(i => i.Name == itemType).Select(i => (Internet) i).Select(i => i.Gigabytes).Sum()}"
                     },
                     {
-                        "Уменьшение кулдауна в процентах",
+                        "Шанс уменьшения кулдауна во время одной попытки",
                         $"{string.Join("\t", items.Where(i => i.Name == itemType).Select(i => (Internet) i).Select(i => $"{i.Ping}%"))}"
                     }
                 },

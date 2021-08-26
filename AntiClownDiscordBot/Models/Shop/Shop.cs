@@ -174,7 +174,7 @@ namespace AntiClownBot.Models.Shop
         {
             var embedBuilder = new DiscordEmbedBuilder();
             embedBuilder.WithTitle(
-                $"Магазин пользователя {Member.ServerOrUsername()} {Utility.Emoji(":PepegaCredit:")} {Utility.Emoji(":PepegaCredit:")} {Utility.Emoji(":PepegaCredit:")}");
+                $"Магазин пользователя {Member.ServerOrUserName()} {Utility.Emoji(":PepegaCredit:")} {Utility.Emoji(":PepegaCredit:")} {Utility.Emoji(":PepegaCredit:")}");
             embedBuilder.AddField("Баланс", $"{shop.Balance}", true);
             embedBuilder.AddField("Цена реролла магазина", $"{shop.ReRollPrice}", true);
             embedBuilder.AddField("Распознавание предмета", $"{shop.FreeItemReveals}", true);

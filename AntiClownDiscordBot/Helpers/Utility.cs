@@ -154,7 +154,7 @@ namespace AntiClownBot.Helpers
                 .SendMessageAsync(content);
         }
 
-        public static string ServerOrUsername(this DiscordMember member)
+        public static string ServerOrUserName(this DiscordMember member)
         {
             return member.Nickname ?? member.Username;
         }

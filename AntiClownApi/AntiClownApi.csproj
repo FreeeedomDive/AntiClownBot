@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>AntiClownBotApi</RootNamespace>
+        <ApplicationIcon>antiPeepoClownServer.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>

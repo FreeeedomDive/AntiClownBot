@@ -36,7 +36,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
             }
             
             embedBuilder.WithColor(DiscordColor.Red);
-            embedBuilder.AddField($"А подношение император XI через {Utility.GetTimeDiff(result.NextTribute)}", "Приходи не раньше чем {Utility.NormalizeTime(result.NextTribute)}");
+            embedBuilder.AddField($"А подношение император XI через {Utility.GetTimeDiff(result.NextTribute)}", $"Приходи не раньше чем {Utility.NormalizeTime(result.NextTribute)}");
             await e.Message.RespondAsync(embedBuilder.Build());
         }
 

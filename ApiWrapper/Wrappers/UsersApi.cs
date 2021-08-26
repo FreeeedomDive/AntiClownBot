@@ -87,7 +87,7 @@ namespace ApiWrapper.Wrappers
         public static ulong GetRichestUser()
         {
             var client = new RestClient(BaseUrl);
-            var request = new RestRequest($"{WrapperUrl}richest");
+            var request = new RestRequest($"{WrapperUrl}mostRich");
             var response = client.Get(request);
             return ulong.Parse(response.Content);
         }

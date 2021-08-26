@@ -111,7 +111,6 @@ namespace AntiClownBotApi.Database.DBControllers
             var user = IsUserExist(id)
                 ? database.Users
                     .Include(u => u.Economy)
-                    .Include(u => u.Economy.Transactions)
                     .First(u => u.DiscordId == id)
                 : CreateNewUserWithDbConnection(id, database);
             user.Economy.ScamCoins += ratingDiff;
@@ -122,7 +121,7 @@ namespace AntiClownBotApi.Database.DBControllers
                 RatingChange = ratingDiff,
                 Description = reason
             };
-            user.Economy.Transactions.Add(transaction);
+            database.Transactions.Add(transaction);
             database.SaveChanges();
         }
 

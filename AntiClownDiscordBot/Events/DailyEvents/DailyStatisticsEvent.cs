@@ -23,9 +23,9 @@ namespace AntiClownBot.Events.DailyEvents
         protected override string BackStory()
         {
             var (majorKey, majorValue) = Config.DailyStatistics.CreditsById.OrderBy(x => x.Value).Last();
-            var majorUserName = Configuration.GetServerMember(majorKey).ServerOrUsername();
+            var majorUserName = Configuration.GetServerMember(majorKey).ServerOrUserName();
             var (bomjKey, bomjValue) = Config.DailyStatistics.CreditsById.OrderBy(x => x.Value).First();
-            var bomjUserName = Configuration.GetServerMember(bomjKey).ServerOrUsername();
+            var bomjUserName = Configuration.GetServerMember(bomjKey).ServerOrUserName();
             
             return "Добрый вечер, Clown-City!\n" +
                 $"Граждане наш Clown-City за день заработать {Config.DailyStatistics.CreditsCollected}\n" +

@@ -67,7 +67,7 @@ namespace AntiClownBotApi.Controllers
         public BulkChangeUserRatingResponseDto BulkChangeBalance(BulkChangeUserBalanceRequestDto dto) =>
             ExecuteCommand<BulkChangeUserBalanceCommand, BulkChangeUserRatingResponseDto>(dto);
 
-        [HttpGet, Route("richest")]
+        [HttpGet, Route("mostRich")]
         public ulong GetRichestUser() => UserDbController.GetRichestUser();
 
         [HttpPost, Route("dailyReset")]
