@@ -78,8 +78,7 @@ namespace AntiClownBotApi.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(
-                "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=roflanEbalo;Include Error Detail=true");
+            optionsBuilder.UseNpgsql(Utility.GetPosgreSqlConfigureStringFromFile());
         }
     }
 }

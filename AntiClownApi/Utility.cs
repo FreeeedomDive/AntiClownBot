@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using AntiClownBotApi.Constants;
+using AntiClownBotApi.Database;
 using AntiClownBotApi.Database.DBControllers;
 using AntiClownBotApi.Database.DBModels;
 using AntiClownBotApi.Models.Items;
+using Newtonsoft.Json;
 
 namespace AntiClownBotApi
 {
@@ -161,6 +164,12 @@ namespace AntiClownBotApi
             }
 
             return result;
+        }
+
+        public static string GetPosgreSqlConfigureStringFromFile()
+        {
+            var jsonText = File.ReadAllText("bdConfig.json");
+            return JsonConvert.DeserializeObject<DbConfigureModel>(jsonText)?.Configuration;
         }
     }
 }
