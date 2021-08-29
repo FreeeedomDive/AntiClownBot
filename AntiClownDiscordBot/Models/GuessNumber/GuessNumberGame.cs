@@ -34,14 +34,14 @@ namespace AntiClownBot.Models.GuessNumber
             IsJoinable = false;
             var count = 0;
             var sb = new StringBuilder($"Правильный ответ {_generatedNumber}!\n");
-            foreach (var pair in Users)
+            foreach (var (userId, userGuess) in Users)
             {
-                if (pair.Value != _generatedNumber) continue;
+                if (userGuess != _generatedNumber) continue;
                 
                 //TODO - временное решение, пока нет идей с реализацией лутбоксов
-                Configuration.GetConfiguration().ChangeBalance(pair.Key, 500, "Угаданное число в эвенте");
-                var member = Configuration.GetServerMember(pair.Key);
-                sb.Append($"\n{member.Nickname} получает 500 Scam-койнов!");
+                Configuration.GetConfiguration().ChangeBalance(userId, 500, "Угаданное число в эвенте");
+                var member = Configuration.GetServerMember(userId);
+                sb.Append($"\n{member.ServerOrUserName()} получает 500 Scam-койнов!");
                 count++;
             }
 
