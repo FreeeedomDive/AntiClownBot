@@ -39,11 +39,11 @@ namespace AntiClownBotApi
             services.Configure<DbOptions>(postgresSection);
             services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
 
-            services.AddTransient<UserRepository>();
-            services.AddTransient<ShopRepository>();
-            services.AddTransient<GlobalState>();
+            services.AddSingleton<UserRepository>();
+            services.AddSingleton<ShopRepository>();
+            services.AddSingleton<GlobalState>();
 
-            services.AddTransient<TributeService>();
+            services.AddSingleton<TributeService>();
             
             var commandTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
@@ -51,7 +51,7 @@ namespace AntiClownBotApi
                 .Where(p => p != typeof(ICommand));
 
             foreach (var commandType in commandTypes)
-                services.AddTransient(typeof(ICommand), commandType);
+                services.AddSingleton(typeof(ICommand), commandType);
             
             services.AddControllers()
                 .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new BaseItemConverter()));
