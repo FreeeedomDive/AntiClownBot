@@ -28,8 +28,8 @@ namespace AntiClownBot.Commands.SocialRatingCommands
             }
             
             var tributeResult = UsersApi.Tribute(e.Author.Id);
-            var embed = Tribute.MakeEmbedForTribute(tributeResult);
-            await e.Message.RespondAsync(embed);
+            if (Tribute.TryMakeEmbedForTribute(tributeResult, out var tributeEmbed))
+                await e.Message.RespondAsync(tributeEmbed);
         }
 
         public override string Help()

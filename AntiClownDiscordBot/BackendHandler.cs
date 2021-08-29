@@ -35,10 +35,11 @@ namespace AntiClownBot
                     continue;
                 stalledAutoTributes.ForEach(async tribute =>
                 {
-                    await Utility.Client
-                        .Guilds[Constants.GuildId]
-                        .GetChannel(Constants.TributeChannelId)
-                        .SendMessageAsync(Tribute.MakeEmbedForTribute(tribute));
+                    if (Tribute.TryMakeEmbedForTribute(tribute, out var tributeEmbed))
+                        await Utility.Client
+                            .Guilds[Constants.GuildId]
+                            .GetChannel(Constants.TributeChannelId)
+                            .SendMessageAsync(tributeEmbed);
                 });
             }
         }
