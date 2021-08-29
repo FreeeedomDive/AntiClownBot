@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AntiClownBot.Helpers;
 using ApiWrapper.Models.Items;
 using ApiWrapper.Responses.UserCommandResponses;
@@ -9,42 +10,48 @@ namespace AntiClownBot.Models
 {
     public class Tribute
     {
-        public static DiscordEmbed MakeEmbedForTribute(TributeResponseDto response)
+        public static bool TryMakeEmbedForTribute(TributeResponseDto response, out DiscordEmbed embed)
         {
+            embed = null;
             var member = Configuration.GetServerMember(response.UserId);
             var messageEmbedBuilder = new DiscordEmbedBuilder();
             var tributeTitle = response.IsTributeAutomatic ? "Подношение кошки-жены" : "Подношение";
             messageEmbedBuilder.WithTitle($"{tributeTitle} {member.ServerOrUserName()}");
-            
-            if (response.Result == TributeResult.CooldownHasNotPassed)
+            messageEmbedBuilder.WithColor(member.Color);
+
+            switch (response.Result)
             {
-                messageEmbedBuilder.WithColor(DiscordColor.Red);
-                messageEmbedBuilder.AddField(Utility.StringEmoji(":NOPERS:"),
-                    $"Не злоупотребляй подношение император XI {Utility.StringEmoji(":PepegaGun:")}");
-                return messageEmbedBuilder.Build();
+                case TributeResult.Success:
+                    break;
+                case TributeResult.AutoTributeWasCancelledByEarlierTribute:
+                    return false;
+                case TributeResult.CooldownHasNotPassed:
+                    messageEmbedBuilder.AddField(Utility.StringEmoji(":NOPERS:"),
+                        $"Не злоупотребляй подношение император XI {Utility.StringEmoji(":PepegaGun:")}");
+                    embed = messageEmbedBuilder.Build();
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             if (response.IsCommunismActive)
             {
                 var sharedUser = Configuration.GetServerMember(response.SharedCommunistUserId);
                 messageEmbedBuilder.AddField($"Произошел коммунизм {Utility.StringEmoji(":cykaPls:")}",
-                    $"Разделение подношения с {sharedUser.Nickname}");
+                    $"Разделение подношения с {sharedUser.ServerOrUserName()}");
             }
             
             switch (response.TributeQuality)
             {
                 case > 0:
-                    messageEmbedBuilder.WithColor(DiscordColor.Green);
                     messageEmbedBuilder.AddField($"+{response.TributeQuality} scam coins", 
                         "Партия гордится вами!!!");
                     break;
                 case < 0:
-                    messageEmbedBuilder.WithColor(DiscordColor.Red);
                     messageEmbedBuilder.AddField($"{response.TributeQuality} scam coins", 
                         "Ну и ну! Вы разочаровать партию!");
                     break;
                 default:
-                    messageEmbedBuilder.WithColor(DiscordColor.White);
                     messageEmbedBuilder.AddField("Партия не оценить ваших усилий",
                         $"{Utility.StringEmoji(":Starege:")} {Utility.StringEmoji(":Starege:")} {Utility.StringEmoji(":Starege:")}");
                     break;
@@ -80,7 +87,8 @@ namespace AntiClownBot.Models
                     $"Кошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}");
             }
 
-            return messageEmbedBuilder.Build();
+            embed = messageEmbedBuilder.Build();
+            return true;
         }
 
     }
