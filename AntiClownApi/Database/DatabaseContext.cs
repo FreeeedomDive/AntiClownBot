@@ -3,6 +3,7 @@ using AntiClownBotApi.Database.DBModels;
 using AntiClownBotApi.Database.DBModels.DbItems;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace AntiClownBotApi.Database
 {
@@ -18,10 +19,12 @@ namespace AntiClownBotApi.Database
         public DbSet<DbShopItem> ShopItems { get; set; }
         public DbSet<DbUserShop> UserShops { get; set; }
         public DbSet<DbTransaction> Transactions { get; set; }
+        private DbOptions Options { get; } 
 
-        public DatabaseContext(DbContextOptions<DatabaseContext> options)
+        public DatabaseContext(DbContextOptions<DatabaseContext> options, IOptions<DbOptions> dbOptionsAccessor)
             : base(options)
         {
+            Options = dbOptionsAccessor.Value;
             Database.EnsureCreated();
         }
         
@@ -80,13 +83,7 @@ namespace AntiClownBotApi.Database
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (optionsBuilder.IsConfigured) return;
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
-            var connectionString = configuration.GetConnectionString("PostgreSql");
-            optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseNpgsql(Options.ConnectionString);
         }
     }
 }

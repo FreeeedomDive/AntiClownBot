@@ -140,22 +140,22 @@ namespace AntiClownBotApi
             _ => Rarity.BlackMarket
         };
         
-        public static List<DbUser> GetCommunists() =>
-            UserDbController.GetAllUsersWithEconomyAndItems()
+        public static List<DbUser> GetCommunists(UserRepository userRepository) =>
+            userRepository.GetAllUsersWithEconomyAndItems()
                 .Where(user => user.Items.Any(item => item.Name.Equals(StringConstants.CommunismBannerName)))
                 .ToList();
 
-        public static Dictionary<DbUser, int> GetCommunistsDictionary() =>
-            GetCommunists()
+        public static Dictionary<DbUser, int> GetCommunistsDictionary(UserRepository userRepository) =>
+            GetCommunists(userRepository)
                 .ToDictionary(
                     user => user,
                     user => user.Items.Count(item => item.Name.Equals(StringConstants.CommunismBannerName))
                 );
 
-        public static List<DbUser> GetDistributedCommunists()
+        public static List<DbUser> GetDistributedCommunists(UserRepository userRepository)
         {
             var result = new List<DbUser>();
-            foreach (var (user, count) in GetCommunistsDictionary())
+            foreach (var (user, count) in GetCommunistsDictionary(userRepository))
             {
                 for (var i = 0; i < count; i++)
                 {
@@ -164,12 +164,6 @@ namespace AntiClownBotApi
             }
 
             return result;
-        }
-
-        public static string GetPosgreSqlConfigureStringFromFile()
-        {
-            var jsonText = File.ReadAllText("bdConfig.json");
-            return JsonConvert.DeserializeObject<DbConfigureModel>(jsonText)?.Configuration;
         }
     }
 }

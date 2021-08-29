@@ -12,10 +12,17 @@ namespace AntiClownBotApi.Controllers
     [Route("/api/shop/{userId}")]
     public class ShopController : Controller
     {
-        [HttpGet, Route("")]
+        private readonly ShopRepository shopRepository;
+
+        public ShopController(ShopRepository shopRepository)
+        {
+            this.shopRepository = shopRepository;
+        }
+
+        [HttpGet("")]
         public UserShopResponseDto GetUserShop(ulong userId)
         {
-            var user = ShopDbController.GetUserShop(userId);
+            var user = shopRepository.GetUserShop(userId);
             return new UserShopResponseDto()
             {
                 UserId = userId,
@@ -34,7 +41,7 @@ namespace AntiClownBotApi.Controllers
             };
         }
 
-        [HttpPost, Route("getItemIdInSlot/{slot:int}")]
+        [HttpPost("getItemIdInSlot/{slot:int}")]
         public ItemIdInSlotResponseDto GetItemIdInSlot(ulong userId, int slot)
         {
             if (slot is <= 0 or > NumericConstants.MaximumItemsInShop)
@@ -46,7 +53,7 @@ namespace AntiClownBotApi.Controllers
                 };
             }
 
-            var result = ShopDbController.GetShopItemInSlot(userId, slot);
+            var result = shopRepository.GetShopItemInSlot(userId, slot);
 
             return new ItemIdInSlotResponseDto
             {
@@ -55,10 +62,10 @@ namespace AntiClownBotApi.Controllers
             };
         }
 
-        [HttpPost, Route("reveal/{itemId:guid}")]
+        [HttpPost("reveal/{itemId:guid}")]
         public ShopItemRevealResponseDto Reveal(ulong userId, Guid itemId)
         {
-            var result = ShopDbController.RevealItem(userId, itemId, out var revealedItem);
+            var result = shopRepository.RevealItem(userId, itemId, out var revealedItem);
 
             return new ShopItemRevealResponseDto()
             {
@@ -77,10 +84,10 @@ namespace AntiClownBotApi.Controllers
             };
         }
 
-        [HttpPost, Route("buy/{itemId:guid}")]
+        [HttpPost("buy/{itemId:guid}")]
         public BuyItemResponseDto Buy(ulong userId, Guid itemId)
         {
-            var result = ShopDbController.TryBuyItem(userId, itemId, out var item);
+            var result = shopRepository.TryBuyItem(userId, itemId, out var item);
             var response = new BuyItemResponseDto() {UserId = userId, BuyResult = result};
             if (result == Enums.BuyResult.Success)
                 response.ItemId = item.Id;
@@ -88,10 +95,10 @@ namespace AntiClownBotApi.Controllers
             return response;
         }
 
-        [HttpPost, Route("reroll")]
+        [HttpPost("reroll")]
         public ReRollResponseDto ReRoll(ulong userId) => new()
         {
-            ReRollResult = ShopDbController.ReRollShop(userId)
+            ReRollResult = shopRepository.ReRollShop(userId)
         };
     }
 }

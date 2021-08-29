@@ -9,9 +9,16 @@ namespace AntiClownBotApi.Commands.UserCommands
 {
     public class RatingCommand: ICommand
     {
+        private UserRepository UserRepository { get; }
+        
+        public RatingCommand(UserRepository userRepository)
+        {
+            UserRepository = userRepository;
+        }
+        
         public BaseResponseDto Execute(BaseRequestDto dto)
         {
-            var user = UserDbController.GetUserWithEconomyAndItems(dto.UserId);
+            var user = UserRepository.GetUserWithEconomyAndItems(dto.UserId);
             var response = new RatingResponseDto()
             {
                 UserId = dto.UserId,

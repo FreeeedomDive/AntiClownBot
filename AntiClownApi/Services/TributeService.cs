@@ -11,15 +11,24 @@ namespace AntiClownBotApi.Services
 {
     public class TributeService
     {
-        public static TributeResponseDto MakeTribute(ulong userId, bool isAutomatic)
+        private UserRepository UserRepository { get; }
+        private GlobalState GlobalState { get; }
+
+        public TributeService(UserRepository userRepository, GlobalState globalState)
         {
-            var response = new TributeResponseDto()
+            UserRepository = userRepository;
+            GlobalState = globalState;
+        }
+        
+        public TributeResponseDto MakeTribute(ulong userId, bool isAutomatic)
+        {
+            var response = new TributeResponseDto
             {
                 UserId = userId,
                 IsTributeAutomatic = isAutomatic
             };
 
-            var user = UserDbController.GetUserWithEconomyAndItems(userId);
+            var user = UserRepository.GetUserWithEconomyAndItems(userId);
 
             if (!user.IsCooldownPassed())
             {
@@ -29,7 +38,7 @@ namespace AntiClownBotApi.Services
                 return response;
             }
 
-            var cooldownModifiers = user.UpdateCooldown();
+            var cooldownModifiers = UserRepository.UpdateCooldown(user.Items, userId);
 
             var minTributeBorder = NumericConstants.MinTributeValue;
             var maxTributeBorder = NumericConstants.MaxTributeValue;
@@ -52,7 +61,7 @@ namespace AntiClownBotApi.Services
             if (communism)
             {
                 var sharedUsers = Utility
-                    .GetDistributedCommunists()
+                    .GetDistributedCommunists(UserRepository)
                     .Where(u => u.DiscordId != user.DiscordId)
                     .ToList();
                 if (sharedUsers.Count > 0)
@@ -89,14 +98,14 @@ namespace AntiClownBotApi.Services
             return response;
         }
 
-        public static void SetupAutoTribute(DbUser user)
+        public void SetupAutoTribute(DbUser user)
         {
-            var delay = UserDbController.GetUserNextTributeDateTime(user.DiscordId) - DateTime.Now +
+            var delay = UserRepository.GetUserNextTributeDateTime(user.DiscordId) - DateTime.Now +
                         TimeSpan.FromSeconds(1);
             BackgroundJob.Schedule(() => TributeWithAddToAutoTributesList(user.DiscordId), delay);
         }
         
-        public static void TributeWithAddToAutoTributesList(ulong userId)
+        public void TributeWithAddToAutoTributesList(ulong userId)
         {
             var nextResult = MakeTribute(userId, true);
             // TODO send to discord nextResult

@@ -1,6 +1,11 @@
 using System;
+using System.Linq;
+using AntiClownBotApi.Commands;
+using AntiClownBotApi.Commands.UserCommands;
 using AntiClownBotApi.Converters;
 using AntiClownBotApi.Database;
+using AntiClownBotApi.Database.DBControllers;
+using AntiClownBotApi.Services;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
@@ -30,17 +35,33 @@ namespace AntiClownBotApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var postgresSection = Configuration.GetSection("PostgreSql");
+            services.Configure<DbOptions>(postgresSection);
+            services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
+
+            services.AddTransient<UserRepository>();
+            services.AddTransient<ShopRepository>();
+            services.AddTransient<GlobalState>();
+
+            services.AddTransient<TributeService>();
+            
+            var commandTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => typeof(ICommand).IsAssignableFrom(p))
+                .Where(p => p != typeof(ICommand));
+
+            foreach (var commandType in commandTypes)
+                services.AddTransient(typeof(ICommand), commandType);
+            
             services.AddControllers()
                 .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new BaseItemConverter()));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Best API ever", Version = "v1"});
             });
-
-            var connection = Configuration.GetConnectionString("PostgreSql");
             
             services.AddHangfire(config =>
-                config.UsePostgreSqlStorage(connection));
+                config.UsePostgreSqlStorage(postgresSection["ConnectionString"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -6,6 +6,13 @@ namespace AntiClownBotApi.Commands.UserCommands
 {
     public class ChangeUserBalanceCommand: ICommand
     {
+        private GlobalState GlobalState { get; }
+
+        public ChangeUserBalanceCommand(GlobalState globalState)
+        {
+            GlobalState = globalState;
+        }
+        
         public BaseResponseDto Execute(BaseRequestDto dto)
         {
             if (dto is not ChangeUserBalanceRequestDto request)

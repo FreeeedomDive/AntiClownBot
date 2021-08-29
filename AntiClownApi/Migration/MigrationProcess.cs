@@ -7,13 +7,21 @@ namespace AntiClownBotApi.Migration
 {
     public class MigrationProcess
     {
-        public static void StartMigration()
+        private DatabaseContext Database { get; }
+        private UserRepository UserRepository { get; }
+
+        public MigrationProcess(DatabaseContext database, UserRepository userRepository)
         {
-            var database = new DatabaseContext();
+            Database = database;
+            UserRepository = userRepository;
+        }
+        
+        public void StartMigration()
+        {
             var oldConfig = Configuration.GetConfiguration();
             foreach (var (id, user) in oldConfig.Users)
             {
-                var newUser = UserDbController.CreateNewUserWithDbConnection(id, database);
+                var newUser = UserRepository.CreateNewUserWithDbConnection(id);
                 var balance = user.SocialRating +
                                             (int) user
                                                 .Items
@@ -23,7 +31,8 @@ namespace AntiClownBotApi.Migration
                 Console.WriteLine($"{user.DiscordUsername} has {balance}");
             }
 
-            database.SaveChanges();
+            Database.SaveChanges();
+            UserRepository.Save();
         }
     }
 }

@@ -10,21 +10,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AntiClownBotApi.Database.DBControllers
 {
-    public static class ShopDbController
+    public class ShopRepository
     {
-        private static DbUser GetUserWithShopUsingConnection(ulong userId, DatabaseContext database)
+        private UserRepository UserRepository { get; }
+        private DatabaseContext Database { get; }
+
+        public ShopRepository(DatabaseContext database, UserRepository userRepository)
         {
-            return UserDbController.IsUserExist(userId)
-                ? database.Users
-                    .Include(u => u.Economy)
-                    .Include(u => u.Shop.Items)
-                    .Include(u => u.Items)
-                    .ThenInclude(i => i.ItemStats)
-                    .First(u => u.DiscordId == userId)
-                : UserDbController.CreateNewUserWithDbConnection(userId, database);
+            Database = database;
+            UserRepository = userRepository;
         }
 
-        private static BaseItem GenerateInventoryItemFromShopItem(DbShopItem shopItem)
+        private BaseItem GenerateInventoryItemFromShopItem(DbShopItem shopItem)
         {
             var item = new ItemBuilder()
                 .WithRarity(shopItem.Rarity)
@@ -64,18 +61,21 @@ namespace AntiClownBotApi.Database.DBControllers
             };
         }
 
-        public static Guid GetShopItemInSlot(ulong userId, int slot)
+        public void Save()
         {
-            using var database = new DatabaseContext();
-            var user = GetUserWithShopUsingConnection(userId, database);
+            Database.SaveChanges();
+        } 
+
+        public Guid GetShopItemInSlot(ulong userId, int slot)
+        {
+            var user = UserRepository.GetUserWithShopUsingConnection(userId);
             return user.Shop.Items[slot - 1].Id;
         }
 
-        public static Enums.RevealResult RevealItem(ulong userId, Guid itemId, out DbShopItem revealedItem)
+        public Enums.RevealResult RevealItem(ulong userId, Guid itemId, out DbShopItem revealedItem)
         {
             revealedItem = null;
-            using var database = new DatabaseContext();
-            var user = GetUserWithShopUsingConnection(userId, database);
+            var user = UserRepository.GetUserWithShopUsingConnection(userId);
             if (user.Shop.Items.All(i => i.Id != itemId))
                 return Enums.RevealResult.ItemDoesntExistInShop;
             var shopItem = user.Shop.Items.First(i => i.Id == itemId);
@@ -93,21 +93,21 @@ namespace AntiClownBotApi.Database.DBControllers
                 var revealCost = shopItem.Price * 4 / 10;
                 if (user.Economy.ScamCoins < revealCost)
                     return Enums.RevealResult.NotEnoughMoney;
-                UserDbController.ChangeUserBalanceWithConnection(userId, -revealCost,
-                    $"Покупка распознавания предмета {shopItem.Name}", database);
+                UserRepository.ChangeUserBalanceWithConnection(userId, -revealCost,
+                    $"Покупка распознавания предмета {shopItem.Name}");
             }
 
             shopItem.IsRevealed = true;
-            database.SaveChanges();
+            UserRepository.Save();
+            Save();
             revealedItem = shopItem;
             return Enums.RevealResult.Success;
         }
 
-        public static Enums.BuyResult TryBuyItem(ulong userId, Guid itemId, out BaseItem newItem)
+        public Enums.BuyResult TryBuyItem(ulong userId, Guid itemId, out BaseItem newItem)
         {
             newItem = null;
-            using var database = new DatabaseContext();
-            var user = GetUserWithShopUsingConnection(userId, database);
+            var user = UserRepository.GetUserWithShopUsingConnection(userId);
             if (user.Shop.Items.All(i => i.Id != itemId))
                 return Enums.BuyResult.ItemDoesntExistInShop;
             var shopItem = user.Shop.Items.First(i => i.Id == itemId);
@@ -120,93 +120,77 @@ namespace AntiClownBotApi.Database.DBControllers
 
             newItem = GenerateInventoryItemFromShopItem(shopItem);
             var dbItem = newItem.ToDbItem();
-            
-            AddItemWithOverflow(user, dbItem, database);
-            
-            UserDbController.ChangeUserBalanceWithConnection(userId, -newItem.Price,
-                $"Покупка предмета {dbItem.Name}", database);
+
+            UserRepository.AddItemToUserWithOverflow(userId, dbItem);
+
+            UserRepository.ChangeUserBalanceWithConnection(userId, -newItem.Price,
+                $"Покупка предмета {dbItem.Name}");
             shopItem.IsOwned = true;
 
-            database.SaveChanges();
+            Save();
 
             return Enums.BuyResult.Success;
         }
 
-        private static void AddItemWithOverflow(DbUser user, DbItem dbItem, DatabaseContext database)
+        public DbUser GetUserShop(ulong userId)
         {
-            var itemsOfType = user.Items.Where(i => i.Name == dbItem.Name).ToList();
-            if (itemsOfType.Count == NumericConstants.MaximumItemsOfOneType)
-            {
-                var itemToDelete = itemsOfType.OrderBy(i => i.Rarity).First();
-                user.Items.Remove(itemToDelete);
-                database.Items.Remove(itemToDelete);
-            }
-            dbItem.User = user;
-            database.Items.Add(dbItem);
-            user.Items.Add(dbItem);
+            return UserRepository.GetUserWithShopUsingConnection(userId);
         }
 
-        public static DbUser GetUserShop(ulong userId)
+        public Enums.ReRollResult ReRollShop(ulong userId)
         {
-            using var database = new DatabaseContext();
-            return GetUserWithShopUsingConnection(userId, database);
-        }
-
-        public static Enums.ReRollResult ReRollShop(ulong userId)
-        {
-            using var database = new DatabaseContext();
-            var user = GetUserWithShopUsingConnection(userId, database);
+            var user = UserRepository.GetUserWithShopUsingConnection(userId);
 
             if (user.Economy.ScamCoins < user.Shop.ReRollPrice)
                 return Enums.ReRollResult.NotEnoughMoney;
 
             user.Shop = DbUserShop.GenerateNewItemsForShop(user.Shop);
-            UserDbController.ChangeUserBalanceWithConnection(userId, -user.Shop.ReRollPrice, "Реролл магазина", database);
+            UserRepository.ChangeUserBalanceWithConnection(userId, -user.Shop.ReRollPrice, "Реролл магазина");
             user.Shop.ReRollPrice += NumericConstants.DefaultReRollPriceIncrease;
-            database.SaveChanges();
+            
+            UserRepository.Save();
+            Save();
 
             return Enums.ReRollResult.Success;
         }
 
-        public static void ResetReRollPrice(ulong userId)
+        public void ResetReRollPrice(ulong userId)
         {
-            using var database = new DatabaseContext();
-            var user = GetUserWithShopUsingConnection(userId, database);
+            var user = UserRepository.GetUserWithShopUsingConnection(userId);
 
             user.Shop.ReRollPrice = NumericConstants.DefaultReRollPrice;
-            database.SaveChanges();
+            UserRepository.Save();
+            Save();
         }
 
-        public static void ResetReRollPriceForAllUsers()
+        public void ResetReRollPriceForAllUsers()
         {
-            using var database = new DatabaseContext();
-            database.Users.ForEach(user => ResetReRollPrice(user.DiscordId));
-            database.SaveChanges();
+            Database.Users.ForEach(user => ResetReRollPrice(user.DiscordId));
+            UserRepository.Save();
+            Save();
         }
 
-        public static void ResetFreeReveals(ulong userId)
+        public void ResetFreeReveals(ulong userId)
         {
-            using var database = new DatabaseContext();
-            var user = GetUserWithShopUsingConnection(userId, database);
+            var user = UserRepository.GetUserWithShopUsingConnection(userId);
 
             user.Shop.FreeItemReveals = Math.Max(NumericConstants.FreeItemRevealsPerDay, user.Shop.FreeItemReveals);
-            database.SaveChanges();
+            UserRepository.Save();
         }
 
-        public static void AddFreeReveals(ulong userId, int count)
+        public void AddFreeReveals(ulong userId, int count)
         {
-            using var database = new DatabaseContext();
-            var user = GetUserWithShopUsingConnection(userId, database);
+            var user = UserRepository.GetUserWithShopUsingConnection(userId);
 
             user.Shop.FreeItemReveals += count;
-            database.SaveChanges();
+            UserRepository.Save();
+            Save();
         }
 
-        public static void ResetFreeRevealsForAllUsers()
+        public void ResetFreeRevealsForAllUsers()
         {
-            using var database = new DatabaseContext();
-            database.Users.ForEach(user => ResetFreeReveals(user.DiscordId));
-            database.SaveChanges();
+            var users = UserRepository.GetAllUsersIds();
+            users.ForEach(ResetFreeReveals);
         }
     }
 }

@@ -5,9 +5,11 @@ using AntiClownBotApi.DTO.Responses.UserCommandResponses;
 
 namespace AntiClownBotApi
 {
-    public static class GlobalState
+    public class GlobalState
     {
         public static List<TributeResponseDto> AutomaticTributes = new();
+        
+        private UserRepository UserRepository { get; }
         // public static DateTime TodayDate;
         // public static RouletteGame Roulette = new();
         // public static Lohotron DailyScamMachine;
@@ -34,26 +36,31 @@ namespace AntiClownBotApi
         //             pair => pair.Value.NetWorth);
         //     return GetStatsForDict(dict, key => key);
         // }
-
-        public static void ChangeUserBalance(ulong userId, int ratingDiff, string reason)
+        
+        public GlobalState(UserRepository userRepository)
         {
-            UserDbController.ChangeUserBalance(userId, ratingDiff, reason);
+            UserRepository = userRepository;
         }
 
-        public static int GetUserBalance(ulong userId) => UserDbController.GetUserEconomy(userId).Economy.ScamCoins;
+        public void ChangeUserBalance(ulong userId, int ratingDiff, string reason)
+        {
+            UserRepository.ChangeUserBalance(userId, ratingDiff, reason);
+        }
+
+        public int GetUserBalance(ulong userId) => UserRepository.GetUserEconomy(userId).Economy.ScamCoins;
 
         // TODO: To Database
 
-        private static bool AreTributesOpen = true;
+        private static bool areTributesOpen = true;
 
         public static void CloseTributes()
         {
-            AreTributesOpen = false;
+            areTributesOpen = false;
         }
 
         public static void OpenTributes()
         {
-            AreTributesOpen = true;
+            areTributesOpen = true;
         }
     }
 }
