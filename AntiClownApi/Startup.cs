@@ -24,7 +24,7 @@ namespace AntiClownBotApi
     public class Startup
     {
         public const bool IsDevelopment = true;
-        
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -44,7 +44,7 @@ namespace AntiClownBotApi
             services.AddSingleton<GlobalState>();
 
             services.AddSingleton<TributeService>();
-            
+
             var commandTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => typeof(ICommand).IsAssignableFrom(p))
@@ -52,14 +52,14 @@ namespace AntiClownBotApi
 
             foreach (var commandType in commandTypes)
                 services.AddSingleton(typeof(ICommand), commandType);
-            
+
             services.AddControllers()
                 .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new BaseItemConverter()));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Best API ever", Version = "v1"});
             });
-            
+
             services.AddHangfire(config =>
                 config.UsePostgreSqlStorage(postgresSection["ConnectionString"]));
         }
@@ -79,7 +79,7 @@ namespace AntiClownBotApi
             app.UseRouting();
             app.UseWebSockets();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            
+
             app.UseHangfireServer();
             app.UseHangfireDashboard();
         }
