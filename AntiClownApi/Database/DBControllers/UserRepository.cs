@@ -159,7 +159,6 @@ namespace AntiClownBotApi.Database.DBControllers
 
             dbItem.User = user;
             Database.Items.Add(dbItem);
-            user.Items.Add(dbItem);
 
             Save();
         }
