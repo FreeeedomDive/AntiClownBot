@@ -146,7 +146,8 @@ namespace AntiClownBotApi.Database.DBControllers
 
             user.Shop = DbUserShop.GenerateNewItemsForShop(user.Shop);
             UserRepository.ChangeUserBalanceWithConnection(userId, -user.Shop.ReRollPrice, "Реролл магазина");
-            user.Shop.ReRollPrice += NumericConstants.DefaultReRollPriceIncrease;
+            user.Shop.ReRollPrice = Math.Max(NumericConstants.DefaultReRollPrice,
+                user.Shop.ReRollPrice + NumericConstants.DefaultReRollPriceIncrease);
             
             UserRepository.Save();
             Save();
@@ -158,7 +159,7 @@ namespace AntiClownBotApi.Database.DBControllers
         {
             var user = UserRepository.GetUserWithShopUsingConnection(userId);
 
-            user.Shop.ReRollPrice = NumericConstants.DefaultReRollPrice;
+            user.Shop.ReRollPrice = 0;
             UserRepository.Save();
             Save();
         }

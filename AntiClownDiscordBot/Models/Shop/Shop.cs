@@ -213,7 +213,7 @@ namespace AntiClownBot.Models.Shop
             {ApiWrapper.Models.Items.Rarity.Rare, DiscordColor.Blue},
             {ApiWrapper.Models.Items.Rarity.Epic, DiscordColor.Purple},
             {ApiWrapper.Models.Items.Rarity.Legendary, DiscordColor.Red},
-            {ApiWrapper.Models.Items.Rarity.BlackMarket, DiscordColor.Yellow},
+            {ApiWrapper.Models.Items.Rarity.BlackMarket, DiscordColor.Black},
         };
 
         public static string Help => "Создает новое сообщение с персональным магазином для пользователя" +

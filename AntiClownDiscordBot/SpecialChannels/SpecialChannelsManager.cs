@@ -19,14 +19,15 @@ namespace AntiClownBot.SpecialChannels
         {
             _specialChannels = new Dictionary<ulong, SpecialChannelParser>
             {
-                {843065708023382036, new BlackJackParser(client, configuration) },
-                {843051370168320002, new GamblingParser(client, configuration) },
-                {843051438594064384, new RollDiceParser(client, configuration) },
-                {843051483892023316, new RouletteParser(client, configuration) },
-                {843051525931532298, new SlotParser(client,configuration) },
-                {848100451949608970, new DevParser(client, configuration)}
+                {Constants.BlackJackChannelId, new BlackJackParser(client, configuration)},
+                {Constants.GamblingChannelId, new GamblingParser(client, configuration)},
+                {Constants.RollDiceChannelId, new RollDiceParser(client, configuration)},
+                {Constants.RouletteChannelId, new RouletteParser(client, configuration)},
+                {Constants.SlotsChannelId, new SlotParser(client, configuration)},
+                {Constants.DebugDevChannelId, new DevParser(client, configuration)}
             };
         }
+
         public bool GetChannelByName(ulong name, out SpecialChannelParser parser)
         {
             if (_specialChannels.ContainsKey(name))
@@ -48,16 +49,19 @@ namespace AntiClownBot.SpecialChannels
                 await e.Message.RespondAsync($"Пока не отвечаю {Utility.Emoji(":NOPERS:")}");
                 return;
             }
+
             if (!GetChannelByName(e.Channel.Id, out var parser))
             {
                 await e.Message.RespondAsync($"Я хз что происходит, но {e.Channel.Id} канала не существует");
                 return;
             }
+
             if (e.Message.Content.StartsWith("help"))
             {
                 await e.Message.RespondAsync(parser.Help(e));
                 return;
             }
+
             parser.Parse(e);
         }
     }

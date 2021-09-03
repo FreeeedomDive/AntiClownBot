@@ -14,7 +14,7 @@ namespace AntiClownBot.Commands.Gaming
 
         public override async void Execute(MessageCreateEventArgs e)
         {
-            if (e.Channel.Id != 878002609217220619)
+            if (e.Channel.Id != Constants.PartyChannelId)
             {
                 await e.Message.RespondAsync($"{Utility.Emoji(":Madge:")} {Utility.Emoji(":point_right:")} {e.Guild.GetChannel(878002609217220619).Mention}");
                 return;

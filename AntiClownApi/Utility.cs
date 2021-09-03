@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using AntiClownBotApi.Constants;
-using AntiClownBotApi.Database;
 using AntiClownBotApi.Database.DBControllers;
 using AntiClownBotApi.Database.DBModels;
 using AntiClownBotApi.Models.Items;
-using Newtonsoft.Json;
 
 namespace AntiClownBotApi
 {
@@ -131,12 +128,12 @@ namespace AntiClownBotApi
             {Rarity.BlackMarket, 20000}
         };
 
-        public static Rarity GenerateRarity() => Randomizer.GetRandomNumberBetween(0, 1000000) switch
+        public static Rarity GenerateRarity() => Randomizer.GetRandomNumberBetween(0, 14000) switch
         {
-            >= 0 and <= 666666 => Rarity.Common,
-            > 666666 and <= 930228 => Rarity.Rare,
-            > 930228 and <= 999000 => Rarity.Epic,
-            > 999000 and <= 999998 => Rarity.Legendary,
+            >= 0 and <= 9500 => Rarity.Common,
+            > 9500 and <= 12700 => Rarity.Rare,
+            > 12700 and <= 13940 => Rarity.Epic,
+            > 13940 and <= 13998 => Rarity.Legendary,
             _ => Rarity.BlackMarket
         };
         
