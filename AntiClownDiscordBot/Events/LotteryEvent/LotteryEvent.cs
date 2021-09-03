@@ -24,7 +24,7 @@ namespace AntiClownBot.Events.LotteryEvent
         protected override string BackStory()
         {
             return $"@everyone Начинаем лотерею! Для участия нажмите на смайлик {Utility.StringEmoji(":NOTED:")} под сообщением или через команду !lottery\n" +
-                "Но помните, вы можете не только выиграть большое количество кредитов, но и проиграть.\n" +
+                "Здесь можно выиграть много scam-койнов!\n" +
                 "Вся необходимая информация о лотерее доступна по команде '!help lottery'\n" +
                 "Начнём подводить итоги через 15 минут";
         }

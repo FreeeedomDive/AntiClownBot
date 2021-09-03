@@ -4,11 +4,18 @@ using AntiClownBotApi.DTO.Responses;
 
 namespace AntiClownBotApi.Commands.UserCommands
 {
-    public class RemoveCooldownsCommand: ICommand
+    public class RemoveCooldownsCommand : ICommand
     {
+        private UserRepository UserRepository { get; }
+        
+        public RemoveCooldownsCommand(UserRepository userRepository)
+        {
+            UserRepository = userRepository;
+        }
+
         public BaseResponseDto Execute(BaseRequestDto dto)
         {
-            UserDbController.RemoveCooldowns();
+            UserRepository.RemoveCooldowns();
             return new BaseResponseDto();
         }
     }

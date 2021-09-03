@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -12,41 +13,22 @@ namespace AntiClownBot.Models.Lottery
     public class Lottery
     {
         private Configuration _configuration;
-        protected static DiscordClient DiscordClient;
+        private static DiscordClient discordClient;
         public bool IsJoinable;
         public ulong LotteryMessageId;
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public enum LotteryEmote
         {
-            //Плохие эмоты
-            weirdChamp,
-            sadKEK,
-            Sadge,
-            PogOff,
-            pigRoll,
-            KEKW,
-            bonk,
-            BibleThump,
-            OMEGAKEK,
-            PepegaGun,
-            peepoClown,
-            Kekega,
-
-            //Хорошие эмоты
-            PogYou,
-            poggers,
-            pauseChamp,
-            olyashGasm,
-            OkayChamp,
-            BOOBA,
-            funnyChamp,
-            BASED,
-            AYAYA,
+            MONKE,
+            FLOPPA,
+            Applecatrun,
+            PPogo,
+            PaPaTuTuWaWa,
+            PolarStrut,
+            TooSmart,
             YEPPING,
-            RainbowPls,
-            peepoClap,
-            PATREGO,
-            popCat
+            PATREGO
         }
 
         public static List<LotteryEmote> GetAllEmotes()
@@ -56,7 +38,7 @@ namespace AntiClownBot.Models.Lottery
 
         public Lottery()
         {
-            DiscordClient = Utility.Client;
+            discordClient = Utility.Client;
             Participants = new Queue<ulong>();
             IsJoinable = true;
             var thread = new Thread(StartEvent)
@@ -82,14 +64,14 @@ namespace AntiClownBot.Models.Lottery
             var allEmotes = GetAllEmotes();
             await Task.Delay(15 * 60 * 1000);
             _configuration ??= Configuration.GetConfiguration();
-            DiscordClient ??= Utility.Client;
+            discordClient ??= Utility.Client;
             IsJoinable = false;
             foreach (var user in Start())
             {
                 var member = Configuration.GetServerMember(user.UserId);
-                var lastMessage = $"{member.Nickname}:\n";
+                var lastMessage = $"{member.ServerOrUserName()}:\n";
 
-                var message = await DiscordClient
+                var message = await discordClient
                     .Guilds[277096298761551872]
                     .GetChannel(838477706643374090)
                     .SendMessageAsync(lastMessage);
@@ -109,12 +91,12 @@ namespace AntiClownBot.Models.Lottery
                     LotteryEmote rollingEmote;
                     if (Randomizer.GetRandomNumberBetween(0, 4) == 0)
                     {
-                        rollingEmote = allEmotes.SelectRandomItem();
+                        rollingEmote = user.Emotes[currentEmote];
+                        emotesToRoll--;
                     }
                     else
                     {
-                        rollingEmote = user.Emotes[currentEmote];
-                        emotesToRoll--;
+                        rollingEmote = allEmotes.SelectRandomItem();
                     }
                     strBuilder.Append($"   {Utility.StringEmoji($":{rollingEmote}:")} ");
                     
@@ -188,32 +170,15 @@ namespace AntiClownBot.Models.Lottery
         {
             return emote switch
             {
-                LotteryEmote.weirdChamp => -10,
-                LotteryEmote.sadKEK => -20,
-                LotteryEmote.Sadge => -10,
-                LotteryEmote.PogOff => -50,
-                LotteryEmote.pigRoll => -30,
-                LotteryEmote.KEKW => -40,
-                LotteryEmote.bonk => -30,
-                LotteryEmote.BibleThump => -20,
-                LotteryEmote.OMEGAKEK => -40,
-                LotteryEmote.PepegaGun => -75,
-                LotteryEmote.peepoClown => -20,
-                LotteryEmote.PogYou => 40,
-                LotteryEmote.poggers => 30,
-                LotteryEmote.pauseChamp => 50,
-                LotteryEmote.olyashGasm => 30,
-                LotteryEmote.OkayChamp => 20,
-                LotteryEmote.BOOBA => 40,
-                LotteryEmote.funnyChamp => 10,
-                LotteryEmote.BASED => 40,
-                LotteryEmote.AYAYA => 40,
-                LotteryEmote.YEPPING => 10,
-                LotteryEmote.RainbowPls => 30,
-                LotteryEmote.peepoClap => 20,
-                LotteryEmote.PATREGO => 75,
-                LotteryEmote.Kekega => -35,
-                LotteryEmote.popCat => 50,
+                LotteryEmote.MONKE => 0,
+                LotteryEmote.FLOPPA => 5,
+                LotteryEmote.Applecatrun => 10,
+                LotteryEmote.PPogo => 15,
+                LotteryEmote.PaPaTuTuWaWa => 20,
+                LotteryEmote.PolarStrut => 25,
+                LotteryEmote.TooSmart => 30,
+                LotteryEmote.YEPPING => 35,
+                LotteryEmote.PATREGO => 40,
                 _ => throw new ArgumentOutOfRangeException(nameof(emote), emote, null)
             };
         }

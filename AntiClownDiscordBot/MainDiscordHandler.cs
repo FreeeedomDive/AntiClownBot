@@ -295,6 +295,13 @@ namespace AntiClownBot
                         case "pepeSearching":
                             shop.CurrentInstrument = Instrument.Revealing;
                             break;
+                        case "❓":
+                            var responseBuilder = new DiscordMessageBuilder();
+                            responseBuilder.WithAllowedMention(UserMention.All);
+                            responseBuilder.Content = $"{e.User.Mention}\n{Shop.Help}";
+                            await e.Message.RespondAsync(responseBuilder);
+                            await e.Message.DeleteReactionAsync(emoji, e.User);
+                            break;
                     }
                 }
                 

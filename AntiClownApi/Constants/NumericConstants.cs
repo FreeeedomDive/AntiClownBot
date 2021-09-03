@@ -12,7 +12,7 @@
         public const double DefaultCooldown = 60 * 60 * 1000d;
 
         // начальная цена реролла магазина
-        public const int DefaultReRollPrice = 200;
+        public const int DefaultReRollPrice = 100;
 
         // увеличение цены реролла
         public const int DefaultReRollPriceIncrease = 25;

@@ -7,12 +7,19 @@ namespace AntiClownBotApi.Commands.UserCommands
 {
     public class WhenCommand: ICommand
     {
+        private UserRepository UserRepository { get; }
+
+        public WhenCommand(UserRepository userRepository)
+        {
+            UserRepository = userRepository;
+        }
+
         public BaseResponseDto Execute(BaseRequestDto dto)
         {
             return new WhenNextTributeResponseDto()
             {
                 UserId = dto.UserId,
-                NextTribute = UserDbController.GetUserNextTributeDateTime(dto.UserId)
+                NextTribute = UserRepository.GetUserNextTributeDateTime(dto.UserId)
             };
         }
     }

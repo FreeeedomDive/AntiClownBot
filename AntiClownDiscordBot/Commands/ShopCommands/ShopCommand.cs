@@ -5,7 +5,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownBot.Commands.ShopCommands
 {
-    public class ShopCommand: BaseCommand
+    public class ShopCommand : BaseCommand
     {
         public ShopCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
@@ -29,20 +29,9 @@ namespace AntiClownBot.Commands.ShopCommands
             await message.CreateReactionAsync(Utility.Emoji(":five:"));
             await message.CreateReactionAsync(Utility.Emoji(":COGGERS:"));
             await message.CreateReactionAsync(Utility.Emoji(":pepeSearching:"));
+            await message.CreateReactionAsync(Utility.Emoji(":question:"));
         }
 
-        public override string Help()
-        {
-            return "Создает новое сообщение с персональным магазином для пользователя" +
-                   "\nМагазин доступен всегда, можно взаимодействовать с персональным сообщением магазина" +
-                   "\nИзначально предметы в магазине скрыты, так что есть риск вслепую покупать предмет" +
-                   "\nПо умолчанию дается 1 бесплатный распознаватель предмета на день, затем распознавание предмета будет стоить 40% от его стоимости" +
-                   $"\nНажатый {Utility.Emoji(":pepeSearching:")} = распознаватель, ненажатый {Utility.Emoji(":pepeSearching:")} = покупка" +
-                   "\nПокупка предметов - через кнопки, соответствующие слотам магазина" +
-                   $"\nДля реролла магазина нажмите {Utility.Emoji(":COGGERS:")}" +
-                   "\nПри переполнении предметов одного типа из инвентаря автоматически удаляется самый плохой по редкости предмет (или случайный из нескольких одинаковой редкости)" +
-                   "\nПо цвету блока сообщения можно определить максимальную редкость одного из предметов в магазине" +
-                   "\nУдачного выбивания новых предметов!";
-        }
+        public override string Help() => Shop.Help;
     }
 }

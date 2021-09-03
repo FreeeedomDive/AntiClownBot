@@ -7,11 +7,18 @@ namespace AntiClownBotApi.Commands.UserCommands
 {
     public class AllUsersCommand: ICommand
     {
+        private UserRepository UserRepository { get; }
+        
+        public AllUsersCommand(UserRepository userRepository)
+        {
+            UserRepository = userRepository;
+        }
+
         public BaseResponseDto Execute(BaseRequestDto dto)
         {
             return new AllUsersResponseDto()
             {
-                Users = UserDbController.GetAllUsersIds()
+                Users = UserRepository.GetAllUsersIds()
             };
         }
     }

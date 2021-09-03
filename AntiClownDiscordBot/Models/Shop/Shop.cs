@@ -41,7 +41,7 @@ namespace AntiClownBot.Models.Shop
                 $"{Utility.Emoji(":PolarStrut:")}",
                 $"{Utility.Emoji(":popCat:")}",
             };
-            
+
             var loadingEmbedBuilder = new DiscordEmbedBuilder();
             loadingEmbedBuilder.WithTitle($"Загрузка магазина... {loadingEmotes.SelectRandomItem().Multiply(5)}");
 
@@ -133,7 +133,8 @@ namespace AntiClownBot.Models.Shop
                     await Message.RespondAsync(responseBuilder);
                     return;
                 case Enums.BuyResult.TooManyItemsOfSelectedType:
-                    responseBuilder.Content = $"{Member.Mention} в инвентаре уже слишком много предметов данного типа (но я это уже сделал по-другому, хз как можно было получить такой ответ)";
+                    responseBuilder.Content =
+                        $"{Member.Mention} в инвентаре уже слишком много предметов данного типа (но я это уже сделал по-другому, хз как можно было получить такой ответ)";
                     await Message.RespondAsync(responseBuilder);
                     return;
                 default:
@@ -212,8 +213,19 @@ namespace AntiClownBot.Models.Shop
             {ApiWrapper.Models.Items.Rarity.Rare, DiscordColor.Blue},
             {ApiWrapper.Models.Items.Rarity.Epic, DiscordColor.Purple},
             {ApiWrapper.Models.Items.Rarity.Legendary, DiscordColor.Red},
-            {ApiWrapper.Models.Items.Rarity.BlackMarket, DiscordColor.Yellow},
+            {ApiWrapper.Models.Items.Rarity.BlackMarket, DiscordColor.Black},
         };
+
+        public static string Help => "Создает новое сообщение с персональным магазином для пользователя" +
+                                       "\nМагазин доступен всегда, можно взаимодействовать с персональным сообщением магазина" +
+                                       "\nИзначально предметы в магазине скрыты, так что есть риск вслепую покупать предмет" +
+                                       "\nПо умолчанию дается 1 бесплатный распознаватель предмета на день, затем распознавание предмета будет стоить 40% от его стоимости" +
+                                       $"\nНажатый {Utility.Emoji(":pepeSearching:")} = распознаватель, ненажатый {Utility.Emoji(":pepeSearching:")} = покупка" +
+                                       "\nПокупка предметов - через кнопки, соответствующие слотам магазина" +
+                                       $"\nДля реролла магазина нажмите {Utility.Emoji(":COGGERS:")}" +
+                                       "\nПри переполнении предметов одного типа из инвентаря автоматически удаляется самый плохой по редкости предмет (или случайный из нескольких одинаковой редкости)" +
+                                       "\nПо цвету блока сообщения можно определить максимальную редкость одного из предметов в магазине" +
+                                       "\nУдачного выбивания новых предметов!";
     }
 
     public enum Instrument

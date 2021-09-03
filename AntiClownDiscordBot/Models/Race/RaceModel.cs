@@ -275,7 +275,7 @@ namespace AntiClownBot.Models.Race
         private void MakeResult()
         {
             _isFinished = true;
-            var points = new[] {25, 18, 15, 12, 10, 8, 6, 4, 2, 1}.Select(x => x * 10).ToArray();
+            var points = new[] {25, 18, 15, 12, 10, 8, 6, 4, 2, 1}.Select(x => x * 100).ToArray();
 
             var botPosition = _drivers.Count;
 
@@ -289,7 +289,7 @@ namespace AntiClownBot.Models.Race
                 if (!d.IsUser) return result;
 
                 var user = Configuration.GetServerMember(d.DiscordId);
-                result += $"\t{user.Nickname}";
+                result += $"\t{user.ServerOrUserName()}";
 
                 if (pos < botPosition && pos <= 10)
                 {
@@ -297,8 +297,6 @@ namespace AntiClownBot.Models.Race
                     _config.ChangeBalance(d.DiscordId, pts, $"{pos} место в гонке");
                     result += $"\t+{pts} scam coins";
                 }
-
-                if (pos >= d.StartPosition) return result;
 
                 var diff = Math.Abs(d.StartPosition - pos);
                 for (var j = 0; j < diff; j++)
