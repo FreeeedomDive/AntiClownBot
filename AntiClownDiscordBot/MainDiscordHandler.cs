@@ -375,7 +375,7 @@ namespace AntiClownBot
 
                 _config.AddEmoji(emojiName);
 
-                if ((emojiName is "peepoClown" or "roflanClownbalo" or "clownChamp") && e.User.Id == 423498706336088085)
+                if ((emojiName is "peepoClown" or "clown" or "clown_face") && (e.User.Id is 423498706336088085 or 369476500820459522))
                 {
                     AddLog("Removed clown");
                     await e.Message.DeleteReactionAsync(emoji, e.User);

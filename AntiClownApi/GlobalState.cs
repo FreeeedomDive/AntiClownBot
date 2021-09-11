@@ -48,19 +48,5 @@ namespace AntiClownBotApi
         }
 
         public int GetUserBalance(ulong userId) => UserRepository.GetUserEconomy(userId).Economy.ScamCoins;
-
-        // TODO: To Database
-
-        private static bool areTributesOpen = true;
-
-        public static void CloseTributes()
-        {
-            areTributesOpen = false;
-        }
-
-        public static void OpenTributes()
-        {
-            areTributesOpen = true;
-        }
     }
 }

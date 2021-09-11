@@ -42,6 +42,8 @@ namespace AntiClownBot.Models.Race
         private DiscordMessage _mainRaceMessage;
         public ulong JoinableMessageId;
 
+        public static readonly int[] Points = new[] {25, 18, 15, 12, 10, 8, 6, 4, 2, 1}.Select(x => x * 100).ToArray();
+
         public RaceModel()
         {
             _config = Configuration.GetConfiguration();
@@ -275,7 +277,6 @@ namespace AntiClownBot.Models.Race
         private void MakeResult()
         {
             _isFinished = true;
-            var points = new[] {25, 18, 15, 12, 10, 8, 6, 4, 2, 1}.Select(x => x * 100).ToArray();
 
             var botPosition = _drivers.Count;
 
@@ -293,7 +294,7 @@ namespace AntiClownBot.Models.Race
 
                 if (pos < botPosition && pos <= 10)
                 {
-                    var pts = points[i];
+                    var pts = Points[i];
                     _config.ChangeBalance(d.DiscordId, pts, $"{pos} место в гонке");
                     result += $"\t+{pts} scam coins";
                 }

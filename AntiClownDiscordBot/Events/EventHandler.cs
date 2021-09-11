@@ -42,18 +42,20 @@ namespace AntiClownBot.Events
             var firstLaunch = false;
             while (true)
             {
-                var minHoursToSleep = firstLaunch ? 0.005 : 1;
-                var maxHoursToSleep = firstLaunch ? 0.005 : 3;
-                var sleepTime = Randomizer.GetRandomNumberBetween(
-                    (int)(minHoursToSleep * 60 * 60 * 1000),
-                    (int)(maxHoursToSleep * 60 * 60 * 1000)
-                );
+                const int sleepTime = 2 * 60 * 60 * 1000;
+                // var minHoursToSleep = firstLaunch ? 0.1 : 0.5;
+                // var maxHoursToSleep = firstLaunch ? 0.1 : 0.5;
+                // var sleepTime = Randomizer.GetRandomNumberBetween(
+                //     (int)(minHoursToSleep * 60 * 60 * 1000),
+                //     (int)(maxHoursToSleep * 60 * 60 * 1000)
+                // );
                 var nextEventTime = DateTime.Now.AddMilliseconds(sleepTime);
                 AddLog(
                     $"Следующий эвент в {Utility.NormalizeTime(nextEventTime)}, через {Utility.GetTimeDiff(nextEventTime)}");
                 await Task.Delay(sleepTime);
                 if (NextEvents.Count == 0)
                 {
+                    // NextEvents.Enqueue(new LotteryEvent.LotteryEvent());
                     NextEvents.Enqueue(firstLaunch ? new MaliMaliEvent.MaliMaliEvent() : _allEvents.SelectRandomItem());
                 }
                 firstLaunch = false;

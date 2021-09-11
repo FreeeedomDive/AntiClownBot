@@ -15,6 +15,7 @@ namespace AntiClownBotApi.Database.DBModels.DbItems
         public ItemType ItemType { get; set; }
         public Rarity Rarity { get; set; }
         public int Price { get; set; }
+        public bool IsActive { get; set; }
         
         public DbItemStats ItemStats { get; set; }
     }

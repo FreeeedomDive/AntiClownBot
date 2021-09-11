@@ -24,7 +24,7 @@ namespace AntiClownBotApi.Database.DBControllers
             return Database.Users.Any(user => user.DiscordId == id);
         }
 
-        public DbUser CreateNewUserWithDbConnection(ulong id)
+        public DbUser CreateNewUser(ulong id)
         {
             var user = new DbUser()
             {
@@ -51,11 +51,6 @@ namespace AntiClownBotApi.Database.DBControllers
             Database.SaveChanges();
         }
 
-        public DbUser CreateNewUser(ulong id)
-        {
-            return CreateNewUserWithDbConnection(id);
-        }
-
         public DbUser GetFullUser(ulong id)
         {
             var user = IsUserExist(id)
@@ -65,7 +60,7 @@ namespace AntiClownBotApi.Database.DBControllers
                     .Include(u => u.Stats)
                     .Include(u => u.Shop)
                     .First(u => u.DiscordId == id)
-                : CreateNewUserWithDbConnection(id);
+                : CreateNewUser(id);
             return user;
         }
 
@@ -75,19 +70,19 @@ namespace AntiClownBotApi.Database.DBControllers
                 ? Database.Users
                     .Include(u => u.Economy)
                     .First(u => u.DiscordId == id)
-                : CreateNewUserWithDbConnection(id);
+                : CreateNewUser(id);
             return user;
         }
 
-        public DbUser GetUserWithEconomyAndItems(ulong id)
+        public DbUser GetUserWithEconomyAndItems(ulong id, bool onlyActive = false)
         {
             var user = IsUserExist(id)
                 ? Database.Users
                     .Include(u => u.Economy)
-                    .Include(u => u.Items)
+                    .Include(u => u.Items.Where(item => !onlyActive || item.IsActive))
                     .ThenInclude(i => i.ItemStats)
                     .First(u => u.DiscordId == id)
-                : CreateNewUserWithDbConnection(id);
+                : CreateNewUser(id);
             return user;
         }
 
@@ -125,7 +120,7 @@ namespace AntiClownBotApi.Database.DBControllers
                 ? Database.Users
                     .Include(u => u.Economy)
                     .First(u => u.DiscordId == id)
-                : CreateNewUserWithDbConnection(id);
+                : CreateNewUser(id);
             user.Economy.ScamCoins += ratingDiff;
             var transaction = new DbTransaction()
             {
@@ -138,17 +133,17 @@ namespace AntiClownBotApi.Database.DBControllers
             Save();
         }
         
-        public DbUser GetUserWithShopUsingConnection(ulong userId)
+        public DbUser GetUserWithShop(ulong userId)
         {
             return IsUserExist(userId)
                 ? GetAllUsers()
                     .First(u => u.DiscordId == userId)
-                : CreateNewUserWithDbConnection(userId);
+                : CreateNewUser(userId);
         }
         
         public void  AddItemToUserWithOverflow(ulong userId, DbItem dbItem)
         {
-            var user = GetUserWithShopUsingConnection(userId);
+            var user = GetUserWithShop(userId);
             var itemsOfType = user.Items.Where(i => i.Name == dbItem.Name).ToList();
             if (itemsOfType.Count == NumericConstants.MaximumItemsOfOneType)
             {
@@ -169,7 +164,7 @@ namespace AntiClownBotApi.Database.DBControllers
                 ? Database.Users
                     .Include(u => u.Economy)
                     .First(u => u.DiscordId == userId)
-                : CreateNewUserWithDbConnection(userId);
+                : CreateNewUser(userId);
             user.Economy.NextTribute = DateTime.Now.AddMilliseconds(cooldown);
             Save();
         }
@@ -180,7 +175,7 @@ namespace AntiClownBotApi.Database.DBControllers
                 ? Database.Users
                     .Include(u => u.Economy)
                     .First(u => u.DiscordId == userId)
-                : CreateNewUserWithDbConnection(userId);
+                : CreateNewUser(userId);
             return user.Economy.NextTribute;
         }
 
@@ -207,7 +202,7 @@ namespace AntiClownBotApi.Database.DBControllers
                     .Include(u => u.Items)
                     .ThenInclude(i => i.ItemStats)
                     .First(u => u.DiscordId == userId)
-                : CreateNewUserWithDbConnection(userId);
+                : CreateNewUser(userId);
 
             var items = user.Items.Where(i => i.Id == itemId).ToList();
             if (!items.Any())

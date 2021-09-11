@@ -20,7 +20,7 @@ namespace AntiClownBot.Models.Lottery
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public enum LotteryEmote
         {
-            MONKE,
+            Starege,
             FLOPPA,
             Applecatrun,
             PPogo,
@@ -62,7 +62,7 @@ namespace AntiClownBot.Models.Lottery
         private async void StartEvent()
         {
             var allEmotes = GetAllEmotes();
-            await Task.Delay(15 * 60 * 1000);
+            await Task.Delay(Constants.LotteryStartDelayInMinutes * 60 * 1000);
             _configuration ??= Configuration.GetConfiguration();
             discordClient ??= Utility.Client;
             IsJoinable = false;
@@ -89,7 +89,7 @@ namespace AntiClownBot.Models.Lottery
                     }
                     
                     LotteryEmote rollingEmote;
-                    if (Randomizer.GetRandomNumberBetween(0, 4) == 0)
+                    if (Randomizer.GetRandomNumberBetween(0, 2) == 0)
                     {
                         rollingEmote = user.Emotes[currentEmote];
                         emotesToRoll--;
@@ -114,7 +114,7 @@ namespace AntiClownBot.Models.Lottery
                 builder.Append($"{member.ServerOrUserName()}:\n");
                 builder.Append(string.Join(" ", user.Emotes.Select(emote => $"{Utility.StringEmoji($":{emote}:")}")));
 
-                builder.Append($"\nТы получил {user.Value} social credit!");
+                builder.Append($"\nТы получил {user.Value} scam coins!");
                 _configuration.ChangeBalance(user.UserId, user.Value, "Лотерея");
 
                 await message.ModifyAsync(builder.ToString());
@@ -170,7 +170,7 @@ namespace AntiClownBot.Models.Lottery
         {
             return emote switch
             {
-                LotteryEmote.MONKE => 0,
+                LotteryEmote.Starege => 0,
                 LotteryEmote.FLOPPA => 5,
                 LotteryEmote.Applecatrun => 10,
                 LotteryEmote.PPogo => 15,

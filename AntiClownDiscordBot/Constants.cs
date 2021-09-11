@@ -2,6 +2,8 @@
 {
     public static class Constants
     {
+        public const int LotteryStartDelayInMinutes = 10;
+        
         //TODO - вынести в конфигурационный файл для гибкой настройки?
         public const ulong BotId = 760879629509853224;
 

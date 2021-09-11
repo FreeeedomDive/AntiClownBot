@@ -21,7 +21,7 @@ namespace AntiClownBotApi.Database.DBControllers
             UserRepository = userRepository;
         }
 
-        private BaseItem GenerateInventoryItemFromShopItem(DbShopItem shopItem)
+        private static BaseItem GenerateInventoryItemFromShopItem(DbShopItem shopItem)
         {
             var item = new ItemBuilder()
                 .WithRarity(shopItem.Rarity)
@@ -68,14 +68,14 @@ namespace AntiClownBotApi.Database.DBControllers
 
         public Guid GetShopItemInSlot(ulong userId, int slot)
         {
-            var user = UserRepository.GetUserWithShopUsingConnection(userId);
+            var user = UserRepository.GetUserWithShop(userId);
             return user.Shop.Items[slot - 1].Id;
         }
 
         public Enums.RevealResult RevealItem(ulong userId, Guid itemId, out DbShopItem revealedItem)
         {
             revealedItem = null;
-            var user = UserRepository.GetUserWithShopUsingConnection(userId);
+            var user = UserRepository.GetUserWithShop(userId);
             if (user.Shop.Items.All(i => i.Id != itemId))
                 return Enums.RevealResult.ItemDoesntExistInShop;
             var shopItem = user.Shop.Items.First(i => i.Id == itemId);
@@ -107,7 +107,7 @@ namespace AntiClownBotApi.Database.DBControllers
         public Enums.BuyResult TryBuyItem(ulong userId, Guid itemId, out BaseItem newItem)
         {
             newItem = null;
-            var user = UserRepository.GetUserWithShopUsingConnection(userId);
+            var user = UserRepository.GetUserWithShop(userId);
             if (user.Shop.Items.All(i => i.Id != itemId))
                 return Enums.BuyResult.ItemDoesntExistInShop;
             var shopItem = user.Shop.Items.First(i => i.Id == itemId);
@@ -134,14 +134,14 @@ namespace AntiClownBotApi.Database.DBControllers
 
         public DbUser GetUserShop(ulong userId)
         {
-            return UserRepository.GetUserWithShopUsingConnection(userId);
+            return UserRepository.GetUserWithShop(userId);
         }
 
         public Enums.ReRollResult ReRollShop(ulong userId)
         {
-            var user = UserRepository.GetUserWithShopUsingConnection(userId);
+            var user = UserRepository.GetUserWithShop(userId);
 
-            if (user.Economy.ScamCoins < user.Shop.ReRollPrice)
+            if (user.Shop.ReRollPrice > 0 && user.Economy.ScamCoins < user.Shop.ReRollPrice)
                 return Enums.ReRollResult.NotEnoughMoney;
 
             user.Shop = DbUserShop.GenerateNewItemsForShop(user.Shop);
@@ -157,7 +157,7 @@ namespace AntiClownBotApi.Database.DBControllers
 
         public void ResetReRollPrice(ulong userId)
         {
-            var user = UserRepository.GetUserWithShopUsingConnection(userId);
+            var user = UserRepository.GetUserWithShop(userId);
 
             user.Shop.ReRollPrice = 0;
             UserRepository.Save();
@@ -173,7 +173,7 @@ namespace AntiClownBotApi.Database.DBControllers
 
         public void ResetFreeReveals(ulong userId)
         {
-            var user = UserRepository.GetUserWithShopUsingConnection(userId);
+            var user = UserRepository.GetUserWithShop(userId);
 
             user.Shop.FreeItemReveals = Math.Max(NumericConstants.FreeItemRevealsPerDay, user.Shop.FreeItemReveals);
             UserRepository.Save();
@@ -181,7 +181,7 @@ namespace AntiClownBotApi.Database.DBControllers
 
         public void AddFreeReveals(ulong userId, int count)
         {
-            var user = UserRepository.GetUserWithShopUsingConnection(userId);
+            var user = UserRepository.GetUserWithShop(userId);
 
             user.Shop.FreeItemReveals += count;
             UserRepository.Save();
