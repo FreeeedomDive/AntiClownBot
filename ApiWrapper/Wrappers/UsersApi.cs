@@ -9,12 +9,12 @@ namespace ApiWrapper.Wrappers
 {
     public class UsersApi : BaseApi
     {
-        private static string WrapperUrl => "api/users/";
+        private static string WrapperUrl => "api/users";
 
         public static TributeResponseDto Tribute(ulong userId)
         {
             var client = new RestClient(BaseUrl);
-            var request = new RestRequest($"{WrapperUrl}{userId}/tribute");
+            var request = new RestRequest($"{WrapperUrl}/{userId}/tribute");
             var response = client.Post(request);
             var content = response.Content;
             return JsonConvert.DeserializeObject<TributeResponseDto>(content);
@@ -23,7 +23,7 @@ namespace ApiWrapper.Wrappers
         public static WhenNextTributeResponseDto WhenNextTribute(ulong userId)
         {
             var client = new RestClient(BaseUrl);
-            var request = new RestRequest($"{WrapperUrl}{userId}/tribute/when");
+            var request = new RestRequest($"{WrapperUrl}/{userId}/tribute/when");
             var response = client.Get(request);
             var content = response.Content;
             return JsonConvert.DeserializeObject<WhenNextTributeResponseDto>(content);
@@ -32,7 +32,7 @@ namespace ApiWrapper.Wrappers
         public static RatingResponseDto Rating(ulong userId)
         {
             var client = new RestClient(BaseUrl);
-            var request = new RestRequest($"{WrapperUrl}{userId}/rating");
+            var request = new RestRequest($"{WrapperUrl}/{userId}/rating");
             var response = client.Get(request);
             var content = response.Content;
             return JsonConvert.DeserializeObject<RatingResponseDto>(content, new ItemConverter());
@@ -41,7 +41,7 @@ namespace ApiWrapper.Wrappers
         public static ChangeUserBalanceResponseDto ChangeUserRating(ulong userId, int ratingDiff, string reason)
         {
             var client = new RestClient(BaseUrl);
-            var request = new RestRequest($"{WrapperUrl}changeBalance");
+            var request = new RestRequest($"{WrapperUrl}/changeBalance");
             request.AddJsonBody(new ChangeUserRatingRequestDto
             {
                 UserId = userId,
@@ -56,7 +56,7 @@ namespace ApiWrapper.Wrappers
         public static BulkChangeUserBalanceResponseDto BulkChangeUserBalance(List<ulong> users, int ratingDiff, string reason)
         {
             var client = new RestClient(BaseUrl);
-            var request = new RestRequest($"{WrapperUrl}bulkChangeBalance");
+            var request = new RestRequest($"{WrapperUrl}/bulkChangeBalance");
             request.AddJsonBody(new BulkChangeUserBalanceRequestDto
             {
                 Users = users,
@@ -80,14 +80,14 @@ namespace ApiWrapper.Wrappers
         public static void RemoveCooldowns()
         {
             var client = new RestClient(BaseUrl);
-            var request = new RestRequest($"{WrapperUrl}removeCooldowns");
+            var request = new RestRequest($"{WrapperUrl}/removeCooldowns");
             client.Post(request);
         }
 
         public static ulong GetRichestUser()
         {
             var client = new RestClient(BaseUrl);
-            var request = new RestRequest($"{WrapperUrl}mostRich");
+            var request = new RestRequest($"{WrapperUrl}/mostRich");
             var response = client.Get(request);
             return ulong.Parse(response.Content);
         }
@@ -95,7 +95,7 @@ namespace ApiWrapper.Wrappers
         public static ItemResponseDto GetItemById(ulong userId, Guid itemId)
         {
             var client = new RestClient(BaseUrl);
-            var request = new RestRequest($"{WrapperUrl}{userId}/items/{itemId}");
+            var request = new RestRequest($"{WrapperUrl}/{userId}/items/{itemId}");
             var response = client.Get(request);
             var content = response.Content;
             return JsonConvert.DeserializeObject<ItemResponseDto>(content, new ItemConverter());
@@ -104,7 +104,7 @@ namespace ApiWrapper.Wrappers
         public static void DailyReset()
         {
             var client = new RestClient(BaseUrl);
-            var request = new RestRequest($"{WrapperUrl}dailyReset");
+            var request = new RestRequest($"{WrapperUrl}/dailyReset");
             client.Post(request);
         }
     }

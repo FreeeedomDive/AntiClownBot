@@ -81,5 +81,9 @@ namespace AntiClownBotApi.Controllers
             ShopRepository.ResetFreeRevealsForAllUsers();
             ShopRepository.ResetReRollPriceForAllUsers();
         }
+
+        [HttpPost("coinsTransaction")]
+        public CoinsTransactionResponseDto CoinsTransaction(CoinsTransactionRequestDto dto) =>
+            ExecuteCommand<CoinsTransactionCommand, CoinsTransactionResponseDto>(dto);
     }
 }
