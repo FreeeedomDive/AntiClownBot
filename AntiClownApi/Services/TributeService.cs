@@ -4,6 +4,7 @@ using AntiClownBotApi.Constants;
 using AntiClownBotApi.Database.DBControllers;
 using AntiClownBotApi.Database.DBModels;
 using AntiClownBotApi.DTO.Responses.UserCommandResponses;
+using AntiClownBotApi.Extensions;
 using AntiClownBotApi.Models.Items;
 using Hangfire;
 
@@ -19,7 +20,7 @@ namespace AntiClownBotApi.Services
             UserRepository = userRepository;
             GlobalState = globalState;
         }
-        
+
         public TributeResponseDto MakeTribute(ulong userId, bool isAutomatic)
         {
             var response = new TributeResponseDto
@@ -29,7 +30,7 @@ namespace AntiClownBotApi.Services
             };
 
             var user = UserRepository.GetUserWithEconomyAndItems(userId);
-            user.Items = user.Items.Where(i => i.IsActive).ToList();
+            var onlyActiveItems = user.Items.Where(i => i.IsActive).ToList();
 
             if (!user.IsCooldownPassed())
             {
@@ -39,12 +40,11 @@ namespace AntiClownBotApi.Services
                 return response;
             }
 
-            var cooldownModifiers = UserRepository.UpdateCooldown(user.Items, userId);
+            var cooldownModifiers = UserRepository.UpdateCooldown(onlyActiveItems, userId);
 
             var minTributeBorder = NumericConstants.MinTributeValue;
             var maxTributeBorder = NumericConstants.MaxTributeValue;
-            foreach (var rice in user.Items.Where(item => item.Name.Equals(StringConstants.RiceBowlName))
-                .Select(item => (RiceBowl) item))
+            foreach (var rice in onlyActiveItems.RiceBowls())
             {
                 minTributeBorder -= rice.NegativeRangeExtend;
                 maxTributeBorder += rice.PositiveRangeExtend;
@@ -52,9 +52,8 @@ namespace AntiClownBotApi.Services
 
             var tributeQuality = Randomizer.GetRandomNumberBetween(minTributeBorder, maxTributeBorder);
 
-            var communismChance = user.Items
-                .Where(item => item.Name.Equals(StringConstants.CommunismBannerName))
-                .Select(item => (CommunismBanner) item)
+            var communismChance = onlyActiveItems
+                .CommunismBanners()
                 .Select(item => item.DivideChance).Sum();
             var communism = Randomizer.GetRandomNumberBetween(0, 100) < communismChance;
 
@@ -84,9 +83,8 @@ namespace AntiClownBotApi.Services
                     "Полученное разделенное подношение");
             }
 
-            var isNextTributeAutomatic = Randomizer.GetRandomNumberBetween(0, 100) < user.Items
-                .Where(item => item.Name.Equals(StringConstants.CatWifeName))
-                .Select(item => (CatWife) item)
+            var isNextTributeAutomatic = Randomizer.GetRandomNumberBetween(0, 100) < onlyActiveItems
+                .CatWives()
                 .Select(cat => cat.AutoTributeChance)
                 .Sum();
 
@@ -105,7 +103,7 @@ namespace AntiClownBotApi.Services
                         TimeSpan.FromSeconds(1);
             BackgroundJob.Schedule(() => TributeWithAddToAutoTributesList(user.DiscordId), delay);
         }
-        
+
         public void TributeWithAddToAutoTributesList(ulong userId)
         {
             var nextResult = MakeTribute(userId, true);

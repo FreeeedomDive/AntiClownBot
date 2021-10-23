@@ -5,6 +5,7 @@ using AntiClownBotApi.Constants;
 using AntiClownBotApi.Database.DBModels;
 using AntiClownBotApi.Database.DBModels.DbItems;
 using AntiClownBotApi.DTO.Responses.UserCommandResponses;
+using AntiClownBotApi.Extensions;
 using AntiClownBotApi.Models.Items;
 using Microsoft.EntityFrameworkCore;
 
@@ -216,13 +217,10 @@ namespace AntiClownBotApi.Database.DBControllers
         {
             var result = new Dictionary<Guid, int>();
 
-            var cooldown = items
-                .Where(item => item.Name.Equals(StringConstants.InternetName))
-                .SelectMany(item => Enumerable.Repeat(item, item.ItemStats.InternetGigabytes))
-                .Aggregate(NumericConstants.DefaultCooldown, (currentCooldown, dbItem) =>
+            var cooldown = items.Internets()
+                .SelectMany(item => Enumerable.Repeat(item, item.Gigabytes))
+                .Aggregate(NumericConstants.DefaultCooldown, (currentCooldown, item) =>
                 {
-                    var item = (Internet) dbItem;
-
                     if (Randomizer.GetRandomNumberBetween(0, 100) >= item.Ping)
                         return currentCooldown;
 
@@ -238,13 +236,10 @@ namespace AntiClownBotApi.Database.DBControllers
                     return currentCooldown * (100d - item.Speed) / 100;
                 });
 
-            cooldown = items
-                .Where(item => item.Name.Equals(StringConstants.JadeRodName))
-                .SelectMany(item => Enumerable.Repeat(item, item.ItemStats.JadeRodLength))
-                .Aggregate(cooldown, (currentCooldown, dbItem) =>
+            cooldown = items.JadeRods()
+                .SelectMany(item => Enumerable.Repeat(item, item.Length))
+                .Aggregate(cooldown, (currentCooldown, item) =>
                 {
-                    var item = (JadeRod) dbItem;
-
                     if (Randomizer.GetRandomNumberBetween(0, 100) >= NumericConstants.CooldownIncreaseChanceByOneJade)
                         return currentCooldown;
 
@@ -257,7 +252,7 @@ namespace AntiClownBotApi.Database.DBControllers
                         result.Add(item.Id, 1);
                     }
 
-                    return currentCooldown * (100d + dbItem.ItemStats.JadeRodThickness) / 100;
+                    return currentCooldown * (100d + item.Thickness) / 100;
                 });
 
             UpdateUserTributeCooldown(discordId, (int) cooldown);

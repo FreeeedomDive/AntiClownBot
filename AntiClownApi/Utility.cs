@@ -5,6 +5,7 @@ using System.Text;
 using AntiClownBotApi.Constants;
 using AntiClownBotApi.Database.DBControllers;
 using AntiClownBotApi.Database.DBModels;
+using AntiClownBotApi.Extensions;
 using AntiClownBotApi.Models.Items;
 
 namespace AntiClownBotApi
@@ -139,7 +140,7 @@ namespace AntiClownBotApi
         
         public static List<DbUser> GetCommunists(UserRepository userRepository) =>
             userRepository.GetAllUsersWithEconomyAndItems()
-                .Where(user => user.Items.Any(item => item.Name.Equals(StringConstants.CommunismBannerName)))
+                .Where(user => user.Items.CommunismBanners().Any())
                 .ToList();
 
         public static Dictionary<DbUser, int> GetCommunistsDictionary(UserRepository userRepository) =>
