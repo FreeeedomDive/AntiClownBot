@@ -15,6 +15,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             Id = id;
             Rarity = rarity;
             Price = price;
+            IsActive = false;
         }
         
         private static readonly Dictionary<Rarity, Func<int>> LootBoxFindChanceDistribution = new()
@@ -39,6 +40,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
         {
             Price = Price,
             Rarity = Rarity,
+            IsActive = IsActive,
             LootBoxFindChance = _lootBoxFindChance
         };
     }

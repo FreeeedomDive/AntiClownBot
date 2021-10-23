@@ -24,6 +24,7 @@ namespace AntiClownBotApi.Models.Items
             {
                 Rarity = item.Rarity,
                 Price = item.Price,
+                IsActive = item.IsActive,
                 DivideChance = item.ItemStats.CommunismDivideChance,
                 StealChance = item.ItemStats.CommunismStealChance
             };

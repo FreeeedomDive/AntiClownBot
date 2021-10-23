@@ -23,7 +23,7 @@ namespace AntiClownBotApi.Commands.UserCommands
             {
                 UserId = dto.UserId,
                 ScamCoins = user.Economy.ScamCoins,
-                Inventory = user.Items.Select(BaseItem.FromDbItem).ToList()
+                Inventory = user.Items.Where(item => item.IsActive).Select(BaseItem.FromDbItem).ToList()
             };
             return response;
         }

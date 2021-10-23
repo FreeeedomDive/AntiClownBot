@@ -74,12 +74,12 @@ namespace AntiClownBotApi.Database.DBControllers
             return user;
         }
 
-        public DbUser GetUserWithEconomyAndItems(ulong id, bool onlyActive = false)
+        public DbUser GetUserWithEconomyAndItems(ulong id)
         {
             var user = IsUserExist(id)
                 ? Database.Users
                     .Include(u => u.Economy)
-                    .Include(u => u.Items.Where(item => !onlyActive || item.IsActive))
+                    .Include(u => u.Items)
                     .ThenInclude(i => i.ItemStats)
                     .First(u => u.DiscordId == id)
                 : CreateNewUser(id);
@@ -132,7 +132,7 @@ namespace AntiClownBotApi.Database.DBControllers
             Database.Transactions.Add(transaction);
             Save();
         }
-        
+
         public DbUser GetUserWithShop(ulong userId)
         {
             return IsUserExist(userId)
@@ -140,17 +140,17 @@ namespace AntiClownBotApi.Database.DBControllers
                     .First(u => u.DiscordId == userId)
                 : CreateNewUser(userId);
         }
-        
-        public void  AddItemToUserWithOverflow(ulong userId, DbItem dbItem)
+
+        public void AddItemToUserWithOverflow(ulong userId, DbItem dbItem)
         {
             var user = GetUserWithShop(userId);
-            var itemsOfType = user.Items.Where(i => i.Name == dbItem.Name).ToList();
-            if (itemsOfType.Count == NumericConstants.MaximumItemsOfOneType)
-            {
-                var itemToDelete = itemsOfType.OrderBy(i => i.Rarity).First();
-                user.Items.Remove(itemToDelete);
-                Database.Items.Remove(itemToDelete);
-            }
+            // var itemsOfType = user.Items.Where(i => i.Name == dbItem.Name).ToList();
+            // if (itemsOfType.Count == NumericConstants.MaximumItemsOfOneType)
+            // {
+            //     var itemToDelete = itemsOfType.OrderBy(i => i.Rarity).First();
+            //     user.Items.Remove(itemToDelete);
+            //     Database.Items.Remove(itemToDelete);
+            // }
 
             dbItem.User = user;
             Database.Items.Add(dbItem);
@@ -211,7 +211,7 @@ namespace AntiClownBotApi.Database.DBControllers
             item = BaseItem.FromDbItem(items[0]);
             return ItemResult.Success;
         }
-        
+
         public Dictionary<Guid, int> UpdateCooldown(List<DbItem> items, ulong discordId)
         {
             var result = new Dictionary<Guid, int>();
@@ -222,7 +222,7 @@ namespace AntiClownBotApi.Database.DBControllers
                 .Aggregate(NumericConstants.DefaultCooldown, (currentCooldown, dbItem) =>
                 {
                     var item = (Internet) dbItem;
-                    
+
                     if (Randomizer.GetRandomNumberBetween(0, 100) >= item.Ping)
                         return currentCooldown;
 
@@ -237,14 +237,14 @@ namespace AntiClownBotApi.Database.DBControllers
 
                     return currentCooldown * (100d - item.Speed) / 100;
                 });
-            
+
             cooldown = items
                 .Where(item => item.Name.Equals(StringConstants.JadeRodName))
                 .SelectMany(item => Enumerable.Repeat(item, item.ItemStats.JadeRodLength))
                 .Aggregate(cooldown, (currentCooldown, dbItem) =>
                 {
                     var item = (JadeRod) dbItem;
-                    
+
                     if (Randomizer.GetRandomNumberBetween(0, 100) >= NumericConstants.CooldownIncreaseChanceByOneJade)
                         return currentCooldown;
 
@@ -259,8 +259,8 @@ namespace AntiClownBotApi.Database.DBControllers
 
                     return currentCooldown * (100d + dbItem.ItemStats.JadeRodThickness) / 100;
                 });
-            
-            UpdateUserTributeCooldown(discordId, (int)cooldown);
+
+            UpdateUserTributeCooldown(discordId, (int) cooldown);
             return result;
         }
     }

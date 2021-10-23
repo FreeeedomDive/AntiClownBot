@@ -26,6 +26,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             Id = id;
             Rarity = rarity;
             Price = price;
+            IsActive = true;
         }
 
         public CommunismBannerBuilder WithRandomDistributedStats()
@@ -53,6 +54,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
         {
             Price = Price,
             Rarity = Rarity,
+            IsActive = IsActive,
             DivideChance = _tributeDivideChance,
             StealChance = _tributeStealChance
         };

@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using AntiClownBotApi.Commands;
-using AntiClownBotApi.Commands.UserCommands;
 using AntiClownBotApi.Converters;
 using AntiClownBotApi.Database;
 using AntiClownBotApi.Database.DBControllers;
@@ -10,14 +9,10 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 
 namespace AntiClownBotApi
 {
@@ -41,6 +36,7 @@ namespace AntiClownBotApi
 
             services.AddSingleton<UserRepository>();
             services.AddSingleton<ShopRepository>();
+            services.AddSingleton<ItemRepository>();
             services.AddSingleton<GlobalState>();
 
             services.AddSingleton<TributeService>();

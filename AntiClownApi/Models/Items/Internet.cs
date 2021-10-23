@@ -25,6 +25,7 @@ namespace AntiClownBotApi.Models.Items
             {
                 Rarity = item.Rarity,
                 Price = item.Price,
+                IsActive = item.IsActive,
                 Speed = item.ItemStats.InternetSpeed,
                 Gigabytes = item.ItemStats.InternetGigabytes,
                 Ping = item.ItemStats.InternetPing

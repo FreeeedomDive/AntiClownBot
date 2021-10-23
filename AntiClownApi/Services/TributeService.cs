@@ -29,6 +29,7 @@ namespace AntiClownBotApi.Services
             };
 
             var user = UserRepository.GetUserWithEconomyAndItems(userId);
+            user.Items = user.Items.Where(i => i.IsActive).ToList();
 
             if (!user.IsCooldownPassed())
             {

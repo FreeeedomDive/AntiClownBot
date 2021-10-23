@@ -16,6 +16,7 @@ namespace AntiClownBotApi.Models.Items
         public abstract ItemType ItemType { get; } 
         public Rarity Rarity { get; init; }
         public int Price { get; set; }
+        public bool IsActive { get; set; }
 
         public abstract DbItem ToDbItem();
 

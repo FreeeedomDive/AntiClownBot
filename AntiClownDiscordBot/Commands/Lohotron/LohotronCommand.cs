@@ -24,7 +24,7 @@ namespace AntiClownBot.Commands.Lohotron
                 case "Credits":
                     var count = ((CreditsLohotronPrize) prize).Count;
                     Config.ChangeBalance(e.Author.Id, count, "Лохотрон");
-                    await e.Message.RespondAsync($"Ты получаешь {count} social credits");
+                    await e.Message.RespondAsync($"Ты получаешь {count} scam coins");
                     return;
                 case "Nothing":
                     await e.Message.RespondAsync($"Ты получаешь {Utility.Emoji(":peepoFinger:")}!");

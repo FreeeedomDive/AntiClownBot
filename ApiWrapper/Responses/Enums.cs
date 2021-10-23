@@ -25,5 +25,11 @@
             Success,
             NotEnoughMoney
         }
+
+        public enum SellItemResult
+        {
+            Success,
+            NotEnoughMoney
+        }
     }
 }

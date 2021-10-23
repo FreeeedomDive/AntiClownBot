@@ -8,6 +8,6 @@ namespace AntiClownBot.Models.Lohotron
 {
     public class DefaultLohotronPrize : ILohotronPrize
     {
-        public string Name { get => "Nothing"; }
+        public string Name => "Nothing";
     }
 }

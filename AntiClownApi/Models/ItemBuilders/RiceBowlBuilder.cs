@@ -17,6 +17,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             Id = id;
             Rarity = rarity;
             Price = price;
+            IsActive = false;
         }
         
         private static readonly Dictionary<Rarity, Func<int>> TributeDecreaseGenerator = new()
@@ -89,6 +90,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
         {
             Price = Price,
             Rarity = Rarity,
+            IsActive = IsActive,
             NegativeRangeExtend = _tributeDecrease,
             PositiveRangeExtend = _tributeIncrease
         };

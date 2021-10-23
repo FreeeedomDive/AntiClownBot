@@ -57,11 +57,14 @@ namespace AntiClownBot.SpecialChannels.Dev.Commands
             {
                 return "Такого ивента нет";
             }
+
             var thread = new Thread(_ =>
             {
                 eventToHandle.ExecuteAsync();
-            });
-            thread.IsBackground = true;
+            })
+            {
+                IsBackground = true
+            };
             thread.Start();
             return "Ивент был запущен успешно";
         }
