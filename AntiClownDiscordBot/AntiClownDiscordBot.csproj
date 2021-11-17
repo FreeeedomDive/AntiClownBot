@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <OutputType>Exe</OutputType>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <RootNamespace>AntiClownBot</RootNamespace>
