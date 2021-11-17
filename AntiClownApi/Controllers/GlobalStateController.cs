@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using AntiClownBotApi.Database;
+using AntiClownBotApi.Database.DBControllers;
 using AntiClownBotApi.DTO.Responses.UserCommandResponses;
+using AntiClownBotApi.Models.Items;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClownBotApi.Controllers
@@ -8,6 +12,15 @@ namespace AntiClownBotApi.Controllers
     [Route("/api/globalState")]
     public class GlobalStateController
     {
+        private UserRepository UserRepository { get; }
+        private DatabaseContext Database { get; }
+
+        public GlobalStateController(DatabaseContext database, UserRepository userRepository)
+        {
+            Database = database;
+            UserRepository = userRepository;
+        }
+        
         [HttpGet, Route("ping")]
         public string Ping()
         {
@@ -26,6 +39,12 @@ namespace AntiClownBotApi.Controllers
         public void CheckEvents()
         {
             // not yet implemented
+        }
+
+        [HttpGet, Route("forSomeSituations")]
+        public void ForSomeSituations()
+        {
+            
         }
     }
 }

@@ -3,7 +3,7 @@ using AntiClownBot.Models.Shop;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 
-namespace AntiClownBot.Commands.ShopCommands
+namespace AntiClownBot.Commands.InventoryCommands
 {
     public class ShopCommand : BaseCommand
     {
@@ -13,7 +13,7 @@ namespace AntiClownBot.Commands.ShopCommands
 
         public override async void Execute(MessageCreateEventArgs e)
         {
-            var message = await e.Message.RespondAsync(Shop.CreateLoadingEmbed());
+            var message = await e.Message.RespondAsync(Shop.CreateLoadingShopEmbed());
             var shop = new Shop()
             {
                 UserId = e.Author.Id,

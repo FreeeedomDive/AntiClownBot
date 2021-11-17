@@ -107,15 +107,11 @@ namespace AntiClownBotApi.Database.DBControllers
             return Database.Users
                 .Include(u => u.Economy)
                 .Include(u => u.Items)
+                .ThenInclude(i => i.ItemStats)
                 .ToList();
         }
 
         public void ChangeUserBalance(ulong id, int ratingDiff, string reason)
-        {
-            ChangeUserBalanceWithConnection(id, ratingDiff, reason);
-        }
-
-        public void ChangeUserBalanceWithConnection(ulong id, int ratingDiff, string reason)
         {
             var user = IsUserExist(id)
                 ? Database.Users
@@ -131,6 +127,20 @@ namespace AntiClownBotApi.Database.DBControllers
                 Description = reason
             };
             Database.Transactions.Add(transaction);
+            Save();
+        }
+
+        public void GiveLootBoxToUser(ulong userId) => ChangeCountOfUserLootBoxes(userId, 1);
+        public void RemoveLootBoxFromUser(ulong userId) => ChangeCountOfUserLootBoxes(userId, -1);
+
+        public void ChangeCountOfUserLootBoxes(ulong userId, int diff)
+        {
+            var user = IsUserExist(userId)
+                ? Database.Users
+                    .Include(u => u.Economy)
+                    .First(u => u.DiscordId == userId)
+                : CreateNewUser(userId);
+            user.Economy.LootBoxes += diff;
             Save();
         }
 

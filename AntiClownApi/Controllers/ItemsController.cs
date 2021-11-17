@@ -13,10 +13,12 @@ namespace AntiClownBotApi.Controllers
     public class ItemsController : Controller
     {
         private ItemRepository ItemRepository { get; }
+        private GlobalState GlobalState { get; }
 
-        public ItemsController(ItemRepository itemRepository)
+        public ItemsController(ItemRepository itemRepository, GlobalState globalState)
         {
             ItemRepository = itemRepository;
+            GlobalState = globalState;
         }
 
         [HttpGet("")]
@@ -36,5 +38,31 @@ namespace AntiClownBotApi.Controllers
             {
                 Result = ItemRepository.SellItem(userId, itemId)
             };
+
+        [HttpPost("lootbox/open")]
+        public OpenLootBoxResultDto OpenLootBox(ulong userId)
+        {
+            var lootBoxResult = ItemRepository.TryOpenLootBox(userId, out var reward);
+            var result = new OpenLootBoxResultDto()
+            {
+                UserId = userId,
+                IsSuccessful = lootBoxResult,
+                Reward = reward
+            };
+
+            return result;
+        }
+        
+        [HttpPost("lootbox/add")]
+        public void AddLootBoxes(ulong userId)
+        {
+            GlobalState.GiveLootBoxToUser(userId);
+        }
+        
+        [HttpPost("lootbox/remove")]
+        public void RemoveLootBoxes(ulong userId)
+        {
+            GlobalState.RemoveLootBoxFromUser(userId);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AntiClownBot.Helpers;
 using AntiClownBot.Models.Lohotron;
+using ApiWrapper.Wrappers;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 
@@ -28,6 +29,10 @@ namespace AntiClownBot.Commands.Lohotron
                     return;
                 case "Nothing":
                     await e.Message.RespondAsync($"Ты получаешь {Utility.Emoji(":peepoFinger:")}!");
+                    return;
+                case "LootBox":
+                    await e.Message.RespondAsync($"Ты получаешь добычу-коробку!");
+                    ItemsApi.AddLootBox(e.Author.Id);
                     return;
                 default:
                     await e.Message.RespondAsync("Какой-то кал, всё сломалось");

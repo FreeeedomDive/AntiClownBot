@@ -28,6 +28,7 @@
         public enum SetActiveStatusForItemResult
         {
             Success,
+            TooManyActiveItems,
             NegativeItemCantBeInactive
         }
 

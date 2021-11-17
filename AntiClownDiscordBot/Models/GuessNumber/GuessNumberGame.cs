@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using AntiClownBot.Helpers;
+using ApiWrapper.Wrappers;
 
 namespace AntiClownBot.Models.GuessNumber
 {
@@ -37,11 +38,9 @@ namespace AntiClownBot.Models.GuessNumber
             foreach (var (userId, userGuess) in Users)
             {
                 if (userGuess != _generatedNumber) continue;
-                
-                //TODO - временное решение, пока нет идей с реализацией лутбоксов
-                Configuration.GetConfiguration().ChangeBalance(userId, 500, "Угаданное число в эвенте");
+                ItemsApi.AddLootBox(userId);
                 var member = Configuration.GetServerMember(userId);
-                sb.Append($"\n{member.ServerOrUserName()} получает 500 Scam-койнов!");
+                sb.Append($"\n{member.ServerOrUserName()} получает добычу-коробку!");
                 count++;
             }
 

@@ -8,7 +8,7 @@ namespace AntiClownBotApi
     public class GlobalState
     {
         public static List<TributeResponseDto> AutomaticTributes = new();
-        
+
         private UserRepository UserRepository { get; }
         // public static DateTime TodayDate;
         // public static RouletteGame Roulette = new();
@@ -36,16 +36,17 @@ namespace AntiClownBotApi
         //             pair => pair.Value.NetWorth);
         //     return GetStatsForDict(dict, key => key);
         // }
-        
+
         public GlobalState(UserRepository userRepository)
         {
             UserRepository = userRepository;
         }
 
-        public void ChangeUserBalance(ulong userId, int ratingDiff, string reason)
-        {
+        public void ChangeUserBalance(ulong userId, int ratingDiff, string reason) =>
             UserRepository.ChangeUserBalance(userId, ratingDiff, reason);
-        }
+
+        public void GiveLootBoxToUser(ulong userId) => UserRepository.GiveLootBoxToUser(userId);
+        public void RemoveLootBoxFromUser(ulong userId) => UserRepository.RemoveLootBoxFromUser(userId);
 
         public int GetUserBalance(ulong userId) => UserRepository.GetUserEconomy(userId).Economy.ScamCoins;
     }

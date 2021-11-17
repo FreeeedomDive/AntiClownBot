@@ -19,7 +19,7 @@ namespace AntiClownBot.Models.Shop
         public DiscordMember Member { get; init; }
         public Instrument CurrentInstrument { get; set; } = Instrument.Buying;
 
-        private Dictionary<int, string> _boughtItemsInfo = new();
+        private readonly Dictionary<int, string> _boughtItemsInfo = new();
 
         public async Task UpdateShopMessage()
         {
@@ -29,7 +29,7 @@ namespace AntiClownBot.Models.Shop
             await Message.ModifyAsync(embed);
         }
 
-        public static DiscordEmbed CreateLoadingEmbed()
+        public static DiscordEmbed CreateLoadingShopEmbed()
         {
             var loadingEmotes = new List<string>()
             {
@@ -112,7 +112,7 @@ namespace AntiClownBot.Models.Shop
                 return;
             }
 
-            var buyResponse = ApiWrapper.Wrappers.ShopApi.Buy(UserId, idResponse.ShopItemId);
+            var buyResponse = ShopApi.Buy(UserId, idResponse.ShopItemId);
 
             var responseBuilder = new DiscordMessageBuilder();
             responseBuilder.WithAllowedMention(UserMention.All);
@@ -140,8 +140,8 @@ namespace AntiClownBot.Models.Shop
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-            var newItemResponse = ApiWrapper.Wrappers.UsersApi.GetItemById(UserId, buyResponse.ItemId);
+            
+            var newItemResponse = UsersApi.GetItemById(UserId, buyResponse.ItemId);
             if (newItemResponse.Result != ItemResult.Success)
             {
                 responseBuilder.Content = $"{Member.Mention} хуйня {Utility.Emoji(":Starege:")}";
@@ -158,7 +158,7 @@ namespace AntiClownBot.Models.Shop
 
         public async void ReRoll()
         {
-            var rerollResult = ApiWrapper.Wrappers.ShopApi.ReRoll(UserId);
+            var rerollResult = ShopApi.ReRoll(UserId);
 
             if (rerollResult.ReRollResult == Enums.ReRollResult.NotEnoughMoney)
             {
@@ -167,7 +167,7 @@ namespace AntiClownBot.Models.Shop
             }
 
             _boughtItemsInfo.Clear();
-            await Message.ModifyAsync(CreateLoadingEmbed());
+            await Message.ModifyAsync(CreateLoadingShopEmbed());
             await UpdateShopMessage();
         }
 

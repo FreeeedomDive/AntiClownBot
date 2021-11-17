@@ -5,7 +5,6 @@ using AntiClownBotApi.Database.DBControllers;
 using AntiClownBotApi.Database.DBModels;
 using AntiClownBotApi.DTO.Responses.UserCommandResponses;
 using AntiClownBotApi.Extensions;
-using AntiClownBotApi.Models.Items;
 using Hangfire;
 
 namespace AntiClownBotApi.Services
@@ -48,6 +47,13 @@ namespace AntiClownBotApi.Services
             {
                 minTributeBorder -= rice.NegativeRangeExtend;
                 maxTributeBorder += rice.PositiveRangeExtend;
+            }
+
+            var lootBoxChance = onlyActiveItems.DogWives().Select(dog => dog.LootBoxFindChance).Sum();
+            if (Randomizer.GetRandomNumberBetween(0, 1000) < lootBoxChance)
+            {
+                response.HasLootBox = true;
+                GlobalState.GiveLootBoxToUser(userId);
             }
 
             var tributeQuality = Randomizer.GetRandomNumberBetween(minTributeBorder, maxTributeBorder);

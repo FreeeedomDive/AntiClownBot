@@ -24,6 +24,13 @@ namespace AntiClownBotApi.Database.DBModels.DbItems
 
         public static DbShopItem GenerateNewShopItem(DbUserShop shop)
         {
+            var item = GenerateNewItem();
+            item.Shop = shop;
+            return item;
+        }
+
+        public static DbShopItem GenerateNewItem()
+        {
             var rarity = Utility.GenerateRarity();
             var possibleItems = new List<string>();
             foreach (var goodItem in StringConstants.GoodItemNames)
@@ -38,7 +45,6 @@ namespace AntiClownBotApi.Database.DBModels.DbItems
                 Name = possibleItems.SelectRandomItem(),
                 Rarity = rarity,
                 Price = Utility.Prices[rarity],
-                Shop = shop,
                 IsOwned = false,
                 IsRevealed = false
             };

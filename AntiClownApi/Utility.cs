@@ -147,7 +147,7 @@ namespace AntiClownBotApi
             GetCommunists(userRepository)
                 .ToDictionary(
                     user => user,
-                    user => user.Items.Count(item => item.Name.Equals(StringConstants.CommunismBannerName))
+                    user => user.Items.CommunismBanners().Count()
                 );
 
         public static List<DbUser> GetDistributedCommunists(UserRepository userRepository)
