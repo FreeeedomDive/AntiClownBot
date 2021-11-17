@@ -20,8 +20,6 @@ namespace AntiClownBot.Commands.SocialRatingCommands
         {
             var member = Configuration.GetServerMember(e.Author.Id);
             var response = ApiWrapper.Wrappers.UsersApi.Rating(e.Author.Id);
-            var netWorth = response.ScamCoins + response.Inventory.Where(item => item.ItemType == ItemType.Positive)
-                .Select(item => item.Price).Sum();
 
             var embedBuilder = new DiscordEmbedBuilder
             {
@@ -37,7 +35,7 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                 $" {Utility.Emoji(":aRolf:")}");
 
             embedBuilder.AddField("SCAM COINS", $"{response.ScamCoins}");
-            embedBuilder.AddField("Общая ценность", $"{netWorth}");
+            embedBuilder.AddField("Общая ценность", $"{response.NetWorth}");
 
             foreach (var itemName in StringConstants.AllItemsNames)
             {
@@ -50,6 +48,8 @@ namespace AntiClownBot.Commands.SocialRatingCommands
                     $"{itemName} - {itemsOfType.Count}",
                     descriptions);
             }
+
+            embedBuilder.AddField($"Добыча-коробка - {response.LootBoxes}", "Получение приза из лутбокса");
 
             await e.Message.RespondAsync(embedBuilder.Build());
         }

@@ -25,5 +25,18 @@
             Success,
             NotEnoughMoney
         }
+
+        public enum SetActiveStatusForItemResult
+        {
+            Success,
+            TooManyActiveItems,
+            NegativeItemCantBeInactive
+        }
+
+        public enum SellItemResult
+        {
+            Success,
+            NotEnoughMoney
+        }
     }
 }

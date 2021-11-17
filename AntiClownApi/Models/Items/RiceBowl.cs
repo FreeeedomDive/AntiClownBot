@@ -24,6 +24,7 @@ namespace AntiClownBotApi.Models.Items
             {
                 Rarity = item.Rarity,
                 Price = item.Price,
+                IsActive = item.IsActive,
                 NegativeRangeExtend = item.ItemStats.RiceNegativeRangeExtend,
                 PositiveRangeExtend = item.ItemStats.RicePositiveRangeExtend
             };

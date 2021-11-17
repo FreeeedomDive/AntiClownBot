@@ -304,6 +304,53 @@ namespace AntiClownBot
                             break;
                     }
                 }
+
+                if (_config.Inventories.TryGetValue(e.User.Id, out var inventory) && e.Message.Id == inventory.Message.Id)
+                {
+                    switch (emojiName)
+                    {
+                        case "⬅️":
+                        case "arrow_left":
+                            inventory.SwitchLeftPage();
+                            await e.Message.DeleteReactionAsync(emoji, e.User);
+                            break;
+                        case "➡️":
+                        case "arrow_right":
+                            inventory.SwitchRightPage();
+                            await e.Message.DeleteReactionAsync(emoji, e.User);
+                            break;
+                        case "1️⃣":
+                            inventory.HandleItemInSlot(1);
+                            await e.Message.DeleteReactionAsync(emoji, e.User);
+                            break;
+                        case "2️⃣":
+                            inventory.HandleItemInSlot(2);
+                            await e.Message.DeleteReactionAsync(emoji, e.User);
+                            break;
+                        case "3️⃣":
+                            inventory.HandleItemInSlot(3);
+                            await e.Message.DeleteReactionAsync(emoji, e.User);
+                            break;
+                        case "4️⃣":
+                            inventory.HandleItemInSlot(4);
+                            await e.Message.DeleteReactionAsync(emoji, e.User);
+                            break;
+                        case "5️⃣":
+                            inventory.HandleItemInSlot(5);
+                            await e.Message.DeleteReactionAsync(emoji, e.User);
+                            break;
+                        case "🔁":
+                        case "repeat":
+                            inventory.EnableChangingStatus();
+                            await e.Message.DeleteReactionAsync(emoji, e.User);
+                            break;
+                        case "❌":
+                        case "x":
+                            inventory.EnableSelling();
+                            await e.Message.DeleteReactionAsync(emoji, e.User);
+                            break;
+                    }
+                }
                 
                 switch (emojiName)
                 {

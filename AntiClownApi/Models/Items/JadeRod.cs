@@ -25,6 +25,7 @@ namespace AntiClownBotApi.Models.Items
             {
                 Rarity = item.Rarity,
                 Price = item.Price,
+                IsActive = item.IsActive,
                 Length = item.ItemStats.JadeRodLength,
                 Thickness = item.ItemStats.JadeRodThickness
             };

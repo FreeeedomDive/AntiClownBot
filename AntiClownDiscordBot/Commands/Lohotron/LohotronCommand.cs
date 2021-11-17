@@ -1,5 +1,6 @@
 ﻿using AntiClownBot.Helpers;
 using AntiClownBot.Models.Lohotron;
+using ApiWrapper.Wrappers;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 
@@ -24,10 +25,14 @@ namespace AntiClownBot.Commands.Lohotron
                 case "Credits":
                     var count = ((CreditsLohotronPrize) prize).Count;
                     Config.ChangeBalance(e.Author.Id, count, "Лохотрон");
-                    await e.Message.RespondAsync($"Ты получаешь {count} social credits");
+                    await e.Message.RespondAsync($"Ты получаешь {count} scam coins");
                     return;
                 case "Nothing":
                     await e.Message.RespondAsync($"Ты получаешь {Utility.Emoji(":peepoFinger:")}!");
+                    return;
+                case "LootBox":
+                    await e.Message.RespondAsync($"Ты получаешь добычу-коробку!");
+                    ItemsApi.AddLootBox(e.Author.Id);
                     return;
                 default:
                     await e.Message.RespondAsync("Какой-то кал, всё сломалось");

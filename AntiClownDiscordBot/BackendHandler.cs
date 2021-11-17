@@ -6,9 +6,9 @@ using DSharpPlus.Entities;
 
 namespace AntiClownBot
 {
-    public class BackendHandler
+    public static class BackendHandler
     {
-        private const int Period = 1 * 60 * 1000;
+        private const int Period = 1 * 30 * 1000;
         public static bool IsHandlerWorking { get; set; } = true;
 
         public static async void BackendMessagesLongPolling()

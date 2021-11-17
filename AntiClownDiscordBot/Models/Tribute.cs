@@ -87,6 +87,13 @@ namespace AntiClownBot.Models
                     $"Кошка-жена подарить тебе автоматический следующий подношение {Utility.StringEmoji(":Pog:")}");
             }
 
+            if (response.HasLootBox)
+            {
+                messageEmbedBuilder.AddField(
+                    "Лутбокс",
+                    "Император подарил вам добычу-коробку");
+            }
+
             embed = messageEmbedBuilder.Build();
             return true;
         }

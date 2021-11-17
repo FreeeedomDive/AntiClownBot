@@ -2,6 +2,7 @@
 using System.Linq;
 using AntiClownBot.Commands.F1;
 using AntiClownBot.Commands.Gaming;
+using AntiClownBot.Commands.InventoryCommands;
 using AntiClownBot.Commands.Lottery;
 using AntiClownBot.Commands.OtherCommands;
 using AntiClownBot.Commands.RandomSelectCommands;
@@ -10,7 +11,6 @@ using AntiClownBot.Commands.StatsCommands;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
 using AntiClownBot.Commands.Lohotron;
-using AntiClownBot.Commands.ShopCommands;
 using AntiClownBot.Helpers;
 
 namespace AntiClownBot.Commands
@@ -42,7 +42,9 @@ namespace AntiClownBot.Commands
             RegisterCommand("!lottery", new LotteryCommand(client, config));
 
             RegisterCommand("!lohotron", new LohotronCommand(client, config));
-            RegisterCommand("!use", new UseCommand(client, config));
+            RegisterCommand("!lootbox", new LootBoxCommand(client, config));
+            
+            RegisterCommand("!inventory", new InventoryCommand(client, config));
             
             RegisterCommand("!party", new BaseGamingCommand(client, config));
         }

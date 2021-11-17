@@ -7,8 +7,7 @@
             Success,
             NotEnoughMoney,
             AlreadyBought,
-            ItemDoesntExistInShop,
-            TooManyItemsOfSelectedType
+            ItemDoesntExistInShop
         }
 
         public enum RevealResult
@@ -21,6 +20,19 @@
         }
 
         public enum ReRollResult
+        {
+            Success,
+            NotEnoughMoney
+        }
+
+        public enum SetActiveStatusForItemResult
+        {
+            Success,
+            TooManyActiveItems,
+            NegativeItemCantBeInactive
+        }
+
+        public enum SellItemResult
         {
             Success,
             NotEnoughMoney

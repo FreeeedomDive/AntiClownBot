@@ -23,6 +23,7 @@ namespace AntiClownBotApi.Models.Items
             {
                 Rarity = item.Rarity,
                 Price = item.Price,
+                IsActive = item.IsActive,
                 LootBoxFindChance = item.ItemStats.DogLootBoxFindChance
             };
         }

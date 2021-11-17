@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AntiClownBot.Events.SpecialEventDays;
 using AntiClownBot.Helpers;
 using DSharpPlus;
 
@@ -10,22 +11,20 @@ namespace AntiClownBot.Events
     public class EventHandler
     {
         public Queue<BaseEvent> NextEvents;
-
-        private readonly List<BaseEvent> _allEvents;
+        private EventDayType _eventDayType;
+        private Dictionary<EventDayType, ISpecialEventDay> _eventMappings;
 
         public EventHandler(DiscordClient client)
         {
             BaseEvent.SetDiscordClient(client);
-            NextEvents = new Queue<BaseEvent>();
-            _allEvents = new List<BaseEvent>
+            _eventMappings = new Dictionary<EventDayType, ISpecialEventDay>()
             {
-                new RemoveCooldownEvent.RemoveCooldownEvent(),
-                new TransfusionEvent.TransfusionEvent(),
-                new LotteryEvent.LotteryEvent(),
-                new GuessNumberEvent.GuessNumberEvent(),
-                new MaliMaliEvent.MaliMaliEvent(),
-                new RaceEvent.RaceEvent()
+                {EventDayType.CommonDay, new CommonDayWithAllEvents()},
+                {EventDayType.LotteryDay, new LotteryDay()},
+                {EventDayType.RaceDay, new RaceDay()}
             };
+            _eventDayType = EventDayType.CommonDay;
+            NextEvents = new Queue<BaseEvent>();
         }
 
         public void Start()
@@ -39,26 +38,18 @@ namespace AntiClownBot.Events
 
         private async void HandleNextEvent()
         {
-            var firstLaunch = false;
             while (true)
             {
-                const int sleepTime = 2 * 60 * 60 * 1000;
-                // var minHoursToSleep = firstLaunch ? 0.1 : 0.5;
-                // var maxHoursToSleep = firstLaunch ? 0.1 : 0.5;
-                // var sleepTime = Randomizer.GetRandomNumberBetween(
-                //     (int)(minHoursToSleep * 60 * 60 * 1000),
-                //     (int)(maxHoursToSleep * 60 * 60 * 1000)
-                // );
+                var eventConfiguration = _eventMappings[_eventDayType];
+                var sleepTime = eventConfiguration.EventInterval;
                 var nextEventTime = DateTime.Now.AddMilliseconds(sleepTime);
-                AddLog(
-                    $"Следующий эвент в {Utility.NormalizeTime(nextEventTime)}, через {Utility.GetTimeDiff(nextEventTime)}");
+                AddLog($"Следующий эвент в {Utility.NormalizeTime(nextEventTime)}, " +
+                       $"через {Utility.GetTimeDiff(nextEventTime)}");
                 await Task.Delay(sleepTime);
                 if (NextEvents.Count == 0)
                 {
-                    // NextEvents.Enqueue(new LotteryEvent.LotteryEvent());
-                    NextEvents.Enqueue(firstLaunch ? new MaliMaliEvent.MaliMaliEvent() : _allEvents.SelectRandomItem());
+                    NextEvents.Enqueue(eventConfiguration.Events.SelectRandomItem());
                 }
-                firstLaunch = false;
 
                 var currentEvent = NextEvents.Dequeue();
                 Configuration.GetConfiguration().DailyStatistics.EventsCount++;

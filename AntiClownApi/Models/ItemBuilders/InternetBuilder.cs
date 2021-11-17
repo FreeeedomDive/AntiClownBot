@@ -19,6 +19,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
             Id = id;
             Rarity = rarity;
             Price = price;
+            IsActive = false;
         }
 
         private static readonly Dictionary<Rarity, int> CooldownReducePercentDistribution = new()
@@ -113,6 +114,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
         {
             Price = Price,
             Rarity = Rarity,
+            IsActive = IsActive,
             Speed = _cooldownReducePercent,
             Gigabytes = _cooldownReduceTries,
             Ping = _cooldownReduceChance

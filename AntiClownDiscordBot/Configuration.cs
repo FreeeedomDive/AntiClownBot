@@ -13,6 +13,7 @@ using AntiClownBot.Models.DailyStatistics;
 using AntiClownBot.Models.Gamble;
 using AntiClownBot.Models.Gaming;
 using AntiClownBot.Models.GuessNumber;
+using AntiClownBot.Models.Inventory;
 using AntiClownBot.Models.Lohotron;
 using AntiClownBot.Models.Race;
 using AntiClownBot.Models.Shop;
@@ -39,6 +40,7 @@ namespace AntiClownBot
         [JsonIgnore] public Dictionary<ulong, GameParty> OpenParties = new();
         [JsonIgnore] private DiscordMessage _partyObserver;
         [JsonIgnore] public Dictionary<ulong, Shop> Shops = new();
+        [JsonIgnore] public Dictionary<ulong, UserInventory> Inventories = new();
 
         private const string FileName = "config.json";
 

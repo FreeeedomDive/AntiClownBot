@@ -8,6 +8,7 @@ namespace AntiClownBotApi.Models.ItemBuilders
         protected Guid Id;
         protected int Price;
         protected Rarity Rarity;
+        protected bool IsActive;
 
         public ItemBuilder()
         {

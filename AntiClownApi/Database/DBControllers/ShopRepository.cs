@@ -6,7 +6,6 @@ using AntiClownBotApi.Database.DBModels.DbItems;
 using AntiClownBotApi.DTO.Responses;
 using AntiClownBotApi.Models.ItemBuilders;
 using AntiClownBotApi.Models.Items;
-using Microsoft.EntityFrameworkCore;
 
 namespace AntiClownBotApi.Database.DBControllers
 {
@@ -21,7 +20,7 @@ namespace AntiClownBotApi.Database.DBControllers
             UserRepository = userRepository;
         }
 
-        private static BaseItem GenerateInventoryItemFromShopItem(DbShopItem shopItem)
+        public static BaseItem GenerateInventoryItemFromShopItem(DbShopItem shopItem)
         {
             var item = new ItemBuilder()
                 .WithRarity(shopItem.Rarity)
@@ -64,7 +63,7 @@ namespace AntiClownBotApi.Database.DBControllers
         public void Save()
         {
             Database.SaveChanges();
-        } 
+        }
 
         public Guid GetShopItemInSlot(ulong userId, int slot)
         {
@@ -93,7 +92,7 @@ namespace AntiClownBotApi.Database.DBControllers
                 var revealCost = shopItem.Price * 4 / 10;
                 if (user.Economy.ScamCoins < revealCost)
                     return Enums.RevealResult.NotEnoughMoney;
-                UserRepository.ChangeUserBalanceWithConnection(userId, -revealCost,
+                UserRepository.ChangeUserBalance(userId, -revealCost,
                     $"Покупка распознавания предмета {shopItem.Name}");
             }
 
@@ -121,10 +120,11 @@ namespace AntiClownBotApi.Database.DBControllers
             newItem = GenerateInventoryItemFromShopItem(shopItem);
             var dbItem = newItem.ToDbItem();
 
+            dbItem.IsActive = dbItem.ItemType == ItemType.Negative;
+
             UserRepository.AddItemToUserWithOverflow(userId, dbItem);
 
-            UserRepository.ChangeUserBalanceWithConnection(userId, -newItem.Price,
-                $"Покупка предмета {dbItem.Name}");
+            UserRepository.ChangeUserBalance(userId, -newItem.Price, $"Покупка предмета {dbItem.Name}");
             shopItem.IsOwned = true;
 
             Save();
@@ -145,10 +145,10 @@ namespace AntiClownBotApi.Database.DBControllers
                 return Enums.ReRollResult.NotEnoughMoney;
 
             user.Shop = DbUserShop.GenerateNewItemsForShop(user.Shop);
-            UserRepository.ChangeUserBalanceWithConnection(userId, -user.Shop.ReRollPrice, "Реролл магазина");
+            UserRepository.ChangeUserBalance(userId, -user.Shop.ReRollPrice, "Реролл магазина");
             user.Shop.ReRollPrice = Math.Max(NumericConstants.DefaultReRollPrice,
                 user.Shop.ReRollPrice + NumericConstants.DefaultReRollPriceIncrease);
-            
+
             UserRepository.Save();
             Save();
 
