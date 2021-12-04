@@ -35,19 +35,17 @@ namespace AntiClownBot.Models.Inventory
             foreach (var nameGroup in orderedGroupsByName)
             {
                 var groupItems = nameGroup.ToList();
-                var pagesCountForGroup = (groupItems.Count - 1) / 5 + 1;
+                var chunkItems = groupItems.Chunk(itemsPerPage);
                 var offset = 0;
-                for (var page = 0; page < pagesCountForGroup; page++)
+                _ = chunkItems.ForEach(pageItems =>
                 {
-                    var pageItems = groupItems.Take(itemsPerPage).ToArray();
-                    Pages.Add(
-                        new UserInventoryPage(
-                            nameGroup.Key,
-                            $"Предметы {offset + 1}-{offset + pageItems.Length}",
-                            pageItems)
-                    );
+                    var currentOffset = offset;
+                    Pages.Add(new UserInventoryPage(
+                        nameGroup.Key,
+                        $"Предметы {currentOffset + 1}-{currentOffset + pageItems.Length}",
+                        pageItems));
                     offset += pageItems.Length;
-                }
+                }).ToArray();
             }
         }
 

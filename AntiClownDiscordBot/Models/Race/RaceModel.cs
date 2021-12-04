@@ -299,7 +299,8 @@ namespace AntiClownBot.Models.Race
                     result += $"\t+{pts} scam coins";
                 }
 
-                var diff = Math.Abs(d.StartPosition - pos);
+                // улучшаются только те гонщики, которые проиграли позиции относительно старта
+                var diff = pos - d.StartPosition;
                 for (var j = 0; j < diff; j++)
                 {
                     switch (Randomizer.GetRandomNumberBetween(0, 3))

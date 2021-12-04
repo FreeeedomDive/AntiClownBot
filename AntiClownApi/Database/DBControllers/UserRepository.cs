@@ -163,6 +163,10 @@ namespace AntiClownBotApi.Database.DBControllers
             //     Database.Items.Remove(itemToDelete);
             // }
 
+            if (dbItem.ItemType == ItemType.Negative)
+            {
+                dbItem.IsActive = true;
+            }
             dbItem.User = user;
             Database.Items.Add(dbItem);
 

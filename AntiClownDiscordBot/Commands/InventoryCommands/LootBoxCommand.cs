@@ -34,7 +34,7 @@ namespace AntiClownBot.Commands.InventoryCommands
             var itemIndex = 1;
             foreach (var item in reward.Items)
             {
-                embedBuilder.AddField($"{itemIndex} предмет", $"Ты получил {item.Rarity} {item.Name}\n" +
+                embedBuilder.AddField($"{itemIndex++} предмет", $"Ты получил {item.Rarity} {item.Name}\n" +
                                                    string.Join("\n",
                                                        item
                                                            .Description()
