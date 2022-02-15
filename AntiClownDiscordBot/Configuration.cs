@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using AntiClownBot.Events;
 using AntiClownBot.Helpers;
 using AntiClownBot.Models.BlackJack;
 using AntiClownBot.Models.Lottery;
@@ -18,6 +19,7 @@ using AntiClownBot.Models.Lohotron;
 using AntiClownBot.Models.Race;
 using AntiClownBot.Models.Shop;
 using DSharpPlus.EventArgs;
+using EventHandler = AntiClownBot.Events.EventHandler;
 
 namespace AntiClownBot
 {
@@ -28,6 +30,9 @@ namespace AntiClownBot
         public Dictionary<string, int> EmojiStatistics;
         public DateTime TodayDate;
         public DailyStatistics DailyStatistics;
+
+        [JsonIgnore] public EventHandler EventHandler;
+        [JsonIgnore] public DailyEventHandler DailyEventHandler;
 
         [JsonIgnore] public RouletteGame Roulette = new RouletteGame();
 

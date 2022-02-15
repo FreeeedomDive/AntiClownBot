@@ -24,7 +24,7 @@ namespace AntiClownBot.Models.Inventory
             UserId = userId;
             CurrentPage = 0;
             CurrentInstrument = Instrument.ChangeActiveStatus;
-            UpdateItems(RefreshItemsFromServer());
+            UpdateItems(RefreshItemsFromApi());
         }
 
         private void UpdateItems(IEnumerable<BaseItem> items)
@@ -42,7 +42,7 @@ namespace AntiClownBot.Models.Inventory
                     var currentOffset = offset;
                     Pages.Add(new UserInventoryPage(
                         nameGroup.Key,
-                        $"Предметы {currentOffset + 1}-{currentOffset + pageItems.Length}",
+                        $"Предметы {currentOffset + 1}-{currentOffset + pageItems.Length} из {groupItems.Count}",
                         pageItems));
                     offset += pageItems.Length;
                 }).ToArray();
@@ -51,7 +51,7 @@ namespace AntiClownBot.Models.Inventory
 
         public DiscordEmbed UpdateEmbedForCurrentPage()
         {
-            var page = Pages[CurrentPage];
+            var page = CurrentPage < Pages.Count ? Pages[CurrentPage] : Pages.Last();
             var embedBuilder = new DiscordEmbedBuilder();
             embedBuilder.WithColor(Member.Color);
             embedBuilder.WithThumbnail(Member.AvatarUrl);
@@ -126,7 +126,7 @@ namespace AntiClownBot.Models.Inventory
             switch (response.Result)
             {
                 case Enums.SellItemResult.Success:
-                    UpdateItems(RefreshItemsFromServer());
+                    UpdateItems(RefreshItemsFromApi());
                     await Message.ModifyAsync(UpdateEmbedForCurrentPage());
                     break;
                 case Enums.SellItemResult.NotEnoughMoney:
@@ -143,7 +143,7 @@ namespace AntiClownBot.Models.Inventory
             switch (response.Result)
             {
                 case Enums.SetActiveStatusForItemResult.Success:
-                    UpdateItems(RefreshItemsFromServer());
+                    UpdateItems(RefreshItemsFromApi());
                     await Message.ModifyAsync(UpdateEmbedForCurrentPage());
                     break;
                 case Enums.SetActiveStatusForItemResult.TooManyActiveItems:
@@ -165,7 +165,7 @@ namespace AntiClownBot.Models.Inventory
             await Message.RespondAsync(responseBuilder);
         }
 
-        private IEnumerable<BaseItem> RefreshItemsFromServer() => ItemsApi.AllItems(UserId);
+        private IEnumerable<BaseItem> RefreshItemsFromApi() => ItemsApi.AllItems(UserId);
         
         public static DiscordEmbed CreateLoadingInventoryEmbed()
         {

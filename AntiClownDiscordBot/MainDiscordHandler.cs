@@ -490,8 +490,11 @@ namespace AntiClownBot
             //     ChangeLog();
             // }).Start();
 
-            new EventHandler(_discord).Start();
-            new DailyEventHandler().Start();
+            _config.EventHandler = new EventHandler(_discord);
+            _config.EventHandler.Start();
+
+            _config.DailyEventHandler = new DailyEventHandler();
+            _config.DailyEventHandler.Start();
 
             await _discord.ConnectAsync();
             await Task.Delay(-1);

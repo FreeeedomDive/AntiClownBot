@@ -23,7 +23,8 @@ namespace AntiClownBot.SpecialChannels.Dev
                 new MessageCommand(client, configuration),
                 new PlayMusicInDirectory(client, configuration),
                 new GiveRating(client, configuration),
-                new GiveLootBox(client, configuration)
+                new GiveLootBox(client, configuration),
+                new RunSpecialEventDay(client, configuration)
             }.ToDictionary(x => x.Name);
         }
         public override string Help(MessageCreateEventArgs e)

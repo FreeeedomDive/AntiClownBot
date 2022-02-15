@@ -25,14 +25,15 @@ namespace AntiClownBot.Commands.SocialRatingCommands
             embedBuilder.WithTitle("А когда же подношение???");
 
             var result = ApiWrapper.Wrappers.UsersApi.WhenNextTribute(e.Author.Id);
-            var now = DateTime.Now;
-            var cooldownHasPassed = now > result.NextTribute;
+            var cooldownHasPassed = DateTime.Now > result.NextTribute;
 
             if (cooldownHasPassed)
             {
                 embedBuilder.WithColor(DiscordColor.Green);
                 embedBuilder.AddField("Уже пора!!!",
                     "Срочно нужно исполнить партийный долг " + Utility.Emoji(":flag_cn:").ToString().Multiply(3));
+                embedBuilder.AddField($"А мог бы прийти и пораньше {Utility.Emoji(":Clueless:")}",
+                    $"Ты опоздал на {Utility.GetTimeDiff(result.NextTribute)}");
                 await e.Message.RespondAsync(embedBuilder.Build());
                 return;
             }

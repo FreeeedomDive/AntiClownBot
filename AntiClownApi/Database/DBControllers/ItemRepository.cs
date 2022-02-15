@@ -6,7 +6,6 @@ using AntiClownBotApi.Database.DBModels.DbItems;
 using AntiClownBotApi.DTO.Responses;
 using AntiClownBotApi.Models;
 using AntiClownBotApi.Models.Items;
-using Microsoft.EntityFrameworkCore;
 
 namespace AntiClownBotApi.Database.DBControllers
 {

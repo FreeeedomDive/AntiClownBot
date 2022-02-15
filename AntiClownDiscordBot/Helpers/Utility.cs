@@ -109,12 +109,12 @@ namespace AntiClownBot.Helpers
 
         public static string GetTimeDiff(DateTime dateTime)
         {
-            var diff = dateTime - DateTime.Now;
+            var diff = dateTime > DateTime.Now ? dateTime - DateTime.Now : DateTime.Now - dateTime;
             var sb = new StringBuilder();
             if (diff.Hours != 0)
-                sb.Append(PluralizeString(diff.Hours, "час", "часа", "часов")).Append(" ");
+                sb.Append(PluralizeString(diff.Hours, "час", "часа", "часов")).Append(' ');
             if (diff.Minutes != 0)
-                sb.Append(PluralizeString(diff.Minutes, "минуту", "минуты", "минут")).Append(" ");
+                sb.Append(PluralizeString(diff.Minutes, "минуту", "минуты", "минут")).Append(' ');
             if (diff.Seconds != 0)
                 sb.Append(PluralizeString(diff.Seconds, "секунду", "секунды", "секунд"));
 

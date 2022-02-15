@@ -34,12 +34,12 @@ namespace AntiClownBotApi
             services.Configure<DbOptions>(postgresSection);
             services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
 
-            services.AddSingleton<UserRepository>();
-            services.AddSingleton<ShopRepository>();
-            services.AddSingleton<ItemRepository>();
-            services.AddSingleton<GlobalState>();
+            services.AddTransient<UserRepository>();
+            services.AddTransient<ShopRepository>();
+            services.AddTransient<ItemRepository>();
+            services.AddTransient<GlobalState>();
 
-            services.AddSingleton<TributeService>();
+            services.AddTransient<TributeService>();
 
             var commandTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(s => s.GetTypes())

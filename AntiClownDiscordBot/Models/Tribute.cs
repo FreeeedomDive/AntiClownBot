@@ -33,6 +33,8 @@ namespace AntiClownBot.Models
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            
+            messageEmbedBuilder.WithThumbnail(member.AvatarUrl);
 
             if (response.IsCommunismActive)
             {
@@ -97,6 +99,5 @@ namespace AntiClownBot.Models
             embed = messageEmbedBuilder.Build();
             return true;
         }
-
     }
 }
