@@ -51,7 +51,7 @@ namespace AntiClownBot
             _discord.UseVoiceNext();
             Voice.VoiceExtension = _discord.GetVoiceNext();
 
-            _discord.VoiceStateUpdated += (_, e) =>
+            /*_discord.VoiceStateUpdated += (_, e) =>
             {
                 if (e.User.IsBot) return Task.CompletedTask;
                 if (e.Channel == null) return Task.CompletedTask;
@@ -73,7 +73,7 @@ namespace AntiClownBot
                 }).Start();
 
                 return Task.CompletedTask;
-            };
+            };*/
 
             _discord.GuildEmojisUpdated += async (_, e) =>
             {

@@ -155,18 +155,9 @@ namespace AntiClownBotApi.Database.DBControllers
             return Enums.ReRollResult.Success;
         }
 
-        public void ResetReRollPrice(ulong userId)
-        {
-            var user = UserRepository.GetUserWithShop(userId);
-
-            user.Shop.ReRollPrice = 0;
-            UserRepository.Save();
-            Save();
-        }
-
         public void ResetReRollPriceForAllUsers()
         {
-            Database.Users.ForEach(user => ResetReRollPrice(user.DiscordId));
+            Database.Users.ForEach(user => user.Shop.ReRollPrice = 0);
             UserRepository.Save();
             Save();
         }
