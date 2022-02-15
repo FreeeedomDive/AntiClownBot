@@ -32,13 +32,12 @@ namespace AntiClownBotApi
         {
             var postgresSection = Configuration.GetSection("PostgreSql");
             services.Configure<DbOptions>(postgresSection);
-            services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
+            services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton, ServiceLifetime.Singleton);
 
             services.AddTransient<UserRepository>();
             services.AddTransient<ShopRepository>();
             services.AddTransient<ItemRepository>();
             services.AddTransient<GlobalState>();
-
             services.AddTransient<TributeService>();
 
             var commandTypes = AppDomain.CurrentDomain.GetAssemblies()
