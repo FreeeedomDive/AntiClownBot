@@ -29,7 +29,7 @@ namespace AntiClownBot.Events.GuessNumberEvent
 
         protected override string BackStory()
         {
-            return "@everyone Я загадал число, угадайте его!!\n" +
+            return DateTime.Now.IsNightTime() ? "" : "@everyone " + "Я загадал число, угадайте его!!\n" +
                    "У вас 10 минут";
         }
     }

@@ -23,10 +23,13 @@ namespace AntiClownBot.Events.LotteryEvent
 
         protected override string BackStory()
         {
-            return $"@everyone Начинаем лотерею! Для участия нажмите на смайлик {Utility.StringEmoji(":NOTED:")} под сообщением или через команду !lottery\n" +
-                "Здесь можно выиграть много scam-койнов!\n" +
-                "Вся необходимая информация о лотерее доступна по команде '!help lottery'\n" +
-                $"Начнём подводить итоги через {Constants.LotteryStartDelayInMinutes} минут";
+            return DateTime.Now.IsNightTime()
+                ? ""
+                : "@everyone " +
+                  $"Начинаем лотерею! Для участия нажмите на смайлик {Utility.StringEmoji(":NOTED:")} под сообщением или через команду !lottery\n" +
+                  "Здесь можно выиграть много scam-койнов!\n" +
+                  "Вся необходимая информация о лотерее доступна по команде '!help lottery'\n" +
+                  $"Начнём подводить итоги через {Constants.LotteryStartDelayInMinutes} минут";
         }
     }
 }
