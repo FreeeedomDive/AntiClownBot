@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AntiClownBot.Helpers;
 using AntiClownBot.Models.Gaming;
 using DSharpPlus;
@@ -28,7 +29,8 @@ namespace AntiClownBot.Commands.Gaming
 
             var party = new GameParty()
             {
-                CreatorId = e.Author.Id
+                CreatorId = e.Author.Id,
+                CreationDate = DateTime.Now
             };
 
             switch (args[1].ToLower())
@@ -40,12 +42,12 @@ namespace AntiClownBot.Commands.Gaming
                 case "dota":
                     party.Description = "Dota";
                     party.MaxPlayersCount = 5;
-                    party.AttachedRole = DiscordClient.Guilds[Constants.GuildId].GetRole(785512028931489802);
+                    party.AttachedRoleId = 785512028931489802;
                     break;
                 case "csgo":
                     party.Description = "CS GO";
                     party.MaxPlayersCount = 5;
-                    party.AttachedRole = DiscordClient.Guilds[Constants.GuildId].GetRole(747723060441776238);
+                    party.AttachedRoleId = 747723060441776238;
                     break;
                 default:
                     if (args.Length < 3 || !int.TryParse(args[^1], out var count))
@@ -68,7 +70,7 @@ namespace AntiClownBot.Commands.Gaming
             await party.CreateMessage(e);
             await party.Message.CreateReactionAsync(Utility.Emoji(":YEP:"));
             await party.Message.CreateReactionAsync(Utility.Emoji(":MEGALUL:"));
-            Config.OpenParties.Add(party.Message.Id, party);
+            Config.OpenParties.Add(party.MessageId, party);
             Configuration.GetConfiguration().UpdatePartyObservers();
         }
 

@@ -42,7 +42,7 @@ namespace AntiClownBot
         public Lottery CurrentLottery;
         [JsonIgnore] public RaceModel CurrentRace;
         [JsonIgnore] public GuessNumberGame CurrentGuessNumberGame;
-        [JsonIgnore] public Dictionary<ulong, GameParty> OpenParties = new();
+        public Dictionary<ulong, GameParty> OpenParties = new();
         [JsonIgnore] private DiscordMessage _partyObserver;
         [JsonIgnore] public Dictionary<ulong, Shop> Shops = new();
         [JsonIgnore] public Dictionary<ulong, UserInventory> Inventories = new();
@@ -195,7 +195,7 @@ namespace AntiClownBot
                 .Values
                 .ToDictionary(p => p,
                     p =>
-                        @$"https://discord.com/channels/{Constants.GuildId}/{p.Message.ChannelId}/{p.Message.Id}");
+                        @$"https://discord.com/channels/{Constants.GuildId}/{Constants.PartyChannelId}/{p.MessageId}");
 
             embedBuilder.WithTitle("ТЕКУЩИЕ ПАТИ");
             if (OpenParties.Count == 0)

@@ -20,7 +20,8 @@ namespace AntiClownBot.Events
             _dailyEvents = new List<BaseEvent>
             {
                 new PayoutsDailyEvent(),
-                new DailyStatisticsEvent()
+                new DailyStatisticsEvent(),
+                new RemoveOldPartiesSystemEvent()
             };
         }
 
