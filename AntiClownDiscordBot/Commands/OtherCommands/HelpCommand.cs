@@ -17,7 +17,7 @@ namespace AntiClownBot.Commands.OtherCommands
             var messageArgs = message.Split(' ');
             if (messageArgs.Length < 2)
             {
-                await e.Message.RespondAsync("Не обнаружена команда");
+                await e.Message.RespondAsync($"Доступные команды:\n{string.Join("\n", _manager.AllCommands)}");
                 return;
             }
             var commandString = $"!{messageArgs[1]}";

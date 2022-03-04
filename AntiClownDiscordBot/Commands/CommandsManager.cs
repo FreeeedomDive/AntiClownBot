@@ -35,7 +35,6 @@ namespace AntiClownBot.Commands
             
             RegisterCommand("!ip", new IpCommand(client, config));
             RegisterCommand("!help", new HelpCommand(client, config, this));
-            RegisterCommand("!allcommands", new AllCommandsCommand(client, config, this));
             RegisterCommand("!playyt", new PlayYoutubeVideoCommand(client, config));
             RegisterCommand("!drivers", new DriversCommand(client, config));
             RegisterCommand("!nickname", new ChangeNicknameCommand(client, config));
