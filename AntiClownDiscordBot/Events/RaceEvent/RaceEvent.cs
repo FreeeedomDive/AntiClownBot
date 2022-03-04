@@ -23,7 +23,7 @@ namespace AntiClownBot.Events.RaceEvent
             Config.CurrentRace.StartRace();
         }
 
-        protected override string BackStory() => DateTime.Now.IsNightTime() ? "" : "@everyone " + "Начинаем гоночку!!!" +
+        protected override string BackStory() => (DateTime.Now.IsNightTime() ? "" : "@everyone ") + "Начинаем гоночку!!!" +
                                                  "\nСоревнуйтесь друг с другом и, главное, со мной, ведь тот, кто сможет обойти меня (и попасть в топ-10), получит социальный рейтинг" +
                                                  $"\nРаспределение рейтинга - {string.Join(", ", RaceModel.Points)}" +
                                                  "\nДля получения рейтинга обязательно нужно быть впереди меня" +
