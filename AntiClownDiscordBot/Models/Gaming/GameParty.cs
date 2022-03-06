@@ -12,16 +12,16 @@ namespace AntiClownBot.Models.Gaming
 {
     public class GameParty
     {
-        private bool _isOpened = true;
+        private bool isOpened = true;
         public string Description;
         public ulong CreatorId { get; init; }
         public int MaxPlayersCount { get; set; }
         public List<ulong> Players { get; }
-        
+
         public ulong? AttachedRoleId { get; set; }
 
         public ulong MessageId { get; set; }
-        
+
         public DateTime CreationDate { get; init; }
 
         private DiscordMessage message;
@@ -29,7 +29,7 @@ namespace AntiClownBot.Models.Gaming
 
         private DiscordRole attachedRole;
         [JsonIgnore] public DiscordRole AttachedRole => attachedRole ??= GetGameRoleById();
-        
+
         public GameParty()
         {
             Players = new List<ulong>();
@@ -56,7 +56,8 @@ namespace AntiClownBot.Models.Gaming
         {
             var messageBuilder = new DiscordMessageBuilder
             {
-                Content = MessageContent()
+                Content = RoleMention(),
+                Embed = MessageContent()
             };
             messageBuilder.WithAllowedMention(DSharpPlus.Entities.RoleMention.All);
             var createdMessage = await e.Message.RespondAsync(messageBuilder);
@@ -72,10 +73,26 @@ namespace AntiClownBot.Models.Gaming
             await Message.ModifyAsync(MessageContent());
         }
 
-        private async Task<DiscordMessage> GetPartyMessageAsync() => await Utility.Client
-            .Guilds[Constants.GuildId]
-            .Channels[Constants.PartyChannelId]
-            .GetMessageAsync(MessageId);
+        private async Task<DiscordMessage> GetPartyMessageAsync()
+        {
+            DiscordMessage partyMessage;
+            try
+            {
+                partyMessage = await Utility.Client
+                    .Guilds[Constants.GuildId]
+                    .Channels[Constants.PartyChannelId]
+                    .GetMessageAsync(MessageId);
+            }
+            catch
+            {
+                partyMessage = await Utility.Client
+                    .Guilds[Constants.GuildId]
+                    .Channels[879784704696549498]
+                    .GetMessageAsync(MessageId);
+            }
+
+            return partyMessage;
+        }
 
         private DiscordRole GetGameRoleById() => AttachedRoleId == null
             ? null
@@ -83,23 +100,45 @@ namespace AntiClownBot.Models.Gaming
                 .Guilds[Constants.GuildId]
                 .GetRole(AttachedRoleId.Value);
 
-        private string MessageContent()
+        private DiscordEmbed MessageContent()
         {
+            var embedBuilder = new DiscordEmbedBuilder()
+                .WithTitle($"СБОР ПАТИ {Description}")
+                .WithColor(GetGameRoleById()?.Color ?? DiscordColor.White);
+
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append($"{RoleMention()} СБОР ПАТИ {Description}").Append('\n');
-            for (var i = 0; i < Math.Max(MaxPlayersCount, Players.Count); i++)
+            for (var i = 0; i < MaxPlayersCount; i++)
             {
-                var position = i < MaxPlayersCount ? $"{i + 1}. " : "В ОЧЕРЕДИ - ";
-                stringBuilder.Append(position);
+                stringBuilder.Append($"{i + 1}. ");
                 var player = i < Players.Count
                     ? Configuration.GetServerMember(Players[i]).ServerOrUserName()
                     : "";
                 stringBuilder.Append(player).Append('\n');
             }
 
-            if (!_isOpened) stringBuilder.Append("СБОР ЗАКРЫТ");
+            embedBuilder.AddField("Состав", stringBuilder.ToString());
 
-            return stringBuilder.ToString();
+            if (Players.Count > MaxPlayersCount)
+            {
+                stringBuilder.Clear();
+                for (var i = MaxPlayersCount; i < Players.Count; i++)
+                {
+                    stringBuilder.Append($"{i + 1}. ");
+                    var player = Configuration.GetServerMember(Players[i]).ServerOrUserName();
+                    stringBuilder.Append(player).Append('\n');
+                }
+
+                embedBuilder.AddField("Очередь", stringBuilder.ToString());
+            }
+
+            if (!isOpened)
+            {
+                embedBuilder
+                    .WithFooter("СБОР ЗАКРЫТ")
+                    .WithColor(DiscordColor.Black);
+            }
+
+            return embedBuilder.Build();
         }
 
         private async void CreatePingIfFullParty()
@@ -122,7 +161,7 @@ namespace AntiClownBot.Models.Gaming
 
             var config = Configuration.GetConfiguration();
             config.OpenParties.Remove(MessageId);
-            _isOpened = false;
+            isOpened = false;
             UpdateMessage();
             Configuration.GetConfiguration().UpdatePartyObservers();
         }

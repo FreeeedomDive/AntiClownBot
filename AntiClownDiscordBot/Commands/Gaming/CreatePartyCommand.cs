@@ -15,7 +15,7 @@ namespace AntiClownBot.Commands.Gaming
 
         public override async void Execute(MessageCreateEventArgs e)
         {
-            if (e.Channel.Id != Constants.PartyChannelId)
+            if (e.Channel.Id != Constants.PartyChannelId && e.Channel.Id != 879784704696549498 /* чат для тестов */)
             {
                 await e.Message.RespondAsync($"{Utility.Emoji(":Madge:")} {Utility.Emoji(":point_right:")} {e.Guild.GetChannel(878002609217220619).Mention}");
                 return;
@@ -36,7 +36,6 @@ namespace AntiClownBot.Commands.Gaming
             switch (args[1].ToLower())
             {
                 case "all":
-                    
                     Config.AddPartyObserverMessage(e);
                     return;
                 case "dota":
@@ -48,6 +47,11 @@ namespace AntiClownBot.Commands.Gaming
                     party.Description = "CS GO";
                     party.MaxPlayersCount = 5;
                     party.AttachedRoleId = 747723060441776238;
+                    break;
+                case "sigame":
+                    party.Description = "ДЕРЖУ ИГРУ";
+                    party.MaxPlayersCount = 7;
+                    party.AttachedRoleId = 739082045275504710;
                     break;
                 default:
                     if (args.Length < 3 || !int.TryParse(args[^1], out var count))

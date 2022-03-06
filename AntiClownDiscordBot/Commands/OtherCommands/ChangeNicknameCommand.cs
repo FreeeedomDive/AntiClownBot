@@ -22,7 +22,7 @@ public class ChangeNicknameCommand: BaseCommand
             return;
         }
         
-        const string pattern = "<@!(\\d+)>";
+        const string pattern = "<@!?(\\d+)>";
         var regex = new Regex(pattern);
         var matches = regex.Matches(args[1]);
 
