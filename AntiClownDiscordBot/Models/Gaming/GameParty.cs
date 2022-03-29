@@ -148,11 +148,26 @@ namespace AntiClownBot.Models.Gaming
                 .Select(playerId => Configuration.GetServerMember(playerId).Mention);
             var messageBuilder = new DiscordMessageBuilder
             {
-                Content = $"НАБРАНО ПОЛНОЕ ПАТИ\n{string.Join("\n", readyPlayersMentions)}"
+                Content =
+                    $"НАБРАНО ПОЛНОЕ ПАТИ (за {Utility.GetTimeDiff(CreationDate)})\n{string.Join("\n", readyPlayersMentions)}"
             };
             messageBuilder.WithAllowedMention(UserMention.All);
 
             await Message.RespondAsync(messageBuilder);
+            if (MaxPlayersCount >= 3)
+            {
+                SaveStats();
+            }
+        }
+
+        private void SaveStats()
+        {
+            var config = Configuration.GetConfiguration();
+            var seconds = Utility.GetTimeSpan(CreationDate).TotalSeconds;
+            config.PartyStats.FastestPartyInSeconds = Math.Min(config.PartyStats.FastestPartyInSeconds, seconds);
+            config.PartyStats.TotalFullParties++;
+            config.PartyStats.TotalSeconds += seconds;
+            config.Save();
         }
 
         public void Destroy(ulong userId)
@@ -163,7 +178,7 @@ namespace AntiClownBot.Models.Gaming
             config.OpenParties.Remove(MessageId);
             isOpened = false;
             UpdateMessage();
-            Configuration.GetConfiguration().UpdatePartyObservers();
+            config.UpdatePartyObservers();
         }
     }
 }

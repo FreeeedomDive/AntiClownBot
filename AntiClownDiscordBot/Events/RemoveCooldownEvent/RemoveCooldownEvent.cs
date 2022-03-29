@@ -5,9 +5,9 @@ namespace AntiClownBot.Events.RemoveCooldownEvent
 {
     public class RemoveCooldownEvent: BaseEvent
     {
-        public override void ExecuteAsync()
+        public override async void ExecuteAsync()
         {
-            TellBackStory();
+            await TellBackStory();
             
             ApiWrapper.Wrappers.UsersApi.RemoveCooldowns();
         }

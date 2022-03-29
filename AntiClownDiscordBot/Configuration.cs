@@ -43,6 +43,7 @@ namespace AntiClownBot
         [JsonIgnore] public RaceModel CurrentRace;
         [JsonIgnore] public GuessNumberGame CurrentGuessNumberGame;
         public Dictionary<ulong, GameParty> OpenParties = new();
+        public PartyStats PartyStats = new();
         [JsonIgnore] private DiscordMessage _partyObserver;
         [JsonIgnore] public Dictionary<ulong, Shop> Shops = new();
         [JsonIgnore] public Dictionary<ulong, UserInventory> Inventories = new();
@@ -99,13 +100,6 @@ namespace AntiClownBot
         
         public void ChangeBalance(ulong userId, int rating, string reason)
         {
-            ApiWrapper.Wrappers.UsersApi.ChangeUserRating(userId, rating, reason);
-            DailyStatistics.CreditsCollected += rating;
-            DailyStatistics.ChangeUserCredits(userId, rating);
-            Configuration.GetConfiguration().Save();
-        }
-        
-        public void BulkChangeBalance(ulong userId, int rating, string reason){
             ApiWrapper.Wrappers.UsersApi.ChangeUserRating(userId, rating, reason);
             DailyStatistics.CreditsCollected += rating;
             DailyStatistics.ChangeUserCredits(userId, rating);

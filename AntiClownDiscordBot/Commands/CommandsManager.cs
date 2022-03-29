@@ -47,7 +47,8 @@ namespace AntiClownBot.Commands
             
             RegisterCommand("!inventory", new InventoryCommand(client, config));
             
-            RegisterCommand("!party", new BaseGamingCommand(client, config));
+            RegisterCommand("!party", new CreatePartyCommand(client, config));
+            RegisterCommand("!partystats", new PartyStatsCommand(client, config));
         }
 
         private void RegisterCommand(string name, BaseCommand baseCommand)

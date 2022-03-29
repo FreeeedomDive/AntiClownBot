@@ -7,9 +7,9 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownBot.Commands.Gaming
 {
-    public class BaseGamingCommand : BaseCommand
+    public class CreatePartyCommand : BaseCommand
     {
-        public BaseGamingCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
+        public CreatePartyCommand(DiscordClient client, Configuration configuration) : base(client, configuration)
         {
         }
 
