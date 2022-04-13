@@ -556,7 +556,6 @@ namespace AntiClownBot
                 message
                     .ToCharArray()
                     .Where(ch => symbols.Contains(ch)));
-            Console.WriteLine(correctMessage);
             return correctMessage.Contains("boob");
         }
 

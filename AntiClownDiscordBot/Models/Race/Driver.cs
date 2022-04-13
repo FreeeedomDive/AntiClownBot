@@ -9,7 +9,7 @@ namespace AntiClownBot.Models.Race
         public bool IsUser = false;
         public DriverModel DriverModel;
 
-        public DiscordEmoji UsableEmoji;
+        // public DiscordEmoji UsableEmoji;
 
         public int StartPosition;
         

@@ -21,13 +21,13 @@ namespace AntiClownBot.Models.Lottery
         public enum LotteryEmote
         {
             Starege,
+            KEKWiggle,
             FLOPPA,
             Applecatrun,
-            PPogo,
+            cykaPls,
             PaPaTuTuWaWa,
             PolarStrut,
-            TooSmart,
-            YEPPING,
+            HACKERMANS,
             PATREGO
         }
 
@@ -171,13 +171,13 @@ namespace AntiClownBot.Models.Lottery
             return emote switch
             {
                 LotteryEmote.Starege => 0,
-                LotteryEmote.FLOPPA => 5,
-                LotteryEmote.Applecatrun => 10,
-                LotteryEmote.PPogo => 15,
-                LotteryEmote.PaPaTuTuWaWa => 20,
-                LotteryEmote.PolarStrut => 25,
-                LotteryEmote.TooSmart => 30,
-                LotteryEmote.YEPPING => 35,
+                LotteryEmote.KEKWiggle => 5,
+                LotteryEmote.FLOPPA => 10,
+                LotteryEmote.Applecatrun => 15,
+                LotteryEmote.cykaPls => 20,
+                LotteryEmote.PaPaTuTuWaWa => 25,
+                LotteryEmote.PolarStrut => 30,
+                LotteryEmote.HACKERMANS => 35,
                 LotteryEmote.PATREGO => 40,
                 _ => throw new ArgumentOutOfRangeException(nameof(emote), emote, null)
             };

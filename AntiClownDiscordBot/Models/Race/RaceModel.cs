@@ -60,7 +60,7 @@ namespace AntiClownBot.Models.Race
                 DiscordId = 0,
                 IsUser = false,
                 DriverModel = model,
-                UsableEmoji = Utility.Emoji($":{model.ShortName}:"),
+                //UsableEmoji = Utility.Emoji($":{model.ShortName}:"),
                 IsFinished = false,
                 BestLap = -1,
                 TotalTime = 0,
@@ -135,8 +135,8 @@ namespace AntiClownBot.Models.Race
             var driversString = _drivers.Select((d, i) =>
             {
                 var pos = i + 1;
-                var emoji = d.UsableEmoji;
-                var result = $"{pos}.\t{emoji}";
+                //var emoji = d.UsableEmoji;
+                var result = (pos < 10 ? " " : "") + $"{pos}.\t{d.DriverModel.ShortName}";
                 if (!d.IsUser) return result;
 
                 var member = Configuration.GetServerMember(d.DiscordId);
@@ -145,7 +145,7 @@ namespace AntiClownBot.Models.Race
                 return result;
             });
 
-            return $"Трасса {_currentTrack.Name}\n{string.Join("\n", driversString)}";
+            return $"Трасса {_currentTrack.Name}\n```\n{string.Join("\n", driversString)}\n```";
         }
 
         public void StartRace()
@@ -239,16 +239,16 @@ namespace AntiClownBot.Models.Race
 
         private string MakeSnapshot()
         {
-            var sb = new StringBuilder($"Трасса {_currentTrack.Name}\nТекущий круг: {_currentLap} / {TotalLaps}\n");
+            var sb = new StringBuilder($"Трасса {_currentTrack.Name}\nТекущий круг: {_currentLap} / {TotalLaps}\n```");
 
             var driversInfo = _drivers.Select((driver, i) =>
             {
                 var pos = i + 1;
-                var ebalo = driver.UsableEmoji;
+                //var ebalo = driver.UsableEmoji;
 
                 var lap = driver.CurrentLap;
 
-                var result = $"{pos}.\t{ebalo}";
+                var result = (pos < 10 ? " " : "") + $"{pos}.\t{driver.DriverModel.ShortName}";
 
                 if (lap != 0 && driver.TotalSectorsPassed != 0)
                 {
@@ -271,7 +271,7 @@ namespace AntiClownBot.Models.Race
                     .Append($"ЛУЧШИЙ КРУГ: {Utility.NormalizeTime(_bestLap)} от {_bestLapHolder}");
             }
 
-            return sb.ToString();
+            return sb.Append("```").ToString();
         }
 
         private void MakeResult()
@@ -280,13 +280,13 @@ namespace AntiClownBot.Models.Race
 
             var botPosition = _drivers.Count;
 
-            var sb = new StringBuilder($"РЕЗУЛЬТАТЫ ГОНОЧКИ В {_currentTrack.Name}\n");
+            var sb = new StringBuilder($"РЕЗУЛЬТАТЫ ГОНОЧКИ В {_currentTrack.Name}\n```");
             var driversInfo = _drivers.Select((d, i) =>
             {
                 var pos = i + 1;
                 if (d.DiscordId == Constants.BotId) botPosition = pos;
 
-                var result = $"{pos}.\t{d.UsableEmoji}";
+                var result = $"{pos}.\t{d.DriverModel.ShortName}";
                 if (!d.IsUser) return result;
 
                 var user = Configuration.GetServerMember(d.DiscordId);
@@ -320,7 +320,7 @@ namespace AntiClownBot.Models.Race
                 return result;
             });
 
-            sb.Append(string.Join("\n", driversInfo));
+            sb.Append(string.Join("\n", driversInfo)).Append("```");
             _mainRaceMessage.ModifyAsync(sb.ToString());
 
             var models = _drivers.Select(d => d.DriverModel).ToList();

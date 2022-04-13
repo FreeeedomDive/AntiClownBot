@@ -34,11 +34,11 @@ namespace AntiClownBot
         [JsonIgnore] public EventHandler EventHandler;
         [JsonIgnore] public DailyEventHandler DailyEventHandler;
 
-        [JsonIgnore] public RouletteGame Roulette = new RouletteGame();
+        [JsonIgnore] public RouletteGame Roulette = new();
 
         public Lohotron DailyScamMachine;
         public Gamble CurrentGamble;
-        [JsonIgnore] public BlackJack CurrentBlackJack = new BlackJack();
+        [JsonIgnore] public BlackJack CurrentBlackJack = new();
         public Lottery CurrentLottery;
         [JsonIgnore] public RaceModel CurrentRace;
         [JsonIgnore] public GuessNumberGame CurrentGuessNumberGame;
@@ -47,6 +47,7 @@ namespace AntiClownBot
         [JsonIgnore] private DiscordMessage _partyObserver;
         [JsonIgnore] public Dictionary<ulong, Shop> Shops = new();
         [JsonIgnore] public Dictionary<ulong, UserInventory> Inventories = new();
+        public List<ulong> JoinableRoles = new();
 
         private const string FileName = "config.json";
 
@@ -107,7 +108,7 @@ namespace AntiClownBot
         }
 
         public static DiscordMember GetServerMember(ulong userId) =>
-            Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(userId).Result;
+            Utility.Client.Guilds[Constants.GuildId].GetMemberAsync(userId).GetAwaiter().GetResult();
 
         public static int GetUserBalance(ulong userId)
         {
