@@ -43,7 +43,7 @@ namespace AntiClownDiscordBotVersion2.Events
                 var eventDayType = Enum.TryParse<EventDayType>(eventDayTypeFromSettings, out var t) ? t : EventDayType.CommonDay;
                 var eventConfiguration = eventMappings[eventDayType];
                 var sleepTime = eventSettingsService.GetEventSettings().EventIntervalInMinutes;
-                var nextEventTime = DateTime.Now.AddMilliseconds(sleepTime);
+                var nextEventTime = DateTime.Now.AddMilliseconds(sleepTime * 60 * 1000);
                 AddLog($"Следующий эвент в {Utility.NormalizeTime(nextEventTime)}, " +
                        $"через {Utility.GetTimeDiff(nextEventTime)}");
                 await Task.Delay(sleepTime);

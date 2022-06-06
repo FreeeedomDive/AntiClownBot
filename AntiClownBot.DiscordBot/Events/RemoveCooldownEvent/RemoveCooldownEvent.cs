@@ -31,7 +31,7 @@ namespace AntiClownDiscordBotVersion2.Events.RemoveCooldownEvent
         public async Task<DiscordMessage> TellBackStory()
         {
             var messageContent =
-                $"У меня хорошее настроение, несите ваши подношения {discordClientWrapper.Emotes.FindEmoteAsync("peepoClap")}";
+                $"У меня хорошее настроение, несите ваши подношения {await discordClientWrapper.Emotes.FindEmoteAsync("peepoClap")}";
             return await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId, messageContent);
         }
 
