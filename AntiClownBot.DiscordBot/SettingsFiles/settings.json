@@ -1,0 +1,7 @@
+﻿{
+  "DiscordToken": "NzYwODc5NjI5NTA5ODUzMjI0.X3SeYA.JLxxQ2gUiFcF9MZyYegkhaDUhqE",
+  "ApiUrl": "https://localhost:5001",
+  "MaintenanceMode": false,
+  "ApiPollingIntervalInSeconds": 10,
+  "IsBackendFeedReadingEnabled": true
+}
