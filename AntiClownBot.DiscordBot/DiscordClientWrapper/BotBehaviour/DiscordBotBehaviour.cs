@@ -106,7 +106,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         if (message.StartsWith(guildSettings.CommandsPrefix))
         {
-            var commandName = message.Split('\n')[0].Split(' ').First().ToLower();
+            var commandName = message.Split('\n')[0].Split(' ').First().ToLower()[guildSettings.CommandsPrefix.Length..];
             await commandsService.ExecuteCommand(commandName, e);
             return;
         }
