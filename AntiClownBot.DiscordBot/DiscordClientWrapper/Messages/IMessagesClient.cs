@@ -14,6 +14,7 @@ public interface IMessagesClient
     Task<DiscordMessage> ModifyAsync(DiscordMessage message, string content);
     Task<DiscordMessage> ModifyAsync(DiscordMessage message, DiscordEmbed embed);
     Task<DiscordMessage> ModifyAsync(DiscordMessage message, DiscordMessageBuilder builder);
+    Task<DiscordMessage> ModifyAsync(InteractionContext context, string? content);
     Task<DiscordMessage> SendAsync(ulong channelId, string content);
     Task<DiscordMessage> SendAsync(ulong channelId, DiscordEmbed embed);
     Task<DiscordMessage> SendAsync(ulong channelId, DiscordMessageBuilder builder);

@@ -22,7 +22,7 @@ public class DiscordClientWrapper : IDiscordClientWrapper
         Emotes = new EmotesClient(discordClient, guildSettingsService, logger);
         Guilds = new GuildsClient(discordClient, guildSettingsService, logger);
         Members = new MembersClient(discordClient, guildSettingsService, logger);
-        Messages = new MessagesClient(discordClient, guildSettingsService, logger);
+        Messages = new MessagesClient(discordClient, Emotes, guildSettingsService, logger);
         Roles = new RolesClient(discordClient, guildSettingsService, Guilds, Members, logger);
         Voice = new VoiceClient(discordClient, Guilds, guildSettingsService, logger);
     }

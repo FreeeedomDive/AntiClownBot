@@ -1,4 +1,5 @@
-﻿using AntiClownDiscordBotVersion2.Log;
+﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper.Emotes;
+using AntiClownDiscordBotVersion2.Log;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
 using DSharpPlus.Entities;
@@ -10,11 +11,13 @@ public class MessagesClient : IMessagesClient
 {
     public MessagesClient(
         DiscordClient discordClient,
+        IEmotesClient emotesClient,
         IGuildSettingsService guildSettingsService,
         ILogger logger
     )
     {
         this.discordClient = discordClient;
+        this.emotesClient = emotesClient;
         this.guildSettingsService = guildSettingsService;
         this.logger = logger;
     }
@@ -77,6 +80,11 @@ public class MessagesClient : IMessagesClient
         return modified;
     }
 
+    public async Task<DiscordMessage> ModifyAsync(InteractionContext context, string? content)
+    {
+        return await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent(content ?? $"{emotesClient.FindEmoteAsync("white_check_mark")}"));
+    }
+
     public async Task<DiscordMessage> SendAsync(ulong channelId, string content)
     {
         var message = await discordClient.Guilds[277096298761551872]
@@ -119,6 +127,7 @@ public class MessagesClient : IMessagesClient
     }
 
     private readonly DiscordClient discordClient;
+    private readonly IEmotesClient emotesClient;
     private readonly IGuildSettingsService guildSettingsService;
     private readonly ILogger logger;
 }
