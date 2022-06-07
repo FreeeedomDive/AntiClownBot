@@ -137,7 +137,8 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
             var readyPlayersMentionsTasks = Players
                 .Take(MaxPlayersCount)
                 .Select(playerId => discordClientWrapper.Members.GetAsync(playerId));
-            var readyPlayersMentions = await Task.WhenAll(readyPlayersMentionsTasks);
+            var readyPlayers = await Task.WhenAll(readyPlayersMentionsTasks);
+            var readyPlayersMentions = readyPlayers.Select(x => x.Mention);
             var messageBuilder = new DiscordMessageBuilder
             {
                 Content =
