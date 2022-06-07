@@ -35,6 +35,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         ILogger logger
     )
     {
+        this.discordClient = discordClient;
         this.discordClientWrapper = discordClientWrapper;
         this.userBalanceService = userBalanceService;
         this.commandsService = commandsService;
@@ -48,7 +49,10 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.guessNumberService = guessNumberService;
         this.randomizer = randomizer;
         this.logger = logger;
-
+    }
+    
+    public void Configure()
+    {
         discordClient.GuildEmojisUpdated += GuildEmojisUpdated;
         discordClient.MessageCreated += MessageCreated;
         discordClient.MessageReactionAdded += MessageReactionAdded;
@@ -493,6 +497,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         return result.Contains("anime");
     }
 
+    private readonly DiscordClient discordClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IUserBalanceService userBalanceService;
     private readonly ICommandsService commandsService;
