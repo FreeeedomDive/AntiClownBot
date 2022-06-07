@@ -1,13 +1,17 @@
-﻿namespace AntiClownDiscordBotVersion2.Events
+﻿using AntiClownDiscordBotVersion2.Log;
+using AntiClownDiscordBotVersion2.Utils;
+
+namespace AntiClownDiscordBotVersion2.Events
 {
     public class DailyEventScheduler
     {
-        private static System.Timers.Timer timer;
-        private readonly IDailyEvent[] dailyEvents;
-
-        public DailyEventScheduler(IDailyEvent[] dailyEvents)
+        public DailyEventScheduler(
+            IDailyEvent[] dailyEvents,
+            ILogger logger
+        )
         {
             this.dailyEvents = dailyEvents;
+            this.logger = logger;
         }
 
         public void Start()
@@ -17,7 +21,7 @@
 
         private async Task HandleEvents()
         {
-            while(true)
+            while (true)
             {
                 var nowTime = DateTime.Now;
                 var scheduledTime = new DateTime(nowTime.Year, nowTime.Month, nowTime.Day, 0, 1, 0, 0);
@@ -25,6 +29,9 @@
                 {
                     scheduledTime = scheduledTime.AddDays(1);
                 }
+
+                logger.Info($"Следующий ежедневный эвент в {Utility.NormalizeTime(scheduledTime)}, " +
+                            $"через {Utility.GetTimeDiff(scheduledTime)}");
 
                 var sleepTime = (scheduledTime - DateTime.Now).TotalMilliseconds;
                 await Task.Delay((int)sleepTime);
@@ -35,5 +42,8 @@
                 }
             }
         }
+
+        private readonly IDailyEvent[] dailyEvents;
+        private readonly ILogger logger;
     }
 }
