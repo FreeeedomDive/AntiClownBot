@@ -2,6 +2,7 @@
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils;
+using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
@@ -58,6 +59,7 @@ namespace AntiClownDiscordBotVersion2.Commands.SlashCommands
                 return;
             }
 
+            await discordClientWrapper.Messages.RespondAsync(context, null, InteractionResponseType.DeferredChannelMessageWithSource);
             await partyService.CreateNewParty(context.Member.Id, name, (int)capacity, role?.Id);
         }
 

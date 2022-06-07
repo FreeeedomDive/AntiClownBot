@@ -40,9 +40,12 @@ public class MessagesClient : IMessagesClient
         return response;
     }
 
-    public async Task<DiscordMessage> RespondAsync(InteractionContext context, string content, InteractionResponseType interactionType = InteractionResponseType.ChannelMessageWithSource)
+    public async Task<DiscordMessage> RespondAsync(InteractionContext context,
+        string? content = null,
+        InteractionResponseType interactionType = InteractionResponseType.ChannelMessageWithSource
+    )
     {
-        var builder = new DiscordInteractionResponseBuilder().WithContent(content);
+        var builder = content == null ? null : new DiscordInteractionResponseBuilder().WithContent(content);
         await context.CreateResponseAsync(interactionType, builder);
         return await context.GetOriginalResponseAsync();
     }
