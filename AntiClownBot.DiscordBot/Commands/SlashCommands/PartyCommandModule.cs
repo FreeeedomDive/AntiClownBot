@@ -8,7 +8,7 @@ using DSharpPlus.SlashCommands;
 namespace AntiClownDiscordBotVersion2.Commands.SlashCommands
 {
     [SlashCommandGroup("party", "Собирайте пати в разные игры :)")]
-    public class PartyCommandModule : ApplicationCommandModule
+    public class PartyCommandModule : ApplicationCommandModule, ISlashCommand
     {
         public PartyCommandModule(
             IDiscordClientWrapper discordClientWrapper,

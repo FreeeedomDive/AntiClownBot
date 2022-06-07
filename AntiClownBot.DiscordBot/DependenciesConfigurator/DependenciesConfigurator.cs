@@ -43,6 +43,7 @@ public class DependenciesConfigurator
             .WithCommandsService()
             .WithCommands()
             .ConfigureCommands()
+            .WithSlashCommands()
             // final touches
             .WithApiPollerScheduler()
             .WithDiscordBotBehaviour();

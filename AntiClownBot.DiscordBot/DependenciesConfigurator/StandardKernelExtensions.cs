@@ -1,6 +1,7 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.ApiPoll;
 using AntiClownDiscordBotVersion2.Commands;
+using AntiClownDiscordBotVersion2.Commands.SlashCommands;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
@@ -237,6 +238,23 @@ public static class StandardKernelExtensions
         {
             ninjectKernel.Bind(commandType).ToSelf();
             ninjectKernel.Bind<ICommand>().To(commandType);
+        }
+
+        return ninjectKernel;
+    }
+
+    public static StandardKernel WithSlashCommands(this StandardKernel ninjectKernel)
+    {
+        var commandTypes = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(s => s.GetTypes())
+            .Where(p => typeof(ISlashCommand).IsAssignableFrom(p))
+            .Where(p => p != typeof(ISlashCommand))
+            .ToList();
+
+        foreach (var commandType in commandTypes)
+        {
+            ninjectKernel.Bind(commandType).ToSelf();
+            ninjectKernel.Bind<ISlashCommand>().To(commandType);
         }
 
         return ninjectKernel;

@@ -38,6 +38,7 @@ namespace AntiClownDiscordBotVersion2.Events
 
         private async Task HandleNextEvent()
         {
+            logger.Info("ЗАШЕЛ В ЕБАНЫЙ МЕТОД С ВАЙЛ ТРУ");
             while (true)
             {
                 logger.Info("ЗАШЕЛ В ЕБАНЫЙ ВАЙЛ ТРУ В МЕТОДЕ ЭВЕНТОВ");
