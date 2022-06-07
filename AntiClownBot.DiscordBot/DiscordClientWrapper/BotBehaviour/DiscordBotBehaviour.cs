@@ -419,6 +419,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private void RegisterSlashCommands(DiscordClient client)
     {
+        logger.Info("Register slash commands");
         var guildSettings = guildSettingsService.GetGuildSettings();
         var slash = client.UseSlashCommands();
         slash.RegisterCommands<PartyCommandModule>(guildSettings.GuildId);
