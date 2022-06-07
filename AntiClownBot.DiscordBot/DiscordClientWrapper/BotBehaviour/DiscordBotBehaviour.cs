@@ -419,8 +419,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private void RegisterSlashCommands(DiscordClient client)
     {
+        var guildSettings = guildSettingsService.GetGuildSettings();
         var slash = client.UseSlashCommands();
-        slash.RegisterCommands<PartyCommandModule>();
+        slash.RegisterCommands<PartyCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
