@@ -8,9 +8,14 @@ using DSharpPlus.SlashCommands;
 namespace AntiClownDiscordBotVersion2.Commands.SlashCommands
 {
     [SlashCommandGroup("party", "Собирайте пати в разные игры :)")]
-    public class PartyCommandModule : ApplicationCommandModule, ISlashCommand
+    public class PartyCommandModule : ApplicationCommandModule
     {
-        public PartyCommandModule(
+        public PartyCommandModule()
+        {
+            
+        }
+        
+        /*public PartyCommandModule(
             IDiscordClientWrapper discordClientWrapper,
             IPartyService partyService,
             IGuildSettingsService guildSettingsService
@@ -19,7 +24,7 @@ namespace AntiClownDiscordBotVersion2.Commands.SlashCommands
             this.discordClientWrapper = discordClientWrapper;
             this.partyService = partyService;
             this.guildSettingsService = guildSettingsService;
-        }
+        }*/
 
         [SlashCommand("create", "Создать пати")]
         public async Task CreateParty(
