@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Log;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus.EventArgs;
@@ -10,12 +11,14 @@ public class CommandsService : ICommandsService
     public CommandsService(
         IDiscordClientWrapper discordClientWrapper,
         IAppSettingsService appSettingsService,
-        IGuildSettingsService guildSettingsService
+        IGuildSettingsService guildSettingsService,
+        ILogger logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
         this.appSettingsService = appSettingsService;
         this.guildSettingsService = guildSettingsService;
+        this.logger = logger;
     }
 
     public void UseCommands(Dictionary<string, ICommand> commands)
@@ -48,6 +51,7 @@ public class CommandsService : ICommandsService
             return;
         }
 
+        logger.Info($"Загружено {commands.Count} команд");
         if (!TryGetCommand(name, out var command))
         {
             await discordClientWrapper.Messages.RespondAsync(e.Message, $"Нет команды с именем {name}");
@@ -67,4 +71,5 @@ public class CommandsService : ICommandsService
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IAppSettingsService appSettingsService;
     private readonly IGuildSettingsService guildSettingsService;
+    private readonly ILogger logger;
 }

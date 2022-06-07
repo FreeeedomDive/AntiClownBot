@@ -240,8 +240,6 @@ public static class StandardKernelExtensions
             ninjectKernel.Bind<ICommand>().To(commandType);
         }
 
-        Console.WriteLine(string.Join("\n", commandTypes));
-
         return ninjectKernel;
     }
 
@@ -264,6 +262,9 @@ public static class StandardKernelExtensions
         
         var commands = ninjectKernel.GetAll<ICommand>();
         var commandsByName = commands.ToDictionary(command => command.Name);
+
+        var logger = ninjectKernel.Get<ILogger>();
+        logger.Info(string.Join("\n", commandsByName.Select(kv => $"{kv.Key} - {kv.Value}")));
         
         commandsService.UseCommands(commandsByName);
 
