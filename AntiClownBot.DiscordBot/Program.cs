@@ -38,7 +38,6 @@ public class Program
     private static void StartBackgroundEventScheduler(StandardKernel configurator)
     {
         var logger = configurator.Get<ILogger>();
-        logger.Info("ЗАПУСТИЛ ЕБАНЫЙ ШЕДУЛЕР ЭВЕНТОВ");
         var eventScheduler = configurator.Get<EventScheduler>();
         eventScheduler.Start();
     }
