@@ -248,7 +248,8 @@ public static class StandardKernelExtensions
         var commandsService = new CommandsService(
             ninjectKernel.Get<IDiscordClientWrapper>(),
             ninjectKernel.Get<IAppSettingsService>(),
-            ninjectKernel.Get<IGuildSettingsService>()
+            ninjectKernel.Get<IGuildSettingsService>(),
+            ninjectKernel.Get<ILogger>()
         );
 
         ninjectKernel.Bind<ICommandsService>().ToConstant(commandsService);
