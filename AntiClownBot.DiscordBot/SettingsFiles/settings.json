@@ -3,5 +3,6 @@
   "ApiUrl": "https://localhost:5001",
   "MaintenanceMode": false,
   "ApiPollingIntervalInSeconds": 10,
-  "IsBackendFeedReadingEnabled": true
+  "IsBackendFeedReadingEnabled": true,
+  "PingOnEvents": false
 }

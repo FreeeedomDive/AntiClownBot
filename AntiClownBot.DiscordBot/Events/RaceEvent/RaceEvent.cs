@@ -1,6 +1,7 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.EventServices;
 using AntiClownDiscordBotVersion2.Models.Race;
+using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
@@ -14,13 +15,15 @@ namespace AntiClownDiscordBotVersion2.Events.RaceEvent
             IDiscordClientWrapper discordClientWrapper,
             IGuildSettingsService guildSettingsService,
             IRaceService raceService,
-            IEventSettingsService eventSettingsService
+            IEventSettingsService eventSettingsService,
+            IAppSettingsService appSettingsService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
             this.guildSettingsService = guildSettingsService;
             this.raceService = raceService;
             this.eventSettingsService = eventSettingsService;
+            this.appSettingsService = appSettingsService;
         }
 
         public async Task ExecuteAsync()
@@ -38,7 +41,7 @@ namespace AntiClownDiscordBotVersion2.Events.RaceEvent
         public async Task<DiscordMessage> TellBackStory()
         {
             var delayInMinutes = eventSettingsService.GetEventSettings().RaceStartDelayInMinutes;
-            var messageContent = (DateTime.Now.IsNightTime() ? "" : "@everyone ") + "Начинаем гоночку!!!" +
+            var messageContent = (DateTime.Now.IsNightTime()  || !appSettingsService.GetSettings().PingOnEvents ? "" : "@everyone ") + "Начинаем гоночку!!!" +
                                  "\nСоревнуйтесь друг с другом и, главное, со мной, ведь тот, кто сможет обойти меня (и попасть в топ-10), получит социальный рейтинг" +
                                  $"\nРаспределение рейтинга - {string.Join(", ", RaceModel.Points)}" +
                                  "\nДля получения рейтинга обязательно нужно быть впереди меня" +
@@ -61,5 +64,6 @@ namespace AntiClownDiscordBotVersion2.Events.RaceEvent
         private readonly IGuildSettingsService guildSettingsService;
         private readonly IRaceService raceService;
         private readonly IEventSettingsService eventSettingsService;
+        private readonly IAppSettingsService appSettingsService;
     }
 }

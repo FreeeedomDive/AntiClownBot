@@ -1,5 +1,6 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.EventServices;
+using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
@@ -13,13 +14,15 @@ namespace AntiClownDiscordBotVersion2.Events.LotteryEvent
             IDiscordClientWrapper discordClientWrapper,
             IGuildSettingsService guildSettingsService,
             ILotteryService lotteryService,
-            IEventSettingsService eventSettingsService
+            IEventSettingsService eventSettingsService,
+            IAppSettingsService appSettingsService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
             this.guildSettingsService = guildSettingsService;
             this.lotteryService = lotteryService;
             this.eventSettingsService = eventSettingsService;
+            this.appSettingsService = appSettingsService;
         }
 
         public async Task ExecuteAsync()
@@ -33,7 +36,7 @@ namespace AntiClownDiscordBotVersion2.Events.LotteryEvent
         public async Task<DiscordMessage> TellBackStory()
         {
             var noted = await discordClientWrapper.Emotes.FindEmoteAsync("NOTED");
-            var text = (DateTime.Now.IsNightTime()
+            var text = (DateTime.Now.IsNightTime() || !appSettingsService.GetSettings().PingOnEvents
                            ? ""
                            : "@everyone ") +
                        $"Начинаем лотерею! Для участия нажмите на смайлик {noted} под сообщением или через команду !lottery\n" +
@@ -55,5 +58,6 @@ namespace AntiClownDiscordBotVersion2.Events.LotteryEvent
         private readonly IGuildSettingsService guildSettingsService;
         private readonly ILotteryService lotteryService;
         private readonly IEventSettingsService eventSettingsService;
+        private readonly IAppSettingsService appSettingsService;
     }
 }
