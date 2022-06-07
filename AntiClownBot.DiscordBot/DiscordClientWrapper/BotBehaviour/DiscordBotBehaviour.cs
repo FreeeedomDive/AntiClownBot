@@ -1,13 +1,13 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 using AntiClownDiscordBotVersion2.Commands;
-using AntiClownDiscordBotVersion2.Commands.SlashCommands;
 using AntiClownDiscordBotVersion2.EventServices;
 using AntiClownDiscordBotVersion2.Log;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.SlashCommands;
 using AntiClownDiscordBotVersion2.Statistics.Emotes;
 using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
