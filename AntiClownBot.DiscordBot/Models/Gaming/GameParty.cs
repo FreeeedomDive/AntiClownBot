@@ -187,11 +187,11 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
         [JsonIgnore] public Action<ulong> OnPartyRemove { get; init; }
         [JsonIgnore] public Action<double> OnStatsUpdate { get; init; }
 
-        private bool isOpened = true;
-        private DiscordMessage? message;
-        private DiscordRole? attachedRole;
+        [JsonIgnore] private bool isOpened = true;
+        [JsonIgnore] private DiscordMessage? message;
+        [JsonIgnore] private DiscordRole? attachedRole;
         
-        private readonly IDiscordClientWrapper discordClientWrapper;
-        private readonly IGuildSettingsService guildSettingsService;
+        [JsonIgnore] private readonly IDiscordClientWrapper discordClientWrapper;
+        [JsonIgnore] private readonly IGuildSettingsService guildSettingsService;
     }
 }

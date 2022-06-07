@@ -22,7 +22,7 @@ public class UtilityClient : IUtilityClient
     {
         var request = new RestRequest($"api/globalState/ping");
         var response = await restClient.ExecuteGetAsync(request);
-        return response.TryDeserialize<bool>();
+        return response.TryDeserialize<string>() == "OK";
     }
 
     private readonly RestClient restClient;
