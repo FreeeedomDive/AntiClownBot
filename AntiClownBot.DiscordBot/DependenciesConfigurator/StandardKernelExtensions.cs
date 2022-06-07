@@ -263,9 +263,6 @@ public static class StandardKernelExtensions
         
         var commands = ninjectKernel.GetAll<ICommand>();
         var commandsByName = commands.ToDictionary(command => command.Name);
-
-        var logger = ninjectKernel.Get<ILogger>();
-        logger.Info(string.Join("\n", commandsByName.Select(kv => $"{kv.Key} - {kv.Value}")));
         
         commandsService.UseCommands(commandsByName);
 

@@ -52,6 +52,8 @@ public class CommandsService : ICommandsService
         }
 
         logger.Info($"Загружено {commands.Count} команд");
+        logger.Info(string.Join("\n", commands.Select(kv => $"|{kv.Key}| - {kv.Value}")));
+        logger.Info($"{commands.ContainsKey(name)}");
         if (!TryGetCommand(name, out var command))
         {
             await discordClientWrapper.Messages.RespondAsync(e.Message, $"Нет команды с именем {name}");
