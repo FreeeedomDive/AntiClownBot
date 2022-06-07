@@ -41,6 +41,7 @@ namespace AntiClownDiscordBotVersion2.Events
             logger.Info("ЗАШЕЛ В ЕБАНЫЙ МЕТОД С ВАЙЛ ТРУ");
             while (true)
             {
+                logger.Info($"{Task.CurrentId}");
                 logger.Info("ЗАШЕЛ В ЕБАНЫЙ ВАЙЛ ТРУ В МЕТОДЕ ЭВЕНТОВ");
                 var eventDayTypeFromSettings = eventSettingsService.GetEventSettings().EventsType;
                 var eventDayType = Enum.TryParse<EventDayType>(eventDayTypeFromSettings, out var t) ? t : EventDayType.CommonDay;
