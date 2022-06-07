@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>AntiClownDiscordBotVersion2</RootNamespace>
+        <ApplicationIcon>antiPeepoClownDiscord.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
