@@ -88,7 +88,7 @@ public static class StandardKernelExtensions
         {
             Token = settings.DiscordToken,
             TokenType = TokenType.Bot,
-            MinimumLogLevel = LogLevel.Trace,
+            MinimumLogLevel = LogLevel.Debug,
             Intents = DiscordIntents.All
         });
         ninjectKernel.Bind<DiscordClient>().ToConstant(discordClient);
