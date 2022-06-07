@@ -24,9 +24,9 @@ namespace AntiClownDiscordBotVersion2.Commands.SlashCommands
         [SlashCommand("create", "Создать пати")]
         public async Task CreateParty(
             InteractionContext context,
-            [Option("Название", "Название вашей группы")] string name,
-            [Option("Роль", "Если нужно пингануть какую-то роль")] DiscordRole role = null,
-            [Option("Кол-во людей", "Ограничение на количество людей в группе. Дефолтно 5")] long capacity = 5)
+            [Option("Name", "Название вашей группы")] string name,
+            [Option("Role", "Если нужно пингануть какую-то роль")] DiscordRole? role = null,
+            [Option("Capacity", "Ограничение на количество людей в группе. Дефолтно 5")] long capacity = 5)
         {
             var guildSettings = guildSettingsService.GetGuildSettings();
             if (context.Channel.Id != guildSettings.PartyChannelId && context.Channel.Id != guildSettings.HiddenTestChannelId)
