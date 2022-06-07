@@ -413,12 +413,10 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         return Task.CompletedTask;
     }
 
-    private Task RegisterSlashCommands(DiscordClient client)
+    private void RegisterSlashCommands(DiscordClient client)
     {
         var slash = client.UseSlashCommands();
         slash.RegisterCommands<PartyCommandModule>();
-
-        return Task.CompletedTask;
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
