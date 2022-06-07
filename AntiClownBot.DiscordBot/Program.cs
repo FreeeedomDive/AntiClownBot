@@ -13,6 +13,7 @@ public class Program
     {
         var configurator = new DependenciesConfigurator.DependenciesConfigurator().BuildDependencies();
         Console.WriteLine("Configured all dependencies");
+        AddExceptionLogger(configurator);
         StartBackgroundApiPollScheduler(configurator);
         Console.WriteLine("Started API poll scheduler");
         StartBackgroundDailyEventScheduler(configurator);
@@ -21,6 +22,16 @@ public class Program
         Console.WriteLine("Started Event scheduler");
         Console.WriteLine("Start listening to discord events...");
         await StartDiscordAsync(configurator);
+    }
+
+    private static void AddExceptionLogger(StandardKernel configurator)
+    {
+        var logger = configurator.Get<ILogger>();
+        AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
+        {
+            var message = $"{eventArgs.Exception.Message}\n{eventArgs.Exception.StackTrace}";
+            logger.Error(message);
+        };
     }
 
     private static void StartBackgroundApiPollScheduler(StandardKernel configurator)
