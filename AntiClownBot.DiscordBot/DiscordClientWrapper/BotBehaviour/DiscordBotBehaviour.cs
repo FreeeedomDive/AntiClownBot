@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 using AntiClownDiscordBotVersion2.Commands;
+using AntiClownDiscordBotVersion2.Commands.SlashCommands;
 using AntiClownDiscordBotVersion2.EventServices;
 using AntiClownDiscordBotVersion2.Log;
 using AntiClownDiscordBotVersion2.Models.Inventory;
@@ -13,6 +14,7 @@ using AntiClownDiscordBotVersion2.Utils;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
+using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 
@@ -54,6 +56,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         discordClient.MessageReactionAdded += MessageReactionAdded;
         discordClient.MessageDeleted += MessageDeleted;
         discordClient.MessageReactionRemoved += MessageReactionRemoved;
+        RegisterSlashCommands(discordClient);
     }
 
     private async Task GuildEmojisUpdated(DiscordClient _, GuildEmojisUpdateEventArgs e)
@@ -406,6 +409,14 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private Task MessageDeleted(DiscordClient sender, MessageDeleteEventArgs e)
     {
         partyService.DeleteObserverIfExists(e.Message);
+
+        return Task.CompletedTask;
+    }
+
+    private Task RegisterSlashCommands(DiscordClient client)
+    {
+        var slash = client.UseSlashCommands();
+        slash.RegisterCommands<PartyCommandModule>();
 
         return Task.CompletedTask;
     }

@@ -2,6 +2,7 @@
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.Messages;
 
@@ -37,6 +38,19 @@ public class MessagesClient : IMessagesClient
         var response = await message.RespondAsync(builder);
 
         return response;
+    }
+
+    public async Task<DiscordMessage> RespondAsync(InteractionContext context, string content, InteractionResponseType interactionType = InteractionResponseType.ChannelMessageWithSource)
+    {
+        var builder = new DiscordInteractionResponseBuilder().WithContent(content);
+        await context.CreateResponseAsync(interactionType, builder);
+        return await context.GetOriginalResponseAsync();
+    }
+
+    public async Task<DiscordMessage> RespondAsync(InteractionContext context, DiscordEmbed embed)
+    {
+        await context.CreateResponseAsync(embed);
+        return await context.GetOriginalResponseAsync();
     }
 
     public async Task<DiscordMessage> ModifyAsync(DiscordMessage message, string content)

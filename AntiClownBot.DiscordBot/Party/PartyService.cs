@@ -3,6 +3,7 @@ using AntiClownDiscordBotVersion2.Models.Gaming;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
+using DSharpPlus.SlashCommands;
 using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Party;
@@ -58,6 +59,18 @@ public class PartyService : IPartyService
 
         var embed = await GetPartiesEmbed();
         var message = await discordClientWrapper.Messages.RespondAsync(messageToRespond, embed);
+        partyObserver = message;
+    }
+
+    public async Task AddPartyObserverMessage(InteractionContext context)
+    {
+        if (partyObserver != null)
+        {
+            await partyObserver.DeleteAsync();
+        }
+
+        var embed = await GetPartiesEmbed();
+        var message = await discordClientWrapper.Messages.RespondAsync(context, embed);
         partyObserver = message;
     }
 
