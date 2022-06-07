@@ -8,6 +8,7 @@ public class DependenciesConfigurator
     {
         var ninjectKernel = new StandardKernel();
         ninjectKernel
+            .WithDiKernel()
             // configure settings
             .WithApplicationSettings()
             .WithEventsSettings()
@@ -43,7 +44,6 @@ public class DependenciesConfigurator
             .WithCommandsService()
             .WithCommands()
             .ConfigureCommands()
-            .WithSlashCommands()
             // final touches
             .WithApiPollerScheduler()
             .WithDiscordBotBehaviour();

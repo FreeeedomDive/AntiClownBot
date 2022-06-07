@@ -30,6 +30,13 @@ namespace AntiClownDiscordBotVersion2.DependenciesConfigurator;
 
 public static class StandardKernelExtensions
 {
+    public static StandardKernel WithDiKernel(this StandardKernel ninjectKernel)
+    {
+        ninjectKernel.Bind<IServiceProvider>().ToConstant(ninjectKernel);
+
+        return ninjectKernel;
+    }
+
     public static StandardKernel WithApplicationSettings(this StandardKernel ninjectKernel)
     {
         ninjectKernel.Bind<IAppSettingsService>().To<AppSettingsService>();

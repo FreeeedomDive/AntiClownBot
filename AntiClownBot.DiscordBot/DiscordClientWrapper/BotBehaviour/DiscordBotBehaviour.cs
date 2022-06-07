@@ -21,6 +21,7 @@ namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 public class DiscordBotBehaviour : IDiscordBotBehaviour
 {
     public DiscordBotBehaviour(
+        IServiceProvider serviceProvider,
         DiscordClient discordClient,
         IDiscordClientWrapper discordClientWrapper,
         IUserBalanceService userBalanceService,
@@ -37,6 +38,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         ILogger logger
     )
     {
+        this.serviceProvider = serviceProvider;
         this.discordClient = discordClient;
         this.discordClientWrapper = discordClientWrapper;
         this.userBalanceService = userBalanceService;
@@ -421,7 +423,10 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     {
         logger.Info("Register slash commands");
         var guildSettings = guildSettingsService.GetGuildSettings();
-        var slash = client.UseSlashCommands();
+        var slash = client.UseSlashCommands(new SlashCommandsConfiguration
+        {
+            Services = serviceProvider
+        });
         slash.RegisterCommands<PartyCommandModule>(guildSettings.GuildId);
     }
 
@@ -508,6 +513,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         return result.Contains("anime");
     }
 
+    private readonly IServiceProvider serviceProvider;
     private readonly DiscordClient discordClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IUserBalanceService userBalanceService;
