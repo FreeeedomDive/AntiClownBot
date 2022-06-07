@@ -4,6 +4,7 @@ using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
+using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Models.Gaming
 {
@@ -182,9 +183,9 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
         public ulong MessageId { get; set; }
         public DateTime CreationDate { get; init; }
 
-        public Func<Task> OnPartyObserverUpdate { get; init; }
-        public Action<ulong> OnPartyRemove { get; init; }
-        public Action<double> OnStatsUpdate { get; init; }
+        [JsonIgnore] public Func<Task> OnPartyObserverUpdate { get; init; }
+        [JsonIgnore] public Action<ulong> OnPartyRemove { get; init; }
+        [JsonIgnore] public Action<double> OnStatsUpdate { get; init; }
 
         private bool isOpened = true;
         private DiscordMessage? message;

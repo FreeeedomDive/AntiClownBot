@@ -25,7 +25,7 @@ public class DailyStatisticsService : IDailyStatisticsService
 
     public void Save()
     {
-        var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+        var json = JsonConvert.SerializeObject(DailyStatistics, Formatting.Indented);
         File.WriteAllText(FileName, json);
     }
 

@@ -143,7 +143,7 @@ public class PartyService : IPartyService
 
     public void Save()
     {
-        var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+        var json = JsonConvert.SerializeObject(PartiesInfo, Formatting.Indented);
         File.WriteAllText(FileName, json);
     }
 

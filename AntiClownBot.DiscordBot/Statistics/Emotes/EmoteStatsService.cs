@@ -31,7 +31,7 @@ public class EmoteStatsService : IEmoteStatsService
 
     private void Save()
     {
-        var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+        var json = JsonConvert.SerializeObject(emoteStatistics, Formatting.Indented);
         File.WriteAllText(FileName, json);
     }
 
