@@ -231,7 +231,8 @@ public static class StandardKernelExtensions
         var commandTypes = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes())
             .Where(p => typeof(ICommand).IsAssignableFrom(p))
-            .Where(p => p != typeof(ICommand));
+            .Where(p => p != typeof(ICommand))
+            .ToList();
 
         foreach (var commandType in commandTypes)
         {
@@ -247,7 +248,8 @@ public static class StandardKernelExtensions
         var commandsService = new CommandsService(
             ninjectKernel.Get<IDiscordClientWrapper>(),
             ninjectKernel.Get<IAppSettingsService>(),
-            ninjectKernel.Get<IGuildSettingsService>()
+            ninjectKernel.Get<IGuildSettingsService>(),
+            ninjectKernel.Get<ILogger>()
         );
 
         ninjectKernel.Bind<ICommandsService>().ToConstant(commandsService);

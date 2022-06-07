@@ -1,5 +1,6 @@
 ﻿using AntiClownDiscordBotVersion2.ApiPoll;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
 using Ninject;
 
@@ -41,6 +42,8 @@ public class Program
 
     private static async Task StartDiscordAsync(StandardKernel configurator)
     {
+        var discordBehaviourConfigurator = configurator.Get<IDiscordBotBehaviour>();
+        discordBehaviourConfigurator.Configure();
         var discordClient = configurator.Get<IDiscordClientWrapper>();
         await discordClient.StartDiscord();
     }
