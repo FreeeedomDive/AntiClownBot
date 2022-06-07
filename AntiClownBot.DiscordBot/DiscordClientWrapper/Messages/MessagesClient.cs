@@ -82,7 +82,7 @@ public class MessagesClient : IMessagesClient
 
     public async Task<DiscordMessage> ModifyAsync(InteractionContext context, string? content)
     {
-        return await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent(content ?? $"{await emotesClient.FindEmoteAsync("white_check_mark")}"));
+        return await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent(content ?? $" {await emotesClient.FindEmoteAsync("white_check_mark")} "));
     }
 
     public async Task<DiscordMessage> SendAsync(ulong channelId, string content)
