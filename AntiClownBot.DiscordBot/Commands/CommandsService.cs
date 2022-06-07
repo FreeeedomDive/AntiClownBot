@@ -28,14 +28,16 @@ public class CommandsService : ICommandsService
 
     public bool TryGetCommand(string name, out ICommand command)
     {
-        if (commands.ContainsKey(name))
+        /*if (commands.ContainsKey(name))
         {
             command = commands[name];
             return true;
         }
 
         command = null;
-        return false;
+        return false;*/
+        command = commands.Values.FirstOrDefault(c => c.Name == name);
+        return command != null;
     }
 
     public async Task ExecuteCommand(string name, MessageCreateEventArgs e)
