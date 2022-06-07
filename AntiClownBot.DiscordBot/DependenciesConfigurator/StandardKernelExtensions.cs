@@ -112,7 +112,7 @@ public static class StandardKernelExtensions
 
     public static StandardKernel WithDailyStatisticService(this StandardKernel ninjectKernel)
     {
-        ninjectKernel.Bind<IDailyStatisticsService>().To<DailyStatisticsService>();
+        ninjectKernel.Bind<IDailyStatisticsService>().To<DailyStatisticsService>().InSingletonScope();
 
         return ninjectKernel;
     }
@@ -133,28 +133,28 @@ public static class StandardKernelExtensions
 
     public static StandardKernel WithPartyService(this StandardKernel ninjectKernel)
     {
-        ninjectKernel.Bind<IPartyService>().To<PartyService>();
+        ninjectKernel.Bind<IPartyService>().To<PartyService>().InSingletonScope();
 
         return ninjectKernel;
     }
 
     public static StandardKernel WithRaceService(this StandardKernel ninjectKernel)
     {
-        ninjectKernel.Bind<IRaceService>().To<RaceService>();
+        ninjectKernel.Bind<IRaceService>().To<RaceService>().InSingletonScope();
 
         return ninjectKernel;
     }
 
     public static StandardKernel WithLotteryService(this StandardKernel ninjectKernel)
     {
-        ninjectKernel.Bind<ILotteryService>().To<LotteryService>();
+        ninjectKernel.Bind<ILotteryService>().To<LotteryService>().InSingletonScope();
 
         return ninjectKernel;
     }
 
     public static StandardKernel WithGuessNumberService(this StandardKernel ninjectKernel)
     {
-        ninjectKernel.Bind<IGuessNumberService>().To<GuessNumberService>();
+        ninjectKernel.Bind<IGuessNumberService>().To<GuessNumberService>().InSingletonScope();
 
         return ninjectKernel;
     }
@@ -168,14 +168,14 @@ public static class StandardKernelExtensions
 
     public static StandardKernel WithInventoryService(this StandardKernel ninjectKernel)
     {
-        ninjectKernel.Bind<IUserInventoryService>().To<UserInventoryService>();
+        ninjectKernel.Bind<IUserInventoryService>().To<UserInventoryService>().InSingletonScope();
 
         return ninjectKernel;
     }
 
     public static StandardKernel WithShopService(this StandardKernel ninjectKernel)
     {
-        ninjectKernel.Bind<IShopService>().To<ShopService>();
+        ninjectKernel.Bind<IShopService>().To<ShopService>().InSingletonScope();
 
         return ninjectKernel;
     }
