@@ -1,7 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.ApiPoll;
 using AntiClownDiscordBotVersion2.Commands;
-using AntiClownDiscordBotVersion2.Commands.OtherCommands;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
@@ -248,8 +247,7 @@ public static class StandardKernelExtensions
         var commandsService = new CommandsService(
             ninjectKernel.Get<IDiscordClientWrapper>(),
             ninjectKernel.Get<IAppSettingsService>(),
-            ninjectKernel.Get<IGuildSettingsService>(),
-            ninjectKernel.Get<ILogger>()
+            ninjectKernel.Get<IGuildSettingsService>()
         );
 
         ninjectKernel.Bind<ICommandsService>().ToConstant(commandsService);
