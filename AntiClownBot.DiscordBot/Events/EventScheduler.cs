@@ -32,6 +32,7 @@ namespace AntiClownDiscordBotVersion2.Events
 
         public void Start()
         {
+            logger.Info("ЗАПУСТИЛ ЕБАНЫЙ ПОТОК ШЕДУЛЕРА ЭВЕНТОВ");
             Task.Run(HandleNextEvent);
         }
 
@@ -39,6 +40,7 @@ namespace AntiClownDiscordBotVersion2.Events
         {
             while (true)
             {
+                logger.Info("ЗАШЕЛ В ЕБАНЫЙ ВАЙЛ ТРУ В МЕТОДЕ ЭВЕНТОВ");
                 var eventDayTypeFromSettings = eventSettingsService.GetEventSettings().EventsType;
                 var eventDayType = Enum.TryParse<EventDayType>(eventDayTypeFromSettings, out var t) ? t : EventDayType.CommonDay;
                 var eventConfiguration = eventMappings[eventDayType];

@@ -2,6 +2,7 @@
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
+using AntiClownDiscordBotVersion2.Log;
 using Ninject;
 
 namespace AntiClownDiscordBotVersion2;
@@ -36,6 +37,8 @@ public class Program
 
     private static void StartBackgroundEventScheduler(StandardKernel configurator)
     {
+        var logger = configurator.Get<ILogger>();
+        logger.Info("ЗАПУСТИЛ ЕБАНЫЙ ШЕДУЛЕР ЭВЕНТОВ");
         var eventScheduler = configurator.Get<EventScheduler>();
         eventScheduler.Start();
     }
