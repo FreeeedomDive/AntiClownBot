@@ -231,13 +231,16 @@ public static class StandardKernelExtensions
         var commandTypes = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes())
             .Where(p => typeof(ICommand).IsAssignableFrom(p))
-            .Where(p => p != typeof(ICommand));
+            .Where(p => p != typeof(ICommand))
+            .ToList();
 
         foreach (var commandType in commandTypes)
         {
             ninjectKernel.Bind(commandType).ToSelf();
             ninjectKernel.Bind<ICommand>().To(commandType);
         }
+
+        Console.WriteLine(string.Join("\n", commandTypes));
 
         return ninjectKernel;
     }
