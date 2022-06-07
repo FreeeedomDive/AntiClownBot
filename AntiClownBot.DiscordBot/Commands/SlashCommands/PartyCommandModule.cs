@@ -26,7 +26,7 @@ namespace AntiClownDiscordBotVersion2.Commands.SlashCommands
             InteractionContext context,
             [Option("Название", "Название вашей группы")] string name,
             [Option("Роль", "Если нужно пингануть какую-то роль")] DiscordRole role = null,
-            [Option("Кол-во людей", "Ограничение на количество людей в группе. Дефолтно 5")] int capacity = 5)
+            [Option("Кол-во людей", "Ограничение на количество людей в группе. Дефолтно 5")] long capacity = 5)
         {
             var guildSettings = guildSettingsService.GetGuildSettings();
             if (context.Channel.Id != guildSettings.PartyChannelId && context.Channel.Id != guildSettings.HiddenTestChannelId)
@@ -49,7 +49,7 @@ namespace AntiClownDiscordBotVersion2.Commands.SlashCommands
                 return;
             }
 
-            if (capacity < 1 || capacity > 20)
+            if (capacity is < 1 or > 20)
             {
                 await discordClientWrapper.Messages.RespondAsync(
                     context,
@@ -58,7 +58,7 @@ namespace AntiClownDiscordBotVersion2.Commands.SlashCommands
                 return;
             }
 
-            await partyService.CreateNewParty(context.Member.Id, name, capacity, role?.Id);
+            await partyService.CreateNewParty(context.Member.Id, name, (int)capacity, role?.Id);
         }
 
         [SlashCommand("list", "Текущие пати")]
