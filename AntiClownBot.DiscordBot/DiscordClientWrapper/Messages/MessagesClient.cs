@@ -85,9 +85,9 @@ public class MessagesClient : IMessagesClient
         return await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent(content ?? $" {await emotesClient.FindEmoteAsync("white_check_mark")} "));
     }
 
-    public async Task<DiscordMessage> ModifyEmbedAsync(InteractionContext context, DiscordEmbed embed, IEnumerable<DiscordComponent>? components = null)
+    public async Task<DiscordMessage> ModifyEmbedAsync(InteractionContext context, DiscordWebhookBuilder builder)
     {
-        return await context.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed).AddComponents(components));
+        return await context.EditResponseAsync(builder);
     }
 
     public async Task<DiscordMessage> SendAsync(ulong channelId, string content)
