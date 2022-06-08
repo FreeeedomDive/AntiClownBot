@@ -326,8 +326,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task ComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
     {
-        var originalResponse = await e.Interaction.GetOriginalResponseAsync();
-        var interactionAuthor = originalResponse.Interaction?.User;
+        var interactionAuthor = e.Message.Interaction?.User;
         var responseBuilder = new DiscordInteractionResponseBuilder();
         if (interactionAuthor == null || e.User.Id != interactionAuthor.Id)
         {
