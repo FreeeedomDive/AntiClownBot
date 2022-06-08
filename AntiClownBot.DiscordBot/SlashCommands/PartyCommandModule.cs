@@ -1,6 +1,7 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.SlashCommands.ChoiceProviders;
 using AntiClownDiscordBotVersion2.Utils;
 using DSharpPlus;
 using DSharpPlus.Entities;
@@ -26,6 +27,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands
         public async Task CreateParty(
             InteractionContext context,
             [Option("Name", "Название вашей группы")] string name,
+            [ChoiceProvider(typeof(JoinableRoleChoiceProvider))]
             [Option("Role", "Если нужно пингануть какую-то роль")] DiscordRole? role = null,
             [Option("Capacity", "Ограничение на количество людей в группе. Дефолтно 5")] long capacity = 5)
         {
