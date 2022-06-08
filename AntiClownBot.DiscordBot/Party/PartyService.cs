@@ -1,5 +1,4 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
-using AntiClownDiscordBotVersion2.Log;
 using AntiClownDiscordBotVersion2.Models.Gaming;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
@@ -13,13 +12,11 @@ public class PartyService : IPartyService
 {
     public PartyService(
         IDiscordClientWrapper discordClientWrapper,
-        IGuildSettingsService guildSettingsService,
-        ILogger logger
+        IGuildSettingsService guildSettingsService
     )
     {
         this.discordClientWrapper = discordClientWrapper;
         this.guildSettingsService = guildSettingsService;
-        this.logger = logger;
         PartiesInfo = CreateOrRestore();
     }
 
@@ -149,7 +146,6 @@ public class PartyService : IPartyService
     public void Save()
     {
         var json = JsonConvert.SerializeObject(PartiesInfo, Formatting.Indented);
-        logger.Info(json);
         File.WriteAllText(FileName, json);
     }
 
@@ -167,5 +163,4 @@ public class PartyService : IPartyService
     private DiscordMessage? partyObserver;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILogger logger;
 }

@@ -46,7 +46,7 @@ public class UsersClient : IUsersClient
         return response.TryDeserialize<ChangeUserBalanceResponseDto>();
     }
 
-    public async Task<BulkChangeUserBalanceResponseDto> BulkChangeUserBalanceAsync(List<ulong> users, int ratingDiff, string reason)
+    public async Task BulkChangeUserBalanceAsync(List<ulong> users, int ratingDiff, string reason)
     {
         var request = new RestRequest($"api/users/bulkChangeBalance");
         request.AddJsonBody(new BulkChangeUserBalanceRequestDto
@@ -56,7 +56,7 @@ public class UsersClient : IUsersClient
             Reason = reason
         });
         var response = await restClient.ExecutePostAsync(request);
-        return response.TryDeserialize<BulkChangeUserBalanceResponseDto>();
+        response.ThrowIfNotSuccessful();
     }
 
     public async Task<AllUsersResponseDto> GetAllUsersAsync()

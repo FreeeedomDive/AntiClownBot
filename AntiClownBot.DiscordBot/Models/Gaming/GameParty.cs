@@ -92,7 +92,7 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
 
         private async Task<DiscordEmbed> CreateMessageEmbed()
         {
-            var role = await GetGameRoleById();
+            var role = await AttachedRole();
             var embedBuilder = new DiscordEmbedBuilder()
                 .WithTitle($"СБОР ПАТИ {Description}")
                 .WithColor(role?.Color ?? DiscordColor.White);

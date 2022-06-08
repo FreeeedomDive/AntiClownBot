@@ -331,24 +331,26 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         var responseBuilder = new DiscordInteractionResponseBuilder();
         if (interactionAuthor == null || e.User.Id != interactionAuthor.Id)
         {
+            var member = await discordClientWrapper.Members.GetAsync(e.User.Id);
             await discordClientWrapper.Messages.RespondAsync(e.Interaction,
                 InteractionResponseType.ChannelMessageWithSource,
-                responseBuilder.WithContent("НЕ НАДО ЮЗАТЬ ЧУЖИЕ КНОПКИ >:("));
+                responseBuilder.WithContent($"{member.Mention} " +
+                                            $"НЕ НАДО ЮЗАТЬ ЧУЖИЕ КНОПКИ " +
+                                            $"{discordClientWrapper.Emotes.FindEmoteAsync("Madge")}"));
         }
         await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate, null);
         if (e.Id.StartsWith("shop_"))
         {
-            await HandleShopInteraction(sender, e);
+            await HandleShopInteraction(e);
             return;
         }
         if (e.Id.StartsWith("inventory_"))
         {
-            await HandleInventoryInteraction(sender, e);
+            await HandleInventoryInteraction(e);
         }
-        return;
     }
 
-    private async Task HandleShopInteraction(DiscordClient sender, ComponentInteractionCreateEventArgs e)
+    private async Task HandleShopInteraction(ComponentInteractionCreateEventArgs e)
     {
         if (!shopService.TryRead(e.User.Id, out var shop))
             return;
@@ -377,15 +379,13 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             case "shop_pepeSearching":
                 shop.CurrentShopTool = shop.CurrentShopTool == ShopTool.Revealing ? ShopTool.Buying : ShopTool.Revealing;
                 break;
-            default:
-                break;
         }
 
         await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction,
             await builder.AddEmbed(await shop.GetNewShopEmbed()).SetShopButtons(discordClientWrapper));
     }
 
-    private async Task HandleInventoryInteraction(DiscordClient sender, ComponentInteractionCreateEventArgs e)
+    private async Task HandleInventoryInteraction(ComponentInteractionCreateEventArgs e)
     {
         if (!userInventoryService.TryRead(e.User.Id, out var inventory))
             return;
@@ -419,8 +419,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 break;
             case "inventory_x":
                 await inventory.EnableSelling();
-                break;
-            default:
                 break;
         }
 
