@@ -434,6 +434,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             Services = serviceProvider
         });
         slash.RegisterCommands<PartyCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<InventoryCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
