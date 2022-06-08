@@ -33,8 +33,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands
             var member = await discordClientWrapper.Members.GetAsync(context.Member.Id);
             var inventory = await new UserInventory(discordClientWrapper, apiClient, randomizer).Create(context.Member.Id, member);
 
-            var loadingEmbed = await inventory.CreateLoadingInventoryEmbed();
-            var message = await discordClientWrapper.Messages.RespondAsync(context, loadingEmbed);
+            var message = await discordClientWrapper.Messages.RespondAsync(context, null, InteractionResponseType.DeferredChannelMessageWithSource);
             inventory.BindToMessage(message);
             userInventoryService.Create(message.Id, inventory);
 
@@ -100,7 +99,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands
                 UserId = context.Member.Id,
                 Member = member
             };
-            var message = await discordClientWrapper.Messages.RespondAsync(context, await shop.CreateLoadingShopEmbed());
+            var message = await discordClientWrapper.Messages.RespondAsync(context, null, InteractionResponseType.DeferredChannelMessageWithSource);
             shop.BindToMessage(message);
             shopService.Create(message.Id, shop);
 
