@@ -36,7 +36,7 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             currentTrack = SelectTrack();
             FillSectors();
 
-            var driversContent = await File.ReadAllTextAsync("StatisticsFiles/drivers.json");
+            var driversContent = await File.ReadAllTextAsync("../Files/StatisticsFiles/drivers.json");
             var driversModels = JsonConvert.DeserializeObject<IEnumerable<DriverModel>>(driversContent);
             if (driversModels is null)
             {
@@ -85,7 +85,7 @@ namespace AntiClownDiscordBotVersion2.Models.Race
 
         private TrackModel SelectTrack()
         {
-            var tracksContent = File.ReadAllText("StatisticsFiles/tracks.json");
+            var tracksContent = File.ReadAllText("../Files/StatisticsFiles/tracks.json");
             var tracks = JsonConvert.DeserializeObject<IEnumerable<TrackModel>>(tracksContent);
             if (tracks is null)
             {
@@ -318,7 +318,7 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             await discordClientWrapper.Messages.ModifyAsync(mainRaceMessage, sb.ToString());
 
             var models = drivers.Select(d => d.DriverModel).ToList();
-            await File.WriteAllTextAsync("StatisticsFiles/drivers.json", JsonConvert.SerializeObject(models, Formatting.Indented));
+            await File.WriteAllTextAsync("../Files/StatisticsFiles/drivers.json", JsonConvert.SerializeObject(models, Formatting.Indented));
 
             // TODO вынести в эвент 
             OnRaceEnd();

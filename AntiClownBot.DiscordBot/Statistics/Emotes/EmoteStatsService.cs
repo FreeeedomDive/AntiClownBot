@@ -46,7 +46,7 @@ public class EmoteStatsService : IEmoteStatsService
         return dict != null;
     }
 
-    private const string FileName = "StatisticsFiles/emotes.json";
+    private const string FileName = "../Files/StatisticsFiles/emotes.json";
 
     private readonly Dictionary<string, int> emoteStatistics;
     private readonly IDiscordClientWrapper discordClientWrapper;

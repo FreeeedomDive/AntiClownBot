@@ -43,5 +43,5 @@ public class DailyStatisticsService : IDailyStatisticsService
     public DateTime TodayDate { get; set; }
     public DailyStatistics DailyStatistics { get; set; }
 
-    private const string FileName = "StatisticsFiles/daily.json";
+    private const string FileName = "../Files/StatisticsFiles/daily.json";
 }

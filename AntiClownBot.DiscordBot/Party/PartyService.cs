@@ -159,7 +159,7 @@ public class PartyService : IPartyService
 
     public PartiesInfo PartiesInfo { get; }
 
-    private const string FileName = "StatisticsFiles/parties.json";
+    private const string FileName = "../Files/StatisticsFiles/parties.json";
     private DiscordMessage? partyObserver;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IGuildSettingsService guildSettingsService;
