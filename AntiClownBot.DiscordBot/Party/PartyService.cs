@@ -86,12 +86,12 @@ public class PartyService : IPartyService
 
     public async Task UpdatePartyObservers()
     {
-        if (partyObserver == null) return;
-        var embed = await GetPartiesEmbed();
-        await discordClientWrapper.Messages.ModifyAsync(partyObserver, embed);
-        logger.Info("Saving parties");
+        if (partyObserver != null)
+        {
+            var embed = await GetPartiesEmbed();
+            await discordClientWrapper.Messages.ModifyAsync(partyObserver, embed);
+        }
         Save();
-        logger.Info("Parties saved to file");
     }
 
     private static PartiesInfo CreateOrRestore()
@@ -135,14 +135,10 @@ public class PartyService : IPartyService
         };
 
         var message = await newParty.CreateMessage();
-        logger.Info("Создаю сообщение");
         await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, "YEP");
         await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, "MEGALUL");
-        logger.Info("Добавил эмоты");
         PartiesInfo.OpenParties.Add(message.Id, newParty);
-        logger.Info("Добавил пати в дикт");
         await UpdatePartyObservers();
-        logger.Info("Обновил список пати и сохранил в файл");
     }
 
     public void RemoveOutdatedParty(ulong partyId)
