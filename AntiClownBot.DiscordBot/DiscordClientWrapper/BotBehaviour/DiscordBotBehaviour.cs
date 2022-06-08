@@ -62,6 +62,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         discordClient.MessageReactionAdded += MessageReactionAdded;
         discordClient.MessageDeleted += MessageDeleted;
         discordClient.MessageReactionRemoved += MessageReactionRemoved;
+        discordClient.ComponentInteractionCreated += ComponentInteractionCreated;
         RegisterSlashCommands(discordClient);
     }
 
@@ -410,6 +411,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         logger.Info($"EMOTE REMOVED - {username}: {emojiName}"); 
         emoteStatsService.RemoveStats(emojiName);
+    }
+
+    private async Task ComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
+    {
+        return;
     }
 
     private Task MessageDeleted(DiscordClient sender, MessageDeleteEventArgs e)

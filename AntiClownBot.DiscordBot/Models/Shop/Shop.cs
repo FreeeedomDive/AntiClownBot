@@ -31,6 +31,13 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
             await discordClientWrapper.Messages.ModifyAsync(Message, embed);
         }
 
+        public async Task<DiscordEmbed> GetNewShopEmbed()
+        {
+            var newShop = await apiClient.Shop.GetAsync(UserId);
+
+            return await CreateNewShopEmbed(newShop);
+        }
+
         public async Task<DiscordEmbed> CreateLoadingShopEmbed()
         {
             var loadingEmotes = new List<string>()
