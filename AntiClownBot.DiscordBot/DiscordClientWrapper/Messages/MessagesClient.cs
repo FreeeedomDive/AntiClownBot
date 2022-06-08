@@ -95,6 +95,11 @@ public class MessagesClient : IMessagesClient
         await interaction.CreateResponseAsync(interactionResponseType, builder);
     }
 
+    public async Task EditOriginalResponseAsync(DiscordInteraction interaction, DiscordWebhookBuilder builder)
+    {
+        await interaction.EditOriginalResponseAsync(builder);
+    }
+
     public async Task<DiscordMessage> SendAsync(ulong channelId, string content)
     {
         var message = await discordClient.Guilds[277096298761551872]

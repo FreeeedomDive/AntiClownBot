@@ -335,21 +335,22 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate, null);
         if (e.Id.StartsWith("shop_"))
         {
-            await HandleShopInteraction(sender, e, responseBuilder);
+            await HandleShopInteraction(sender, e);
             return;
         }
         if (e.Id.StartsWith("inventory_"))
         {
-            await HandleInventoryInteraction(sender, e, responseBuilder);
+            await HandleInventoryInteraction(sender, e);
         }
         return;
     }
 
-    private async Task HandleShopInteraction(DiscordClient sender, ComponentInteractionCreateEventArgs e, DiscordInteractionResponseBuilder builder)
+    private async Task HandleShopInteraction(DiscordClient sender, ComponentInteractionCreateEventArgs e)
     {
         if (!shopService.TryRead(e.User.Id, out var shop))
             return;
 
+        var builder = new DiscordWebhookBuilder();
         switch (e.Id)
         {
             case "shop_one":
@@ -377,14 +378,15 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 break;
         }
 
-        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.UpdateMessage, builder.AddEmbed(await shop.GetNewShopEmbed()));
+        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder.AddEmbed(await shop.GetNewShopEmbed()));
     }
 
-    private async Task HandleInventoryInteraction(DiscordClient sender, ComponentInteractionCreateEventArgs e, DiscordInteractionResponseBuilder builder)
+    private async Task HandleInventoryInteraction(DiscordClient sender, ComponentInteractionCreateEventArgs e)
     {
         if (!userInventoryService.TryRead(e.User.Id, out var inventory))
             return;
 
+        var builder = new DiscordWebhookBuilder();
         switch (e.Id)
         {
             case "inventory_one":
@@ -418,7 +420,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 break;
         }
 
-        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.UpdateMessage, builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()));
+        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()));
     }
 
     private Task MessageDeleted(DiscordClient sender, MessageDeleteEventArgs e)

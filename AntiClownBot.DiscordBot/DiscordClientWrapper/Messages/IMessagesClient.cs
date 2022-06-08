@@ -12,6 +12,7 @@ public interface IMessagesClient
     Task<DiscordMessage> RespondAsync(InteractionContext context, string? content, InteractionResponseType interactionType = InteractionResponseType.ChannelMessageWithSource);
     Task<DiscordMessage> RespondAsync(InteractionContext context, DiscordEmbed embed);
     Task RespondAsync(DiscordInteraction interaction, InteractionResponseType interactionResponseType, DiscordInteractionResponseBuilder? builder);
+    Task EditOriginalResponseAsync(DiscordInteraction interaction, DiscordWebhookBuilder builder);
     Task<DiscordMessage> ModifyAsync(DiscordMessage message, string content);
     Task<DiscordMessage> ModifyAsync(DiscordMessage message, DiscordEmbed embed);
     Task<DiscordMessage> ModifyAsync(DiscordMessage message, DiscordMessageBuilder builder);
