@@ -336,7 +336,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 InteractionResponseType.ChannelMessageWithSource,
                 responseBuilder.WithContent($"{member.Mention} " +
                                             $"НЕ НАДО ЮЗАТЬ ЧУЖИЕ КНОПКИ " +
-                                            $"{discordClientWrapper.Emotes.FindEmoteAsync("Madge")}"));
+                                            $"{await discordClientWrapper.Emotes.FindEmoteAsync("Madge")}"));
         }
         await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate, null);
         if (e.Id.StartsWith("shop_"))
