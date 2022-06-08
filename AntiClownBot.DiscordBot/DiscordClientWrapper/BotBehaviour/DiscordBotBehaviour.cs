@@ -11,6 +11,7 @@ using AntiClownDiscordBotVersion2.SlashCommands;
 using AntiClownDiscordBotVersion2.Statistics.Emotes;
 using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
+using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
@@ -330,7 +331,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         var responseBuilder = new DiscordInteractionResponseBuilder();
         if (interactionAuthor == null || e.User.Id != interactionAuthor.Id)
         {
-            await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.ChannelMessageWithSource, responseBuilder.WithContent("НЕ НАДО ЮЗАТЬ ЧУЖИЕ КНОПКИ >:("));
+            await discordClientWrapper.Messages.RespondAsync(e.Interaction,
+                InteractionResponseType.ChannelMessageWithSource,
+                responseBuilder.WithContent("НЕ НАДО ЮЗАТЬ ЧУЖИЕ КНОПКИ >:("));
         }
         await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate, null);
         if (e.Id.StartsWith("shop_"))
@@ -378,7 +381,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 break;
         }
 
-        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder.AddEmbed(await shop.GetNewShopEmbed()));
+        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction,
+            await builder.AddEmbed(await shop.GetNewShopEmbed()).SetShopButtons(discordClientWrapper));
     }
 
     private async Task HandleInventoryInteraction(DiscordClient sender, ComponentInteractionCreateEventArgs e)
@@ -420,7 +424,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 break;
         }
 
-        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()));
+        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction,
+            await builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()).SetInventoryButtons(discordClientWrapper));
     }
 
     private Task MessageDeleted(DiscordClient sender, MessageDeleteEventArgs e)
