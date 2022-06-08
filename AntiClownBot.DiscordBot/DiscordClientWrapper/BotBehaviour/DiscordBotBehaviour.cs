@@ -341,7 +341,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
         if (e.Id.StartsWith("inventory_"))
         {
-
+            await HandleInventoryInteraction(sender, e, responseBuilder);
         }
         return;
     }
@@ -378,7 +378,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 break;
         }
 
-        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate, builder.AddEmbed(await shop.GetNewShopEmbed()));
+        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.UpdateMessage, builder.AddEmbed(await shop.GetNewShopEmbed()));
     }
 
     private async Task HandleInventoryInteraction(DiscordClient sender, ComponentInteractionCreateEventArgs e, DiscordInteractionResponseBuilder builder)
@@ -419,7 +419,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 break;
         }
 
-        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate, builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()));
+        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.UpdateMessage, builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()));
     }
 
     private Task MessageDeleted(DiscordClient sender, MessageDeleteEventArgs e)
