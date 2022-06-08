@@ -36,11 +36,6 @@ namespace AntiClownDiscordBotVersion2.Models.Inventory
             return this;
         }
 
-        public void BindToMessage(DiscordMessage message)
-        {
-            Message = message;
-        }
-
         private void UpdateItems(IEnumerable<BaseItem> items)
         {
             const int itemsPerPage = 5;
@@ -94,89 +89,69 @@ namespace AntiClownDiscordBotVersion2.Models.Inventory
             {
                 CurrentPage = Pages.Count - Math.Abs(CurrentPage);
             }
-
-            await discordClientWrapper.Messages.ModifyAsync(Message, UpdateEmbedForCurrentPage());
         }
 
         public async Task SwitchRightPage()
         {
             CurrentPage = (CurrentPage + 1) % Pages.Count;
-            await discordClientWrapper.Messages.ModifyAsync(Message, UpdateEmbedForCurrentPage());
         }
 
         public async Task EnableChangingStatus()
         {
             CurrentInventoryTool = InventoryTool.ChangeActiveStatus;
-            await discordClientWrapper.Messages.ModifyAsync(Message, UpdateEmbedForCurrentPage());
         }
 
         public async Task EnableSelling()
         {
             CurrentInventoryTool = InventoryTool.Sell;
-            await discordClientWrapper.Messages.ModifyAsync(Message, UpdateEmbedForCurrentPage());
         }
 
-        public async Task HandleItemInSlot(int slot)
+        public async Task<string> HandleItemInSlot(int slot)
         {
             if (slot > Pages[CurrentPage].PageItems.Length)
-                return;
+                return string.Empty;
             var item = Pages[CurrentPage].PageItems[slot - 1];
             switch (CurrentInventoryTool)
             {
                 case InventoryTool.Sell:
-                    await SellItem(item);
-                    break;
+                    return await SellItem(item);
                 case InventoryTool.ChangeActiveStatus:
-                    await ChangeActiveStatusForItem(item);
-                    break;
+                    return await ChangeActiveStatusForItem(item);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(slot));
             }
         }
 
-        private async Task SellItem(BaseItem item)
+        private async Task<string> SellItem(BaseItem item)
         {
             var response = await apiClient.Items.SellItemAsync(UserId, item.Id);
             switch (response.Result)
             {
                 case Enums.SellItemResult.Success:
                     UpdateItems(await RefreshItemsFromApi());
-                    await discordClientWrapper.Messages.ModifyAsync(Message, UpdateEmbedForCurrentPage());
-                    break;
+                    return string.Empty;
                 case Enums.SellItemResult.NotEnoughMoney:
-                    await RespondWithMention("недостаточно денег для продажи негативного предмета");
-                    break;
+                    return "недостаточно денег для продажи негативного предмета";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(response.Result));
             }
         }
 
-        private async Task ChangeActiveStatusForItem(BaseItem item)
+        private async Task<string> ChangeActiveStatusForItem(BaseItem item)
         {
             var response = await apiClient.Items.SetActiveStatusForItemAsync(UserId, item.Id, !item.IsActive);
             switch (response.Result)
             {
                 case Enums.SetActiveStatusForItemResult.Success:
                     UpdateItems(await RefreshItemsFromApi());
-                    await discordClientWrapper.Messages.ModifyAsync(Message, UpdateEmbedForCurrentPage());
-                    break;
+                    return string.Empty;
                 case Enums.SetActiveStatusForItemResult.TooManyActiveItems:
-                    await RespondWithMention("невозможно изменить статус предмета, активных предметов должно быть не более 3");
-                    break;
+                    return "невозможно изменить статус предмета, активных предметов должно быть не более 3";
                 case Enums.SetActiveStatusForItemResult.NegativeItemCantBeInactive:
-                    await RespondWithMention("негативный предмет нельзя сделать неактивным");
-                    break;
+                    return "негативный предмет нельзя сделать неактивным";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(response.Result));
             }
-        }
-
-        private async Task RespondWithMention(string message)
-        {
-            var responseBuilder = new DiscordMessageBuilder();
-            responseBuilder.WithAllowedMention(UserMention.All);
-            responseBuilder.Content = $"{Member.Mention} {message}";
-            await discordClientWrapper.Messages.ModifyAsync(Message, responseBuilder);
         }
 
         private async Task<IEnumerable<BaseItem>> RefreshItemsFromApi() => await apiClient.Items.AllItemsAsync(UserId);
@@ -208,7 +183,6 @@ namespace AntiClownDiscordBotVersion2.Models.Inventory
         };
 
         public ulong UserId { get; private set; }
-        public DiscordMessage Message { get; private set; }
         public DiscordMember Member { get; private set; }
         public List<UserInventoryPage> Pages { get; private set; }
         public int CurrentPage { get; private set; }

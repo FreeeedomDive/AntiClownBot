@@ -214,87 +214,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         var emoji = e.Emoji;
         var emojiName = emoji.Name;
 
-        if (shopService.TryRead(e.User.Id, out var shop) && e.Message.Id == shop.Message.Id)
-        {
-            switch (emojiName)
-            {
-                case "1️⃣":
-                    await shop.HandleItemInSlot(1);
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "2️⃣":
-                    await shop.HandleItemInSlot(2);
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "3️⃣":
-                    await shop.HandleItemInSlot(3);
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "4️⃣":
-                    await shop.HandleItemInSlot(4);
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "5️⃣":
-                    await shop.HandleItemInSlot(5);
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "COGGERS":
-                    await shop.ReRoll();
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "pepeSearching":
-                    shop.CurrentShopTool = ShopTool.Revealing;
-                    break;
-            }
-        }
-
-        if (userInventoryService.TryRead(e.User.Id, out var inventory) && e.Message.Id == inventory.Message.Id)
-        {
-            switch (emojiName)
-            {
-                case "⬅️":
-                case "arrow_left":
-                    await inventory.SwitchLeftPage();
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "➡️":
-                case "arrow_right":
-                    await inventory.SwitchRightPage();
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "1️⃣":
-                    await inventory.HandleItemInSlot(1);
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "2️⃣":
-                    await inventory.HandleItemInSlot(2);
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "3️⃣":
-                    await inventory.HandleItemInSlot(3);
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "4️⃣":
-                    await inventory.HandleItemInSlot(4);
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "5️⃣":
-                    await inventory.HandleItemInSlot(5);
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "🔁":
-                case "repeat":
-                    await inventory.EnableChangingStatus();
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-                case "❌":
-                case "x":
-                    await inventory.EnableSelling();
-                    await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
-                    break;
-            }
-        }
-
         switch (emojiName)
         {
             case "YEP":
@@ -376,14 +295,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     {
         var emoji = e.Emoji;
         var emojiName = emoji.Name;
-
-        if (shopService.TryRead(e.User.Id, out var shop) && e.Message.Id == shop.Message.Id)
-        {
-            if (emojiName == "pepeSearching")
-            {
-                shop.CurrentShopTool = ShopTool.Buying;
-            }
-        }
                 
         switch (emojiName)
         {
@@ -415,7 +326,100 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task ComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
     {
+        var originalResponse = await e.Interaction.GetOriginalResponseAsync();
+        var interactionAuthor = originalResponse.Interaction?.User;
+        var responseBuilder = new DiscordInteractionResponseBuilder();
+        if (interactionAuthor == null || e.User.Id != interactionAuthor.Id)
+        {
+            await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.ChannelMessageWithSource, responseBuilder.WithContent("НЕ НАДО ЮЗАТЬ ЧУЖИЕ КНОПКИ >:("));
+        }
+        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate, null);
+        if (e.Id.StartsWith("shop_"))
+        {
+            await HandleShopInteraction(sender, e, responseBuilder);
+            return;
+        }
+        if (e.Id.StartsWith("inventory_"))
+        {
+
+        }
         return;
+    }
+
+    private async Task HandleShopInteraction(DiscordClient sender, ComponentInteractionCreateEventArgs e, DiscordInteractionResponseBuilder builder)
+    {
+        if (!shopService.TryRead(e.User.Id, out var shop))
+            return;
+
+        switch (e.Id)
+        {
+            case "shop_one":
+                await shop.HandleItemInSlot(1, e.Interaction);
+                break;
+            case "shop_two":
+                await shop.HandleItemInSlot(2, e.Interaction);
+                break;
+            case "shop_three":
+                await shop.HandleItemInSlot(3, e.Interaction);
+                break;
+            case "shop_four":
+                await shop.HandleItemInSlot(4, e.Interaction);
+                break;
+            case "shop_five":
+                await shop.HandleItemInSlot(5, e.Interaction);
+                break;
+            case "shop_COGGERS":
+                await shop.ReRoll(e.Interaction);
+                break;
+            case "shop_pepeSearching":
+                shop.CurrentShopTool = shop.CurrentShopTool == ShopTool.Revealing ? ShopTool.Buying : ShopTool.Revealing;
+                break;
+            default:
+                break;
+        }
+
+        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate, builder.AddEmbed(await shop.GetNewShopEmbed()));
+    }
+
+    private async Task HandleInventoryInteraction(DiscordClient sender, ComponentInteractionCreateEventArgs e, DiscordInteractionResponseBuilder builder)
+    {
+        if (!userInventoryService.TryRead(e.User.Id, out var inventory))
+            return;
+
+        switch (e.Id)
+        {
+            case "inventory_one":
+                builder.Content = await inventory.HandleItemInSlot(1);
+                break;
+            case "inventory_two":
+                builder.Content = await inventory.HandleItemInSlot(2);
+                break;
+            case "inventory_three":
+                builder.Content = await inventory.HandleItemInSlot(3);
+                break;
+            case "inventory_four":
+                builder.Content = await inventory.HandleItemInSlot(4);
+                break;
+            case "inventory_five":
+                builder.Content = await inventory.HandleItemInSlot(5);
+                break;
+            case "inventory_left":
+                await inventory.SwitchLeftPage();
+                break;
+            case "inventory_right":
+                await inventory.SwitchRightPage();
+                break;
+            case "inventory_repeat":
+                await inventory.EnableChangingStatus();
+                break;
+            case "inventory_x":
+                await inventory.EnableSelling();
+                break;
+            default:
+                break;
+        }
+
+        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate, builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()));
     }
 
     private Task MessageDeleted(DiscordClient sender, MessageDeleteEventArgs e)
