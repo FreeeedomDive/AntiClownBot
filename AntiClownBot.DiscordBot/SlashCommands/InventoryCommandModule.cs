@@ -40,16 +40,23 @@ namespace AntiClownDiscordBotVersion2.SlashCommands
             var embed = inventory.UpdateEmbedForCurrentPage();
             var components = new List<DiscordComponent>
             {
-                new DiscordButtonComponent(ButtonStyle.Primary, "inventory_left", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("arrow_left"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "inventory_right", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("arrow_right"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "inventory_one", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("one"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "inventory_two", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("two"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "inventory_three", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("three"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "inventory_four", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("four"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "inventory_five", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("five"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "inventory_repeat", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("repeat"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "inventory_x", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("x"))),
-
+                new DiscordActionRowComponent(
+                    new List<DiscordComponent>
+                    {
+                        new DiscordButtonComponent(ButtonStyle.Primary, "inventory_one", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("one"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "inventory_two", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("two"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "inventory_three", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("three"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "inventory_four", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("four"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "inventory_five", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("five")))
+                    }),
+                new DiscordActionRowComponent(
+                    new List<DiscordComponent>
+                    {
+                        new DiscordButtonComponent(ButtonStyle.Primary, "inventory_left", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("arrow_left"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "inventory_right", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("arrow_right"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "inventory_repeat", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("repeat"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "inventory_x", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("x")))
+                    })
             };
             await discordClientWrapper.Messages.ModifyEmbedAsync(context, embed, components);
         }
@@ -106,14 +113,21 @@ namespace AntiClownDiscordBotVersion2.SlashCommands
             var embed = await shop.GetNewShopEmbed();
             var components = new List<DiscordComponent>
             {
-                new DiscordButtonComponent(ButtonStyle.Primary, "shop_one", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("one"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "shop_two", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("two"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "shop_three", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("three"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "shop_four", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("four"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "shop_five", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("five"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "shop_COGGERS", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("COGGERS"))),
-                new DiscordButtonComponent(ButtonStyle.Primary, "shop_pepeSearching", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("pepeSearching"))),
-
+                new DiscordActionRowComponent(
+                    new List<DiscordComponent>
+                    {
+                        new DiscordButtonComponent(ButtonStyle.Primary, "shop_one", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("one"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "shop_two", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("two"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "shop_three", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("three"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "shop_four", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("four"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "shop_five", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("five"))) 
+                    }),
+                new DiscordActionRowComponent(
+                    new List<DiscordComponent>
+                    {
+                        new DiscordButtonComponent(ButtonStyle.Primary, "shop_COGGERS", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("COGGERS"))),
+                        new DiscordButtonComponent(ButtonStyle.Primary, "shop_pepeSearching", null, false, new DiscordComponentEmoji(await discordClientWrapper.Emotes.FindEmoteAsync("pepeSearching")))
+                    })
             };
             await discordClientWrapper.Messages.ModifyEmbedAsync(context, embed, components);
         }
