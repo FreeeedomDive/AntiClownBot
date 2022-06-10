@@ -272,7 +272,7 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             var botId = await discordClientWrapper.Members.GetBotIdAsync();
 
             var sb = new StringBuilder($"РЕЗУЛЬТАТЫ ГОНОЧКИ В {currentTrack.Name}\n```");
-            var driversInfo = drivers.Select(async (d, i) =>
+            var driversInfoTasks = drivers.Select(async (d, i) =>
             {
                 var pos = i + 1;
                 if (d.DiscordId == botId)
@@ -313,6 +313,8 @@ namespace AntiClownDiscordBotVersion2.Models.Race
 
                 return result;
             });
+
+            var driversInfo = await Task.WhenAll(driversInfoTasks);
 
             sb.Append(string.Join("\n", driversInfo)).Append("```");
             await discordClientWrapper.Messages.ModifyAsync(mainRaceMessage, sb.ToString());
