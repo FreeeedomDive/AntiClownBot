@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClownDiscordBot", "AntiClownDiscordBot\AntiClownDiscordBot.csproj", "{C093576B-0A56-4217-B629-84BC58E5BF1D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Old.AntiClownDiscordBot", "Old.AntiClownDiscordBot\Old.AntiClownDiscordBot.csproj", "{C093576B-0A56-4217-B629-84BC58E5BF1D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClownApi", "AntiClownApi\AntiClownApi.csproj", "{FFCFDDDA-EEF3-4845-A3EE-04F30F04CB92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiWrapper", "ApiWrapper\ApiWrapper.csproj", "{B86331A6-6F1E-44EE-9941-3563E0C8795B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Old.ApiWrapper", "Old.ApiWrapper\Old.ApiWrapper.csproj", "{B86331A6-6F1E-44EE-9941-3563E0C8795B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClownBot.DiscordBot", "AntiClownBot.DiscordBot\AntiClownBot.DiscordBot.csproj", "{E2794C47-DD22-4430-9F4E-C309AA889966}"
 EndProject
