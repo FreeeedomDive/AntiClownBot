@@ -15,5 +15,5 @@ public class GuildSettingsService : IGuildSettingsService
         return settings;
     }
 
-    private const string FileName = "SettingsFiles/guild.json";
+    private const string FileName = "../Files/SettingsFiles/guild.json";
 }

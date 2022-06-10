@@ -15,5 +15,5 @@ public class AppSettingsService : IAppSettingsService
         return settings;
     }
 
-    private const string FileName = "SettingsFiles/settings.json";
+    private const string FileName = "../Files/SettingsFiles/settings.json";
 }

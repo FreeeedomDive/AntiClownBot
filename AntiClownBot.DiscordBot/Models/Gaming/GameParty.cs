@@ -4,6 +4,7 @@ using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
+using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Models.Gaming
 {
@@ -91,7 +92,7 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
 
         private async Task<DiscordEmbed> CreateMessageEmbed()
         {
-            var role = await GetGameRoleById();
+            var role = await AttachedRole();
             var embedBuilder = new DiscordEmbedBuilder()
                 .WithTitle($"СБОР ПАТИ {Description}")
                 .WithColor(role?.Color ?? DiscordColor.White);
@@ -137,7 +138,8 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
             var readyPlayersMentionsTasks = Players
                 .Take(MaxPlayersCount)
                 .Select(playerId => discordClientWrapper.Members.GetAsync(playerId));
-            var readyPlayersMentions = await Task.WhenAll(readyPlayersMentionsTasks);
+            var readyPlayers = await Task.WhenAll(readyPlayersMentionsTasks);
+            var readyPlayersMentions = readyPlayers.Select(x => x.Mention);
             var messageBuilder = new DiscordMessageBuilder
             {
                 Content =
@@ -181,15 +183,15 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
         public ulong MessageId { get; set; }
         public DateTime CreationDate { get; init; }
 
-        public Func<Task> OnPartyObserverUpdate { get; init; }
-        public Action<ulong> OnPartyRemove { get; init; }
-        public Action<double> OnStatsUpdate { get; init; }
+        [JsonIgnore] public Func<Task> OnPartyObserverUpdate { get; init; }
+        [JsonIgnore] public Action<ulong> OnPartyRemove { get; init; }
+        [JsonIgnore] public Action<double> OnStatsUpdate { get; init; }
 
-        private bool isOpened = true;
-        private DiscordMessage? message;
-        private DiscordRole? attachedRole;
+        [JsonIgnore] private bool isOpened = true;
+        [JsonIgnore] private DiscordMessage? message;
+        [JsonIgnore] private DiscordRole? attachedRole;
         
-        private readonly IDiscordClientWrapper discordClientWrapper;
-        private readonly IGuildSettingsService guildSettingsService;
+        [JsonIgnore] private readonly IDiscordClientWrapper discordClientWrapper;
+        [JsonIgnore] private readonly IGuildSettingsService guildSettingsService;
     }
 }

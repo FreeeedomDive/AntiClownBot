@@ -31,7 +31,7 @@ public class EmoteStatsService : IEmoteStatsService
 
     private void Save()
     {
-        var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+        var json = JsonConvert.SerializeObject(emoteStatistics, Formatting.Indented);
         File.WriteAllText(FileName, json);
     }
 
@@ -46,7 +46,7 @@ public class EmoteStatsService : IEmoteStatsService
         return dict != null;
     }
 
-    private const string FileName = "StatisticsFiles/emotes.json";
+    private const string FileName = "../Files/StatisticsFiles/emotes.json";
 
     private readonly Dictionary<string, int> emoteStatistics;
     private readonly IDiscordClientWrapper discordClientWrapper;

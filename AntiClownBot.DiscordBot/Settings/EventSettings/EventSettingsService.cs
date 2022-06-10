@@ -15,5 +15,5 @@ public class EventSettingsService : IEventSettingsService
         return settings;
     }
 
-    private const string FileName = "SettingsFiles/eventSettings.json";
+    private const string FileName = "../Files/SettingsFiles/eventSettings.json";
 }

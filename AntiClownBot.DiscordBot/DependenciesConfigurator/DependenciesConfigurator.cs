@@ -8,6 +8,7 @@ public class DependenciesConfigurator
     {
         var ninjectKernel = new StandardKernel();
         ninjectKernel
+            .WithDiKernel()
             // configure settings
             .WithApplicationSettings()
             .WithEventsSettings()

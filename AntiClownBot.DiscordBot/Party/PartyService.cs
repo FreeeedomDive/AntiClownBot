@@ -3,6 +3,7 @@ using AntiClownDiscordBotVersion2.Models.Gaming;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
+using DSharpPlus.SlashCommands;
 using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Party;
@@ -61,6 +62,18 @@ public class PartyService : IPartyService
         partyObserver = message;
     }
 
+    public async Task AddPartyObserverMessage(InteractionContext context)
+    {
+        if (partyObserver != null)
+        {
+            await partyObserver.DeleteAsync();
+        }
+
+        var embed = await GetPartiesEmbed();
+        var message = await discordClientWrapper.Messages.RespondAsync(context, embed);
+        partyObserver = message;
+    }
+
     public void DeleteObserverIfExists(DiscordMessage message)
     {
         if (partyObserver == null) return;
@@ -70,9 +83,11 @@ public class PartyService : IPartyService
 
     public async Task UpdatePartyObservers()
     {
-        if (partyObserver == null) return;
-        var embed = await GetPartiesEmbed();
-        await discordClientWrapper.Messages.ModifyAsync(partyObserver, embed);
+        if (partyObserver != null)
+        {
+            var embed = await GetPartiesEmbed();
+            await discordClientWrapper.Messages.ModifyAsync(partyObserver, embed);
+        }
         Save();
     }
 
@@ -130,7 +145,7 @@ public class PartyService : IPartyService
 
     public void Save()
     {
-        var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+        var json = JsonConvert.SerializeObject(PartiesInfo, Formatting.Indented);
         File.WriteAllText(FileName, json);
     }
 
@@ -144,7 +159,7 @@ public class PartyService : IPartyService
 
     public PartiesInfo PartiesInfo { get; }
 
-    private const string FileName = "StatisticsFiles/parties.json";
+    private const string FileName = "../Files/StatisticsFiles/parties.json";
     private DiscordMessage? partyObserver;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IGuildSettingsService guildSettingsService;

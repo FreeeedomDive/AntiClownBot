@@ -8,7 +8,7 @@ public interface IUsersClient
     Task<WhenNextTributeResponseDto> WhenNextTributeAsync(ulong userId);
     Task<RatingResponseDto> RatingAsync(ulong userId);
     Task<ChangeUserBalanceResponseDto> ChangeUserRatingAsync(ulong userId, int ratingDiff, string reason);
-    Task<BulkChangeUserBalanceResponseDto> BulkChangeUserBalanceAsync(List<ulong> users, int ratingDiff, string reason);
+    Task BulkChangeUserBalanceAsync(List<ulong> users, int ratingDiff, string reason);
     Task<AllUsersResponseDto> GetAllUsersAsync();
     Task RemoveCooldownsAsync();
     Task<ulong> GetRichestUserAsync();

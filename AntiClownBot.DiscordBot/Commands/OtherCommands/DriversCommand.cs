@@ -14,7 +14,7 @@ public class DriversCommand : ICommand
 
     public async Task Execute(MessageCreateEventArgs e)
     {
-        var driversContent = await File.ReadAllTextAsync("StatisticsFiles/drivers.json");
+        var driversContent = await File.ReadAllTextAsync("../Files/StatisticsFiles/drivers.json");
         var driversModels = JsonConvert.DeserializeObject<IEnumerable<DriverModel>>(driversContent);
         if (driversModels == null)
         {

@@ -1,4 +1,5 @@
 ﻿using DSharpPlus.Entities;
+using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.Party;
 
@@ -8,6 +9,7 @@ public interface IPartyService
     void RemoveOutdatedParty(ulong partyId);
 
     Task AddPartyObserverMessage(DiscordMessage messageToRespond);
+    Task AddPartyObserverMessage(InteractionContext messageToRespond);
     void DeleteObserverIfExists(DiscordMessage message);
 
     void Save();

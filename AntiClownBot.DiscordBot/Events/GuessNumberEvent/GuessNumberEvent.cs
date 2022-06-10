@@ -1,5 +1,6 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.EventServices;
+using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
@@ -11,12 +12,14 @@ namespace AntiClownDiscordBotVersion2.Events.GuessNumberEvent
         public GuessNumberEvent(
             IDiscordClientWrapper discordClientWrapper,
             IGuildSettingsService guildSettingsService,
-            IGuessNumberService guessNumberService
+            IGuessNumberService guessNumberService,
+            IAppSettingsService appSettingsService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
             this.guildSettingsService = guildSettingsService;
             this.guessNumberService = guessNumberService;
+            this.appSettingsService = appSettingsService;
         }
 
         public async Task ExecuteAsync()
@@ -31,7 +34,7 @@ namespace AntiClownDiscordBotVersion2.Events.GuessNumberEvent
 
         public async Task<DiscordMessage> TellBackStory()
         {
-            var text = (DateTime.Now.IsNightTime() ? "" : "@everyone ")
+            var text = (DateTime.Now.IsNightTime()  || !appSettingsService.GetSettings().PingOnEvents ? "" : "@everyone ")
                        + "Я загадал число, угадайте его!!\n"
                        + "У вас 10 минут";
 
@@ -50,5 +53,6 @@ namespace AntiClownDiscordBotVersion2.Events.GuessNumberEvent
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IGuildSettingsService guildSettingsService;
         private readonly IGuessNumberService guessNumberService;
+        private readonly IAppSettingsService appSettingsService;
     }
 }

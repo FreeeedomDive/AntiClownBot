@@ -36,7 +36,7 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             currentTrack = SelectTrack();
             FillSectors();
 
-            var driversContent = await File.ReadAllTextAsync("StatisticsFiles/drivers.json");
+            var driversContent = await File.ReadAllTextAsync("../Files/StatisticsFiles/drivers.json");
             var driversModels = JsonConvert.DeserializeObject<IEnumerable<DriverModel>>(driversContent);
             if (driversModels is null)
             {
@@ -85,7 +85,7 @@ namespace AntiClownDiscordBotVersion2.Models.Race
 
         private TrackModel SelectTrack()
         {
-            var tracksContent = File.ReadAllText("StatisticsFiles/tracks.json");
+            var tracksContent = File.ReadAllText("../Files/StatisticsFiles/tracks.json");
             var tracks = JsonConvert.DeserializeObject<IEnumerable<TrackModel>>(tracksContent);
             if (tracks is null)
             {
@@ -272,7 +272,7 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             var botId = await discordClientWrapper.Members.GetBotIdAsync();
 
             var sb = new StringBuilder($"РЕЗУЛЬТАТЫ ГОНОЧКИ В {currentTrack.Name}\n```");
-            var driversInfo = drivers.Select(async (d, i) =>
+            var driversInfoTasks = drivers.Select(async (d, i) =>
             {
                 var pos = i + 1;
                 if (d.DiscordId == botId)
@@ -314,11 +314,13 @@ namespace AntiClownDiscordBotVersion2.Models.Race
                 return result;
             });
 
+            var driversInfo = await Task.WhenAll(driversInfoTasks);
+
             sb.Append(string.Join("\n", driversInfo)).Append("```");
             await discordClientWrapper.Messages.ModifyAsync(mainRaceMessage, sb.ToString());
 
             var models = drivers.Select(d => d.DriverModel).ToList();
-            await File.WriteAllTextAsync("StatisticsFiles/drivers.json", JsonConvert.SerializeObject(models, Formatting.Indented));
+            await File.WriteAllTextAsync("../Files/StatisticsFiles/drivers.json", JsonConvert.SerializeObject(models, Formatting.Indented));
 
             // TODO вынести в эвент 
             OnRaceEnd();

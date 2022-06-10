@@ -93,8 +93,8 @@ namespace AntiClownDiscordBotVersion2.Events.MaliMaliEvent
         public async Task<DiscordMessage> TellBackStory()
         {
             var pomLeftEmote = await discordClientWrapper.Emotes.FindEmoteAsync("pomLeft");
-            var floppaEmote = await discordClientWrapper.Emotes.FindEmoteAsync("pomLeft");
-            var pomRight = await discordClientWrapper.Emotes.FindEmoteAsync("pomLeft");
+            var floppaEmote = await discordClientWrapper.Emotes.FindEmoteAsync("FLOPPA");
+            var pomRight = await discordClientWrapper.Emotes.FindEmoteAsync("pomRight");
             var messageContent =
                 $"{pomLeftEmote} {pomLeftEmote} {floppaEmote} {pomRight} {pomRight} MALI MALI {pomLeftEmote} {pomLeftEmote} {floppaEmote} {pomRight} {pomRight}\n" +
                 $"{pomLeftEmote} {pomLeftEmote} {floppaEmote} {pomRight} {pomRight} MALI MALI {pomLeftEmote} {pomLeftEmote} {floppaEmote} {pomRight} {pomRight}\n" +

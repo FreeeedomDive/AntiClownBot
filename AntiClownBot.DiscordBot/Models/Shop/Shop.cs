@@ -6,6 +6,7 @@ using AntiClownApiClient.Dto.Responses.UserCommandResponses;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
+using DSharpPlus;
 using DSharpPlus.Entities;
 
 namespace AntiClownDiscordBotVersion2.Models.Shop
@@ -23,12 +24,11 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
             this.randomizer = randomizer;
         }
 
-        public async Task UpdateShopMessage()
+        public async Task<DiscordEmbed> GetNewShopEmbed()
         {
             var newShop = await apiClient.Shop.GetAsync(UserId);
 
-            var embed = await CreateNewShopEmbed(newShop);
-            await discordClientWrapper.Messages.ModifyAsync(Message, embed);
+            return await CreateNewShopEmbed(newShop);
         }
 
         public async Task<DiscordEmbed> CreateLoadingShopEmbed()
@@ -50,95 +50,91 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
             return loadingEmbedBuilder.Build();
         }
 
-        public async Task HandleItemInSlot(int slot)
+        public async Task HandleItemInSlot(int slot, DiscordInteraction interaction)
         {
             switch (CurrentShopTool)
             {
                 case ShopTool.Buying:
-                    await BuyItem(slot);
+                    await BuyItem(slot, interaction);
                     return;
                 case ShopTool.Revealing:
-                    await RevealItem(slot);
+                    await RevealItem(slot, interaction);
                     return;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        public async Task RevealItem(int slot)
+        public async Task RevealItem(int slot, DiscordInteraction interaction)
         {
             var idResponse = await apiClient.Shop.ItemIdInSlotAsync(UserId, slot);
+            var responseBuilder = new DiscordInteractionResponseBuilder();
             if (idResponse.HasError)
             {
-                await discordClientWrapper.Messages.RespondAsync(Message, $"{Member.Mention} {idResponse.Error}");
+                responseBuilder.WithContent($"{Member.Mention} {idResponse.Error}");
+                await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.UpdateMessage, responseBuilder);
                 return;
             }
 
             var revealResponse = await apiClient.Shop.ItemRevealAsync(UserId, idResponse.ShopItemId);
 
-            var responseBuilder = new DiscordMessageBuilder();
-            responseBuilder.WithAllowedMention(UserMention.All);
             switch (revealResponse.RevealResult)
             {
                 case Enums.RevealResult.Success:
                     break;
                 case Enums.RevealResult.NotEnoughMoney:
-                    responseBuilder.Content = $"{Member.Mention} недостаточно денег для распознавания предмета";
-                    await discordClientWrapper.Messages.RespondAsync(Message, responseBuilder);
+                    responseBuilder.WithContent($"{Member.Mention} недостаточно денег для распознавания предмета");
+                    await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.UpdateMessage, responseBuilder);
                     return;
                 case Enums.RevealResult.AlreadyRevealed:
-                    responseBuilder.Content = $"{Member.Mention} предмет уже распознан";
-                    await discordClientWrapper.Messages.RespondAsync(Message, responseBuilder);
+                    responseBuilder.WithContent($"{Member.Mention} предмет уже распознан");
+                    await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.UpdateMessage, responseBuilder);
                     return;
                 case Enums.RevealResult.AlreadyBought:
-                    responseBuilder.Content = $"{Member.Mention} предмет уже куплен";
-                    await discordClientWrapper.Messages.RespondAsync(Message, responseBuilder);
+                    responseBuilder.WithContent($"{Member.Mention} предмет уже куплен");
+                    await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.UpdateMessage, responseBuilder);
                     return;
                 case Enums.RevealResult.ItemDoesntExistInShop:
-                    responseBuilder.Content = $"{Member.Mention} такого предмета нет в магазине (wtf?)";
-                    await discordClientWrapper.Messages.RespondAsync(Message, responseBuilder);
+                    responseBuilder.WithContent($"{Member.Mention} такого предмета нет в магазине (wtf?)");
+                    await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.UpdateMessage, responseBuilder);
                     return;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-            await UpdateShopMessage();
         }
 
-        public async Task BuyItem(int slot)
+        public async Task BuyItem(int slot, DiscordInteraction interaction)
         {
             var idResponse = await apiClient.Shop.ItemIdInSlotAsync(UserId, slot);
+            var responseBuilder = new DiscordInteractionResponseBuilder();
             if (idResponse.HasError)
             {
-                await discordClientWrapper.Messages.RespondAsync(Message, $"{Member.Mention} {idResponse.Error}");
+                await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.ChannelMessageWithSource, responseBuilder.WithContent($"{Member.Mention} {idResponse.Error}"));
                 return;
             }
 
             var buyResponse = await apiClient.Shop.BuyAsync(UserId, idResponse.ShopItemId);
 
-            var responseBuilder = new DiscordMessageBuilder();
-            responseBuilder.WithAllowedMention(UserMention.All);
             switch (buyResponse.BuyResult)
             {
                 case Enums.BuyResult.Success:
                     break;
                 case Enums.BuyResult.NotEnoughMoney:
-                    responseBuilder.Content = $"{Member.Mention} недостаточно денег для покупки предмета";
-                    await discordClientWrapper.Messages.RespondAsync(Message, responseBuilder);
+                    responseBuilder.WithContent($"{Member.Mention} недостаточно денег для покупки предмета");
+                    await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.ChannelMessageWithSource, responseBuilder);
                     return;
                 case Enums.BuyResult.AlreadyBought:
-                    responseBuilder.Content = $"{Member.Mention} предмет уже куплен";
-                    await discordClientWrapper.Messages.RespondAsync(Message, responseBuilder);
+                    responseBuilder.WithContent($"{Member.Mention} предмет уже куплен");
+                    await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.ChannelMessageWithSource, responseBuilder);
                     return;
                 case Enums.BuyResult.ItemDoesntExistInShop:
-                    responseBuilder.Content = $"{Member.Mention} такого предмета нет в магазине (wtf?)";
-                    await discordClientWrapper.Messages.RespondAsync(Message, responseBuilder);
+                    responseBuilder.WithContent($"{Member.Mention} такого предмета нет в магазине (wtf?)");
+                    await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.ChannelMessageWithSource, responseBuilder);
                     return;
                 case Enums.BuyResult.TooManyItemsOfSelectedType:
                     // xdd
-                    responseBuilder.Content =
-                        $"{Member.Mention} в инвентаре уже слишком много предметов данного типа (но я это уже сделал по-другому, хз как можно было получить такой ответ)";
-                    await discordClientWrapper.Messages.RespondAsync(Message, responseBuilder);
+                    responseBuilder.WithContent($"{Member.Mention} в инвентаре уже слишком много предметов данного типа (но я это уже сделал по-другому, хз как можно было получить такой ответ)");
+                    await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.ChannelMessageWithSource, responseBuilder);
                     return;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -148,31 +144,27 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
             if (newItemResponse.Result != ItemResult.Success)
             {
                 var starege = await discordClientWrapper.Emotes.FindEmoteAsync("Starege");
-                responseBuilder.Content = $"{Member.Mention} хуйня {starege}";
-                await discordClientWrapper.Messages.RespondAsync(Message, responseBuilder);
+                responseBuilder.WithContent($"{Member.Mention} хуйня {starege}");
+                await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.ChannelMessageWithSource, responseBuilder);
                 return;
             }
 
             var info = $"{string.Join("\n", newItemResponse.Item.Description().Select(kv => $"{kv.Key}\n\t{kv.Value}"))}";
             boughtItemsInfo[slot] = info;
-
-            await UpdateShopMessage();
         }
 
-        public async Task ReRoll()
+        public async Task ReRoll(DiscordInteraction interaction)
         {
             var rerollResult = await apiClient.Shop.ReRollAsync(UserId);
+            var responseBuilder = new DiscordInteractionResponseBuilder();
 
             if (rerollResult.ReRollResult == Enums.ReRollResult.NotEnoughMoney)
             {
-                await discordClientWrapper.Messages.RespondAsync(Message, $"{Member.Mention} недостаточно денег для реролла");
+                await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.ChannelMessageWithSource, responseBuilder.WithContent($"{Member.Mention} недостаточно денег для реролла"));
                 return;
             }
 
             boughtItemsInfo.Clear();
-            var embed = await CreateLoadingShopEmbed();
-            await discordClientWrapper.Messages.ModifyAsync(Message, embed);
-            await UpdateShopMessage();
         }
 
         private async Task<DiscordEmbed> CreateNewShopEmbed(UserShopResponseDto shop)
@@ -200,6 +192,8 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
                 itemIndex++;
             }
 
+            embedBuilder.WithFooter($"Текущее действие: {StringTool()}");
+
             return embedBuilder.Build();
         }
 
@@ -221,15 +215,16 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
             {AntiClownApiClient.Dto.Models.Items.Rarity.BlackMarket, DiscordColor.Black},
         };
 
-        public void BindToMessage(DiscordMessage message)
+        private string StringTool() => CurrentShopTool switch
         {
-            Message = message;
-        }
-        
+            ShopTool.Buying => "покупка",
+            ShopTool.Revealing => "пупа и лупа",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
         public ulong UserId { get; init; }
         public DiscordMember Member { get; init; }
         public ShopTool CurrentShopTool { get; set; } = ShopTool.Buying;
-        public DiscordMessage Message { get; private set; }
 
         private readonly Dictionary<int, string> boughtItemsInfo = new();
         private readonly IDiscordClientWrapper discordClientWrapper;
