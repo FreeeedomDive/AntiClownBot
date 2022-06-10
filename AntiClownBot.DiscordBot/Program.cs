@@ -30,7 +30,7 @@ public class Program
         AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
         {
             var message = $"{eventArgs.Exception.Message}\n{eventArgs.Exception.StackTrace}";
-            logger.Error(message);
+            Task.Run(() => logger.Error(message, eventArgs.Exception));
         };
     }
 
