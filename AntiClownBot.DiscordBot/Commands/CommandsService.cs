@@ -1,0 +1,71 @@
+﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Log;
+using AntiClownDiscordBotVersion2.Settings.AppSettings;
+using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using DSharpPlus.EventArgs;
+
+namespace AntiClownDiscordBotVersion2.Commands;
+
+public class CommandsService : ICommandsService
+{
+    public CommandsService(
+        IDiscordClientWrapper discordClientWrapper,
+        IAppSettingsService appSettingsService,
+        IGuildSettingsService guildSettingsService
+    )
+    {
+        this.discordClientWrapper = discordClientWrapper;
+        this.appSettingsService = appSettingsService;
+        this.guildSettingsService = guildSettingsService;
+    }
+
+    public void UseCommands(Dictionary<string, ICommand> commands)
+    {
+        this.commands = commands;
+    }
+
+    public bool TryGetCommand(string name, out ICommand command)
+    {
+        if (commands.ContainsKey(name))
+        {
+            command = commands[name];
+            return true;
+        }
+
+        command = null;
+        return false;
+    }
+
+    public async Task ExecuteCommand(string name, MessageCreateEventArgs e)
+    {
+        var appSettings = appSettingsService.GetSettings();
+        var guildSettings = guildSettingsService.GetGuildSettings();
+        if (appSettings.MaintenanceMode && e.Author.Id != guildSettings.AdminId)
+        {
+            await discordClientWrapper.Messages.RespondAsync(
+                e.Message,
+                $"Пока не отвечаю {await discordClientWrapper.Emotes.FindEmoteAsync("NOPERS")}"
+            );
+            return;
+        }
+
+        if (!TryGetCommand(name, out var command))
+        {
+            await discordClientWrapper.Messages.RespondAsync(e.Message, $"Нет команды с именем {name}");
+            return;
+        }
+
+        await command.Execute(e);
+    }
+
+    public IEnumerable<string> GetAllCommandNames()
+    {
+        return commands.Keys.OrderBy(key => key);
+    }
+
+    private Dictionary<string, ICommand> commands;
+
+    private readonly IDiscordClientWrapper discordClientWrapper;
+    private readonly IAppSettingsService appSettingsService;
+    private readonly IGuildSettingsService guildSettingsService;
+}
