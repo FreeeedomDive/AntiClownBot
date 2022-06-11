@@ -29,7 +29,7 @@ public class Program
         var logger = configurator.Get<ILogger>();
         AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
         {
-            var message = $"{eventArgs.Exception.Message}\n{eventArgs.Exception.StackTrace}";
+            var message = "Unhandled exception in FirstChanceException";
             Task.Run(() => logger.Error(message, eventArgs.Exception));
         };
     }

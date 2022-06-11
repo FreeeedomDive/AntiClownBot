@@ -109,8 +109,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         var message = e.Message.Content;
 
-        logger.Info($"{e.Author.Username}: {message}");
-
         if (message.StartsWith(guildSettings.CommandsPrefix))
         {
             var commandName = message.Split('\n')[0].Split(' ').First().ToLower()[guildSettings.CommandsPrefix.Length..];
@@ -281,13 +279,10 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             logger.Error($"Exception in username", ex);
         }
 
-        logger.Info($"EMOTE ADDED - {username}: {emojiName}");
-
         emoteStatsService.AddStats(emojiName);
 
         if ((emojiName is "peepoClown" or "clown" or "clown_face") && (e.User.Id is 423498706336088085 or 369476500820459522))
         {
-            logger.Info("Removed clown");
             await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
         }
     }
@@ -321,7 +316,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             logger.Error($"Exception in username", ex);
         }
 
-        logger.Info($"EMOTE REMOVED - {username}: {emojiName}"); 
         emoteStatsService.RemoveStats(emojiName);
     }
 
@@ -435,7 +429,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private void RegisterSlashCommands(DiscordClient client)
     {
-        logger.Info("Register slash commands");
         var guildSettings = guildSettingsService.GetGuildSettings();
         var slash = client.UseSlashCommands(new SlashCommandsConfiguration
         {

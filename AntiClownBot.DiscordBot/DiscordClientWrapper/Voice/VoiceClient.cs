@@ -63,7 +63,7 @@ public class VoiceClient : IVoiceClient
         connection = voiceExtension.GetConnection(guild);
         if (connection == null)
         {
-            logger.Info($"Бот не подключен");
+            logger.Info("Бот не подключен");
             return;
         }
 

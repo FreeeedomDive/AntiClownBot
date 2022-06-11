@@ -42,7 +42,7 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
             var fileName = Path.Combine(dir, video.FullName);
             if (!File.Exists(fileName))
             {
-                logger.Info($"Скачиваю {fileName}");
+                logger.Info("Скачиваю {FileName}, fileName");
                 await File.WriteAllBytesAsync(fileName, await video.GetBytesAsync());
             }
 

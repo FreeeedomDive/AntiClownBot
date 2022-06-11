@@ -30,8 +30,8 @@ namespace AntiClownDiscordBotVersion2.Events
                     scheduledTime = scheduledTime.AddDays(1);
                 }
 
-                logger.Info($"Следующий ежедневный эвент в {Utility.NormalizeTime(scheduledTime)}, " +
-                            $"через {Utility.GetTimeDiff(scheduledTime)}");
+                logger.Info("Следующий ежедневный эвент в {ScheduledTime}, через {ScheduledTimeDiff}", 
+                    Utility.NormalizeTime(scheduledTime), Utility.GetTimeDiff(scheduledTime));
 
                 var sleepTime = (scheduledTime - DateTime.Now).TotalMilliseconds;
                 await Task.Delay((int)sleepTime);
