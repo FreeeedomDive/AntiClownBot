@@ -1,9 +1,9 @@
 ﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618
 
-namespace AntiClownDiscordBotVersion2.Settings.AppSettings;
+namespace AntiClownApiClient.Dto.Settings;
 
-public class Settings
+public class ApplicationSettings
 {
     public string DiscordToken { get; set; }
     public string ApiUrl { get; set; }

@@ -2,5 +2,5 @@
 
 public interface IGuildSettingsService
 {
-    GuildSettings GetGuildSettings();
+    AntiClownApiClient.Dto.Settings.GuildSettings GetGuildSettings();
 }

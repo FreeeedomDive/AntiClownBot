@@ -4,9 +4,9 @@ namespace AntiClownDiscordBotVersion2.Settings.EventSettings;
 
 public class EventSettingsService : IEventSettingsService
 {
-    public EventSettings GetEventSettings()
+    public AntiClownApiClient.Dto.Settings.EventSettings GetEventSettings()
     {
-        var settings = JsonConvert.DeserializeObject<EventSettings>(File.ReadAllText(FileName));
+        var settings = JsonConvert.DeserializeObject<AntiClownApiClient.Dto.Settings.EventSettings>(File.ReadAllText(FileName));
         if (settings == null)
         {
             throw new Exception("Failed to read event settings");

@@ -10,7 +10,7 @@ namespace AntiClownBotApi.Controllers
 {
     [ApiController]
     [Route("/api/globalState")]
-    public class GlobalStateController
+    public class GlobalStateController : Controller
     {
         private UserRepository UserRepository { get; }
         private DatabaseContext Database { get; }

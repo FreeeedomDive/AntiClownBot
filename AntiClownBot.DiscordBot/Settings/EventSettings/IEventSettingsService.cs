@@ -2,5 +2,5 @@
 
 public interface IEventSettingsService
 {
-    EventSettings GetEventSettings();
+    AntiClownApiClient.Dto.Settings.EventSettings GetEventSettings();
 }

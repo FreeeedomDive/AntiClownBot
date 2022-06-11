@@ -1,7 +1,7 @@
 ﻿using AntiClownApiClient.Dto.Settings;
 using Newtonsoft.Json;
 
-namespace AntiClownDiscordBotVersion2.Settings.AppSettings;
+namespace AntiClownApi.AdminApi.SettingsServices.App;
 
 public class AppSettingsService : IAppSettingsService
 {
@@ -14,6 +14,11 @@ public class AppSettingsService : IAppSettingsService
         }
 
         return settings;
+    }
+
+    public void UpdateSettings(ApplicationSettings newSettings)
+    {
+        File.WriteAllText(FileName, JsonConvert.SerializeObject(newSettings));
     }
 
     private const string FileName = "../Files/SettingsFiles/settings.json";

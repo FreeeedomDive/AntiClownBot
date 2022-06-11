@@ -2,5 +2,5 @@
 
 public interface IAppSettingsService
 {
-    Settings GetSettings();
+    AntiClownApiClient.Dto.Settings.ApplicationSettings GetSettings();
 }

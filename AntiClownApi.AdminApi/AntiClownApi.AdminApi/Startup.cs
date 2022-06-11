@@ -1,4 +1,8 @@
-﻿namespace AntiClownApi.AdminApi;
+﻿using AntiClownApi.AdminApi.SettingsServices.App;
+using AntiClownApi.AdminApi.SettingsServices.Events;
+using AntiClownApi.AdminApi.SettingsServices.Guild;
+
+namespace AntiClownApi.AdminApi;
 
 public class Startup
 {
@@ -7,20 +11,26 @@ public class Startup
         Configuration = configuration;
     }
 
-    // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+
+        services.AddTransient<IAppSettingsService, AppSettingsService>();
+        services.AddTransient<IEventSettingsService, EventSettingsService>();
+        services.AddTransient<IGuildSettingsService, GuildSettingsService>();
     }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AntiClownApi v1"));
         }
-
+        
         app.UseHttpsRedirection();
 
         app.UseRouting();

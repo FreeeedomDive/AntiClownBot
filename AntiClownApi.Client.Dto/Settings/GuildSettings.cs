@@ -1,4 +1,4 @@
-﻿namespace AntiClownDiscordBotVersion2.Settings.GuildSettings;
+﻿namespace AntiClownApiClient.Dto.Settings;
 
 public class GuildSettings
 {

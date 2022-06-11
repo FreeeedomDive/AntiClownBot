@@ -24,15 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="SettingsFiles\eventSettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="SettingsFiles\guild.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="SettingsFiles\settings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
       <None Update="StatisticsFiles\daily.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>

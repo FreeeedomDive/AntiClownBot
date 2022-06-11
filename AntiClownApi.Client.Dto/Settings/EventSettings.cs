@@ -1,4 +1,4 @@
-﻿namespace AntiClownDiscordBotVersion2.Settings.EventSettings;
+﻿namespace AntiClownApiClient.Dto.Settings;
 
 public class EventSettings
 {

@@ -4,9 +4,9 @@ namespace AntiClownDiscordBotVersion2.Settings.GuildSettings;
 
 public class GuildSettingsService : IGuildSettingsService
 {
-    public GuildSettings GetGuildSettings()
+    public AntiClownApiClient.Dto.Settings.GuildSettings GetGuildSettings()
     {
-        var settings = JsonConvert.DeserializeObject<GuildSettings>(File.ReadAllText(FileName));
+        var settings = JsonConvert.DeserializeObject<AntiClownApiClient.Dto.Settings.GuildSettings>(File.ReadAllText(FileName));
         if (settings == null)
         {
             throw new Exception("Failed to read guild");
