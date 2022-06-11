@@ -26,10 +26,17 @@ public class MembersClient : IMembersClient
 
     public async Task<DiscordMember> GetAsync(ulong userId)
     {
-        var guild = guildSettingsService.GetGuildSettings().GuildId;
-        var member = await discordClient.Guilds[guild].GetMemberAsync(userId);
+        try
+        {
+            var guild = guildSettingsService.GetGuildSettings().GuildId;
+            var member = await discordClient.Guilds[guild].GetMemberAsync(userId);
 
-        return member;
+            return member;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public async Task ModifyAsync(DiscordMember member, Action<MemberEditModel> action)

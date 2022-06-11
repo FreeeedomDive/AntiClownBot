@@ -6,6 +6,6 @@ public static class DiscordMemberExtensions
 {
     public static string ServerOrUserName(this DiscordMember member)
     {
-        return member.Nickname ?? member.Username;
+        return member?.Nickname ?? member?.Username ?? "(чел, которого нет на сервере)";
     }
 }
