@@ -40,18 +40,18 @@ public class ItemsClient : IItemsClient
         return response.TryDeserialize<OpenLootBoxResultDto>();
     }
 
-    public async Task<string> AddLootBoxAsync(ulong userId)
+    public async Task AddLootBoxAsync(ulong userId)
     {
         var request = new RestRequest($"api/users/{userId}/items/lootbox/add");
         var response = await restClient.ExecutePostAsync(request);
-        return response.TryDeserialize<string>();
+        response.ThrowIfNotSuccessful();
     }
 
-    public async Task<string> RemoveLootBoxAsync(ulong userId)
+    public async Task RemoveLootBoxAsync(ulong userId)
     {
         var request = new RestRequest($"api/users/{userId}/items/lootbox/remove");
         var response = await restClient.ExecutePostAsync(request);
-        return response.TryDeserialize<string>();
+        response.ThrowIfNotSuccessful();
     }
 
     private readonly RestClient restClient;

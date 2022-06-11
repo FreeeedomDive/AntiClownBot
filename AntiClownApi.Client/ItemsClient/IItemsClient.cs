@@ -9,6 +9,6 @@ public interface IItemsClient
     Task<SetActiveStatusForItemResponseDto> SetActiveStatusForItemAsync(ulong userId, Guid itemId, bool isActive);
     Task<SellItemResponseDto> SellItemAsync(ulong userId, Guid itemId);
     Task<OpenLootBoxResultDto> OpenLootBoxAsync(ulong userId);
-    Task<string> AddLootBoxAsync(ulong userId);
-    Task<string> RemoveLootBoxAsync(ulong userId);
+    Task AddLootBoxAsync(ulong userId);
+    Task RemoveLootBoxAsync(ulong userId);
 }

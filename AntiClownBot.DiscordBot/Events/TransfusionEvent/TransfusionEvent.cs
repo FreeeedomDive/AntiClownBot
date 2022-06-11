@@ -22,9 +22,9 @@ namespace AntiClownDiscordBotVersion2.Events.TransfusionEvent
             this.guildSettingsService = guildSettingsService;
         }
 
-        public Task ExecuteAsync()
+        public async Task ExecuteAsync()
         {
-            return Task.CompletedTask;
+            await TellBackStory();
         }
 
         public async Task<DiscordMessage> TellBackStory()
