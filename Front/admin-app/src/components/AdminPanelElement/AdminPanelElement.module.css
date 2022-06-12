@@ -1,0 +1,12 @@
+.settingsBlock {
+    border: 1px solid #0008a0;
+    border-radius: 4px;
+    background-color: #000843;
+    margin: 4px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.settingsBlock:hover {
+    background-color: #000869;
+}
