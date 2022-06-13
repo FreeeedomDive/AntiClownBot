@@ -38,6 +38,7 @@ namespace AntiClownDiscordBotVersion2.Events
 
                 foreach (var dailyEvent in dailyEvents)
                 {
+                    logger.Info("Executing {Event}", dailyEvent.GetType().Name);
                     await dailyEvent.ExecuteAsync();
                 }
             }

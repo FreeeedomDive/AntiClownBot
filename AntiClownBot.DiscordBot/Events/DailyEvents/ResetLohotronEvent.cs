@@ -19,7 +19,7 @@ public class ResetLohotronEvent : IDailyEvent
 
     public Task<DiscordMessage> TellBackStory()
     {
-        return null;
+        throw new NotImplementedException();
     }
 
     public bool HasRelatedEvents() => RelatedEvents.Count > 0;

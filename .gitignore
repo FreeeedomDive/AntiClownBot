@@ -6,3 +6,5 @@ bin/
 obj/
 AntiClownApi/config.json
 start.bat
+build/
+node_modules/

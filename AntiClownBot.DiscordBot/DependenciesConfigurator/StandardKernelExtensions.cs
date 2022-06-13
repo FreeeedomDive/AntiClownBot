@@ -160,7 +160,7 @@ public static class StandardKernelExtensions
 
     public static StandardKernel WithLohotron(this StandardKernel ninjectKernel)
     {
-        ninjectKernel.Bind<Lohotron>().ToSelf();
+        ninjectKernel.Bind<Lohotron>().ToSelf().InSingletonScope();
 
         return ninjectKernel;
     }
