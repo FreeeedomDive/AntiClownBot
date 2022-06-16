@@ -24,6 +24,7 @@ public class ShopClient : IShopClient
     {
         var request = new RestRequest($"api/shop/{userId}/ExecuteGetAsyncItemIdInSlot/{slot}");
         var response = await restClient.ExecutePostAsync(request);
+        logger.Info(response.Content!);
         return response.TryDeserialize<ItemIdInSlotResponseDto>();
     }
 
