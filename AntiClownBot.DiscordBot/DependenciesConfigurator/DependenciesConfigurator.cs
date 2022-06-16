@@ -37,6 +37,7 @@ public class DependenciesConfigurator
             .WithTributeService()
             // configure events and service
             .WithEvents()
+            .WithNightEvents()
             .WithEventScheduler()
             .WithDailyEvents()
             .WithDailyEventScheduler()

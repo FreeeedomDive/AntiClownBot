@@ -4,6 +4,7 @@ using AntiClownDiscordBotVersion2.Commands;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
+using AntiClownDiscordBotVersion2.Events.NightEvents;
 using AntiClownDiscordBotVersion2.EventServices;
 using AntiClownDiscordBotVersion2.Models;
 using AntiClownDiscordBotVersion2.Models.Inventory;
@@ -197,6 +198,22 @@ public static class StandardKernelExtensions
         {
             ninjectKernel.Bind(eventType).ToSelf();
             ninjectKernel.Bind<IEvent>().To(eventType);
+        }
+
+        return ninjectKernel;
+    }
+
+    public static StandardKernel WithNightEvents(this StandardKernel ninjectKernel)
+    {
+        var eventTypes = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(s => s.GetTypes())
+            .Where(p => typeof(INightEvent).IsAssignableFrom(p))
+            .Where(p => p != typeof(INightEvent));
+
+        foreach (var eventType in eventTypes)
+        {
+            ninjectKernel.Bind(eventType).ToSelf();
+            ninjectKernel.Bind<INightEvent>().To(eventType);
         }
 
         return ninjectKernel;

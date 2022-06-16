@@ -1,4 +1,5 @@
-﻿using AntiClownDiscordBotVersion2.Events.SpecialEventDays;
+﻿using AntiClownDiscordBotVersion2.Events.NightEvents;
+using AntiClownDiscordBotVersion2.Events.SpecialEventDays;
 using Loggers;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Statistics.Daily;
@@ -14,13 +15,15 @@ namespace AntiClownDiscordBotVersion2.Events
             IDailyStatisticsService dailyStatisticsService,
             ILogger logger,
             IRandomizer randomizer,
-            IEvent[] events
+            IEvent[] events,
+            INightEvent[] nightEvents
         )
         {
             this.eventSettingsService = eventSettingsService;
             this.dailyStatisticsService = dailyStatisticsService;
             this.logger = logger;
             this.randomizer = randomizer;
+            this.nightEvents = nightEvents;
             eventMappings = new Dictionary<EventDayType, ISpecialEventDay>()
             {
                 { EventDayType.CommonDay, new CommonDayWithAllEvents(events) },
@@ -47,11 +50,17 @@ namespace AntiClownDiscordBotVersion2.Events
                 AddLog($"Следующий эвент в {Utility.NormalizeTime(nextEventTime)}, " +
                        $"через {Utility.GetTimeDiff(nextEventTime)}");
                 await Task.Delay(sleepTime);
+
+                if (DateTime.Now.IsNightTime())
+                {
+                    await nightEvents.SelectRandomItem(randomizer).ExecuteAsync();
+                    continue;
+                }
+                
                 if (nextEvents.Count == 0)
                 {
                     nextEvents.Enqueue(eventConfiguration.Events.SelectRandomItem(randomizer));
                 }
-
                 var currentEvent = nextEvents.Dequeue();
                 dailyStatisticsService.DailyStatistics.EventsCount++;
                 await currentEvent.ExecuteAsync();
@@ -73,6 +82,7 @@ namespace AntiClownDiscordBotVersion2.Events
         private readonly IDailyStatisticsService dailyStatisticsService;
         private readonly ILogger logger;
         private readonly IRandomizer randomizer;
+        private readonly INightEvent[] nightEvents;
         private readonly Dictionary<EventDayType, ISpecialEventDay> eventMappings;
     }
 }
