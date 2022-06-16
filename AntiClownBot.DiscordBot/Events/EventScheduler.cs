@@ -1,5 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.Events.SpecialEventDays;
-using AntiClownDiscordBotVersion2.Log;
+using Loggers;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Statistics.Daily;
 using AntiClownDiscordBotVersion2.Utils;

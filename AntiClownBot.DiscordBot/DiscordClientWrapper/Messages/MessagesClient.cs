@@ -1,5 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper.Emotes;
-using AntiClownDiscordBotVersion2.Log;
+using Loggers;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
 using DSharpPlus.Entities;

@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\AntiClownApi.Client\AntiClownApi.Client.csproj" />
+      <ProjectReference Include="..\Loggers\Loggers.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -51,6 +52,10 @@
       <None Update="NLog.config">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Log" />
     </ItemGroup>
 
 </Project>

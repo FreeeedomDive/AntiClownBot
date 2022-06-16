@@ -1,4 +1,4 @@
-﻿using AntiClownDiscordBotVersion2.Log;
+﻿using Loggers;
 using AntiClownDiscordBotVersion2.Utils;
 
 namespace AntiClownDiscordBotVersion2.Events

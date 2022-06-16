@@ -1,6 +1,6 @@
 ﻿using NLog;
 
-namespace AntiClownDiscordBotVersion2.Log;
+namespace Loggers;
 
 public class NLogger : ILogger
 {

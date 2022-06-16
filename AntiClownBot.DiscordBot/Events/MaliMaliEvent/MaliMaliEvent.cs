@@ -1,6 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
-using AntiClownDiscordBotVersion2.Log;
+using Loggers;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;

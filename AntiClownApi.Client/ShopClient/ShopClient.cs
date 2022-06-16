@@ -1,14 +1,16 @@
 ﻿using AntiClownApiClient.Dto.Responses.ShopResponses;
 using AntiClownApiClient.Extensions;
+using Loggers;
 using RestSharp;
 
 namespace AntiClownApiClient.ShopClient;
 
 public class ShopClient : IShopClient
 {
-    public ShopClient(RestClient restClient)
+    public ShopClient(RestClient restClient, ILogger logger)
     {
         this.restClient = restClient;
+        this.logger = logger;
     }
 
     public async Task<UserShopResponseDto> GetAsync(ulong userId)
@@ -36,6 +38,7 @@ public class ShopClient : IShopClient
     {
         var request = new RestRequest($"api/shop/{userId}/buy/{itemId}");
         var response = await restClient.ExecutePostAsync(request);
+        logger.Info(response.Content!);
         return response.TryDeserialize<BuyItemResponseDto>();
     }
 
@@ -47,4 +50,5 @@ public class ShopClient : IShopClient
     }
 
     private readonly RestClient restClient;
+    private readonly ILogger logger;
 }

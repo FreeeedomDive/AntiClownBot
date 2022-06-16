@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using AntiClownDiscordBotVersion2.Commands;
 using AntiClownDiscordBotVersion2.EventServices;
-using AntiClownDiscordBotVersion2.Log;
+using Loggers;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;

@@ -4,7 +4,7 @@ using AntiClownDiscordBotVersion2.DiscordClientWrapper.Members;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Messages;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Roles;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Voice;
-using AntiClownDiscordBotVersion2.Log;
+using Loggers;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
 

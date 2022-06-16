@@ -2,7 +2,7 @@
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
-using AntiClownDiscordBotVersion2.Log;
+using Loggers;
 using Ninject;
 
 namespace AntiClownDiscordBotVersion2;

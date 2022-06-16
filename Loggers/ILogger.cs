@@ -1,4 +1,4 @@
-﻿namespace AntiClownDiscordBotVersion2.Log;
+﻿namespace Loggers;
 
 public interface ILogger
 {

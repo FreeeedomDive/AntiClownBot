@@ -1,5 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
-using AntiClownDiscordBotVersion2.Log;
+using Loggers;
 using DSharpPlus.EventArgs;
 using VideoLibrary;
 
