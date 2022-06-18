@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.Utils;
+using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Models.Lohotron
 {
@@ -7,14 +8,14 @@ namespace AntiClownDiscordBotVersion2.Models.Lohotron
         public Lohotron(IRandomizer randomizer)
         {
             this.randomizer = randomizer;
+            UsersId = CreateOrRestore();
         }
 
         public void Reset()
         {
             UsersId.Clear();
+            Save();
         }
-        
-        public readonly List<ulong> UsersId = new();
 
         private static readonly ILohotronPrize[] AllPrizes =
         {
@@ -44,11 +45,33 @@ namespace AntiClownDiscordBotVersion2.Models.Lohotron
                 new (6, AllPrizes[9])               // Lootbox
             );
 
-        public ILohotronPrize Play()
+        public ILohotronPrize Play(ulong userId)
         {
+            UsersId.Add(userId);
+            Save();
             return Wheel.GetPrize(randomizer.GetRandomNumberBetween(0, Wheel.PrizesCount));
         }
 
+        private List<ulong> CreateOrRestore()
+        {
+            if (!File.Exists(FileName))
+            {
+                return new List<ulong>();
+            }
+            
+            var content = JsonConvert.DeserializeObject<List<ulong>>(File.ReadAllText(FileName));
+            return content ?? new List<ulong>();
+        }
+
+        private void Save()
+        {
+            var json = JsonConvert.SerializeObject(UsersId, Formatting.Indented);
+            File.WriteAllText(FileName, json);
+        }
+
+        public readonly List<ulong> UsersId;
+
         private readonly IRandomizer randomizer;
+        private const string FileName = "../Files/StatisticsFiles/lohotron.json";
     }
 }

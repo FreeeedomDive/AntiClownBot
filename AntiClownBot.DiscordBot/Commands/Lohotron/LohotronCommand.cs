@@ -32,8 +32,7 @@ namespace AntiClownDiscordBotVersion2.Commands.Lohotron
                 return;
             }
 
-            var prize = lohotron.Play();
-            lohotron.UsersId.Add(e.Author.Id);
+            var prize = lohotron.Play(e.Author.Id);
             switch (prize.Name)
             {
                 case "Credits":
