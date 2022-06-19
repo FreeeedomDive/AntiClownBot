@@ -11,4 +11,5 @@ public class Settings
     public int ApiPollingIntervalInSeconds { get; set; }
     public bool IsBackendFeedReadingEnabled { get; set; }
     public bool PingOnEvents { get; set; }
+    public string LogLevel { get; set; }
 }

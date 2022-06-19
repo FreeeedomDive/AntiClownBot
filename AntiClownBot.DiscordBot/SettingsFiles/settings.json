@@ -4,5 +4,6 @@
   "MaintenanceMode": false,
   "ApiPollingIntervalInSeconds": 10,
   "IsBackendFeedReadingEnabled": true,
-  "PingOnEvents": false
+  "PingOnEvents": false,
+  "LogLevel": "Information"
 }
