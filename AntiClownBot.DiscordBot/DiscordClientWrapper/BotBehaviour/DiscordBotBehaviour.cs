@@ -186,7 +186,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 var didSomeoneSayCock = await discordClientWrapper.Emotes.FindEmoteAsync("DIDSOMEONESAYCOCK");
                 await discordClientWrapper.Emotes.AddReactionToMessageAsync(e.Message, didSomeoneSayCock);
                 var yep = await discordClientWrapper.Emotes.FindEmoteAsync("YEP");
-                await discordClientWrapper.Emotes.AddReactionToMessageAsync(e.Message, $"{yep} COCK");
+                await discordClientWrapper.Messages.RespondAsync(e.Message, $"{yep} COCK");
             }
 
             if (booba)
