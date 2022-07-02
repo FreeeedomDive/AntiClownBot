@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
@@ -19,7 +18,6 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
             this.guildSettingsService = guildSettingsService;
         }
 
-        [SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
         public async Task Execute(MessageCreateEventArgs e)
         {
             var guildSettings = guildSettingsService.GetGuildSettings();
@@ -33,7 +31,7 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
             {
                 var serverPath = guildSettings.MinecraftServerFolder;
                 var isModded = Directory.Exists($"{serverPath}\\mods");
-                const string serverDescription = "Версия: 1.18.2 vanilla";
+                const string serverDescription = "Версия: 1.19";
                 var ip = await GetRealIp();
                 var mods = new List<string>();
                 if (isModded)
@@ -75,9 +73,6 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
             using var stream = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
             return await stream.ReadToEndAsync();
         }
-
-        private static async Task<string> GetNgrokIpFromFile(string serverDirectory) =>
-            await File.ReadAllTextAsync($"{serverDirectory}\\server.txt");
 
         public Task<string> Help()
         {
