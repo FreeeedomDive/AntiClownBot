@@ -135,7 +135,7 @@ public class ServicesHealthChecker : IServicesHealthChecker
 
     private static string ConvertBoolToStatus(bool online)
     {
-        return online ? "ONLINE" : "OFFLINE";
+        return online ? "✅" : "❌";
     }
 
     private Dictionary<ServiceType, string> ServiceDescription { get; }
