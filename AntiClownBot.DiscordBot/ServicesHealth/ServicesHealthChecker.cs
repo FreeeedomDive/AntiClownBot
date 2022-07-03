@@ -54,8 +54,10 @@ public class ServicesHealthChecker : IServicesHealthChecker
 
     private async Task StartScheduler()
     {
+        var enumValues = Enum.GetValues<ServiceType>();
         while (true)
         {
+            
             var currentStatuses = new Dictionary<ServiceType, bool>()
             {
                 { ServiceType.Api, false },
@@ -71,7 +73,7 @@ public class ServicesHealthChecker : IServicesHealthChecker
             await Task.Delay(checkInterval);
 
             // collect data about services
-            foreach (var serviceType in Enum.GetValues<ServiceType>())
+            foreach (var serviceType in enumValues)
             {
                 currentStatuses[serviceType] = await ServiceStatusCheck[serviceType]();
                 servicesStatusBuilder.Append($"\n{ServiceDescription[serviceType]}: {ConvertBoolToStatus(currentStatuses[serviceType])}");
@@ -79,7 +81,8 @@ public class ServicesHealthChecker : IServicesHealthChecker
 
             var totalStatus = servicesStatusBuilder.ToString();
 
-            if (currentStatuses.Equals(ServiceStatus))
+            var sameStatuses = enumValues.All(e => currentStatuses[e] == ServiceStatus[e]);
+            if (sameStatuses)
             {
                 logger.Info("Statuses are the same");
                 continue;
