@@ -72,6 +72,8 @@ public class ServicesHealthChecker : IServicesHealthChecker
                     statusChanged = true;
                 }
 
+                ServiceStatus[serviceType] = currentStatus;
+
                 servicesStatusBuilder.Append($"\n{ServiceDescription[serviceType]}: {ConvertBoolToStatus(currentStatus)}");
             }
 
