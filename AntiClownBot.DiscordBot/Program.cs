@@ -1,7 +1,8 @@
-﻿using AntiClownDiscordBotVersion2.ApiPoll;
+﻿using AntiClownDiscordBotVersion2.ApiEventFeed;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
+using AntiClownDiscordBotVersion2.ServicesHealth;
 using Loggers;
 using Ninject;
 
@@ -15,6 +16,7 @@ public class Program
         Console.WriteLine("Configured all dependencies");
         AddExceptionLogger(configurator);
         StartBackgroundApiPollScheduler(configurator);
+        StartBackgroundServiceChecker(configurator);
         Console.WriteLine("Started API poll scheduler");
         StartBackgroundDailyEventScheduler(configurator);
         Console.WriteLine("Started DailyEvent scheduler");
@@ -36,8 +38,14 @@ public class Program
 
     private static void StartBackgroundApiPollScheduler(StandardKernel configurator)
     {
-        var apiPollingScheduler = configurator.Get<IApiPollScheduler>();
+        var apiPollingScheduler = configurator.Get<IApiEventFeedConsumer>();
         apiPollingScheduler.Start();
+    }
+
+    private static void StartBackgroundServiceChecker(StandardKernel configurator)
+    {
+        var servicesHealthChecker = configurator.Get<IServicesHealthChecker>();
+        servicesHealthChecker.Start();
     }
 
     private static void StartBackgroundDailyEventScheduler(StandardKernel configurator)

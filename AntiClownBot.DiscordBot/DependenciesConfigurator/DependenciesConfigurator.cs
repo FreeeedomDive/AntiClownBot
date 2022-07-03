@@ -46,7 +46,8 @@ public class DependenciesConfigurator
             .WithCommands()
             .ConfigureCommands()
             // final touches
-            .WithApiPollerScheduler()
+            .WithApiEventFeedConsumer()
+            .WithServicesHealthChecker()
             .WithDiscordBotBehaviour();
 
         return ninjectKernel;

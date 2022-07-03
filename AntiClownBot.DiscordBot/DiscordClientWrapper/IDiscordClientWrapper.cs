@@ -1,4 +1,5 @@
-﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper.Emotes;
+﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper.Channels;
+using AntiClownDiscordBotVersion2.DiscordClientWrapper.Emotes;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Guilds;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Members;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Messages;
@@ -17,4 +18,5 @@ public interface IDiscordClientWrapper
     IMessagesClient Messages { get; }
     IRolesClient Roles { get; }
     IVoiceClient Voice { get; }
+    IChannelsClient Channels { get; }
 }

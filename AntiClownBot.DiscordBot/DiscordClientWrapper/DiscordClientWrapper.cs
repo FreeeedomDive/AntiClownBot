@@ -1,4 +1,5 @@
-﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper.Emotes;
+﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper.Channels;
+using AntiClownDiscordBotVersion2.DiscordClientWrapper.Emotes;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Guilds;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Members;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Messages;
@@ -25,6 +26,7 @@ public class DiscordClientWrapper : IDiscordClientWrapper
         Messages = new MessagesClient(discordClient, Emotes, guildSettingsService, logger);
         Roles = new RolesClient(discordClient, guildSettingsService, Guilds, Members, logger);
         Voice = new VoiceClient(discordClient, Guilds, guildSettingsService, logger);
+        Channels = new ChannelsClient(discordClient, Guilds);
     }
 
     public async Task StartDiscord()
@@ -39,6 +41,7 @@ public class DiscordClientWrapper : IDiscordClientWrapper
     public IMessagesClient Messages { get; }
     public IRolesClient Roles { get; }
     public IVoiceClient Voice { get; }
+    public IChannelsClient Channels { get; }
 
     private readonly DiscordClient discordClient;
 }

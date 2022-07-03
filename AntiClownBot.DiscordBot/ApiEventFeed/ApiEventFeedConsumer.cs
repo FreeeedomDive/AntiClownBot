@@ -5,11 +5,11 @@ using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus.Entities;
 
-namespace AntiClownDiscordBotVersion2.ApiPoll;
+namespace AntiClownDiscordBotVersion2.ApiEventFeed;
 
-public class ApiPollScheduler : IApiPollScheduler
+public class ApiEventFeedConsumer : IApiEventFeedConsumer
 {
-    public ApiPollScheduler(
+    public ApiEventFeedConsumer(
         IDiscordClientWrapper discordClientWrapper,
         IApiClient apiClient,
         IAppSettingsService appSettingsService,

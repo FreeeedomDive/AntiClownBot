@@ -1,5 +1,5 @@
 ﻿using AntiClownApiClient;
-using AntiClownDiscordBotVersion2.ApiPoll;
+using AntiClownDiscordBotVersion2.ApiEventFeed;
 using AntiClownDiscordBotVersion2.Commands;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
@@ -11,6 +11,7 @@ using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Lohotron;
 using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
+using AntiClownDiscordBotVersion2.ServicesHealth;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
@@ -291,9 +292,16 @@ public static class StandardKernelExtensions
         return ninjectKernel;
     }
 
-    public static StandardKernel WithApiPollerScheduler(this StandardKernel ninjectKernel)
+    public static StandardKernel WithApiEventFeedConsumer(this StandardKernel ninjectKernel)
     {
-        ninjectKernel.Bind<IApiPollScheduler>().To<ApiPollScheduler>();
+        ninjectKernel.Bind<IApiEventFeedConsumer>().To<ApiEventFeedConsumer>();
+
+        return ninjectKernel;
+    }
+
+    public static StandardKernel WithServicesHealthChecker(this StandardKernel ninjectKernel)
+    {
+        ninjectKernel.Bind<IServicesHealthChecker>().To<ServicesHealthChecker>();
 
         return ninjectKernel;
     }

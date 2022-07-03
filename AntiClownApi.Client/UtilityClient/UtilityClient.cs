@@ -20,9 +20,16 @@ public class UtilityClient : IUtilityClient
 
     public async Task<bool> PingApiAsync()
     {
-        var request = new RestRequest($"api/globalState/ping");
-        var response = await restClient.ExecuteGetAsync(request);
-        return response.TryDeserialize<string>() == "OK";
+        try
+        {
+            var request = new RestRequest($"api/globalState/ping");
+            var response = await restClient.ExecuteGetAsync(request);
+            return response.TryDeserialize<string>() == "OK";
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private readonly RestClient restClient;
