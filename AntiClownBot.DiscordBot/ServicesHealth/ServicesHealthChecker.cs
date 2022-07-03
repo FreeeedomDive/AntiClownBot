@@ -4,6 +4,7 @@ using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.Utils.Extensions;
 using Loggers;
 
 namespace AntiClownDiscordBotVersion2.ServicesHealth;
@@ -55,7 +56,13 @@ public class ServicesHealthChecker : IServicesHealthChecker
     {
         while (true)
         {
-            var statusChanged = false;
+            var currentStatuses = new Dictionary<ServiceType, bool>()
+            {
+                { ServiceType.Api, false },
+                { ServiceType.AdminApi, false },
+                { ServiceType.MinecraftServer, false },
+            };
+            
             var servicesStatusBuilder = new StringBuilder("Состояние сервисов:");
             var appSettings = appSettingsService.GetSettings();
             var guildSettings = guildSettingsService.GetGuildSettings();
@@ -66,28 +73,34 @@ public class ServicesHealthChecker : IServicesHealthChecker
             // collect data about services
             foreach (var serviceType in Enum.GetValues<ServiceType>())
             {
-                var currentStatus = await ServiceStatusCheck[serviceType]();
-                if (ServiceStatus[serviceType] != currentStatus)
-                {
-                    statusChanged = true;
-                }
-
-                ServiceStatus[serviceType] = currentStatus;
-
-                servicesStatusBuilder.Append($"\n{ServiceDescription[serviceType]}: {ConvertBoolToStatus(currentStatus)}");
+                currentStatuses[serviceType] = await ServiceStatusCheck[serviceType]();
+                servicesStatusBuilder.Append($"\n{ServiceDescription[serviceType]}: {currentStatuses[serviceType]}");
             }
 
             var totalStatus = servicesStatusBuilder.ToString();
 
-            /*if (!statusChanged)
+            if (currentStatuses.Equals(ServiceStatus))
             {
+                logger.Info("Statuses are the same");
                 continue;
-            }*/
-
+            }
+            
             // send this data to bot channel
             logger.Info(totalStatus);
-            await discordClientWrapper.Channels.ModifyChannelAsync(guildSettings.BotChannelId,
-                model => { model.Topic = totalStatus; });
+            try
+            {
+                await discordClientWrapper.Channels.ModifyChannelAsync(guildSettings.BotChannelId,
+                    model => { model.Topic = totalStatus; });
+                // if discord updated the topic, assign new statuses to global status dict
+                foreach (var status in currentStatuses.Keys)
+                {
+                    ServiceStatus[status] = currentStatuses[status];
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Error("Discord can't update status topic", e);
+            }
         }
     }
 
