@@ -76,14 +76,14 @@ public class ServicesHealthChecker : IServicesHealthChecker
             }
 
             var totalStatus = servicesStatusBuilder.ToString();
-            logger.Info(totalStatus);
 
-            if (!statusChanged)
+            /*if (!statusChanged)
             {
                 continue;
-            }
+            }*/
 
             // send this data to bot channel
+            logger.Info(totalStatus);
             await discordClientWrapper.Channels.ModifyChannelAsync(guildSettings.BotChannelId,
                 model => { model.Topic = totalStatus; });
         }
