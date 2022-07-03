@@ -52,7 +52,6 @@ public class ServicesHealthChecker : IServicesHealthChecker
 
     private async Task<bool> IsApiOnline()
     {
-        var guildSettings = guildSettingsService.GetGuildSettings();
         return await apiClient.Utility.PingApiAsync();
     }
 
