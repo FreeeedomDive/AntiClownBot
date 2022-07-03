@@ -4,6 +4,7 @@ using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using Loggers;
 
 namespace AntiClownDiscordBotVersion2.ServicesHealth;
 
@@ -13,13 +14,36 @@ public class ServicesHealthChecker : IServicesHealthChecker
         IDiscordClientWrapper discordClientWrapper,
         IApiClient apiClient,
         IAppSettingsService appSettingsService,
-        IGuildSettingsService guildSettingsService
+        IGuildSettingsService guildSettingsService,
+        ILogger logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
         this.apiClient = apiClient;
         this.appSettingsService = appSettingsService;
         this.guildSettingsService = guildSettingsService;
+        this.logger = logger;
+
+        ServiceDescription = new Dictionary<ServiceType, string>()
+        {
+            { ServiceType.Api, "Api" },
+            { ServiceType.AdminApi, "AdminApi" },
+            { ServiceType.MinecraftServer, "Minecraft Server" },
+        };
+
+        ServiceStatus = new Dictionary<ServiceType, bool>()
+        {
+            { ServiceType.Api, false },
+            { ServiceType.AdminApi, false },
+            { ServiceType.MinecraftServer, false },
+        };
+
+        ServiceStatusCheck = new Dictionary<ServiceType, Func<Task<bool>>>()
+        {
+            { ServiceType.Api, IsApiOnline },
+            { ServiceType.AdminApi, IsAdminApiOnline },
+            { ServiceType.MinecraftServer, IsMinecraftServerOnline },
+        };
     }
 
     public void Start()
@@ -31,6 +55,7 @@ public class ServicesHealthChecker : IServicesHealthChecker
     {
         while (true)
         {
+            var statusChanged = false;
             var servicesStatusBuilder = new StringBuilder("Состояние сервисов:");
             var appSettings = appSettingsService.GetSettings();
             var guildSettings = guildSettingsService.GetGuildSettings();
@@ -39,20 +64,39 @@ public class ServicesHealthChecker : IServicesHealthChecker
             await Task.Delay(checkInterval);
 
             // collect data about services
-            servicesStatusBuilder.Append($"\nAPI: {ConvertBoolToStatus(await IsApiOnline())}.");
-            servicesStatusBuilder.Append($"\nMinecraft server: {ConvertBoolToStatus(await IsMinecraftServerOnline())}.");
+            foreach (var serviceType in Enum.GetValues<ServiceType>())
+            {
+                var currentStatus = await ServiceStatusCheck[serviceType]();
+                if (ServiceStatus[serviceType] != currentStatus)
+                {
+                    statusChanged = true;
+                }
+
+                servicesStatusBuilder.Append($"\n{ServiceDescription[serviceType]}: {ConvertBoolToStatus(currentStatus)}");
+            }
+
+            var totalStatus = servicesStatusBuilder.ToString();
+            logger.Info(totalStatus);
+
+            if (!statusChanged)
+            {
+                continue;
+            }
 
             // send this data to bot channel
-            await discordClientWrapper.Channels.ModifyChannelAsync(guildSettings.BotChannelId, model =>
-            {
-                model.Topic = servicesStatusBuilder.ToString();
-            });
+            await discordClientWrapper.Channels.ModifyChannelAsync(guildSettings.BotChannelId,
+                model => { model.Topic = totalStatus; });
         }
     }
 
     private async Task<bool> IsApiOnline()
     {
         return await apiClient.Utility.PingApiAsync();
+    }
+
+    private Task<bool> IsAdminApiOnline()
+    {
+        return Task.FromResult(false);
     }
 
     private async Task<bool> IsMinecraftServerOnline()
@@ -76,9 +120,14 @@ public class ServicesHealthChecker : IServicesHealthChecker
     {
         return online ? "ONLINE" : "OFFLINE";
     }
-    
+
+    private Dictionary<ServiceType, string> ServiceDescription { get; }
+    private Dictionary<ServiceType, bool> ServiceStatus { get; }
+    private Dictionary<ServiceType, Func<Task<bool>>> ServiceStatusCheck { get; }
+
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IApiClient apiClient;
     private readonly IAppSettingsService appSettingsService;
     private readonly IGuildSettingsService guildSettingsService;
+    private readonly ILogger logger;
 }
