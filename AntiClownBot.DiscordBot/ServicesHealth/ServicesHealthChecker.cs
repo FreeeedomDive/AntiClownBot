@@ -74,7 +74,7 @@ public class ServicesHealthChecker : IServicesHealthChecker
             foreach (var serviceType in Enum.GetValues<ServiceType>())
             {
                 currentStatuses[serviceType] = await ServiceStatusCheck[serviceType]();
-                servicesStatusBuilder.Append($"\n{ServiceDescription[serviceType]}: {currentStatuses[serviceType]}");
+                servicesStatusBuilder.Append($"\n{ServiceDescription[serviceType]}: {ConvertBoolToStatus(currentStatuses[serviceType])}");
             }
 
             var totalStatus = servicesStatusBuilder.ToString();
