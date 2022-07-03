@@ -57,14 +57,13 @@ public class ServicesHealthChecker : IServicesHealthChecker
         var enumValues = Enum.GetValues<ServiceType>();
         while (true)
         {
-            
             var currentStatuses = new Dictionary<ServiceType, bool>()
             {
                 { ServiceType.Api, false },
                 { ServiceType.AdminApi, false },
                 { ServiceType.MinecraftServer, false },
             };
-            
+
             var servicesStatusBuilder = new StringBuilder("Состояние сервисов:");
             var appSettings = appSettingsService.GetSettings();
             var guildSettings = guildSettingsService.GetGuildSettings();
@@ -87,7 +86,7 @@ public class ServicesHealthChecker : IServicesHealthChecker
                 logger.Info("Statuses are the same");
                 continue;
             }
-            
+
             // send this data to bot channel
             logger.Info(totalStatus);
             try
