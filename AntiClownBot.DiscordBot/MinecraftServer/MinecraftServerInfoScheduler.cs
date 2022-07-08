@@ -44,8 +44,10 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
                 logger.Info("Ip was null");
                 continue;
             }
+
+            var guildSettings = guildSettingsService.GetGuildSettings();
             
-            var serverInfo = await minecraftServerInfoService.ReadServerInfo(ip);
+            var serverInfo = await minecraftServerInfoService.ReadServerInfo($"{ip}{guildSettings.MinecraftServerPort}");
             if (serverInfo == null)
             {
                 logger.Info("Server info was null");
@@ -68,8 +70,7 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
                         .Append(string.Join('\n', serverInfo.Players.Players));
                 }
             }
-
-            var guildSettings = guildSettingsService.GetGuildSettings();
+            
             await discordClientWrapper.Channels.ModifyChannelAsync(guildSettings.MinecraftChannelId, model =>
             {
                 model.Topic = messageBuilder.ToString();
