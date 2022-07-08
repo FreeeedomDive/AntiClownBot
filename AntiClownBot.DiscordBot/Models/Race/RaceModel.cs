@@ -266,6 +266,8 @@ namespace AntiClownDiscordBotVersion2.Models.Race
 
         private async Task MakeResult()
         {
+            var changeUserRatingTasks = new List<Func<Task>>();
+            
             isFinished = true;
 
             var botPosition = drivers.Count;
@@ -274,22 +276,24 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             var sb = new StringBuilder($"РЕЗУЛЬТАТЫ ГОНОЧКИ В {currentTrack.Name}\n```");
             var driversInfoTasks = drivers.Select(async (d, i) =>
             {
+                var driver = d;
+                
                 var pos = i + 1;
-                if (d.DiscordId == botId)
+                if (driver.DiscordId == botId)
                 {
                     botPosition = pos;
                 }
 
-                var result = (pos < 10 ? " " : "") + $"{pos}.\t{d.DriverModel.ShortName}";
-                if (!d.IsUser) return result;
+                var result = (pos < 10 ? " " : "") + $"{pos}.\t{driver.DriverModel.ShortName}";
+                if (!driver.IsUser) return result;
 
-                var user = await discordClientWrapper.Members.GetAsync(d.DiscordId);
+                var user = await discordClientWrapper.Members.GetAsync(driver.DiscordId);
                 result += $"\t{user.ServerOrUserName()}";
 
                 if (pos < botPosition && pos <= 10)
                 {
                     var pts = Points[i];
-                    await apiClient.Users.ChangeUserRatingAsync(d.DiscordId, pts, $"{pos} место в гонке");
+                    changeUserRatingTasks.Add(() => apiClient.Users.ChangeUserRatingAsync(driver.DiscordId, pts, $"{pos} место в гонке"));
                     result += $"\t+{pts} scam coins";
                 }
 
@@ -322,7 +326,13 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             var models = drivers.Select(d => d.DriverModel).ToList();
             await File.WriteAllTextAsync("../Files/StatisticsFiles/drivers.json", JsonConvert.SerializeObject(models, Formatting.Indented));
 
-            // TODO вынести в эвент 
+            foreach (var changeUserRatingTask in changeUserRatingTasks)
+            {
+                // добавляю небольшую задержку во время присваивания челикам денег за гонку, чтобы временно избежать ошибок постгреса до переделывания репозиториев
+                await changeUserRatingTask();
+                await Task.Delay(1000);
+            }
+            
             OnRaceEnd();
         }
 
