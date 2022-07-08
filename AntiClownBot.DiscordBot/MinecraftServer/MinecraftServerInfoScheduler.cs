@@ -47,7 +47,7 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
 
             var guildSettings = guildSettingsService.GetGuildSettings();
             
-            var serverInfo = await minecraftServerInfoService.ReadServerInfo($"{ip}{guildSettings.MinecraftServerPort}");
+            var serverInfo = await minecraftServerInfoService.ReadServerInfo($"{ip}:{guildSettings.MinecraftServerPort}");
             if (serverInfo == null)
             {
                 logger.Info("Server info was null");
