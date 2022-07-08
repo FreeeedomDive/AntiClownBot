@@ -62,12 +62,12 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
                 .Append($"Ip: {serverInfo.Ip}:{serverInfo.Port}");
             if (isServerOnline)
             {
-                messageBuilder.Append($"\nИгроков онлайн: {serverInfo.Players.Online}");
-                if (serverInfo.Players.Players != null)
+                messageBuilder.Append($"\nИгроков онлайн: {serverInfo.Players.Online} / {serverInfo.Players.Max}");
+                if (serverInfo.Players.List != null)
                 {
                     messageBuilder
                         .Append('\n')
-                        .Append(string.Join('\n', serverInfo.Players.Players));
+                        .Append(string.Join('\n', serverInfo.Players.List));
                 }
             }
             
