@@ -36,11 +36,12 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
     {
         while (true)
         {
+            await Wait();
+
             var ip = await ipService.GetIp();
             if (ip == null)
             {
                 logger.Info("Ip was null");
-                await Wait();
                 continue;
             }
             
@@ -48,7 +49,6 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
             if (serverInfo == null)
             {
                 logger.Info("Server info was null");
-                await Wait();
                 continue;
             }
 
@@ -74,8 +74,6 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
             {
                 model.Topic = messageBuilder.ToString();
             });
-
-            await Wait();
         }
     }
 

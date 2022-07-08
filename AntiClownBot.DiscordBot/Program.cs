@@ -2,6 +2,7 @@
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
+using AntiClownDiscordBotVersion2.MinecraftServer;
 using AntiClownDiscordBotVersion2.ServicesHealth;
 using Loggers;
 using Ninject;
@@ -22,6 +23,8 @@ public class Program
         Console.WriteLine("Started DailyEvent scheduler");
         StartBackgroundEventScheduler(configurator);
         Console.WriteLine("Started Event scheduler");
+        StartBackgroundMinecraftServerInfoScheduler(configurator);
+        Console.WriteLine("Started MinecraftServerInfo scheduler");
         Console.WriteLine("Start listening to discord events...");
         await StartDiscordAsync(configurator);
     }
@@ -56,8 +59,13 @@ public class Program
 
     private static void StartBackgroundEventScheduler(StandardKernel configurator)
     {
-        var logger = configurator.Get<ILogger>();
         var eventScheduler = configurator.Get<EventScheduler>();
+        eventScheduler.Start();
+    }
+
+    private static void StartBackgroundMinecraftServerInfoScheduler(StandardKernel configurator)
+    {
+        var eventScheduler = configurator.Get<IMinecraftServerInfoScheduler>();
         eventScheduler.Start();
     }
 
