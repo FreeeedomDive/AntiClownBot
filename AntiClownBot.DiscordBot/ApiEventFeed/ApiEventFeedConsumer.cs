@@ -47,13 +47,6 @@ public class ApiEventFeedConsumer : IApiEventFeedConsumer
             var isServerWorking = await apiClient.Utility.PingApiAsync();
             if (!isServerWorking)
             {
-                var admin = await discordClientWrapper.Members.GetAsync(guildSettings.AdminId);
-                var messageBuilder = new DiscordMessageBuilder
-                {
-                    Content = $"{admin.Mention} сервер прилёг"
-                };
-                messageBuilder.WithAllowedMention(UserMention.All);
-                await discordClientWrapper.Messages.SendAsync(guildSettings.BotChannelId, messageBuilder);
                 continue;
             }
 
