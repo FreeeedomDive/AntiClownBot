@@ -6,6 +6,7 @@ using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
 using AntiClownDiscordBotVersion2.Events.NightEvents;
 using AntiClownDiscordBotVersion2.EventServices;
+using AntiClownDiscordBotVersion2.MinecraftServer;
 using AntiClownDiscordBotVersion2.Models;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Lohotron;
@@ -19,10 +20,13 @@ using AntiClownDiscordBotVersion2.Statistics.Daily;
 using AntiClownDiscordBotVersion2.Statistics.Emotes;
 using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
+using CommonServices.IpService;
+using CommonServices.MinecraftServerService;
 using DSharpPlus;
 using Loggers;
 using Ninject;
 using NLog;
+using RestClient;
 using RestSharp;
 using ILogger = Loggers.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -71,12 +75,8 @@ public static class StandardKernelExtensions
     public static StandardKernel WithApiClients(this StandardKernel ninjectKernel)
     {
         var settings = ninjectKernel.Get<IAppSettingsService>().GetSettings();
-        var restClientOptions = new RestClientOptions
-        {
-            BaseUrl = new Uri(settings.ApiUrl)
-        };
-        var restClient = new RestClient(restClientOptions);
-        ninjectKernel.Bind<RestClient>().ToConstant(restClient);
+        var restClient = RestClientBuilder.BuildRestClient(settings.ApiUrl);
+        ninjectKernel.Bind<RestSharp.RestClient>().ToConstant(restClient);
         ninjectKernel.Bind<IApiClient>().To<ApiClient>();
 
         return ninjectKernel;
@@ -306,9 +306,30 @@ public static class StandardKernelExtensions
         return ninjectKernel;
     }
 
+    public static StandardKernel WithMinecraftServerInfoScheduler(this StandardKernel ninjectKernel)
+    {
+        ninjectKernel.Bind<IMinecraftServerInfoScheduler>().To<MinecraftServerInfoScheduler>();
+
+        return ninjectKernel;
+    }
+
     public static StandardKernel WithDiscordBotBehaviour(this StandardKernel ninjectKernel)
     {
         ninjectKernel.Bind<IDiscordBotBehaviour>().To<DiscordBotBehaviour>();
+
+        return ninjectKernel;
+    }
+
+    public static StandardKernel WithIpService(this StandardKernel ninjectKernel)
+    {
+        ninjectKernel.Bind<IIpService>().To<IpService>();
+
+        return ninjectKernel;
+    }
+
+    public static StandardKernel WithMinecraftServerInfoService(this StandardKernel ninjectKernel)
+    {
+        ninjectKernel.Bind<IMinecraftServerInfoService>().To<MinecraftServerInfoService>();
 
         return ninjectKernel;
     }

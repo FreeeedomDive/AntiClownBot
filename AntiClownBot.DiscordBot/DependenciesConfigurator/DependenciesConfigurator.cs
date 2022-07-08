@@ -17,6 +17,8 @@ public class DependenciesConfigurator
             .WithLogger()
             // configure other stuff without dependencies
             .WithRandomizer()
+            .WithIpService()
+            .WithMinecraftServerInfoService()
             // configure api clients
             .WithApiClients()
             .WithDiscordClient()
@@ -48,6 +50,7 @@ public class DependenciesConfigurator
             // final touches
             .WithApiEventFeedConsumer()
             .WithServicesHealthChecker()
+            .WithMinecraftServerInfoScheduler()
             .WithDiscordBotBehaviour();
 
         return ninjectKernel;

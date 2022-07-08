@@ -1,0 +1,100 @@
+﻿using System.Text;
+using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Settings.AppSettings;
+using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using CommonServices.IpService;
+using CommonServices.MinecraftServerService;
+using Loggers;
+
+namespace AntiClownDiscordBotVersion2.MinecraftServer;
+
+public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
+{
+    public MinecraftServerInfoScheduler(
+        IDiscordClientWrapper discordClientWrapper,
+        IAppSettingsService appSettingsService,
+        IGuildSettingsService guildSettingsService,
+        IMinecraftServerInfoService minecraftServerInfoService,
+        IIpService ipService,
+        ILogger logger
+    )
+    {
+        this.discordClientWrapper = discordClientWrapper;
+        this.appSettingsService = appSettingsService;
+        this.guildSettingsService = guildSettingsService;
+        this.minecraftServerInfoService = minecraftServerInfoService;
+        this.ipService = ipService;
+        this.logger = logger;
+    }
+
+    public void Start()
+    {
+        Task.Run(StartScheduler);
+    }
+
+    private async Task StartScheduler()
+    {
+        while (true)
+        {
+            var ip = await ipService.GetIp();
+            if (ip == null)
+            {
+                logger.Info("Ip was null");
+                await Wait();
+                continue;
+            }
+            
+            var serverInfo = await minecraftServerInfoService.ReadServerInfo(ip);
+            if (serverInfo == null)
+            {
+                logger.Info("Server info was null");
+                await Wait();
+                continue;
+            }
+
+            var messageBuilder = new StringBuilder();
+            var isServerOnline = serverInfo.Online;
+            messageBuilder
+                .Append($"Сервер онлайн: {ConvertBoolToStatus(isServerOnline)}\n")
+                .Append($"Версия: {serverInfo.Version}\n")
+                .Append($"Ip: {serverInfo.Ip}:{serverInfo.Port}");
+            if (isServerOnline)
+            {
+                messageBuilder.Append($"\nИгроков онлайн: {serverInfo.Players.Online}");
+                if (serverInfo.Players.Players != null)
+                {
+                    messageBuilder
+                        .Append('\n')
+                        .Append(string.Join('\n', serverInfo.Players.Players));
+                }
+            }
+
+            var guildSettings = guildSettingsService.GetGuildSettings();
+            await discordClientWrapper.Channels.ModifyChannelAsync(guildSettings.MinecraftChannelId, model =>
+            {
+                model.Topic = messageBuilder.ToString();
+            });
+
+            await Wait();
+        }
+    }
+
+    private async Task Wait()
+    {
+        var appSettings = appSettingsService.GetSettings();
+        var checkInterval = appSettings.MinecraftServerCheckIntervalInSeconds * 1000;
+        await Task.Delay(checkInterval);
+    }
+
+    private static string ConvertBoolToStatus(bool online)
+    {
+        return online ? "✅" : "❌";
+    }
+
+    private readonly IDiscordClientWrapper discordClientWrapper;
+    private readonly IAppSettingsService appSettingsService;
+    private readonly IGuildSettingsService guildSettingsService;
+    private readonly IMinecraftServerInfoService minecraftServerInfoService;
+    private readonly IIpService ipService;
+    private readonly ILogger logger;
+}

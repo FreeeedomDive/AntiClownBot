@@ -10,6 +10,7 @@ public class Settings
     public bool MaintenanceMode { get; set; }
     public int ApiPollingIntervalInSeconds { get; set; }
     public int ServicesCheckIntervalInSeconds { get; set; }
+    public int MinecraftServerCheckIntervalInSeconds { get; set; }
     public bool IsBackendFeedReadingEnabled { get; set; }
     public bool PingOnEvents { get; set; }
     public string LogLevel { get; set; }

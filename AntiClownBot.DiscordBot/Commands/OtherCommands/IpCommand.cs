@@ -1,8 +1,7 @@
-﻿using System.Net;
-using System.Net.Sockets;
-using System.Text;
+﻿using System.Net.Sockets;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using CommonServices.IpService;
 using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
@@ -11,11 +10,13 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
     {
         public IpCommand(
             IDiscordClientWrapper discordClientWrapper,
-            IGuildSettingsService guildSettingsService
+            IGuildSettingsService guildSettingsService,
+            IIpService ipService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
             this.guildSettingsService = guildSettingsService;
+            this.ipService = ipService;
         }
 
         public async Task Execute(MessageCreateEventArgs e)
@@ -32,7 +33,7 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
                 var serverPath = guildSettings.MinecraftServerFolder;
                 var isModded = Directory.Exists($"{serverPath}\\mods");
                 const string serverDescription = "Версия: 1.19";
-                var ip = await GetRealIp();
+                var ip = await ipService.GetIp();
                 var mods = new List<string>();
                 if (isModded)
                 {
@@ -64,16 +65,6 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
             }
         }
 
-        private static async Task<string> GetRealIp()
-        {
-            const string apiUrl = "https://api.ipify.org";
-            var request = (HttpWebRequest)WebRequest.Create(apiUrl);
-            var response = (HttpWebResponse)request.GetResponse();
-
-            using var stream = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-            return await stream.ReadToEndAsync();
-        }
-
         public Task<string> Help()
         {
             return Task.FromResult("Получение айпишника для удовлетворения кубоёбов\nИспользование:\n" +
@@ -85,5 +76,6 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IGuildSettingsService guildSettingsService;
+        private readonly IIpService ipService;
     }
 }

@@ -8,6 +8,7 @@ public class GuildSettings
     public ulong BotChannelId { get; set; }
     public ulong TributeChannelId { get; set; }
     public ulong PartyChannelId { get; set; }
+    public ulong MinecraftChannelId { get; set; }
     public ulong HiddenTestChannelId { get; set; }
     
     public ulong DotaRoleId { get; set; }
