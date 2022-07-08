@@ -83,7 +83,6 @@ public class ServicesHealthChecker : IServicesHealthChecker
             var sameStatuses = enumValues.All(e => currentStatuses[e] == ServiceStatus[e]);
             if (sameStatuses)
             {
-                logger.Info("Statuses are the same");
                 continue;
             }
 
