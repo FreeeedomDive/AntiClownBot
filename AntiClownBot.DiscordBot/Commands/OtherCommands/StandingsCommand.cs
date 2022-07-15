@@ -29,7 +29,7 @@ public class StandingsCommand : ICommand
 
         var orderedDriversString = string.Join("\n", orderedDriversDict);
 
-        await discordClientWrapper.Messages.RespondAsync(e.Message, orderedDriversString);
+        await discordClientWrapper.Messages.RespondAsync(e.Message, $"```{orderedDriversString}```");
     }
 
     public Task<string> Help()
