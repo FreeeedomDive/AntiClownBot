@@ -29,10 +29,10 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
                 return;
             }
 
-            var commandString = $"!{messageArgs[1]}";
-            if (!commandsService.TryGetCommand(commandString, out var command))
+            var commandName = messageArgs[1];
+            if (!commandsService.TryGetCommand(commandName, out var command))
             {
-                await discordClientWrapper.Messages.RespondAsync(e.Message, $"Не существует команды с именем {commandString}");
+                await discordClientWrapper.Messages.RespondAsync(e.Message, $"Не существует команды с именем {commandName}");
                 return;
             }
 
