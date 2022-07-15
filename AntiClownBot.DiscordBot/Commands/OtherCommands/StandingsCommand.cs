@@ -25,7 +25,7 @@ public class StandingsCommand : ICommand
         var position = 1;
         var orderedDriversDict = driversModels
             .OrderByDescending(driver => driver.Points)
-            .ToDictionary(_ => position++, driver => driver).Select(kv => $"{kv.Key}. {kv.Value.Name} - {kv.Value.Points}");
+            .ToDictionary(_ => position++, driver => driver).Select(kv => $"{kv.Key}. {kv.Value.ShortName} - {kv.Value.Points}");
 
         var orderedDriversString = string.Join("\n", orderedDriversDict);
 
