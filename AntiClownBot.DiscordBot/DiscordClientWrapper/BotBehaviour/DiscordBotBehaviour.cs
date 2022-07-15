@@ -6,6 +6,7 @@ using Loggers;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
+using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.SlashCommands;
 using AntiClownDiscordBotVersion2.Statistics.Emotes;
@@ -27,6 +28,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IDiscordClientWrapper discordClientWrapper,
         IUserBalanceService userBalanceService,
         ICommandsService commandsService,
+        IAppSettingsService appSettingsService,
         IGuildSettingsService guildSettingsService,
         IEmoteStatsService emoteStatsService,
         IShopService shopService,
@@ -44,6 +46,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.discordClientWrapper = discordClientWrapper;
         this.userBalanceService = userBalanceService;
         this.commandsService = commandsService;
+        this.appSettingsService = appSettingsService;
         this.guildSettingsService = guildSettingsService;
         this.emoteStatsService = emoteStatsService;
         this.shopService = shopService;
@@ -69,6 +72,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task GuildEmojisUpdated(DiscordClient _, GuildEmojisUpdateEventArgs e)
     {
+        var appSettings = appSettingsService.GetSettings();
+        if (!appSettings.IsEmoteNotificationEnabled)
+        {
+            return;
+        }
         if (e.EmojisAfter.Count > e.EmojisBefore.Count)
         {
             var messageBuilder = new StringBuilder($"{await discordClientWrapper.Emotes.FindEmoteAsync("pepeLaugh")} " +
@@ -533,6 +541,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IUserBalanceService userBalanceService;
     private readonly ICommandsService commandsService;
+    private readonly IAppSettingsService appSettingsService;
     private readonly IGuildSettingsService guildSettingsService;
     private readonly IEmoteStatsService emoteStatsService;
     private readonly IShopService shopService;

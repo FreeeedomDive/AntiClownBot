@@ -8,6 +8,8 @@ namespace AntiClownDiscordBotVersion2.Models.Race
         public string Name;
         [JsonProperty("ShortName")]
         public string ShortName;
+        [JsonProperty("Points")]
+        public int Points;
         [JsonProperty("CorneringStat")]
         public float CorneringStat;
         [JsonProperty("AccelerationStat")]

@@ -60,7 +60,8 @@ namespace AntiClownDiscordBotVersion2.Models.Race
                 d.StartPosition = i;
             }).ToList();
 
-            mainRaceMessage = await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId, await GetStartingGrid());
+            mainRaceMessage =
+                await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId, await GetStartingGrid());
             isJoinable = true;
             JoinRace(await discordClientWrapper.Members.GetBotIdAsync());
 
@@ -267,7 +268,7 @@ namespace AntiClownDiscordBotVersion2.Models.Race
         private async Task MakeResult()
         {
             var changeUserRatingTasks = new List<Func<Task>>();
-            
+
             isFinished = true;
 
             var botPosition = drivers.Count;
@@ -277,43 +278,47 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             var driversInfoTasks = drivers.Select(async (d, i) =>
             {
                 var driver = d;
-                
-                var pos = i + 1;
+                var index = i;
+
+                var pos = index + 1;
                 if (driver.DiscordId == botId)
                 {
                     botPosition = pos;
                 }
 
                 var result = (pos < 10 ? " " : "") + $"{pos}.\t{driver.DriverModel.ShortName}";
-                if (!driver.IsUser) return result;
-
-                var user = await discordClientWrapper.Members.GetAsync(driver.DiscordId);
-                result += $"\t{user.ServerOrUserName()}";
-
-                if (pos < botPosition && pos <= 10)
-                {
-                    var pts = Points[i];
-                    changeUserRatingTasks.Add(() => apiClient.Users.ChangeUserRatingAsync(driver.DiscordId, pts, $"{pos} место в гонке"));
-                    result += $"\t+{pts} scam coins";
-                }
 
                 // улучшаются только те гонщики, которые проиграли позиции относительно старта
-                var diff = pos - d.StartPosition;
+                var diff = pos - driver.StartPosition;
                 for (var j = 0; j < diff; j++)
                 {
                     switch (randomizer.GetRandomNumberBetween(0, 3))
                     {
                         case 0:
-                            d.DriverModel.CorneringStat += 0.001f;
+                            driver.DriverModel.CorneringStat += 0.001f;
                             break;
                         case 1:
-                            d.DriverModel.AccelerationStat += 0.001f;
+                            driver.DriverModel.AccelerationStat += 0.001f;
                             break;
                         case 2:
-                            d.DriverModel.BreakingStat += 0.001f;
+                            driver.DriverModel.BreakingStat += 0.001f;
                             break;
                     }
                 }
+
+                var pointsForRace = index < Points.Length ? Points[index] : 0;
+                driver.DriverModel.Points += pointsForRace;
+
+                if (!driver.IsUser) return result;
+
+                var user = await discordClientWrapper.Members.GetAsync(driver.DiscordId);
+                result += $"\t{user.ServerOrUserName()}";
+
+                if (pos >= botPosition || pos > 10) return result;
+
+                var pts = Rewards[index];
+                changeUserRatingTasks.Add(() => apiClient.Users.ChangeUserRatingAsync(driver.DiscordId, pts, $"{pos} место в гонке"));
+                result += $"\t+{pts} scam coins";
 
                 return result;
             });
@@ -332,11 +337,12 @@ namespace AntiClownDiscordBotVersion2.Models.Race
                 await changeUserRatingTask();
                 await Task.Delay(1000);
             }
-            
+
             OnRaceEnd();
         }
 
-        public static readonly int[] Points = new[] { 25, 18, 15, 12, 10, 8, 6, 4, 2, 1 }.Select(x => x * 100).ToArray();
+        public static readonly int[] Points = new[] { 25, 18, 15, 12, 10, 8, 6, 4, 2, 1 };
+        public static readonly int[] Rewards = Points.Select(x => x * 100).ToArray();
 
         public ulong JoinableMessageId { get; init; }
         public Action OnRaceEnd { get; init; }

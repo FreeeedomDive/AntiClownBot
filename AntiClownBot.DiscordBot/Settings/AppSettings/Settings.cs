@@ -12,6 +12,7 @@ public class Settings
     public int ServicesCheckIntervalInSeconds { get; set; }
     public int MinecraftServerCheckIntervalInSeconds { get; set; }
     public bool IsBackendFeedReadingEnabled { get; set; }
+    public bool IsEmoteNotificationEnabled { get; set; }
     public bool PingOnEvents { get; set; }
     public string LogLevel { get; set; }
 }
