@@ -71,7 +71,7 @@ namespace AntiClownDiscordBotVersion2.Events
             }
         }
 
-        private int CalculateTimeBeforeNextEvent()
+        private static int CalculateTimeBeforeNextEvent()
         {
             // calculate time for scheduler start
             // events will start at the half of odd hours
@@ -87,7 +87,6 @@ namespace AntiClownDiscordBotVersion2.Events
                 ? (now.Minute < eventStartMinute ? 0 : 1)
                 : (now.Minute < eventStartMinute ? 1 : 0);
 
-            AddLog($"Event scheduler will start in {hoursToSleep} hours {minutesToSleep} minutes {secondsToSleep} seconds");
             return (hoursToSleep * 60 * 60 + minutesToSleep * 60 + secondsToSleep) * 1000;
         }
 
