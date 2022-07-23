@@ -1,6 +1,7 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
@@ -13,13 +14,15 @@ namespace AntiClownDiscordBotVersion2.Events.TransfusionEvent
             IDiscordClientWrapper discordClientWrapper,
             IApiClient apiClient,
             IRandomizer randomizer,
-            IGuildSettingsService guildSettingsService
+            IGuildSettingsService guildSettingsService,
+            IUserBalanceService userBalanceService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
             this.apiClient = apiClient;
             this.randomizer = randomizer;
             this.guildSettingsService = guildSettingsService;
+            this.userBalanceService = userBalanceService;
         }
 
         public async Task ExecuteAsync()
@@ -49,8 +52,8 @@ namespace AntiClownDiscordBotVersion2.Events.TransfusionEvent
                                  $"{richestMember.ServerOrUserName()}. " +
                                  $"Отдай {exchangeMember.ServerOrUserName()} {exchange} social credits"; 
 
-            await apiClient.Users.ChangeUserRatingAsync(theRichestUser, -exchange, "Эвент перекачки");
-            await apiClient.Users.ChangeUserRatingAsync(exchangeUser, exchange, "Эвент перекачки");
+            await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(theRichestUser, -exchange, "Эвент перекачки");
+            await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(exchangeUser, exchange, "Эвент перекачки");
             
             return await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId, messageContent);
         }
@@ -62,5 +65,6 @@ namespace AntiClownDiscordBotVersion2.Events.TransfusionEvent
         private readonly IApiClient apiClient;
         private readonly IRandomizer randomizer;
         private readonly IGuildSettingsService guildSettingsService;
+        private readonly IUserBalanceService userBalanceService;
     }
 }

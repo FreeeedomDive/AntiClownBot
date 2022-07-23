@@ -2,6 +2,7 @@
 using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
@@ -22,13 +23,15 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             IDiscordClientWrapper discordClientWrapper,
             IRandomizer randomizer,
             IGuildSettingsService guildSettingsService,
-            IApiClient apiClient
+            IApiClient apiClient,
+            IUserBalanceService userBalanceService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
             this.randomizer = randomizer;
             this.guildSettingsService = guildSettingsService;
             this.apiClient = apiClient;
+            this.userBalanceService = userBalanceService;
         }
 
         public async Task<RaceModel> CreateAsync()
@@ -317,7 +320,7 @@ namespace AntiClownDiscordBotVersion2.Models.Race
                 if (pos >= botPosition || pos > 10) return result;
 
                 var pts = Rewards[index];
-                changeUserRatingTasks.Add(() => apiClient.Users.ChangeUserRatingAsync(driver.DiscordId, pts, $"{pos} место в гонке"));
+                changeUserRatingTasks.Add(() => userBalanceService.ChangeUserBalanceWithDailyStatsAsync(driver.DiscordId, pts, $"{pos} место в гонке"));
                 result += $"\t+{pts} scam coins";
 
                 return result;
@@ -371,5 +374,6 @@ namespace AntiClownDiscordBotVersion2.Models.Race
         private readonly IRandomizer randomizer;
         private readonly IGuildSettingsService guildSettingsService;
         private readonly IApiClient apiClient;
+        private readonly IUserBalanceService userBalanceService;
     }
 }

@@ -19,6 +19,11 @@ public class UserBalanceService : IUserBalanceService
         await apiClient.Users.ChangeUserRatingAsync(userId, diff, reason);
         dailyStatisticsService.ChangeUserCredits(userId, diff);
     }
+
+    public void ChangeDailyStats(ulong userId, int diff)
+    {
+        dailyStatisticsService.ChangeUserCredits(userId, diff);
+    }
     
     private readonly IApiClient apiClient;
     private readonly IDailyStatisticsService dailyStatisticsService;

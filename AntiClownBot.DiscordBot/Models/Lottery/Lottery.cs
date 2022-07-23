@@ -4,6 +4,7 @@ using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 
@@ -18,7 +19,8 @@ namespace AntiClownDiscordBotVersion2.Models.Lottery
             IRandomizer randomizer,
             IEventSettingsService eventSettingsService,
             IGuildSettingsService guildSettingsService,
-            IApiClient apiClient
+            IApiClient apiClient,
+            IUserBalanceService userBalanceService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
@@ -26,6 +28,7 @@ namespace AntiClownDiscordBotVersion2.Models.Lottery
             this.eventSettingsService = eventSettingsService;
             this.guildSettingsService = guildSettingsService;
             this.apiClient = apiClient;
+            this.userBalanceService = userBalanceService;
         }
 
         public Lottery Create(ulong messageId)
@@ -127,7 +130,7 @@ namespace AntiClownDiscordBotVersion2.Models.Lottery
 
                 builder.Append($"\nТы получил {user.Value} scam coins!");
 
-                await apiClient.Users.ChangeUserRatingAsync(user.UserId, user.Value, "Лотерея");
+                await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(user.UserId, user.Value, "Лотерея");
 
                 await discordClientWrapper.Messages.ModifyAsync(message, builder.ToString());
             }
@@ -215,5 +218,6 @@ namespace AntiClownDiscordBotVersion2.Models.Lottery
         private readonly IEventSettingsService eventSettingsService;
         private readonly IGuildSettingsService guildSettingsService;
         private readonly IApiClient apiClient;
+        private readonly IUserBalanceService userBalanceService;
     }
 }

@@ -2,6 +2,7 @@
 using AntiClownApiClient.Dto.Models.Items;
 using AntiClownApiClient.Dto.Responses.UserCommandResponses;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
 
@@ -9,16 +10,15 @@ namespace AntiClownDiscordBotVersion2.Models
 {
     public class TributeService
     {
-        private readonly IDiscordClientWrapper discordClientWrapper;
-        private readonly IApiClient apiClient;
-
         public TributeService(
             IDiscordClientWrapper discordClientWrapper,
-            IApiClient apiClient
+            IApiClient apiClient,
+            IUserBalanceService userBalanceService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
             this.apiClient = apiClient;
+            this.userBalanceService = userBalanceService;
         }
 
         public async Task<DiscordEmbed?> TryMakeEmbedForTribute(TributeResponseDto response)
@@ -49,10 +49,14 @@ namespace AntiClownDiscordBotVersion2.Models
             if (response.IsCommunismActive)
             {
                 var sharedUser = await discordClientWrapper.Members.GetAsync(response.SharedCommunistUserId);
-                messageEmbedBuilder.AddField($"Произошел коммунизм {await discordClientWrapper.Emotes.FindEmoteAsync("cykaPls")}",
-                    $"Разделение подношения с {sharedUser.ServerOrUserName()}");
+                messageEmbedBuilder.AddField(
+                    $"Произошел коммунизм {await discordClientWrapper.Emotes.FindEmoteAsync("cykaPls")}",
+                    $"Разделение подношения с {sharedUser.ServerOrUserName()}"
+                );
+                userBalanceService.ChangeDailyStats(response.SharedCommunistUserId, response.TributeQuality);
             }
 
+            userBalanceService.ChangeDailyStats(response.UserId, response.TributeQuality);
             switch (response.TributeQuality)
             {
                 case > 0:
@@ -114,5 +118,9 @@ namespace AntiClownDiscordBotVersion2.Models
 
             return messageEmbedBuilder.Build();
         }
+
+        private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IApiClient apiClient;
+        private readonly IUserBalanceService userBalanceService;
     }
 }

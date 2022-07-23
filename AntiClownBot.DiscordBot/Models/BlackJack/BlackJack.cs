@@ -3,6 +3,7 @@ using System.Timers;
 using AntiClownApiClient;
 using AntiClownBot.Models.BlackJack;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using Timer = System.Timers.Timer;
@@ -27,12 +28,14 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
         public BlackJack(
             IDiscordClientWrapper discordClientWrapper,
             IApiClient apiClient,
-            IRandomizer randomizer
+            IRandomizer randomizer,
+            IUserBalanceService userBalanceService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
             this.apiClient = apiClient;
             this.randomizer = randomizer;
+            this.userBalanceService = userBalanceService;
 
             var dealers = new[]
             {
@@ -66,7 +69,7 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
         private async Task Kick()
         {
             var player = Players.Dequeue();
-            await apiClient.Users.ChangeUserRatingAsync(player.UserId, -50, "Кик за бездействие в блекджеке");
+            await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(player.UserId, -50, "Кик за бездействие в блекджеке");
             var message = $"{player.Name} исключён за бездействие и теряет 50 ScamCoins\n";
 
             if (Players.First().IsDealer)
@@ -89,7 +92,7 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
                 StopTimer();
                 if (IsActive)
                 {
-                    await apiClient.Users.ChangeUserRatingAsync(userId, -50, "Выход из активной игры блекджека");
+                    await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(userId, -50, "Выход из активной игры блекджека");
                 }
 
                 var p = Players.Dequeue();
@@ -104,7 +107,7 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
             Players = Players.WithoutItem(player);
             if (IsActive)
             {
-                await apiClient.Users.ChangeUserRatingAsync(
+                await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(
                     player.UserId,
                     player.IsDouble ? -100 : -50,
                     "Выход из активной игры блекджека");
@@ -221,12 +224,12 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
                 {
                     if (player.IsDouble)
                     {
-                        await apiClient.Users.ChangeUserRatingAsync(player.UserId, -100, "Проигрыш с double в блекджек");
+                        await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(player.UserId, -100, "Проигрыш с double в блекджек");
                         strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                     }
                     else
                     {
-                        await apiClient.Users.ChangeUserRatingAsync(player.UserId, -50, "Проигрыш в блекджек");
+                        await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(player.UserId, -50, "Проигрыш в блекджек");
                         strBuilder.Append($"{player.Name} проебал 50 очков\n");
                     }
                 }
@@ -240,31 +243,31 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
                     {
                         if (player.IsDouble)
                         {
-                            await apiClient.Users.ChangeUserRatingAsync(player.UserId, -100, "Проигрыш с double в блекджек");
+                            await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(player.UserId, -100, "Проигрыш с double в блекджек");
                             strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                         }
                         else
                         {
-                            await apiClient.Users.ChangeUserRatingAsync(player.UserId, -50, "Проигрыш в блекджек");
+                            await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(player.UserId, -50, "Проигрыш в блекджек");
                             strBuilder.Append($"{player.Name} проебал 50 очков\n");
                         }
                     }
                 }
                 else if (player.IsBlackJack)
                 {
-                    await apiClient.Users.ChangeUserRatingAsync(player.UserId, 75, "Выигрыш в блекджек");
+                    await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(player.UserId, 75, "Выигрыш в блекджек");
                     strBuilder.Append($"{player.Name} выиграл BlackJack и получил 75 очков\n");
                 }
                 else if (dealer.Value > 21 || player.Value > dealer.Value)
                 {
                     if (player.IsDouble)
                     {
-                        await apiClient.Users.ChangeUserRatingAsync(player.UserId, 100, "Выигрыш с double в блекджек");
+                        await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(player.UserId, 100, "Выигрыш с double в блекджек");
                         strBuilder.Append($"{player.Name} с удвоенной ставкой выиграл 100 очков\n");
                     }
                     else
                     {
-                        await apiClient.Users.ChangeUserRatingAsync(player.UserId, 50, "Выигрыш в блекджек");
+                        await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(player.UserId, 50, "Выигрыш в блекджек");
                         strBuilder.Append($"{player.Name} выиграл 50 очков\n");
                     }
                 }
@@ -272,12 +275,12 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
                 {
                     if (player.IsDouble)
                     {
-                        await apiClient.Users.ChangeUserRatingAsync(player.UserId, -100, "Проигрыш с double в блекджек");
+                        await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(player.UserId, -100, "Проигрыш с double в блекджек");
                         strBuilder.Append($"{player.Name} с удвоенной ставкой проебал 100 очков\n");
                     }
                     else
                     {
-                        await apiClient.Users.ChangeUserRatingAsync(player.UserId, -50, "Проигрыш в блекджек");
+                        await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(player.UserId, -50, "Проигрыш в блекджек");
                         strBuilder.Append($"{player.Name} проебал 50 очков\n");
                     }
                 }
@@ -334,5 +337,6 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IApiClient apiClient;
         private readonly IRandomizer randomizer;
+        private readonly IUserBalanceService userBalanceService;
     }
 }
