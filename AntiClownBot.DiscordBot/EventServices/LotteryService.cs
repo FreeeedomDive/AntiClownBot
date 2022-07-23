@@ -3,6 +3,7 @@ using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Models.Lottery;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
 
 namespace AntiClownDiscordBotVersion2.EventServices;
@@ -14,7 +15,8 @@ public class LotteryService : ILotteryService
         IRandomizer randomizer,
         IEventSettingsService eventSettingsService,
         IGuildSettingsService guildSettingsService,
-        IApiClient apiClient
+        IApiClient apiClient,
+        IUserBalanceService userBalanceService
     )
     {
         this.discordClientWrapper = discordClientWrapper;
@@ -22,6 +24,7 @@ public class LotteryService : ILotteryService
         this.eventSettingsService = eventSettingsService;
         this.guildSettingsService = guildSettingsService;
         this.apiClient = apiClient;
+        this.userBalanceService = userBalanceService;
     }
 
     public void CreateLottery(ulong messageId)
@@ -31,7 +34,8 @@ public class LotteryService : ILotteryService
             randomizer,
             eventSettingsService,
             guildSettingsService,
-            apiClient
+            apiClient,
+            userBalanceService
         )
         {
             OnLotteryEnd = () => Lottery = null
@@ -45,4 +49,5 @@ public class LotteryService : ILotteryService
     private readonly IEventSettingsService eventSettingsService;
     private readonly IGuildSettingsService guildSettingsService;
     private readonly IApiClient apiClient;
+    private readonly IUserBalanceService userBalanceService;
 }
