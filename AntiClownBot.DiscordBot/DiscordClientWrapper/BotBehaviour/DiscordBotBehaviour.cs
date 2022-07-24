@@ -452,6 +452,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<PartyCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<InventoryCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<LohotronCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<RatingCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)

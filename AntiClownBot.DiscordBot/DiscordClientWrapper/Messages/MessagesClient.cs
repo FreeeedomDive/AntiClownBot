@@ -45,17 +45,19 @@ public class MessagesClient : IMessagesClient
 
     public async Task<DiscordMessage> RespondAsync(InteractionContext context,
         string? content = null,
-        InteractionResponseType interactionType = InteractionResponseType.ChannelMessageWithSource
+        InteractionResponseType interactionType = InteractionResponseType.ChannelMessageWithSource,
+        bool isEphemeral = false
     )
     {
-        var builder = content == null ? null : new DiscordInteractionResponseBuilder().WithContent(content);
+        var builder = content == null ? null : new DiscordInteractionResponseBuilder().WithContent(content).AsEphemeral(isEphemeral);
         await context.CreateResponseAsync(interactionType, builder);
         return await context.GetOriginalResponseAsync();
     }
 
-    public async Task<DiscordMessage> RespondAsync(InteractionContext context, DiscordEmbed embed)
+    public async Task<DiscordMessage> RespondAsync(InteractionContext context, DiscordEmbed? embed, bool isEphemeral = false)
     {
-        await context.CreateResponseAsync(embed);
+        var builder = embed == null ? null : new DiscordInteractionResponseBuilder().AddEmbed(embed).AsEphemeral(isEphemeral);
+        await context.CreateResponseAsync(builder);
         return await context.GetOriginalResponseAsync();
     }
 
@@ -82,7 +84,7 @@ public class MessagesClient : IMessagesClient
 
     public async Task<DiscordMessage> ModifyAsync(InteractionContext context, string? content)
     {
-        return await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent(content ?? $" {await emotesClient.FindEmoteAsync("white_check_mark")} "));
+        return await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent(content ?? $" {await emotesClient.FindEmoteAsync("YEP")} "));
     }
 
     public async Task<DiscordMessage> ModifyEmbedAsync(InteractionContext context, DiscordWebhookBuilder builder)

@@ -22,9 +22,10 @@ namespace AntiClownDiscordBotVersion2.SlashCommands
         }
 
         [SlashCommand("lohotron", "Прокрутить колесо лохотрона (1 раз в день)")]
-        public async Task CreateParty(InteractionContext context)
+        public async Task PlayLohotron(InteractionContext context)
         {
-            if (lohotron.UsersId.Contains(context.Member.Id))
+            var userId = context.Member.Id;
+            if (lohotron.UsersId.Contains(userId))
             {
                 await discordClientWrapper.Messages.RespondAsync(
                     context,
@@ -33,13 +34,13 @@ namespace AntiClownDiscordBotVersion2.SlashCommands
                 return;
             }
 
-            var prize = lohotron.Play();
-            lohotron.UsersId.Add(context.Member.Id);
+            var prize = lohotron.Play(userId);
+            lohotron.UsersId.Add(userId);
             switch (prize.Name)
             {
                 case "Credits":
                     var count = ((CreditsLohotronPrize)prize).Count;
-                    await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(context.Member.Id, count, "Лохотрон");
+                    await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(userId, count, "Лохотрон");
                     await discordClientWrapper.Messages.RespondAsync(context, $"Ты получаешь {count} scam coins");
                     return;
                 case "Nothing":
@@ -48,7 +49,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands
                     return;
                 case "LootBox":
                     await discordClientWrapper.Messages.RespondAsync(context, "Ты получаешь добычу-коробку!");
-                    await apiClient.Items.AddLootBoxAsync(context.Member.Id);
+                    await apiClient.Items.AddLootBoxAsync(userId);
                     return;
                 default:
                     await discordClientWrapper.Messages.RespondAsync(context, "Какой-то кал, всё сломалось");
