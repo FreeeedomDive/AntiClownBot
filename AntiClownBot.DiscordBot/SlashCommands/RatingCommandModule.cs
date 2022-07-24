@@ -29,7 +29,6 @@ public class RatingCommandModule : ApplicationCommandModule
         await discordClientWrapper.Messages.RespondAsync(
             context,
             $"{userRating.ScamCoins} скам-койнов",
-            InteractionResponseType.DeferredChannelMessageWithSource,
             isEphemeral: true
         );
     }
