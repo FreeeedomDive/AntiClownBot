@@ -10,11 +10,13 @@ public class DailyResetCommand : ICommand
     public DailyResetCommand(
         IDiscordClientWrapper discordClientWrapper,
         IApiClient apiClient,
+        Models.Lohotron.Lohotron lohotron,
         IGuildSettingsService guildSettingsService
     )
     {
         this.discordClientWrapper = discordClientWrapper;
         this.apiClient = apiClient;
+        this.lohotron = lohotron;
         this.guildSettingsService = guildSettingsService;
     }
 
@@ -32,6 +34,7 @@ public class DailyResetCommand : ICommand
         }
 
         await apiClient.Users.DailyResetAsync();
+        lohotron.Reset();
         await discordClientWrapper.Messages.RespondAsync(e.Message, "done");
     }
 
@@ -44,5 +47,6 @@ public class DailyResetCommand : ICommand
 
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IApiClient apiClient;
+    private readonly Models.Lohotron.Lohotron lohotron;
     private readonly IGuildSettingsService guildSettingsService;
 }
