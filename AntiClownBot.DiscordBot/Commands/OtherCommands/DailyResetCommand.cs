@@ -40,7 +40,7 @@ public class DailyResetCommand : ICommand
         return Task.FromResult("Ручной ежедневный сброс");
     }
 
-    public string Name => "dailyReset";
+    public string Name => "dailyreset";
 
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IApiClient apiClient;
