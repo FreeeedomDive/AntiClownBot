@@ -8,3 +8,4 @@ AntiClownApi/config.json
 start.bat
 build/
 node_modules/
+AntiClownApi/appsettings.Production.json
