@@ -4,7 +4,7 @@ namespace Loggers;
 
 public class NLogger : ILogger
 {
-    public NLogger(Logger logger)
+    private NLogger(Logger logger)
     {
         this.logger = logger;
     }
@@ -19,9 +19,15 @@ public class NLogger : ILogger
         logger.Error(message, args);
     }
 
-    public void Error(string message, Exception exception)
+    public void Error(Exception exception, string message, params object?[] args)
     {
-        logger.Error(message, exception);
+        logger.Error(exception, message, args);
+    }
+
+    public static NLogger Build(string name)
+    {
+        var logger = LogManager.GetLogger(name);
+        return new NLogger(logger);
     }
 
     private readonly Logger logger;

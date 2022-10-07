@@ -32,10 +32,10 @@ public class Program
     private static void AddExceptionLogger(StandardKernel configurator)
     {
         var logger = configurator.Get<ILogger>();
-        AppDomain.CurrentDomain.FirstChanceException += (sender, eventArgs) =>
+        AppDomain.CurrentDomain.FirstChanceException += (_, eventArgs) =>
         {
             var message = $"{eventArgs.Exception.Message}\n{eventArgs.Exception.StackTrace}";
-            Task.Run(() => logger.Error(message, eventArgs.Exception));
+            Task.Run(() => logger.Error(eventArgs.Exception, message));
         };
     }
 

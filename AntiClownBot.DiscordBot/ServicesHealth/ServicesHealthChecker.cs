@@ -100,7 +100,7 @@ public class ServicesHealthChecker : IServicesHealthChecker
             }
             catch (Exception e)
             {
-                logger.Error("Discord can't update status topic", e);
+                logger.Error(e, "Discord can't update status topic");
             }
         }
     }

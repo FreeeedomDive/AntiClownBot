@@ -286,7 +286,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
         catch (Exception ex)
         {
-            logger.Error($"Exception in username", ex);
+            logger.Error(ex, "Exception in username");
         }
 
         logger.Info($"EMOTE ADDED - {username}: {emojiName}");
@@ -326,7 +326,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
         catch (Exception ex)
         {
-            logger.Error($"Exception in username", ex);
+            logger.Error(ex, "Exception in username");
         }
 
         logger.Info($"EMOTE REMOVED - {username}: {emojiName}"); 

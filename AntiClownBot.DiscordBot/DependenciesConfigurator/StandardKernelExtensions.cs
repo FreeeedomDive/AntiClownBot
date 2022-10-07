@@ -65,9 +65,7 @@ public static class StandardKernelExtensions
 
     public static StandardKernel WithLogger(this StandardKernel ninjectKernel)
     {
-        var logger = LogManager.GetLogger("Default");
-        ninjectKernel.Bind<Logger>().ToConstant(logger);
-        ninjectKernel.Bind<ILogger>().To<NLogger>();
+        ninjectKernel.Bind<ILogger>().ToConstant(NLogger.Build("DiscordBotLog"));
 
         return ninjectKernel;
     }

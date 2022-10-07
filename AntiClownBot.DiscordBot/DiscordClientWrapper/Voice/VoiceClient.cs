@@ -120,7 +120,7 @@ public class VoiceClient : IVoiceClient
             logger.Info("Закончили проигрывать {Name}", soundName);
             if (exc != null)
             {
-                logger.Error("Все наебнулось", exc);
+                logger.Error(exc, "Все наебнулось");
             }
             lock (locker)
             {

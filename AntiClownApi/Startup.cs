@@ -4,9 +4,11 @@ using AntiClownBotApi.Commands;
 using AntiClownBotApi.Converters;
 using AntiClownBotApi.Database;
 using AntiClownBotApi.Database.DBControllers;
+using AntiClownBotApi.Middlewares;
 using AntiClownBotApi.Services;
 using Hangfire;
 using Hangfire.PostgreSql;
+using Loggers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +35,8 @@ namespace AntiClownBotApi
             var postgresSection = Configuration.GetSection("PostgreSql");
             services.Configure<DbOptions>(postgresSection);
             services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton, ServiceLifetime.Singleton);
+            
+            services.AddSingleton<ILogger>(NLogger.Build("ApiLog"));
 
             services.AddTransient<UserRepository>();
             services.AddTransient<ShopRepository>();
@@ -73,6 +77,7 @@ namespace AntiClownBotApi
 
             app.UseRouting();
             app.UseWebSockets();
+            app.UseMiddleware<RequestLoggingMiddleware>();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseHangfireServer();
