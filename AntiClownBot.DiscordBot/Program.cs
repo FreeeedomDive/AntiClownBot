@@ -40,8 +40,8 @@ public class Program
             {
                 return;
             }
-            var message = $"{eventArgs.Exception.Message}\n{eventArgs.Exception.StackTrace}";
-            Task.Run(() => logger.Error(eventArgs.Exception, message));
+            // var message = $"{eventArgs.Exception.Message}\n{eventArgs.Exception.StackTrace}";
+            Task.Run(() => logger.Error(eventArgs.Exception, "Unhandled exception in DiscordBot"));
         };
     }
 
