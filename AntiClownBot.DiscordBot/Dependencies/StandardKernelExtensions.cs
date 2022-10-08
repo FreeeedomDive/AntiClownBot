@@ -6,6 +6,8 @@ using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
 using AntiClownDiscordBotVersion2.Events.NightEvents;
 using AntiClownDiscordBotVersion2.EventServices;
+using AntiClownDiscordBotVersion2.ExceptionFilters;
+using AntiClownDiscordBotVersion2.ExceptionFilters.Rules;
 using AntiClownDiscordBotVersion2.MinecraftServer;
 using AntiClownDiscordBotVersion2.Models;
 using AntiClownDiscordBotVersion2.Models.Inventory;
@@ -25,13 +27,11 @@ using CommonServices.MinecraftServerService;
 using DSharpPlus;
 using Loggers;
 using Ninject;
-using NLog;
 using RestClient;
-using RestSharp;
 using ILogger = Loggers.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-namespace AntiClownDiscordBotVersion2.DependenciesConfigurator;
+namespace AntiClownDiscordBotVersion2.Dependencies;
 
 public static class StandardKernelExtensions
 {
@@ -66,6 +66,23 @@ public static class StandardKernelExtensions
     public static StandardKernel WithLogger(this StandardKernel ninjectKernel)
     {
         ninjectKernel.Bind<ILogger>().ToConstant(NLogger.Build("DiscordBotLog"));
+
+        return ninjectKernel;
+    }
+
+    public static StandardKernel WithExceptionFilter(this StandardKernel ninjectKernel)
+    {
+        var rules = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(s => s.GetTypes())
+            .Where(p => typeof(IExceptionFilterRule).IsAssignableFrom(p))
+            .Where(p => p != typeof(IExceptionFilterRule));
+
+        foreach (var rule in rules)
+        {
+            ninjectKernel.Bind<IExceptionFilterRule>().To(rule);
+        }
+
+        ninjectKernel.Bind<IExceptionFilter>().To<ExceptionFilter>();
 
         return ninjectKernel;
     }

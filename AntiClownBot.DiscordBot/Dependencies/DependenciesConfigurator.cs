@@ -1,6 +1,6 @@
 ﻿using Ninject;
 
-namespace AntiClownDiscordBotVersion2.DependenciesConfigurator;
+namespace AntiClownDiscordBotVersion2.Dependencies;
 
 public class DependenciesConfigurator
 {
@@ -48,6 +48,7 @@ public class DependenciesConfigurator
             .WithCommands()
             .ConfigureCommands()
             // final touches
+            .WithExceptionFilter()
             .WithApiEventFeedConsumer()
             .WithServicesHealthChecker()
             .WithMinecraftServerInfoScheduler()

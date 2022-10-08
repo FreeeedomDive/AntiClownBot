@@ -2,6 +2,7 @@
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
+using AntiClownDiscordBotVersion2.ExceptionFilters;
 using AntiClownDiscordBotVersion2.MinecraftServer;
 using AntiClownDiscordBotVersion2.ServicesHealth;
 using Loggers;
@@ -13,7 +14,7 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        var configurator = new DependenciesConfigurator.DependenciesConfigurator().BuildDependencies();
+        var configurator = new Dependencies.DependenciesConfigurator().BuildDependencies();
         Console.WriteLine("Configured all dependencies");
         AddExceptionLogger(configurator);
         StartBackgroundApiPollScheduler(configurator);
@@ -32,8 +33,13 @@ public class Program
     private static void AddExceptionLogger(StandardKernel configurator)
     {
         var logger = configurator.Get<ILogger>();
+        var exceptionFilter = configurator.Get<IExceptionFilter>();
         AppDomain.CurrentDomain.FirstChanceException += (_, eventArgs) =>
         {
+            if (exceptionFilter.Filter(eventArgs.Exception))
+            {
+                return;
+            }
             var message = $"{eventArgs.Exception.Message}\n{eventArgs.Exception.StackTrace}";
             Task.Run(() => logger.Error(eventArgs.Exception, message));
         };
