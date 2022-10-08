@@ -4,12 +4,9 @@ public class MinecraftServerFailedToConnectExceptionRule : IExceptionFilterRule
 {
     public bool Filter(Exception exception)
     {
-        Console.WriteLine(exception.StackTrace);
-        var result = exception
-                         .StackTrace?
-                         .Contains("AntiClownDiscordBotVersion2.ServicesHealth.ServicesHealthChecker.IsMinecraftServerOnline")
-                     ?? false;
-        Console.WriteLine($"{nameof(MinecraftServerFailedToConnectExceptionRule)} filter result is {result}");
-        return result;
+        return exception
+                   .StackTrace?
+                   .Contains("TcpClient.CompleteConnectAsync(Task task)")
+               ?? false;;
     }
 }
