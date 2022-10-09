@@ -29,7 +29,6 @@ namespace AntiClownBot.Models.Lottery
             PolarStrut,
             HACKERMANS,
             PATREGO,
-            triangD
         }
 
         public static List<LotteryEmote> GetAllEmotes()
@@ -180,7 +179,6 @@ namespace AntiClownBot.Models.Lottery
                 LotteryEmote.PolarStrut => 30,
                 LotteryEmote.HACKERMANS => 35,
                 LotteryEmote.PATREGO => 40,
-                LotteryEmote.triangD => 50,
                 _ => throw new ArgumentOutOfRangeException(nameof(emote), emote, null)
             };
         }
