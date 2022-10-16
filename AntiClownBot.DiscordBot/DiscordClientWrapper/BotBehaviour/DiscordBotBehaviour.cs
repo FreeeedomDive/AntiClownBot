@@ -129,19 +129,22 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             var embedBuilder = new DiscordEmbedBuilder()
                 //.WithTitle("Модерация чата пати")
                 .WithColor(DiscordColor.DarkRed)
-                .AddField("Модерация чата пати", "Если нужно собрать пати, воспользуйся командой !party или слеш-командой /party\n" +
-                                                 "Если нужно ответить по какому-то пати, сделай это в соответствующем треде");
+                .AddField("Модерация чата пати",
+                    "Если нужно собрать пати, воспользуйся командой !party или слеш-командой /party\n" +
+                    "Если нужно ответить по какому-то пати, сделай это в соответствующем треде");
             var messageBuilder = new DiscordMessageBuilder()
                 .WithEmbed(embedBuilder.Build())
                 .WithAllowedMentions(Mentions.All)
                 .WithContent(e.Author.Mention);
-            var deleteMessage = !message.IsCommand(guildSettings.CommandsPrefix)
-                                || (
-                                    message.IsCommand(guildSettings.CommandsPrefix)
-                                    && commandsService.TryGetCommand(
-                                        message.GetCommandName(guildSettings.CommandsPrefix), out var command)
-                                    && command.Name == "party"
-                                );
+            var isCommand = message.IsCommand(guildSettings.CommandsPrefix);
+            var command = isCommand
+                ? message.IsCommand(guildSettings.CommandsPrefix)
+                  && commandsService.TryGetCommand(message.GetCommandName(guildSettings.CommandsPrefix), out var x)
+                    ? x
+                    : null
+                : null;
+            Console.WriteLine(command?.Name);
+            var deleteMessage = !isCommand || isCommand && command is { Name: "party" };
             if (deleteMessage)
             {
                 var response = await discordClientWrapper.Messages.RespondAsync(e.Message, messageBuilder);
