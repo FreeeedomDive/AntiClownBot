@@ -143,8 +143,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                     ? x
                     : null
                 : null;
-            logger.Info($"Команда {command?.Name}");
-            var deleteMessage = !isCommand || isCommand && command is { Name: "party" };
+            var deleteMessage = !isCommand || (isCommand && command != null && command.Name != "party");
             if (deleteMessage)
             {
                 var response = await discordClientWrapper.Messages.RespondAsync(e.Message, messageBuilder);
