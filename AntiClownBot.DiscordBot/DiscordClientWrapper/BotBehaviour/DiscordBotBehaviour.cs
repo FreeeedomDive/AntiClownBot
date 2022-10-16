@@ -146,10 +146,13 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             var deleteMessage = !isCommand || (isCommand && command != null && command.Name != "party");
             if (deleteMessage)
             {
-                var response = await discordClientWrapper.Messages.RespondAsync(e.Message, messageBuilder);
-                await discordClientWrapper.Messages.DeleteAsync(e.Message);
-                await Task.Delay(10000);
-                await discordClientWrapper.Messages.DeleteAsync(response);
+                Task.Run(async () =>
+                {
+                    var response = await discordClientWrapper.Messages.RespondAsync(e.Message, messageBuilder);
+                    await discordClientWrapper.Messages.DeleteAsync(e.Message);
+                    await Task.Delay(10000);
+                    await discordClientWrapper.Messages.DeleteAsync(response);
+                });
                 return;
             }
         }
