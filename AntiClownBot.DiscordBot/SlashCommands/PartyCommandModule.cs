@@ -61,7 +61,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands
 
             await discordClientWrapper.Messages.RespondAsync(context, null, InteractionResponseType.DeferredChannelMessageWithSource);
             await partyService.CreateNewParty(context.Member.Id, name, (int)capacity, role?.Id);
-            await discordClientWrapper.Messages.ModifyAsync(context, null);
+            await discordClientWrapper.Messages.DeleteAsync(context);
         }
 
         [SlashCommand("list", "Текущие пати")]

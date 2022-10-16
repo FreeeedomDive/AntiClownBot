@@ -29,4 +29,6 @@ public interface IMessagesClient
     Task<DiscordMessage> SendAsync(ulong channelId, DiscordEmbed embed);
     Task<DiscordMessage> SendAsync(ulong channelId, DiscordMessageBuilder builder);
     Task<DiscordMessage> FindMessageAsync(ulong channelId, ulong messageId);
+    Task<DiscordThreadChannel> CreateThreadAsync(DiscordMessage message, string content);
+    Task DeleteAsync(InteractionContext interaction);
 }
