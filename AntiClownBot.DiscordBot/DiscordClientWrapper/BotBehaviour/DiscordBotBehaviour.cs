@@ -133,13 +133,14 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                                                  "Если нужно ответить по какому-то пати, сделай это в соответствующем треде");
             var messageBuilder = new DiscordMessageBuilder()
                 .WithEmbed(embedBuilder.Build())
+                .WithAllowedMentions(Mentions.All)
                 .WithContent(e.Author.Mention);
             var deleteMessage = !message.IsCommand(guildSettings.CommandsPrefix)
                                 || (
                                     message.IsCommand(guildSettings.CommandsPrefix)
                                     && commandsService.TryGetCommand(
                                         message.GetCommandName(guildSettings.CommandsPrefix), out var command)
-                                    && command.GetType() == typeof(CreatePartyCommand)
+                                    && command.Name == "party"
                                 );
             if (deleteMessage)
             {
