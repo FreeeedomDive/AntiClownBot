@@ -143,7 +143,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                     ? x
                     : null
                 : null;
-            Console.WriteLine(command?.Name);
+            logger.Info($"Команда {command?.Name}");
             var deleteMessage = !isCommand || isCommand && command is { Name: "party" };
             if (deleteMessage)
             {
