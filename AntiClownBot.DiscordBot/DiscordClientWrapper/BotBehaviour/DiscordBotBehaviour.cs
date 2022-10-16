@@ -139,7 +139,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                                     message.IsCommand(guildSettings.CommandsPrefix)
                                     && commandsService.TryGetCommand(
                                         message.GetCommandName(guildSettings.CommandsPrefix), out var command)
-                                    && command is CreatePartyCommand
+                                    && command.GetType() == typeof(CreatePartyCommand)
                                 );
             if (deleteMessage)
             {
