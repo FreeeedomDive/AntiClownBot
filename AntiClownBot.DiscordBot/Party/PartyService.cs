@@ -134,6 +134,7 @@ public class PartyService : IPartyService
         var message = await newParty.CreateMessage();
         await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, "YEP");
         await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, "MEGALUL");
+        await discordClientWrapper.Messages.CreateThreadAsync(message, "Your comments");
         PartiesInfo.OpenParties.Add(message.Id, newParty);
         await UpdatePartyObservers();
     }

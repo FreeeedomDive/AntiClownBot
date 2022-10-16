@@ -143,6 +143,16 @@ public class MessagesClient : IMessagesClient
         return message;
     }
 
+    public async Task DeleteAsync(InteractionContext context)
+    {
+        await context.DeleteResponseAsync();
+    }
+
+    public async Task<DiscordThreadChannel> CreateThreadAsync(DiscordMessage message, string content)
+    {
+        return await message.CreateThreadAsync(content, AutoArchiveDuration.Day);
+    }
+
     private readonly DiscordClient discordClient;
     private readonly IEmotesClient emotesClient;
     private readonly IGuildSettingsService guildSettingsService;
