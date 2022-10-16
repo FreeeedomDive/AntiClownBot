@@ -31,4 +31,5 @@ public interface IMessagesClient
     Task<DiscordMessage> FindMessageAsync(ulong channelId, ulong messageId);
     Task<DiscordThreadChannel> CreateThreadAsync(DiscordMessage message, string content);
     Task DeleteAsync(InteractionContext interaction);
+    Task DeleteAsync(DiscordMessage message);
 }

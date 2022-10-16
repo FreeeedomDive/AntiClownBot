@@ -56,6 +56,9 @@ namespace AntiClownDiscordBotVersion2.Commands.Gaming
                 case "sigame":
                     await partyService.CreateNewParty(e.Author.Id, "ДЕРЖУ ИГРУ", 7, guildSettings.SiGameRoleId);
                     break;
+                case "test":
+                    await partyService.CreateNewParty(e.Author.Id, "тест", 2, 277847491959980032);
+                    break;
                 default:
                     if (args.Length < 3 || !int.TryParse(args[^1], out var count))
                     {

@@ -148,6 +148,11 @@ public class MessagesClient : IMessagesClient
         await context.DeleteResponseAsync();
     }
 
+    public async Task DeleteAsync(DiscordMessage message)
+    {
+        await message.DeleteAsync();
+    }
+
     public async Task<DiscordThreadChannel> CreateThreadAsync(DiscordMessage message, string content)
     {
         return await message.CreateThreadAsync(content, AutoArchiveDuration.Day);

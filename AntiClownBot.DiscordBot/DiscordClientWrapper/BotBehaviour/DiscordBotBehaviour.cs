@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 using AntiClownDiscordBotVersion2.Commands;
+using AntiClownDiscordBotVersion2.Commands.Gaming;
 using AntiClownDiscordBotVersion2.EventServices;
 using Loggers;
 using AntiClownDiscordBotVersion2.Models.Inventory;
@@ -58,7 +59,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.randomizer = randomizer;
         this.logger = logger;
     }
-    
+
     public void Configure()
     {
         discordClient.GuildEmojisUpdated += GuildEmojisUpdated;
@@ -77,6 +78,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         {
             return;
         }
+
         if (e.EmojisAfter.Count > e.EmojisBefore.Count)
         {
             var messageBuilder = new StringBuilder($"{await discordClientWrapper.Emotes.FindEmoteAsync("pepeLaugh")} " +
@@ -89,7 +91,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 }
             }
 
-            await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId, messageBuilder.ToString());
+            await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId,
+                messageBuilder.ToString());
             return;
         }
 
@@ -105,7 +108,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             }
 
             messageBuilder.Append($"удалили {await discordClientWrapper.Emotes.FindEmoteAsync("BibleThump")}");
-            await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId, messageBuilder.ToString());
+            await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId,
+                messageBuilder.ToString());
         }
     }
 
@@ -119,10 +123,37 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         logger.Info($"{e.Author.Username}: {message}");
 
+        // удаляем все сообщения из чата с пати, чтобы люди отвечали в треды
+        if (e.Channel.Id == guildSettings.PartyChannelId)
+        {
+            var embedBuilder = new DiscordEmbedBuilder()
+                //.WithTitle("Модерация чата пати")
+                .WithColor(DiscordColor.DarkRed)
+                .AddField("Модерация чата пати", "Если нужно собрать пати, воспользуйся командой !party или слеш-командой /party\n" +
+                                                 "Если нужно ответить по какому-то пати, сделай это в соответствующем треде");
+            var messageBuilder = new DiscordMessageBuilder()
+                .WithEmbed(embedBuilder.Build())
+                .WithContent(e.Author.Mention);
+            var deleteMessage = !message.IsCommand(guildSettings.CommandsPrefix)
+                                || (
+                                    message.IsCommand(guildSettings.CommandsPrefix)
+                                    && commandsService.TryGetCommand(
+                                        message.GetCommandName(guildSettings.CommandsPrefix), out var command)
+                                    && command is CreatePartyCommand
+                                );
+            if (deleteMessage)
+            {
+                var response = await discordClientWrapper.Messages.RespondAsync(e.Message, messageBuilder);
+                await discordClientWrapper.Messages.DeleteAsync(e.Message);
+                await Task.Delay(10000);
+                await discordClientWrapper.Messages.DeleteAsync(response);
+                return;
+            }
+        }
+
         if (message.StartsWith(guildSettings.CommandsPrefix))
         {
-            var commandName = message.Split('\n')[0].Split(' ').First().ToLower()[guildSettings.CommandsPrefix.Length..];
-            await commandsService.ExecuteCommand(commandName, e);
+            await commandsService.ExecuteCommand(message.GetCommandName(guildSettings.CommandsPrefix), e);
             return;
         }
 
@@ -146,7 +177,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 return;
             }
 
-            if ((message.Contains("бот, ты") || message.Contains("бот ты")) && randomizer.GetRandomNumberBetween(0, 3) == 0)
+            if ((message.Contains("бот, ты") || message.Contains("бот ты")) &&
+                randomizer.GetRandomNumberBetween(0, 3) == 0)
             {
                 await discordClientWrapper.Messages.RespondAsync(e.Message, "А может ты?");
                 return;
@@ -154,11 +186,13 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
             if (randomizer.FlipACoin())
             {
-                await discordClientWrapper.Messages.RespondAsync(e.Message,$"{await discordClientWrapper.Emotes.FindEmoteAsync("YEP")}");
+                await discordClientWrapper.Messages.RespondAsync(e.Message,
+                    $"{await discordClientWrapper.Emotes.FindEmoteAsync("YEP")}");
             }
             else
             {
-                await discordClientWrapper.Messages.RespondAsync(e.Message,$"{await discordClientWrapper.Emotes.FindEmoteAsync("NOPE")}");
+                await discordClientWrapper.Messages.RespondAsync(e.Message,
+                    $"{await discordClientWrapper.Emotes.FindEmoteAsync("NOPE")}");
             }
 
             return;
@@ -178,7 +212,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             if (pidor < 6)
             {
                 await ReactToAppeal(e.Message);
-                await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(e.Author.Id, -30, "Оскорбление императора");
+                await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(e.Author.Id, -30,
+                    "Оскорбление императора");
                 return;
             }
         }
@@ -201,17 +236,20 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             {
                 if (randomizer.FlipACoin())
                 {
-                    await discordClientWrapper.Messages.RespondAsync(e.Message, "https://tenor.com/view/booba-boobs-coom-hecute-pepe-gif-19186230");
+                    await discordClientWrapper.Messages.RespondAsync(e.Message,
+                        "https://tenor.com/view/booba-boobs-coom-hecute-pepe-gif-19186230");
                 }
                 else
                 {
-                    await discordClientWrapper.Messages.RespondAsync(e.Message, "https://tenor.com/view/booba-pepe-meme-4chan-huypenis-gif-18858228");
+                    await discordClientWrapper.Messages.RespondAsync(e.Message,
+                        "https://tenor.com/view/booba-pepe-meme-4chan-huypenis-gif-18858228");
                 }
             }
 
             if (anime)
             {
-                await discordClientWrapper.Emotes.AddReactionToMessageAsync(e.Message, await discordClientWrapper.Emotes.FindEmoteAsync("AYAYABASS"));
+                await discordClientWrapper.Emotes.AddReactionToMessageAsync(e.Message,
+                    await discordClientWrapper.Emotes.FindEmoteAsync("AYAYABASS"));
             }
         }
     }
@@ -293,7 +331,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         emoteStatsService.AddStats(emojiName);
 
-        if ((emojiName is "peepoClown" or "clown" or "clown_face") && (e.User.Id is 423498706336088085 or 369476500820459522))
+        if ((emojiName is "peepoClown" or "clown" or "clown_face") &&
+            (e.User.Id is 423498706336088085 or 369476500820459522))
         {
             logger.Info("Removed clown");
             await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
@@ -304,7 +343,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     {
         var emoji = e.Emoji;
         var emojiName = emoji.Name;
-                
+
         switch (emojiName)
         {
             case "YEP":
@@ -329,7 +368,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             logger.Error(ex, "Exception in username");
         }
 
-        logger.Info($"EMOTE REMOVED - {username}: {emojiName}"); 
+        logger.Info($"EMOTE REMOVED - {username}: {emojiName}");
         emoteStatsService.RemoveStats(emojiName);
     }
 
@@ -346,12 +385,15 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                                             $"НЕ НАДО ЮЗАТЬ ЧУЖИЕ КНОПКИ " +
                                             $"{await discordClientWrapper.Emotes.FindEmoteAsync("Madge")}"));
         }
-        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate, null);
+
+        await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate,
+            null);
         if (e.Id.StartsWith("shop_"))
         {
             await HandleShopInteraction(e);
             return;
         }
+
         if (e.Id.StartsWith("inventory_"))
         {
             await HandleInventoryInteraction(e);
@@ -385,7 +427,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 await shop.ReRoll(e.Interaction);
                 break;
             case "shop_pepeSearching":
-                shop.CurrentShopTool = shop.CurrentShopTool == ShopTool.Revealing ? ShopTool.Buying : ShopTool.Revealing;
+                shop.CurrentShopTool =
+                    shop.CurrentShopTool == ShopTool.Revealing ? ShopTool.Buying : ShopTool.Revealing;
                 break;
         }
 
@@ -465,7 +508,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             $"{await discordClientWrapper.Emotes.FindEmoteAsync("gachiBASS")}",
             $"{await discordClientWrapper.Emotes.FindEmoteAsync("monkaW")}",
         };
-        await discordClientWrapper.Messages.RespondAsync(message, pool[randomizer.GetRandomNumberBetween(0, pool.Length)]);
+        await discordClientWrapper.Messages.RespondAsync(message,
+            pool[randomizer.GetRandomNumberBetween(0, pool.Length)]);
     }
 
     private void CheckEmojiInMessage(string message)
