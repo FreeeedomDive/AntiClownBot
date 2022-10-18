@@ -75,6 +75,7 @@ namespace AntiClownDiscordBotVersion2.Commands.Gaming
                     }
 
                     await partyService.CreateNewParty(e.Author.Id, string.Join(" ", args.Skip(1).Take(args.Length - 2)), count);
+                    await discordClientWrapper.Messages.DeleteAsync(e.Message);
                     break;
             }
         }
