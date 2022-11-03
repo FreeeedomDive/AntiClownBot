@@ -90,7 +90,7 @@ public static class StandardKernelExtensions
     public static StandardKernel WithApiClients(this StandardKernel ninjectKernel)
     {
         var settings = ninjectKernel.Get<IAppSettingsService>().GetSettings();
-        var restClient = RestClientBuilder.BuildRestClient(settings.ApiUrl);
+        var restClient = RestClientBuilder.BuildRestClient(settings.ApiUrl, false);
         ninjectKernel.Bind<RestSharp.RestClient>().ToConstant(restClient);
         ninjectKernel.Bind<IApiClient>().To<ApiClient>();
 
