@@ -5,7 +5,7 @@ step "build-anticlownbot-api" {
         action_type = "Octopus.Script"
         properties = {
             Octopus.Action.RunOnServer = "true"
-            Octopus.Action.Script.ScriptBody = "dotnet publish source/AntiClownApi"
+            Octopus.Action.Script.ScriptBody = "dir"
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
         }
