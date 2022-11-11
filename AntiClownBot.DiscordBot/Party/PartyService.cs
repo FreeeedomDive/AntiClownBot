@@ -4,6 +4,7 @@ using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
+using Loggers;
 using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Party;
@@ -12,11 +13,13 @@ public class PartyService : IPartyService
 {
     public PartyService(
         IDiscordClientWrapper discordClientWrapper,
-        IGuildSettingsService guildSettingsService
+        IGuildSettingsService guildSettingsService,
+        ILogger logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
         this.guildSettingsService = guildSettingsService;
+        this.logger = logger;
         PartiesInfo = CreateOrRestore();
     }
 
@@ -119,7 +122,7 @@ public class PartyService : IPartyService
 
     public async Task CreateNewParty(ulong authorId, string description, int maxPlayers, ulong? attachedRoleId = null)
     {
-        var newParty = new GameParty(discordClientWrapper, guildSettingsService)
+        var newParty = new GameParty(discordClientWrapper, guildSettingsService, logger)
         {
             CreatorId = authorId,
             CreationDate = DateTime.Now,
@@ -164,4 +167,5 @@ public class PartyService : IPartyService
     private DiscordMessage? partyObserver;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IGuildSettingsService guildSettingsService;
+    private readonly ILogger logger;
 }
