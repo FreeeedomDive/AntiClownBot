@@ -4,7 +4,6 @@ using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Loggers;
 using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Party;
@@ -13,13 +12,11 @@ public class PartyService : IPartyService
 {
     public PartyService(
         IDiscordClientWrapper discordClientWrapper,
-        IGuildSettingsService guildSettingsService,
-        ILogger logger
+        IGuildSettingsService guildSettingsService
     )
     {
         this.discordClientWrapper = discordClientWrapper;
         this.guildSettingsService = guildSettingsService;
-        this.logger = logger;
         PartiesInfo = CreateOrRestore();
     }
 
@@ -38,7 +35,8 @@ public class PartyService : IPartyService
         if (PartiesInfo.OpenParties.Count == 0)
         {
             embedBuilder.Color = new Optional<DiscordColor>(DiscordColor.DarkRed);
-            embedBuilder.AddField($"{await discordClientWrapper.Emotes.FindEmoteAsync("BibleThump")}", "Сейчас никто не играет");
+            embedBuilder.AddField($"{await discordClientWrapper.Emotes.FindEmoteAsync("BibleThump")}",
+                "Сейчас никто не играет");
         }
         else
         {
@@ -91,10 +89,11 @@ public class PartyService : IPartyService
             var embed = await GetPartiesEmbed();
             await discordClientWrapper.Messages.ModifyAsync(partyObserver, embed);
         }
+
         Save();
     }
 
-    private static PartiesInfo CreateOrRestore()
+    private PartiesInfo CreateOrRestore()
     {
         if (!File.Exists(FileName))
         {
@@ -117,12 +116,27 @@ public class PartyService : IPartyService
             };
         }
 
+        var restoredParties = parties.OpenParties
+            .ToDictionary(
+                party => party.Key,
+                party => GameParty.RestoreWithDependencies(
+                    party.Value,
+                    discordClientWrapper,
+                    guildSettingsService,
+                    UpdatePartyObservers,
+                    RemoveOutdatedParty,
+                    UpdateStatsAfterFullParty
+                )
+            );
+
+        parties.OpenParties = restoredParties;
+
         return parties;
     }
 
     public async Task CreateNewParty(ulong authorId, string description, int maxPlayers, ulong? attachedRoleId = null)
     {
-        var newParty = new GameParty(discordClientWrapper, guildSettingsService, logger)
+        var newParty = new GameParty(discordClientWrapper, guildSettingsService)
         {
             CreatorId = authorId,
             CreationDate = DateTime.Now,
@@ -167,5 +181,4 @@ public class PartyService : IPartyService
     private DiscordMessage? partyObserver;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILogger logger;
 }
