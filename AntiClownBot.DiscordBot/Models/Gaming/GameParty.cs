@@ -4,6 +4,7 @@ using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
+using Loggers;
 using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Models.Gaming
@@ -12,11 +13,13 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
     {
         public GameParty(
             IDiscordClientWrapper discordClientWrapper,
-            IGuildSettingsService guildSettingsService
+            IGuildSettingsService guildSettingsService,
+            ILogger logger
         )
         {
             this.discordClientWrapper = discordClientWrapper;
             this.guildSettingsService = guildSettingsService;
+            this.logger = logger;
             Players = new List<ulong>();
         }
 
@@ -86,7 +89,8 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
             {
                 return null;
             }
-            
+
+            logger.Info("Role Id: {Id}", AttachedRoleId);
             return await discordClientWrapper.Roles.FindRoleAsync(AttachedRoleId.Value);
         }
 
@@ -193,5 +197,6 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
         
         [JsonIgnore] private readonly IDiscordClientWrapper discordClientWrapper;
         [JsonIgnore] private readonly IGuildSettingsService guildSettingsService;
+        private readonly ILogger logger;
     }
 }
