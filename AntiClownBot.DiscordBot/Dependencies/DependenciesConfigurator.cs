@@ -1,4 +1,5 @@
 ﻿using Ninject;
+using TelemetryApp.Utilities.Extensions;
 
 namespace AntiClownDiscordBotVersion2.Dependencies;
 
@@ -13,8 +14,9 @@ public class DependenciesConfigurator
             .WithApplicationSettings()
             .WithEventsSettings()
             .WithGuildSettings()
-            // configure logger
-            .WithLogger()
+            // configure telemetry api clients
+            .ConfigureLoggerClient("AntiClownBot", "DiscordBot")
+            .ConfigureApiTelemetryClient("AntiClownBot", "DiscordBot")
             // configure other stuff without dependencies
             .WithRandomizer()
             .WithIpService()

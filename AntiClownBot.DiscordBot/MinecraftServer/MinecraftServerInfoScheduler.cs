@@ -4,7 +4,7 @@ using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using CommonServices.IpService;
 using CommonServices.MinecraftServerService;
-using Loggers;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.MinecraftServer;
 
@@ -16,7 +16,7 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
         IGuildSettingsService guildSettingsService,
         IMinecraftServerInfoService minecraftServerInfoService,
         IIpService ipService,
-        ILogger logger
+        ILoggerClient logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
@@ -41,7 +41,7 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
             var ip = await ipService.GetIp();
             if (ip == null)
             {
-                logger.Info("Ip was null");
+                await logger.InfoAsync("Ip was null");
                 continue;
             }
 
@@ -50,7 +50,7 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
             var serverInfo = await minecraftServerInfoService.ReadServerInfo($"{ip}:{guildSettings.MinecraftServerPort}");
             if (serverInfo == null)
             {
-                logger.Info("Server info was null");
+                await logger.InfoAsync("Server info was null");
                 continue;
             }
 
@@ -95,5 +95,5 @@ public class MinecraftServerInfoScheduler : IMinecraftServerInfoScheduler
     private readonly IGuildSettingsService guildSettingsService;
     private readonly IMinecraftServerInfoService minecraftServerInfoService;
     private readonly IIpService ipService;
-    private readonly ILogger logger;
+    private readonly ILoggerClient logger;
 }

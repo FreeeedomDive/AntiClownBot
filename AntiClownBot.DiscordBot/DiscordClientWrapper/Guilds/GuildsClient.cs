@@ -1,7 +1,7 @@
-﻿using Loggers;
-using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+﻿using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.Guilds;
 
@@ -10,7 +10,7 @@ public class GuildsClient : IGuildsClient
     public GuildsClient(
         DiscordClient discordClient,
         IGuildSettingsService guildSettingsService,
-        ILogger logger
+        ILoggerClient logger
     )
     {
         this.discordClient = discordClient;
@@ -49,5 +49,5 @@ public class GuildsClient : IGuildsClient
 
     private readonly DiscordClient discordClient;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILogger logger;
+    private readonly ILoggerClient logger;
 }

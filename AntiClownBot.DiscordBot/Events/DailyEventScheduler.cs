@@ -1,5 +1,5 @@
-﻿using Loggers;
-using AntiClownDiscordBotVersion2.Utils;
+﻿using AntiClownDiscordBotVersion2.Utils;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.Events
 {
@@ -7,7 +7,7 @@ namespace AntiClownDiscordBotVersion2.Events
     {
         public DailyEventScheduler(
             IDailyEvent[] dailyEvents,
-            ILogger logger
+            ILoggerClient logger
         )
         {
             this.dailyEvents = dailyEvents;
@@ -30,21 +30,21 @@ namespace AntiClownDiscordBotVersion2.Events
                     scheduledTime = scheduledTime.AddDays(1);
                 }
 
-                logger.Info($"Следующий ежедневный эвент в {Utility.NormalizeTime(scheduledTime)}, " +
-                            $"через {Utility.GetTimeDiff(scheduledTime)}");
+                await logger.InfoAsync($"Следующий ежедневный эвент в {Utility.NormalizeTime(scheduledTime)}, " +
+                                  $"через {Utility.GetTimeDiff(scheduledTime)}");
 
                 var sleepTime = (scheduledTime - DateTime.Now).TotalMilliseconds;
                 await Task.Delay((int)sleepTime);
 
                 foreach (var dailyEvent in dailyEvents)
                 {
-                    logger.Info("Executing {Event}", dailyEvent.GetType().Name);
+                    await logger.InfoAsync("Executing {Event}", dailyEvent.GetType().Name);
                     await dailyEvent.ExecuteAsync();
                 }
             }
         }
 
         private readonly IDailyEvent[] dailyEvents;
-        private readonly ILogger logger;
+        private readonly ILoggerClient logger;
     }
 }

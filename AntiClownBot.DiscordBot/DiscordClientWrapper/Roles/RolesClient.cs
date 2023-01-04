@@ -1,9 +1,9 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper.Guilds;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Members;
-using Loggers;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
 using DSharpPlus.Entities;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.Roles;
 
@@ -14,7 +14,7 @@ public class RolesClient : IRolesClient
         IGuildSettingsService guildSettingsService,
         IGuildsClient guildsClient,
         IMembersClient membersClient,
-        ILogger logger
+        ILoggerClient logger
     )
     {
         this.discordClient = discordClient;
@@ -59,5 +59,5 @@ public class RolesClient : IRolesClient
     private readonly IGuildSettingsService guildSettingsService;
     private readonly IGuildsClient guildsClient;
     private readonly IMembersClient membersClient;
-    private readonly ILogger logger;
+    private readonly ILoggerClient logger;
 }

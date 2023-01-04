@@ -2,7 +2,6 @@
 using AntiClownApiClient.ShopClient;
 using AntiClownApiClient.UsersClient;
 using AntiClownApiClient.UtilityClient;
-using Loggers;
 using RestSharp;
 
 namespace AntiClownApiClient;

@@ -1,5 +1,4 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
-using Loggers;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus.EventArgs;

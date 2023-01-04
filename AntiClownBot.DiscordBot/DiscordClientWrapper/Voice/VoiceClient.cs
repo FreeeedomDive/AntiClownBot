@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Guilds;
-using Loggers;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.VoiceNext;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.Voice;
 
@@ -14,7 +14,7 @@ public class VoiceClient : IVoiceClient
         DiscordClient discordClient,
         IGuildsClient guildsClient,
         IGuildSettingsService guildSettingsService,
-        ILogger logger
+        ILoggerClient logger
     )
     {
         this.discordClient = discordClient;
@@ -63,13 +63,13 @@ public class VoiceClient : IVoiceClient
         connection = voiceExtension.GetConnection(guild);
         if (connection == null)
         {
-            logger.Info($"Бот не подключен");
+            await logger.InfoAsync("Бот не подключен");
             return;
         }
 
         if (!File.Exists(soundName))
         {
-            logger.Error("Нет файла {Name}", soundName);
+            await logger.ErrorAsync("Нет файла {Name}", soundName);
             return;
         }
 
@@ -77,14 +77,14 @@ public class VoiceClient : IVoiceClient
         {
             if (connection.IsPlaying)
             {
-                logger.Info("Добавлен в очередь {Name}", soundName);
-                SoundQueue.Enqueue(soundName);
+                logger.InfoAsync("Добавлен в очередь {Name}", soundName);
+                soundQueue.Enqueue(soundName);
                 return;
             }
         }
 
         Exception? exc = null;
-        logger.Info("Начинаем проигрывать {Name}", soundName);
+        await logger.InfoAsync("Начинаем проигрывать {Name}", soundName);
 
         try
         {
@@ -100,7 +100,7 @@ public class VoiceClient : IVoiceClient
             var ffmpeg = Process.Start(psi);
             if (ffmpeg == null)
             {
-                logger.Error("ffmpeg не стартанул");
+                await logger.ErrorAsync("ffmpeg не стартанул");
                 return;
             }
             var ffOut = ffmpeg.StandardOutput.BaseStream;
@@ -117,21 +117,21 @@ public class VoiceClient : IVoiceClient
         finally
         {
             await connection.SendSpeakingAsync(false);
-            logger.Info("Закончили проигрывать {Name}", soundName);
+            await logger.InfoAsync("Закончили проигрывать {Name}", soundName);
             if (exc != null)
             {
-                logger.Error(exc, "Все наебнулось");
+                await logger.ErrorAsync(exc, "Все наебнулось");
             }
             lock (locker)
             {
-                if (SoundQueue.Count > 0)
+                if (soundQueue.Count > 0)
                 {
-                    logger.Info("Закончили проигрывать {Name}", soundName);
-                    PlaySoundAsync(SoundQueue.Dequeue());
+                    logger.InfoAsync("Закончили проигрывать {Name}", soundName);
+                    PlaySoundAsync(soundQueue.Dequeue());
                 }
                 else
                 {
-                    logger.Info("Ливну через минуту");
+                    logger.InfoAsync("Ливну через минуту");
                     DisconnectAsync();
                 }
             }
@@ -157,7 +157,7 @@ public class VoiceClient : IVoiceClient
     {
         lock (locker)
         {
-            SoundQueue.Clear();
+            soundQueue.Clear();
         }
     }
 
@@ -167,37 +167,37 @@ public class VoiceClient : IVoiceClient
         var vnc = voiceExtension.GetConnection(guild);
         if (vnc == null)
         {
-            logger.Error("Бот не подключен");
+            await logger.ErrorAsync("Бот не подключен");
             return;
         }
 
         await Task.Delay(60 * 1000);
         lock (locker)
         {
-            if (SoundQueue.Count > 0 && !vnc.IsPlaying)
+            if (soundQueue.Count > 0 && !vnc.IsPlaying)
             {
-                PlaySoundAsync(SoundQueue.Dequeue());
+                PlaySoundAsync(soundQueue.Dequeue());
                 return;
             }
         }
 
         if (vnc.IsPlaying)
         {
-            logger.Error("Бля, чёт играет, ливать не буду");
+            await logger.ErrorAsync("Бля, чёт играет, ливать не буду");
             return;
         }
 
-        logger.Info("Ливаю");
+        await logger.InfoAsync("Ливаю");
         vnc.Disconnect();
     }
 
-    public readonly Queue<string> SoundQueue = new();
+    private readonly Queue<string> soundQueue = new();
 
     private VoiceNextConnection? connection;
     private readonly DiscordClient discordClient;
     private readonly IGuildsClient guildsClient;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILogger logger;
+    private readonly ILoggerClient logger;
     private readonly VoiceNextExtension voiceExtension;
     private readonly object locker = new();
 }

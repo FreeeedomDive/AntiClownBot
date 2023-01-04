@@ -1,9 +1,7 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 using AntiClownDiscordBotVersion2.Commands;
-using AntiClownDiscordBotVersion2.Commands.Gaming;
 using AntiClownDiscordBotVersion2.EventServices;
-using Loggers;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
@@ -18,6 +16,7 @@ using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 
@@ -39,7 +38,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IRaceService raceService,
         IGuessNumberService guessNumberService,
         IRandomizer randomizer,
-        ILogger logger
+        ILoggerClient logger
     )
     {
         this.serviceProvider = serviceProvider;
@@ -60,7 +59,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.logger = logger;
     }
 
-    public void Configure()
+    public async Task ConfigureAsync()
     {
         discordClient.GuildEmojisUpdated += GuildEmojisUpdated;
         discordClient.MessageCreated += MessageCreated;
@@ -68,7 +67,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         discordClient.MessageDeleted += MessageDeleted;
         discordClient.MessageReactionRemoved += MessageReactionRemoved;
         discordClient.ComponentInteractionCreated += ComponentInteractionCreated;
-        RegisterSlashCommands(discordClient);
+        await RegisterSlashCommands(discordClient);
     }
 
     private async Task GuildEmojisUpdated(DiscordClient _, GuildEmojisUpdateEventArgs e)
@@ -121,7 +120,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         var message = e.Message.Content;
 
-        logger.Info($"{e.Author.Username}: {message}");
+        await logger.InfoAsync($"{e.Author.Username}: {message}");
 
         // удаляем все сообщения из чата с пати, чтобы люди отвечали в треды
         if (e.Channel.Id == guildSettings.PartyChannelId)
@@ -330,17 +329,17 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
         catch (Exception ex)
         {
-            logger.Error(ex, "Exception in username");
+            await logger.ErrorAsync(ex, "Exception in username");
         }
 
-        logger.Info($"EMOTE ADDED - {username}: {emojiName}");
+        await logger.InfoAsync($"EMOTE ADDED - {username}: {emojiName}");
 
         emoteStatsService.AddStats(emojiName);
 
         if ((emojiName is "peepoClown" or "clown" or "clown_face") &&
             (e.User.Id is 423498706336088085 or 369476500820459522))
         {
-            logger.Info("Removed clown");
+            await logger.InfoAsync("Removed clown");
             await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
         }
     }
@@ -371,10 +370,10 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
         catch (Exception ex)
         {
-            logger.Error(ex, "Exception in username");
+            await logger.ErrorAsync(ex, "Exception in username");
         }
 
-        logger.Info($"EMOTE REMOVED - {username}: {emojiName}");
+        await logger.InfoAsync($"EMOTE REMOVED - {username}: {emojiName}");
         emoteStatsService.RemoveStats(emojiName);
     }
 
@@ -490,9 +489,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         return Task.CompletedTask;
     }
 
-    private void RegisterSlashCommands(DiscordClient client)
+    private async Task RegisterSlashCommands(DiscordClient client)
     {
-        logger.Info("Register slash commands");
+        await logger.InfoAsync("Register slash commands");
         var guildSettings = guildSettingsService.GetGuildSettings();
         var slash = client.UseSlashCommands(new SlashCommandsConfiguration
         {
@@ -603,5 +602,5 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IRaceService raceService;
     private readonly IGuessNumberService guessNumberService;
     private readonly IRandomizer randomizer;
-    private readonly ILogger logger;
+    private readonly ILoggerClient logger;
 }

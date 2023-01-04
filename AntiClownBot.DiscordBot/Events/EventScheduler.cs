@@ -1,10 +1,10 @@
 ﻿using AntiClownDiscordBotVersion2.Events.NightEvents;
 using AntiClownDiscordBotVersion2.Events.SpecialEventDays;
-using Loggers;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Statistics.Daily;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.Events
 {
@@ -13,7 +13,7 @@ namespace AntiClownDiscordBotVersion2.Events
         public EventScheduler(
             IEventSettingsService eventSettingsService,
             IDailyStatisticsService dailyStatisticsService,
-            ILogger logger,
+            ILoggerClient logger,
             IRandomizer randomizer,
             IEvent[] events,
             INightEvent[] nightEvents
@@ -42,25 +42,28 @@ namespace AntiClownDiscordBotVersion2.Events
         {
             while (true)
             {
+                var sleepTime = CalculateTimeBeforeNextEvent();
+                var nextEventTime = DateTime.Now.AddMilliseconds(sleepTime);
+                await logger.InfoAsync(
+                    "Следующий эвент в {time}, через {diff}",
+                    Utility.NormalizeTime(nextEventTime),
+                    Utility.GetTimeDiff(nextEventTime));
+                await Task.Delay(sleepTime);
+
                 var eventDayTypeFromSettings = eventSettingsService.GetEventSettings().EventsType;
                 var eventDayType = Enum.TryParse<EventDayType>(eventDayTypeFromSettings, out var t) ? t : EventDayType.CommonDay;
                 var eventConfiguration = eventMappings[eventDayType];
-                var sleepTime = CalculateTimeBeforeNextEvent();
-                var nextEventTime = DateTime.Now.AddMilliseconds(sleepTime);
-                AddLog($"Следующий эвент в {Utility.NormalizeTime(nextEventTime)}, " +
-                       $"через {Utility.GetTimeDiff(nextEventTime)}");
-                await Task.Delay(sleepTime);
-
                 if (DateTime.Now.IsNightTime())
                 {
                     await nightEvents.SelectRandomItem(randomizer).ExecuteAsync();
                     continue;
                 }
-                
+
                 if (nextEvents.Count == 0)
                 {
                     nextEvents.Enqueue(eventConfiguration.Events.SelectRandomItem(randomizer));
                 }
+
                 var currentEvent = nextEvents.Dequeue();
                 dailyStatisticsService.DailyStatistics.EventsCount++;
                 await currentEvent.ExecuteAsync();
@@ -80,7 +83,7 @@ namespace AntiClownDiscordBotVersion2.Events
             const int eventStartMinute = 30; // xx:30 minutes
             var now = DateTime.Now;
             var secondsToSleep = 60 - now.Second;
-            var minutesToSleep = now.Minute < eventStartMinute 
+            var minutesToSleep = now.Minute < eventStartMinute
                 ? (eventStartMinute - now.Minute - 1)
                 : (60 - now.Minute + eventStartMinute - 1);
             var hoursToSleep = now.Hour % 2 == eventStartHour
@@ -90,16 +93,11 @@ namespace AntiClownDiscordBotVersion2.Events
             return (hoursToSleep * 60 * 60 + minutesToSleep * 60 + secondsToSleep) * 1000;
         }
 
-        private void AddLog(string content)
-        {
-            logger.Info(content);
-        }
-
         private readonly Queue<IEvent> nextEvents;
 
         private readonly IEventSettingsService eventSettingsService;
         private readonly IDailyStatisticsService dailyStatisticsService;
-        private readonly ILogger logger;
+        private readonly ILoggerClient logger;
         private readonly IRandomizer randomizer;
         private readonly INightEvent[] nightEvents;
         private readonly Dictionary<EventDayType, ISpecialEventDay> eventMappings;

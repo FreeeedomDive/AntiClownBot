@@ -5,9 +5,9 @@ using AntiClownDiscordBotVersion2.DiscordClientWrapper.Members;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Messages;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Roles;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Voice;
-using Loggers;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper;
 
@@ -16,7 +16,7 @@ public class DiscordClientWrapper : IDiscordClientWrapper
     public DiscordClientWrapper(
         DiscordClient discordClient,
         IGuildSettingsService guildSettingsService,
-        ILogger logger
+        ILoggerClient logger
     )
     {
         this.discordClient = discordClient;

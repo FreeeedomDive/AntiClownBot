@@ -1,6 +1,6 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
-using Loggers;
 using DSharpPlus.EventArgs;
+using TelemetryApp.Api.Client.Log;
 using VideoLibrary;
 
 namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
@@ -9,7 +9,7 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
     {
         public PlayYoutubeVideoCommand(
             IDiscordClientWrapper discordClientWrapper,
-            ILogger logger
+            ILoggerClient logger
         )
         {
             this.discordClientWrapper = discordClientWrapper;
@@ -42,11 +42,11 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
             var fileName = Path.Combine(dir, video.FullName);
             if (!File.Exists(fileName))
             {
-                logger.Info($"Скачиваю {fileName}");
+                await logger.InfoAsync("Скачиваю {fileName}", fileName);
                 await File.WriteAllBytesAsync(fileName, await video.GetBytesAsync());
             }
 
-            await discordClientWrapper.Messages.ModifyAsync(musicMessage,"Добавлено в очередь");
+            await discordClientWrapper.Messages.ModifyAsync(musicMessage, "Добавлено в очередь");
             await Play(e, e.Author.Id, fileName);
         }
 
@@ -67,6 +67,6 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
         public string Name => "play";
 
         private readonly IDiscordClientWrapper discordClientWrapper;
-        private readonly ILogger logger;
+        private readonly ILoggerClient logger;
     }
 }

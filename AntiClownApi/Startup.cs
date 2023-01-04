@@ -4,17 +4,17 @@ using AntiClownBotApi.Commands;
 using AntiClownBotApi.Converters;
 using AntiClownBotApi.Database;
 using AntiClownBotApi.Database.DBControllers;
-using AntiClownBotApi.Middlewares;
 using AntiClownBotApi.Services;
 using Hangfire;
 using Hangfire.PostgreSql;
-using Loggers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using TelemetryApp.Utilities.Extensions;
+using TelemetryApp.Utilities.Middlewares;
 
 namespace AntiClownBotApi
 {
@@ -35,8 +35,10 @@ namespace AntiClownBotApi
             var postgresSection = Configuration.GetSection("PostgreSql");
             services.Configure<DbOptions>(postgresSection);
             services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton, ServiceLifetime.Singleton);
-            
-            services.AddSingleton<ILogger>(NLogger.Build("ApiLog"));
+
+            services
+                .ConfigureLoggerClient("AntiClownBot", "AntiClownBot.Api")
+                .ConfigureApiTelemetryClient("AntiClownBot", "AntiClownBot.Api");
 
             services.AddTransient<UserRepository>();
             services.AddTransient<ShopRepository>();

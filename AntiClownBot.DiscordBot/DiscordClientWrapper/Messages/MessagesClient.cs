@@ -1,9 +1,9 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper.Emotes;
-using Loggers;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.Messages;
 
@@ -13,7 +13,7 @@ public class MessagesClient : IMessagesClient
         DiscordClient discordClient,
         IEmotesClient emotesClient,
         IGuildSettingsService guildSettingsService,
-        ILogger logger
+        ILoggerClient logger
     )
     {
         this.discordClient = discordClient;
@@ -161,5 +161,5 @@ public class MessagesClient : IMessagesClient
     private readonly DiscordClient discordClient;
     private readonly IEmotesClient emotesClient;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILogger logger;
+    private readonly ILoggerClient logger;
 }

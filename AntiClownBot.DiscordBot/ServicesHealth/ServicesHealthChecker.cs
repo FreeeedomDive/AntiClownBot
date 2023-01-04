@@ -4,8 +4,7 @@ using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
-using AntiClownDiscordBotVersion2.Utils.Extensions;
-using Loggers;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.ServicesHealth;
 
@@ -16,7 +15,7 @@ public class ServicesHealthChecker : IServicesHealthChecker
         IApiClient apiClient,
         IAppSettingsService appSettingsService,
         IGuildSettingsService guildSettingsService,
-        ILogger logger
+        ILoggerClient logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
@@ -87,7 +86,6 @@ public class ServicesHealthChecker : IServicesHealthChecker
             }
 
             // send this data to bot channel
-            logger.Info(totalStatus);
             try
             {
                 await discordClientWrapper.Channels.ModifyChannelAsync(guildSettings.BotChannelId,
@@ -100,7 +98,7 @@ public class ServicesHealthChecker : IServicesHealthChecker
             }
             catch (Exception e)
             {
-                logger.Error(e, "Discord can't update status topic");
+                await logger.ErrorAsync(e, "Discord can't update status topic");
             }
         }
     }
@@ -145,5 +143,5 @@ public class ServicesHealthChecker : IServicesHealthChecker
     private readonly IApiClient apiClient;
     private readonly IAppSettingsService appSettingsService;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILogger logger;
+    private readonly ILoggerClient logger;
 }

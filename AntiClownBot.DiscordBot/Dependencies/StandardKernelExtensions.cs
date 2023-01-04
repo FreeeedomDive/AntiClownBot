@@ -25,10 +25,8 @@ using AntiClownDiscordBotVersion2.Utils;
 using CommonServices.IpService;
 using CommonServices.MinecraftServerService;
 using DSharpPlus;
-using Loggers;
 using Ninject;
 using RestClient;
-using ILogger = Loggers.ILogger;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace AntiClownDiscordBotVersion2.Dependencies;
@@ -59,13 +57,6 @@ public static class StandardKernelExtensions
     public static StandardKernel WithGuildSettings(this StandardKernel ninjectKernel)
     {
         ninjectKernel.Bind<IGuildSettingsService>().To<GuildSettingsService>();
-
-        return ninjectKernel;
-    }
-
-    public static StandardKernel WithLogger(this StandardKernel ninjectKernel)
-    {
-        ninjectKernel.Bind<ILogger>().ToConstant(NLogger.Build("DiscordBotLog"));
 
         return ninjectKernel;
     }

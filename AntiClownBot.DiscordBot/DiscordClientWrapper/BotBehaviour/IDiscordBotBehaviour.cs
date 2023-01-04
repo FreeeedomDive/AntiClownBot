@@ -2,5 +2,5 @@
 
 public interface IDiscordBotBehaviour
 {
-    public void Configure();
+    Task ConfigureAsync();
 }

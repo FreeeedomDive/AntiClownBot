@@ -5,8 +5,8 @@ using AntiClownDiscordBotVersion2.Events;
 using AntiClownDiscordBotVersion2.ExceptionFilters;
 using AntiClownDiscordBotVersion2.MinecraftServer;
 using AntiClownDiscordBotVersion2.ServicesHealth;
-using Loggers;
 using Ninject;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2;
 
@@ -32,7 +32,7 @@ public class Program
 
     private static void AddExceptionLogger(StandardKernel configurator)
     {
-        var logger = configurator.Get<ILogger>();
+        var logger = configurator.Get<ILoggerClient>();
         var exceptionFilter = configurator.Get<IExceptionFilter>();
         AppDomain.CurrentDomain.FirstChanceException += (_, eventArgs) =>
         {
@@ -40,7 +40,8 @@ public class Program
             {
                 return;
             }
-            Task.Run(() => logger.Error(eventArgs.Exception, "Unhandled exception in DiscordBot"));
+
+            logger.ErrorAsync(eventArgs.Exception, "Unhandled exception in DiscordBot").GetAwaiter().GetResult();
         };
     }
 
@@ -77,7 +78,7 @@ public class Program
     private static async Task StartDiscordAsync(StandardKernel configurator)
     {
         var discordBehaviourConfigurator = configurator.Get<IDiscordBotBehaviour>();
-        discordBehaviourConfigurator.Configure();
+        await discordBehaviourConfigurator.ConfigureAsync();
         var discordClient = configurator.Get<IDiscordClientWrapper>();
         await discordClient.StartDiscord();
     }

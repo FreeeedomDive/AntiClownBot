@@ -8,13 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta2" />
-      <PackageReference Include="RestSharp" Version="108.0.2" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+      <PackageReference Include="RestSharp" Version="108.0.3" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\AntiClownApi.Client.Dto\AntiClownApi.Client.Dto.csproj" />
-      <ProjectReference Include="..\Loggers\Loggers.csproj" />
     </ItemGroup>
 
 </Project>
