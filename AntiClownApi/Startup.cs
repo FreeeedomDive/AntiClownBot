@@ -38,8 +38,7 @@ namespace AntiClownBotApi
 
             services
                 .ConfigureLoggerClient("AntiClownBot", "AntiClownBot.Api")
-                .ConfigureApiTelemetryClient("AntiClownBot", "AntiClownBot.Api")
-                .ConfigureApiTelemetryFilters(filter =>
+                .ConfigureApiTelemetryClient("AntiClownBot", "AntiClownBot.Api", filter =>
                 {
                     filter.ForbiddenRoutes = new[]
                     {
@@ -64,10 +63,7 @@ namespace AntiClownBotApi
 
             services.AddControllers()
                 .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new BaseItemConverter()));
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Best API ever", Version = "v1"});
-            });
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "Best API ever", Version = "v1" }); });
 
             services.AddHangfire(config =>
                 config.UsePostgreSqlStorage(postgresSection["ConnectionString"]));
