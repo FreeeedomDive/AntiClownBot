@@ -38,7 +38,15 @@ namespace AntiClownBotApi
 
             services
                 .ConfigureLoggerClient("AntiClownBot", "AntiClownBot.Api")
-                .ConfigureApiTelemetryClient("AntiClownBot", "AntiClownBot.Api");
+                .ConfigureApiTelemetryClient("AntiClownBot", "AntiClownBot.Api")
+                .ConfigureApiTelemetryFilters(filter =>
+                {
+                    filter.ForbiddenRoutes = new[]
+                    {
+                        "/api/globalState/ping",
+                        "/api/globalState/autoTributes"
+                    };
+                });
 
             services.AddTransient<UserRepository>();
             services.AddTransient<ShopRepository>();
