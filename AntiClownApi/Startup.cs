@@ -43,8 +43,8 @@ namespace AntiClownBotApi
                 {
                     filter.ForbiddenRoutes = new[]
                     {
-                        "/api/globalState/ping",
-                        "/api/globalState/autoTributes"
+                        "api/globalState/ping",
+                        "api/globalState/autoTributes"
                     };
                 });
 
