@@ -6,7 +6,9 @@ public class AppSettingsService : IAppSettingsService
 {
     public Settings GetSettings()
     {
-        var settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(FileName));
+        var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+        var fileName = $"{filesDirectory}/SettingsFiles/settings.json";
+        var settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(fileName));
         if (settings == null)
         {
             throw new Exception("Failed to read settings");
@@ -14,6 +16,4 @@ public class AppSettingsService : IAppSettingsService
 
         return settings;
     }
-
-    private const string FileName = "../Files/SettingsFiles/settings.json";
 }

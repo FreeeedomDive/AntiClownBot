@@ -7,6 +7,7 @@ public class Settings
 {
     public string DiscordToken { get; set; }
     public string ApiUrl { get; set; }
+    public string TelemetryApiUrl { get; set; }
     public bool MaintenanceMode { get; set; }
     public int ApiPollingIntervalInSeconds { get; set; }
     public int ServicesCheckIntervalInSeconds { get; set; }

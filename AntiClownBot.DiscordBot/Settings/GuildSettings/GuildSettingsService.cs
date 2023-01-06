@@ -6,7 +6,9 @@ public class GuildSettingsService : IGuildSettingsService
 {
     public GuildSettings GetGuildSettings()
     {
-        var settings = JsonConvert.DeserializeObject<GuildSettings>(File.ReadAllText(FileName));
+        var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+        var fileName = $"{filesDirectory}/SettingsFiles/guild.json";
+        var settings = JsonConvert.DeserializeObject<GuildSettings>(File.ReadAllText(fileName));
         if (settings == null)
         {
             throw new Exception("Failed to read guild");
@@ -14,6 +16,4 @@ public class GuildSettingsService : IGuildSettingsService
 
         return settings;
     }
-
-    private const string FileName = "../Files/SettingsFiles/guild.json";
 }

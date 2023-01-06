@@ -15,6 +15,8 @@ public class PartyService : IPartyService
         IGuildSettingsService guildSettingsService
     )
     {
+        var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+        fileName = $"{filesDirectory}/StatisticsFiles/parties.json";
         this.discordClientWrapper = discordClientWrapper;
         this.guildSettingsService = guildSettingsService;
         PartiesInfo = CreateOrRestore();
@@ -27,9 +29,7 @@ public class PartyService : IPartyService
         var partiesLinks = PartiesInfo
             .OpenParties
             .Values
-            .ToDictionary(p => p,
-                p =>
-                    @$"https://discord.com/channels/{guildSettings.GuildId}/{guildSettings.PartyChannelId}/{p.MessageId}");
+            .ToDictionary(p => p, p => @$"https://discord.com/channels/{guildSettings.GuildId}/{guildSettings.PartyChannelId}/{p.MessageId}");
 
         embedBuilder.WithTitle("ТЕКУЩИЕ ПАТИ");
         if (PartiesInfo.OpenParties.Count == 0)
@@ -95,7 +95,7 @@ public class PartyService : IPartyService
 
     private PartiesInfo CreateOrRestore()
     {
-        if (!File.Exists(FileName))
+        if (!File.Exists(fileName))
         {
             return new PartiesInfo
             {
@@ -105,7 +105,7 @@ public class PartyService : IPartyService
             };
         }
 
-        var parties = JsonConvert.DeserializeObject<PartiesInfo>(File.ReadAllText(FileName));
+        var parties = JsonConvert.DeserializeObject<PartiesInfo>(File.ReadAllText(fileName));
         if (parties == null)
         {
             return new PartiesInfo
@@ -164,7 +164,7 @@ public class PartyService : IPartyService
     public void Save()
     {
         var json = JsonConvert.SerializeObject(PartiesInfo, Formatting.Indented);
-        File.WriteAllText(FileName, json);
+        File.WriteAllText(fileName, json);
     }
 
     private void UpdateStatsAfterFullParty(double seconds)
@@ -177,7 +177,7 @@ public class PartyService : IPartyService
 
     public PartiesInfo PartiesInfo { get; }
 
-    private const string FileName = "../Files/StatisticsFiles/parties.json";
+    private static string fileName = "";
     private DiscordMessage? partyObserver;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IGuildSettingsService guildSettingsService;

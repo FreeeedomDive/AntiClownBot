@@ -8,6 +8,8 @@ public class DailyStatisticsService : IDailyStatisticsService
 {
     public DailyStatisticsService()
     {
+        var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+        fileName = $"{filesDirectory}/StatisticsFiles/daily.json";
         DailyStatistics = TryRead(out var stats) ? stats : new DailyStatistics();
     }
 
@@ -26,22 +28,22 @@ public class DailyStatisticsService : IDailyStatisticsService
     public void Save()
     {
         var json = JsonConvert.SerializeObject(DailyStatistics, Formatting.Indented);
-        File.WriteAllText(FileName, json);
+        File.WriteAllText(fileName, json);
     }
 
     private static bool TryRead(out DailyStatistics dict)
     {
-        dict = null;
-        if (!File.Exists(FileName))
+        dict = null!;
+        if (!File.Exists(fileName))
         {
             return false;
         }
-        dict = JsonConvert.DeserializeObject<DailyStatistics>(File.ReadAllText(FileName));
+        dict = JsonConvert.DeserializeObject<DailyStatistics>(File.ReadAllText(fileName))!;
         return dict != null;
     }
     
     public DateTime TodayDate { get; set; }
     public DailyStatistics DailyStatistics { get; set; }
 
-    private const string FileName = "../Files/StatisticsFiles/daily.json";
+    private static string fileName = "";
 }

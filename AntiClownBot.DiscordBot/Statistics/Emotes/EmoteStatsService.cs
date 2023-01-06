@@ -8,6 +8,8 @@ public class EmoteStatsService : IEmoteStatsService
 {
     public EmoteStatsService(IDiscordClientWrapper discordClientWrapper)
     {
+        var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+        fileName = $"{filesDirectory}/StatisticsFiles/emotes.json";
         this.discordClientWrapper = discordClientWrapper;
         emoteStatistics = TryRead(out var dict) ? dict : new Dictionary<string, int>();
     }
@@ -32,21 +34,21 @@ public class EmoteStatsService : IEmoteStatsService
     private void Save()
     {
         var json = JsonConvert.SerializeObject(emoteStatistics, Formatting.Indented);
-        File.WriteAllText(FileName, json);
+        File.WriteAllText(fileName, json);
     }
 
     private static bool TryRead(out Dictionary<string, int> dict)
     {
-        dict = null;
-        if (!File.Exists(FileName))
+        dict = null!;
+        if (!File.Exists(fileName))
         {
             return false;
         }
-        dict = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(FileName));
+        dict = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(fileName))!;
         return dict != null;
     }
 
-    private const string FileName = "../Files/StatisticsFiles/emotes.json";
+    private static string fileName = "";
 
     private readonly Dictionary<string, int> emoteStatistics;
     private readonly IDiscordClientWrapper discordClientWrapper;

@@ -14,7 +14,8 @@ public class StandingsCommand : ICommand
 
     public async Task Execute(MessageCreateEventArgs e)
     {
-        var driversContent = await File.ReadAllTextAsync("../Files/StatisticsFiles/drivers.json");
+        var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+        var driversContent = await File.ReadAllTextAsync($"{filesDirectory}/StatisticsFiles/drivers.json");
         var driversModels = JsonConvert.DeserializeObject<IEnumerable<DriverModel>>(driversContent);
         if (driversModels == null)
         {

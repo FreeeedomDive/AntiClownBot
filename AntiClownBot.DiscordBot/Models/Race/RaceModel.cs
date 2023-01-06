@@ -39,7 +39,10 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             currentTrack = SelectTrack();
             FillSectors();
 
-            var driversContent = await File.ReadAllTextAsync("../Files/StatisticsFiles/drivers.json");
+            // TODO вынести чтение drivers.json в отдельный сервис
+            var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+
+            var driversContent = await File.ReadAllTextAsync($"{filesDirectory}/StatisticsFiles/drivers.json");
             var driversModels = JsonConvert.DeserializeObject<IEnumerable<DriverModel>>(driversContent);
             if (driversModels is null)
             {
@@ -89,7 +92,9 @@ namespace AntiClownDiscordBotVersion2.Models.Race
 
         private TrackModel SelectTrack()
         {
-            var tracksContent = File.ReadAllText("../Files/StatisticsFiles/tracks.json");
+            var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+
+            var tracksContent = File.ReadAllText($"{filesDirectory}/StatisticsFiles/tracks.json");
             var tracks = JsonConvert.DeserializeObject<IEnumerable<TrackModel>>(tracksContent);
             if (tracks is null)
             {
@@ -320,7 +325,8 @@ namespace AntiClownDiscordBotVersion2.Models.Race
                 if (pos >= botPosition || pos > 10) return result;
 
                 var pts = Rewards[index];
-                changeUserRatingTasks.Add(() => userBalanceService.ChangeUserBalanceWithDailyStatsAsync(driver.DiscordId, pts, $"{pos} место в гонке"));
+                changeUserRatingTasks.Add(
+                    () => userBalanceService.ChangeUserBalanceWithDailyStatsAsync(driver.DiscordId, pts, $"{pos} место в гонке"));
                 result += $"\t+{pts} scam coins";
 
                 return result;
@@ -332,7 +338,8 @@ namespace AntiClownDiscordBotVersion2.Models.Race
             await discordClientWrapper.Messages.ModifyAsync(mainRaceMessage, sb.ToString());
 
             var models = drivers.Select(d => d.DriverModel).ToList();
-            await File.WriteAllTextAsync("../Files/StatisticsFiles/drivers.json", JsonConvert.SerializeObject(models, Formatting.Indented));
+            var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+            await File.WriteAllTextAsync($"{filesDirectory}/StatisticsFiles/drivers.json", JsonConvert.SerializeObject(models, Formatting.Indented));
 
             foreach (var changeUserRatingTask in changeUserRatingTasks)
             {

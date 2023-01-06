@@ -6,7 +6,9 @@ public class EventSettingsService : IEventSettingsService
 {
     public EventSettings GetEventSettings()
     {
-        var settings = JsonConvert.DeserializeObject<EventSettings>(File.ReadAllText(FileName));
+        var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+        var fileName = $"{filesDirectory}/SettingsFiles/eventSettings.json";
+        var settings = JsonConvert.DeserializeObject<EventSettings>(File.ReadAllText(fileName));
         if (settings == null)
         {
             throw new Exception("Failed to read event settings");
@@ -14,6 +16,4 @@ public class EventSettingsService : IEventSettingsService
 
         return settings;
     }
-
-    private const string FileName = "../Files/SettingsFiles/eventSettings.json";
 }
