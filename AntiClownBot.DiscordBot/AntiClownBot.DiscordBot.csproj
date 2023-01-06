@@ -16,8 +16,8 @@
       <PackageReference Include="Ninject" Version="3.3.6" />
       <PackageReference Include="RestSharp" Version="108.0.3" />
       <PackageReference Include="VideoLibrary" Version="3.1.9" />
-      <PackageReference Include="Xdd.TelemetryApp.Api.Client" Version="1.0.9" />
-      <PackageReference Include="Xdd.TelemetryApp.Api.Utilities" Version="1.0.9" />
+      <PackageReference Include="Xdd.TelemetryApp.Api.Client" Version="1.0.10" />
+      <PackageReference Include="Xdd.TelemetryApp.Api.Utilities" Version="1.0.10" />
     </ItemGroup>
 
     <ItemGroup>

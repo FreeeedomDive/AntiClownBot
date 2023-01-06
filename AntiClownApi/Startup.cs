@@ -5,6 +5,7 @@ using AntiClownBotApi.Converters;
 using AntiClownBotApi.Database;
 using AntiClownBotApi.Database.DBControllers;
 using AntiClownBotApi.Services;
+using AntiClownBotApi.Settings;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
@@ -36,16 +37,15 @@ namespace AntiClownBotApi
             services.Configure<DbOptions>(postgresSection);
             services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton, ServiceLifetime.Singleton);
 
-            services
-                .ConfigureLoggerClient("AntiClownBot", "AntiClownBot.Api")
-                .ConfigureApiTelemetryClient("AntiClownBot", "AntiClownBot.Api", filter =>
+            var settings = new SettingsProvider().GetSettings();
+            services.ConfigureTelemetryClientWithLogger("AntiClownBot", "AntiClownBot.Api", settings.TelemetryApiUrl, filter =>
+            {
+                filter.ForbiddenRoutes = new[]
                 {
-                    filter.ForbiddenRoutes = new[]
-                    {
-                        "api/globalState/ping",
-                        "api/globalState/autoTributes"
-                    };
-                });
+                    "api/globalState/ping",
+                    "api/globalState/autoTributes"
+                };
+            });
 
             services.AddTransient<UserRepository>();
             services.AddTransient<ShopRepository>();
