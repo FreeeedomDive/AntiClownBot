@@ -41,7 +41,9 @@ public class Program
                 return;
             }
 
-            logger.ErrorAsync(eventArgs.Exception, "Unhandled exception in DiscordBot").GetAwaiter().GetResult();
+            Console.WriteLine(eventArgs.Exception.Message);
+            Console.WriteLine(eventArgs.Exception.StackTrace);
+            // logger.ErrorAsync(eventArgs.Exception, "Unhandled exception in DiscordBot").GetAwaiter().GetResult();
         };
     }
 
