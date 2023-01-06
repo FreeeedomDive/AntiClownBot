@@ -21,6 +21,7 @@ services:
       - ${AntiClownBotFilesDirectory}:/settings:rw
     build:
       dockerfile: DockerfileDiscordBot
+    restart: always
 
 networks:
   default:
