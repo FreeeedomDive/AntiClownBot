@@ -39,6 +39,9 @@ namespace AntiClownBotApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("ItemType")
                         .HasColumnType("integer");
 

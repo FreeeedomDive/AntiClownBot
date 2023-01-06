@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  AntiClownBot.Api:
+    image: anticlownbotapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=https://*:6240
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/certificate/https/certificate.pfx
+      - ASPNETCORE_KESTREL__Certificates__Default__Password=aspnet
+    build:
+      dockerfile: DockerfileAntiClownApi
+    ports:
+      - "6240:6240"
+
+  AntiClownBot.DiscordBot:
+    image: anticlownbotdiscordbot
+    environment:
+      - AntiClownBotFilesDirectory=/settings
+    volumes:
+      - ${AntiClownBotFilesDirectory}:/settings:rw
+    build:
+      dockerfile: DockerfileDiscordBot
+
+networks:
+  default:
+    name: AntiClownBotNetwork

@@ -25,12 +25,6 @@ namespace AntiClownBotApi.Database
             : base(options)
         {
             Options = dbOptionsAccessor.Value;
-            Database.EnsureCreated();
-        }
-        
-        public DatabaseContext()
-        {
-            Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

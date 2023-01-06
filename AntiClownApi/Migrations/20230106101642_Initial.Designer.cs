@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AntiClownBotApi.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210905111758_Govno")]
-    partial class Govno
+    [Migration("20230106101642_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,6 +40,9 @@ namespace AntiClownBotApi.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("ItemType")
                         .HasColumnType("integer");

@@ -1,0 +1,25 @@
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /certificate
+RUN dotnet dev-certs https --clean
+RUN dotnet dev-certs https -ep ./https/certificate.pfx -p aspnet
+RUN dotnet dev-certs https --trust
+WORKDIR /src
+COPY ["AntiClownApi/AntiClownApi.csproj", "AntiClownApi/"]
+COPY ["AntiClownApi.Client.Dto/AntiClownApi.Client.Dto.csproj", "AntiClownApi.Client.Dto/"]
+RUN dotnet restore "AntiClownApi/AntiClownApi.csproj"
+COPY . .
+WORKDIR "/src/AntiClownApi"
+RUN dotnet build "AntiClownApi.csproj" -c Release -o /app/build
+
+FROM build AS publish
+WORKDIR "/src/AntiClownApi"
+RUN dotnet publish "AntiClownApi.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /certificate /certificate
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "AntiClownApi.dll"]
