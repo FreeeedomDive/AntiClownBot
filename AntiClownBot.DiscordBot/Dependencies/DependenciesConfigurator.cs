@@ -15,7 +15,7 @@ public class DependenciesConfigurator
             .WithEventsSettings()
             .WithGuildSettings()
             // configure telemetry api clients
-            .ConfigureTelemetryClientWithLogger("AntiClownBot", "DiscordBot")
+            .WithTelemetryClientWithLogger()
             // configure other stuff without dependencies
             .WithRandomizer()
             .WithIpService()

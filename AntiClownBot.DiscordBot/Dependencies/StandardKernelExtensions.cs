@@ -27,6 +27,7 @@ using CommonServices.MinecraftServerService;
 using DSharpPlus;
 using Ninject;
 using RestClient;
+using TelemetryApp.Utilities.Extensions;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace AntiClownDiscordBotVersion2.Dependencies;
@@ -59,6 +60,13 @@ public static class StandardKernelExtensions
         ninjectKernel.Bind<IGuildSettingsService>().To<GuildSettingsService>();
 
         return ninjectKernel;
+    }
+
+    public static StandardKernel WithTelemetryClientWithLogger(this StandardKernel ninjectkernel)
+    {
+        var settings = ninjectkernel.Get<IAppSettingsService>().GetSettings();
+
+        return ninjectkernel.ConfigureTelemetryClientWithLogger("AntiClownBot", "DiscordBot", settings.TelemetryApiUrl);
     }
 
     public static StandardKernel WithExceptionFilter(this StandardKernel ninjectKernel)
