@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anticlown-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anticlownapi
+  template:
+    metadata:
+      labels:
+        app: anticlownapi
+    spec:
+      containers:
+        - name: anticlownapi
+          image: localhost:5000/anticlownapi
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+              value: /certificate/https/certificate.pfx
+            - name: ASPNETCORE_KESTREL__Certificates__Default__Password
+              value: aspnet
+            - name: ASPNETCORE_URLS
+              value: https://+:6651
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: anticlown-api-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: anticlownapi
+  ports:
+    - name: anticlownapi
+      protocol: TCP
+      port: 6651
+      targetPort: 6651
