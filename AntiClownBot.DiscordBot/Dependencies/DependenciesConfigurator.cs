@@ -20,6 +20,7 @@ public class DependenciesConfigurator
             .WithRandomizer()
             .WithIpService()
             .WithMinecraftServerInfoService()
+            .WithTimeOffsetTestTask()
             // configure api clients
             .WithApiClients()
             .WithDiscordClient()

@@ -26,6 +26,7 @@ public class Program
         Console.WriteLine("Started Event scheduler");
         StartBackgroundMinecraftServerInfoScheduler(configurator);
         Console.WriteLine("Started MinecraftServerInfo scheduler");
+        StartTimeOffsetTestTask(configurator);
         Console.WriteLine("Start listening to discord events...");
         await StartDiscordAsync(configurator);
     }
@@ -75,6 +76,12 @@ public class Program
     {
         var eventScheduler = configurator.Get<IMinecraftServerInfoScheduler>();
         eventScheduler.Start();
+    }
+
+    private static void StartTimeOffsetTestTask(StandardKernel configurator)
+    {
+        var test = configurator.Get<TimeOffsetTestTask>();
+        test.Start();
     }
 
     private static async Task StartDiscordAsync(StandardKernel configurator)

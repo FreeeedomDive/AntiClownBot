@@ -347,4 +347,11 @@ public static class StandardKernelExtensions
 
         return ninjectKernel;
     }
+
+    public static StandardKernel WithTimeOffsetTestTask(this StandardKernel ninjectKernel)
+    {
+        ninjectKernel.Bind<TimeOffsetTestTask>().ToSelf();
+
+        return ninjectKernel;
+    }
 }
