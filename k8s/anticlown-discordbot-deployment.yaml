@@ -1,21 +1,3 @@
-apiVersion: v1
-kind: Pod
-metadata:
-  name: anticlowndiscordbot-pod
-spec:
-  containers:
-    - image: localhost:5000/anticlowndiscordbot
-      name: test-anticlowndiscordbot
-      volumeMounts:
-        - mountPath: /settings
-          name: anticlowndiscordbotsettings-volume
-          readOnly: false
-  volumes:
-    - name: anticlowndiscordbotsettings-volume
-      hostPath:
-        path: ${AntiClownBotFilesDirectory}
-        type: Directory
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,3 +18,21 @@ spec:
           env:
             - name: AntiClownBotFilesDirectory
               value: /settings
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: anticlowndiscordbot-pod
+spec:
+  containers:
+    - image: localhost:5000/anticlowndiscordbot
+      name: anticlowndiscordbot
+      volumeMounts:
+        - mountPath: /settings
+          name: anticlowndiscordbotsettings-volume
+          readOnly: false
+  volumes:
+    - name: anticlowndiscordbotsettings-volume
+      hostPath:
+        path: ${AntiClownBotFilesDirectory}
+        type: Directory

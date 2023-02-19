@@ -36,5 +36,5 @@ spec:
   ports:
     - name: anticlownapi
       protocol: TCP
-      port: 6651
-      targetPort: 6651
+      port: 6240
+      targetPort: 6240
