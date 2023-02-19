@@ -1,34 +1,15 @@
 apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: anticlown-discordbot-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: anticlowndiscordbot
-  template:
-    metadata:
-      labels:
-        app: anticlowndiscordbot
-    spec:
-      containers:
-        - name: anticlowndiscordbot
-          image: localhost:5000/anticlowndiscordbot:{{TAG_NUMBER}}
-          env:
-            - name: AntiClownBotFilesDirectory
-              value: /settings
-      volumes:
-        - name: anticlown-discordbot-settings-volume
----
-apiVersion: v1
 kind: Pod
 metadata:
   name: anticlown-discordbot-pod-withvolume
 spec:
+  replicas: 1
   containers:
-    - image: localhost:5000/anticlowndiscordbot
-      name: anticlowndiscordbot
+    - name: anticlowndiscordbot
+      image: localhost:5000/anticlowndiscordbot:{{TAG_NUMBER}}
+      env:
+        - name: AntiClownBotFilesDirectory
+          value: /settings
       volumeMounts:
         - mountPath: /settings
           name: anticlown-discordbot-settings-volume
