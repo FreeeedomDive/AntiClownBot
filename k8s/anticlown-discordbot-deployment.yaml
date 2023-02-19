@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: anticlowndiscordbot
-          image: localhost:5000/anticlowndiscordbot
+          image: localhost:5000/anticlowndiscordbot:{{TAG_NUMBER}}
           env:
             - name: AntiClownBotFilesDirectory
               value: /settings
@@ -22,7 +22,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: anticlowndiscordbot-pod
+  name: anticlowndiscordbot-pod-withvolume
 spec:
   containers:
     - image: localhost:5000/anticlowndiscordbot
