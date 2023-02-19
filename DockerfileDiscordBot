@@ -1,10 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
-RUN rm -f /etc/localtime \
-&& ln -sv /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime \
-&& echo "Asia/Yekaterinburg" > /etc/timezone
-
 COPY ["AntiClownBot.DiscordBot/AntiClownBot.DiscordBot.csproj", "AntiClownBot.DiscordBot/"]
 COPY ["AntiClownApi.Client.Dto/AntiClownApi.Client.Dto.csproj", "AntiClownApi.Client.Dto/"]
 COPY ["AntiClownApi.Client/AntiClownApi.Client.csproj", "AntiClownApi.Client/"]

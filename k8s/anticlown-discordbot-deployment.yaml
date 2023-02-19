@@ -21,6 +21,8 @@ spec:
           env:
             - name: AntiClownBotFilesDirectory
               value: /settings
+            - name: TZ
+              value: Asia/Yekaterinburg
       volumes:
         - hostPath:
             path: /run/desktop/mnt/host/{{SETTINGS_PATH}}

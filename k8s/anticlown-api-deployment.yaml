@@ -24,6 +24,8 @@ spec:
               value: aspnet
             - name: ASPNETCORE_URLS
               value: https://+:6240
+            - name: TZ
+              value: Asia/Yekaterinburg
 ---
 apiVersion: v1
 kind: Service
