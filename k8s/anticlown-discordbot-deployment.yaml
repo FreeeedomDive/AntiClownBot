@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anticlown-discordbot-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anticlowndiscordbot
+  template:
+    metadata:
+      labels:
+        app: anticlowndiscordbot
+    spec:
+      containers:
+        - name: anticlowndiscordbot
+          image: localhost:5000/anticlowndiscordbot:{{TAG_NUMBER}}
+          volumeMounts:
+            - mountPath: /settings
+              name: anticlown-discordbot-settings-volume
+          env:
+            - name: AntiClownBotFilesDirectory
+              value: /settings
+            - name: TZ
+              value: Asia/Yekaterinburg
+      volumes:
+        - hostPath:
+            path: /run/desktop/mnt/host/{{SETTINGS_PATH}}
+          name: anticlown-discordbot-settings-volume
