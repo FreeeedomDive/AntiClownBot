@@ -18,21 +18,23 @@ spec:
           env:
             - name: AntiClownBotFilesDirectory
               value: /settings
+      volumes:
+        - name: anticlown-discordbot-settings-volume
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: anticlowndiscordbot-pod-withvolume
+  name: anticlown-discordbot-pod-withvolume
 spec:
   containers:
     - image: localhost:5000/anticlowndiscordbot
       name: anticlowndiscordbot
       volumeMounts:
         - mountPath: /settings
-          name: anticlowndiscordbotsettings-volume
+          name: anticlown-discordbot-settings-volume
           readOnly: false
   volumes:
-    - name: anticlowndiscordbotsettings-volume
+    - name: anticlown-discordbot-settings-volume
       hostPath:
         path: ${AntiClownBotFilesDirectory}
         type: Directory
