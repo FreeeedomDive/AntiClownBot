@@ -5,8 +5,9 @@ RUN dotnet dev-certs https --clean
 RUN dotnet dev-certs https -ep ./https/certificate.pfx -p aspnet
 RUN dotnet dev-certs https --trust
 
-RUN apt update && apt install tzdata -y
-ENV TZ="Asia/Yekaterinburg"
+RUN rm -f /etc/localtime \
+&& ln -sv /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime \
+&& echo "Asia/Yekaterinburg" > /etc/timezone
 
 WORKDIR /src
 COPY ["AntiClownApi/AntiClownApi.csproj", "AntiClownApi/"]
