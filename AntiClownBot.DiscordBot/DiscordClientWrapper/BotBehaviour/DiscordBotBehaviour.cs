@@ -505,6 +505,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         {
             slash.RegisterCommands(slashCommandsModule, guildSettings.GuildId);
         }
+
+        await logger.DebugAsync($"Registered slash command modules: {string.Join("\n", slashCommandModules.Select(x => x.GetType().Name))}");
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
