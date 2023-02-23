@@ -50,6 +50,12 @@ public class CommandsService : ICommandsService
 
         if (!TryGetCommand(name, out var command))
         {
+            var isObsolete = Attribute.GetCustomAttribute(command.GetType(), typeof(ObsoleteCommandAttribute)) != null;
+            if (isObsolete)
+            {
+                await discordClientWrapper.Messages.RespondAsync(e.Message, $"Команда {name} устарела, воспользуйся аналогичной слеш-командой");
+                return;
+            }
             await discordClientWrapper.Messages.RespondAsync(e.Message, $"Нет команды с именем {name}");
             return;
         }
