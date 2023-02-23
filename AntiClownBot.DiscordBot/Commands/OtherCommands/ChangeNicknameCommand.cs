@@ -75,7 +75,6 @@ public class ChangeNicknameCommand : ICommand
     }
 
     public string Name => "nickname";
-    public bool IsObsolete => false;
 
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IApiClient apiClient;

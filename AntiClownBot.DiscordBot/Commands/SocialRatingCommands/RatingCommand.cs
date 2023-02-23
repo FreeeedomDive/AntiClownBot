@@ -133,7 +133,6 @@ namespace AntiClownDiscordBotVersion2.Commands.SocialRatingCommands
         }
 
         public string Name => "rating";
-        public bool IsObsolete => true;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IApiClient apiClient;

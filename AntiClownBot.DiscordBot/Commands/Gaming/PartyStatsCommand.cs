@@ -37,5 +37,4 @@ public class PartyStatsCommand : ICommand
     public Task<string> Help() => Task.FromResult("Статистика по времени сбора фулл пати");
 
     public string Name => "partystats";
-    public bool IsObsolete => true;
 }

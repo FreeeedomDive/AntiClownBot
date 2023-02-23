@@ -46,7 +46,6 @@ namespace AntiClownDiscordBotVersion2.Commands.RandomSelectCommands
         }
 
         public string Name => "roll";
-        public bool IsObsolete => false;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IRandomizer randomizer;

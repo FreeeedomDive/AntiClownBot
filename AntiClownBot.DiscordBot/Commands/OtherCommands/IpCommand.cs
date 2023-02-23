@@ -74,7 +74,6 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
         }
 
         public string Name => "ip";
-        public bool IsObsolete => false;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IGuildSettingsService guildSettingsService;

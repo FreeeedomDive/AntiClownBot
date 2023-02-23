@@ -49,7 +49,6 @@ namespace AntiClownDiscordBotVersion2.Commands.SocialRatingCommands
         }
 
         public string Name => "tribute";
-        public bool IsObsolete => false;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IApiClient apiClient;

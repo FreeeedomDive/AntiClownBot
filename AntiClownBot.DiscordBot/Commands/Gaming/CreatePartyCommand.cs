@@ -92,7 +92,6 @@ namespace AntiClownDiscordBotVersion2.Commands.Gaming
         }
 
         public string Name => "party";
-        public bool IsObsolete => true;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IPartyService partyService;

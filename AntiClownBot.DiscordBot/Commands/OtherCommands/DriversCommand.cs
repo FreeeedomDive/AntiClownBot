@@ -41,7 +41,6 @@ public class DriversCommand : ICommand
     }
 
     public string Name => "drivers";
-    public bool IsObsolete => false;
 
     private readonly IDiscordClientWrapper discordClientWrapper;
 }

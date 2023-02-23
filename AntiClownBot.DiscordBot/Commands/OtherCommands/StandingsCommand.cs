@@ -44,7 +44,6 @@ public class StandingsCommand : ICommand
     }
 
     public string Name => "standings";
-    public bool IsObsolete => false;
 
     private readonly IDiscordClientWrapper discordClientWrapper;
 }

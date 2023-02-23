@@ -27,7 +27,6 @@ namespace AntiClownDiscordBotVersion2.Commands.StatsCommands
         }
 
         public string Name => "emotes";
-        public bool IsObsolete => false;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IEmoteStatsService emoteStatsService;
