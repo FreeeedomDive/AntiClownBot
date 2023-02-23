@@ -49,8 +49,6 @@ public class DependenciesConfigurator
             .WithCommandsService()
             .WithCommands()
             .ConfigureCommands()
-            // auto add all slash command modules
-            .WithSlashCommandModules()
             // final touches
             .WithExceptionFilter()
             .WithApiEventFeedConsumer()

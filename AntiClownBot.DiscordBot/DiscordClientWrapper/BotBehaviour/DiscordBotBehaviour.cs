@@ -2,7 +2,6 @@
 using System.Text.RegularExpressions;
 using AntiClownDiscordBotVersion2.Commands;
 using AntiClownDiscordBotVersion2.EventServices;
-using AntiClownDiscordBotVersion2.Extensions;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
@@ -63,7 +62,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.logger = logger;
     }
 
-    public async Task ConfigureAsync(ApplicationCommandModule[] slashCommandModules)
+    public async Task ConfigureAsync()
     {
         discordClient.GuildEmojisUpdated += GuildEmojisUpdated;
         discordClient.MessageCreated += MessageCreated;
@@ -71,7 +70,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         discordClient.MessageDeleted += MessageDeleted;
         discordClient.MessageReactionRemoved += MessageReactionRemoved;
         discordClient.ComponentInteractionCreated += ComponentInteractionCreated;
-        await RegisterSlashCommands(discordClient, slashCommandModules);
+        await RegisterSlashCommands(discordClient);
     }
 
     private async Task GuildEmojisUpdated(DiscordClient _, GuildEmojisUpdateEventArgs e)
@@ -493,17 +492,18 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         return Task.CompletedTask;
     }
 
-    private async Task RegisterSlashCommands(DiscordClient client, ApplicationCommandModule[] slashCommandModules)
+    private async Task RegisterSlashCommands(DiscordClient client)
     {
+        await logger.InfoAsync("Register slash commands");
         var guildSettings = guildSettingsService.GetGuildSettings();
         var slash = client.UseSlashCommands(new SlashCommandsConfiguration
         {
             Services = serviceProvider
         });
-        foreach (var slashCommandsModule in slashCommandModules)
-        {
-            slash.RegisterCommands(slashCommandsModule, guildSettings.GuildId, logger);
-        }
+        slash.RegisterCommands<PartyCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<InventoryCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<LohotronCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<RatingCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)

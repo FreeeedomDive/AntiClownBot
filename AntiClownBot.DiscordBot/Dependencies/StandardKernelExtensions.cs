@@ -25,7 +25,6 @@ using AntiClownDiscordBotVersion2.Utils;
 using CommonServices.IpService;
 using CommonServices.MinecraftServerService;
 using DSharpPlus;
-using DSharpPlus.SlashCommands;
 using Ninject;
 using RestClient;
 using TelemetryApp.Utilities.Extensions;
@@ -303,22 +302,6 @@ public static class StandardKernelExtensions
         var commandsByName = commands.ToDictionary(command => command.Name);
         
         commandsService.UseCommands(commandsByName);
-
-        return ninjectKernel;
-    }
-
-    public static StandardKernel WithSlashCommandModules(this StandardKernel ninjectKernel)
-    {
-        var modules = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(s => s.GetTypes())
-            .Where(p => typeof(ApplicationCommandModule).IsAssignableFrom(p))
-            .Where(p => p != typeof(ApplicationCommandModule))
-            .ToList();
-
-        foreach (var module in modules)
-        {
-            ninjectKernel.Bind<ApplicationCommandModule>().To(module);
-        }
 
         return ninjectKernel;
     }
