@@ -8,7 +8,7 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Roles;
 
-[SlashCommandGroup("role", "Управление ролями")]
+[SlashCommandGroup("roles", "Управление ролями")]
 public class RolesCommandModule : ApplicationCommandModule
 {
     public RolesCommandModule(
@@ -41,7 +41,7 @@ public class RolesCommandModule : ApplicationCommandModule
     [SlashCommand("-c", "Создать новую роль и получить ее себе")]
     public async Task CreateRoleAsync(
         InteractionContext context,
-        [Option("Role name", "Название новой роли")]
+        [Option("name", "Название новой роли")]
         string name
     )
     {
@@ -82,7 +82,7 @@ public class RolesCommandModule : ApplicationCommandModule
     [SlashCommand("-a", "Получить роль")]
     public async Task AddRoleToUser(
         InteractionContext context,
-        [Option("Role", "Роль")] DiscordRole role
+        [Option("role", "Роль")] DiscordRole role
     )
     {
         var joinableRoles = await GetAllRolesToJoinAsync();
@@ -127,7 +127,7 @@ public class RolesCommandModule : ApplicationCommandModule
     [SlashCommand("-r", "Убрать роль")]
     public async Task LeaveRoleAsync(
         InteractionContext context,
-        [Option("Role", "Роль")] DiscordRole role
+        [Option("role", "Роль")] DiscordRole role
     )
     {
         var joinableRoles = await GetAllRolesToJoinAsync();
