@@ -18,8 +18,8 @@ public class RollCommandModule : ApplicationCommandModule
     [SlashCommand("roll", "Рандомное число от a до b включительно")]
     public async Task Roll(
         InteractionContext context,
-        [Option("a", "")] int a,
-        [Option("b", "")] int b
+        [Option("a", "")] long a,
+        [Option("b", "")] long b
     )
     {
         if (a > b)
@@ -27,7 +27,8 @@ public class RollCommandModule : ApplicationCommandModule
             (a, b) = (b, a);
         }
 
-        await discordClientWrapper.Messages.RespondAsync(context,
+        await discordClientWrapper.Messages.RespondAsync(
+            context,
             $"{randomizer.GetRandomNumberBetweenIncludeRange(a, b)}"
         );
     }
