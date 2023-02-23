@@ -502,12 +502,14 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         {
             Services = serviceProvider
         });
+        // TODO: хорошо бы автоматизировать, но он не хочет регать модули через дженерики и GetType
         slash.RegisterCommands<PartyCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<InventoryCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<LohotronCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<RatingCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<RolesCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<LotteryCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<ChangeNicknameCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
