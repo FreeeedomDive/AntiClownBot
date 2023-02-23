@@ -30,13 +30,13 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
             }
 
             var commandName = messageArgs[1];
-            if (!commandsService.TryGetCommand(commandName, out var command))
+            if (!commandsService.TryGetCommand(commandName, out var command) && command is not null)
             {
                 await discordClientWrapper.Messages.RespondAsync(e.Message, $"Не существует команды с именем {commandName}");
                 return;
             }
 
-            await discordClientWrapper.Messages.RespondAsync(e.Message, await command.Help());
+            await discordClientWrapper.Messages.RespondAsync(e.Message, await command!.Help());
         }
 
         public Task<string> Help()

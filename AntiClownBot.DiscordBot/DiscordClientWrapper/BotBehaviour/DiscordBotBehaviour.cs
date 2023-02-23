@@ -7,7 +7,6 @@ using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
-using AntiClownDiscordBotVersion2.SlashCommands;
 using AntiClownDiscordBotVersion2.SlashCommands.Gaming;
 using AntiClownDiscordBotVersion2.SlashCommands.Inventory;
 using AntiClownDiscordBotVersion2.SlashCommands.Lohotron;
