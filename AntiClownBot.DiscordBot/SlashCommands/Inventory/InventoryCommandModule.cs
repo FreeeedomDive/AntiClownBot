@@ -8,7 +8,7 @@ using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
-namespace AntiClownDiscordBotVersion2.SlashCommands
+namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
 {
     public class InventoryCommandModule : ApplicationCommandModule
     {
