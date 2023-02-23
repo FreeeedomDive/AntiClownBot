@@ -7,6 +7,7 @@ using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.SlashCommands;
 using AntiClownDiscordBotVersion2.SlashCommands.Gaming;
 using AntiClownDiscordBotVersion2.SlashCommands.Inventory;
 using AntiClownDiscordBotVersion2.SlashCommands.Lohotron;
@@ -511,6 +512,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<LotteryCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<ChangeNicknameCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<DailyResetCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<RaceCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)

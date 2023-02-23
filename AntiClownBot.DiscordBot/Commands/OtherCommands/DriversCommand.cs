@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Commands.OtherCommands;
 
+[ObsoleteCommand("/drivers")]
 public class DriversCommand : ICommand
 {
     public DriversCommand(IDiscordClientWrapper discordClientWrapper)
