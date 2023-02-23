@@ -18,7 +18,7 @@ public class DailyResetCommandModule : ApplicationCommandModule
         this.lohotron = lohotron;
     }
 
-    [SlashCommand("/dailyReset", "Ручной ежедневный сброс (если автоматический не сработал)", false)]
+    [SlashCommand("dailyReset", "Ручной ежедневный сброс (если автоматический не сработал)", false)]
     [SlashCommandPermissions(Permissions.Administrator)]
     public async Task ManualDailyReset(InteractionContext context)
     {
