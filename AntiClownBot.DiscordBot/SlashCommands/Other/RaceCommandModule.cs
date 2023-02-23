@@ -3,7 +3,7 @@ using AntiClownDiscordBotVersion2.Models.Race;
 using DSharpPlus.SlashCommands;
 using Newtonsoft.Json;
 
-namespace AntiClownDiscordBotVersion2.SlashCommands;
+namespace AntiClownDiscordBotVersion2.SlashCommands.Other;
 
 [SlashCommandGroup("race", "Статистика гонок")]
 public class RaceCommandModule : ApplicationCommandModule
@@ -28,15 +28,15 @@ public class RaceCommandModule : ApplicationCommandModule
         var position = 1;
         var orderedDriversDict = driversModels
             .OrderByDescending(driver => driver.AccelerationStat + driver.BreakingStat + driver.CorneringStat)
-            .Select(driver => (driver.Name, Math.Round(((driver.AccelerationStat + driver.BreakingStat + driver.CorneringStat) * 1000) / 3) / 10d))
-            .ToDictionary(_ => position++, driver => driver).Select(kv => $"{kv.Key}. {kv.Value.Name} - {kv.Value.Item2}%");
+            .Select(driver => (Name: driver.Name, Stats: Math.Round(((driver.AccelerationStat + driver.BreakingStat + driver.CorneringStat) * 1000) / 3) / 10d))
+            .ToDictionary(_ => position++, driver => driver).Select(kv => $"{kv.Key}. {kv.Value.Name} - {kv.Value.Stats}%");
 
         var orderedDriversString = string.Join("\n", orderedDriversDict);
 
         await discordClientWrapper.Messages.RespondAsync(context, orderedDriversString);
     }
 
-    [SlashCommand("standings", "Уровень прокачки гонщиков")]
+    [SlashCommand("standings", "Личный зачет")]
     public async Task Standings(InteractionContext context)
     {
         var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
