@@ -18,8 +18,8 @@ public class RollCommandModule : ApplicationCommandModule
     [SlashCommand("roll", "Рандомное число от a до b включительно")]
     public async Task Roll(
         InteractionContext context,
-        [Option("a", "")] long a,
-        [Option("b", "")] long b
+        [Option("a", "a")] long a,
+        [Option("b", "b")] long b
     )
     {
         if (a > b)
