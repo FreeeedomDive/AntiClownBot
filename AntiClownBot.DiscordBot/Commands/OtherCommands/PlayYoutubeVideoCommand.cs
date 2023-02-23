@@ -65,6 +65,7 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
 
         public Task<string> Help() => Task.FromResult("Запуск музыки с ютуба");
         public string Name => "play";
+        public bool IsObsolete => false;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly ILoggerClient logger;

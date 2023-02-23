@@ -43,6 +43,7 @@ namespace AntiClownDiscordBotVersion2.Commands.RandomSelectCommands
         }
 
         public string Name => "select";
+        public bool IsObsolete => false;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IRandomizer randomizer;

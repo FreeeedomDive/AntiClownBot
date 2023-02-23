@@ -45,6 +45,7 @@ namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
         }
 
         public string Name => "help";
+        public bool IsObsolete => false;
 
         private readonly ICommandsService commandsService;
     }

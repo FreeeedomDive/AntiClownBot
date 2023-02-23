@@ -53,6 +53,7 @@ namespace AntiClownDiscordBotVersion2.Commands.Lottery
         }
 
         public string Name => "lottery";
+        public bool IsObsolete => false;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly ILotteryService lotteryService;

@@ -113,6 +113,7 @@ public class CreateRoleCommand : ICommand
     }
 
     public string Name => "role";
+    public bool IsObsolete => false;
 
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IApiClient apiClient;

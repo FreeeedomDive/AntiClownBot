@@ -44,6 +44,7 @@ public class DailyResetCommand : ICommand
     }
 
     public string Name => "dailyreset";
+    public bool IsObsolete => false;
 
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IApiClient apiClient;

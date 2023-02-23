@@ -33,4 +33,5 @@ public class HuetaCommand : ICommand
     }
 
     public string Name => "hueta";
+    public bool IsObsolete => false;
 }
