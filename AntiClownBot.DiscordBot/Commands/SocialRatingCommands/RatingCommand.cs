@@ -8,6 +8,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.SocialRatingCommands
 {
+    [ObsoleteCommand("/rating")]
     public class RatingCommand : ICommand
     {
         public RatingCommand(
