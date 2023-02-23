@@ -24,8 +24,7 @@ public class LotteryCommandModule : ApplicationCommandModule
         var discordEmotes = await Task.WhenAll(discordEmotesTasks);
         var emotesPrice = emotes.Select(Models.Lottery.Lottery.EmoteToInt).ToArray();
         var emotesInfo = discordEmotes.Select((x, i) => $"\t{x} = {emotesPrice[i]}");
-        var response = ">>> !!! Команда работает только во время эвента с лотереей !!!\n" +
-                       "Принятие участия в активной лотерее\n" +
+        var response = ">>> Информация о лотерее\n" +
                        "Смайлики, которые могут выпасть:\n" +
                        string.Join("\n", emotesInfo) +
                        "\nКоличество одинаковых смайликов тоже влияет на результат\n" +
