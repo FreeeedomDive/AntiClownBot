@@ -3,7 +3,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
 {
-    public class HelpCommand : ICommand
+    public class HelpCommand //: ICommand
     {
         private readonly IDiscordClientWrapper discordClientWrapper;
 

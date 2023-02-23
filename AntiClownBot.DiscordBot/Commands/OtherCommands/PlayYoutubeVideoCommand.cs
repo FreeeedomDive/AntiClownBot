@@ -5,6 +5,7 @@ using VideoLibrary;
 
 namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
 {
+    [ObsoleteCommand("youtube")]
     public class PlayYoutubeVideoCommand : ICommand
     {
         public PlayYoutubeVideoCommand(

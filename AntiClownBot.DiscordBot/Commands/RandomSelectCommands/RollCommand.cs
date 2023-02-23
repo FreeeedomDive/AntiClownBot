@@ -4,6 +4,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.RandomSelectCommands
 {
+    [ObsoleteCommand("roll")]
     public class RollCommand : ICommand
     {
         public RollCommand(
