@@ -52,6 +52,8 @@ public class UserSocialRatingEditorCommandModule : ApplicationCommandModule
             default:
                 throw new ArgumentOutOfRangeException(nameof(operation), operation, null);
         }
+
+        await discordClientWrapper.Messages.RespondAsync(context, "done");
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;
