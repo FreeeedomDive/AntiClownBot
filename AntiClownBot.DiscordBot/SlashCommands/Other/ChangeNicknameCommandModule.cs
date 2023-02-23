@@ -23,7 +23,7 @@ public class ChangeNicknameCommandModule : ApplicationCommandModule
     public async Task ChangeNickname(
         InteractionContext context,
         [Option("member", "Чел, которому хочешь поменять никнейм")]
-        DiscordMember member,
+        DiscordUser member,
         [Option("newName", "Новое имя")] string newName
     )
     {
