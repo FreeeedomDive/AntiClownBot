@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
@@ -11,7 +12,8 @@ public class CreateMessageCommandModule : ApplicationCommandModule
         this.discordClientWrapper = discordClientWrapper;
     }
 
-    [SlashCommand("message", "Отправить сообщение от лица бота")]
+    [SlashCommand("message", "Отправить сообщение от лица бота", false)]
+    [SlashCommandPermissions(Permissions.Administrator)]
     public async Task CreateMessage(
         InteractionContext context,
         [Option("channel", "Текстовый канал")] DiscordChannel channel,
