@@ -23,12 +23,12 @@ public class ChangeNicknameCommandModule : ApplicationCommandModule
     public async Task ChangeNickname(
         InteractionContext context,
         [Option("member", "Чел, которому хочешь поменять никнейм")]
-        DiscordUser member,
+        DiscordUser userToEdit,
         [Option("newName", "Новое имя")] string newName
     )
     {
         var userId = context.User.Id;
-        var selfChanging = userId == member.Id;
+        var selfChanging = userId == userToEdit.Id;
         var cost = selfChanging ? -1000 : -2000;
         var balance = (await apiClient.Users.RatingAsync(userId)).ScamCoins;
         if (balance < -cost)
@@ -39,6 +39,7 @@ public class ChangeNicknameCommandModule : ApplicationCommandModule
             );
             return;
         }
+        var member = await discordClientWrapper.Members.GetAsync(userToEdit.Id);
 
         try
         {
