@@ -495,7 +495,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task RegisterSlashCommands(DiscordClient client, ApplicationCommandModule[] slashCommandModules)
     {
-        await logger.InfoAsync("Register slash commands");
         var guildSettings = guildSettingsService.GetGuildSettings();
         var slash = client.UseSlashCommands(new SlashCommandsConfiguration
         {
@@ -503,10 +502,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         });
         foreach (var slashCommandsModule in slashCommandModules)
         {
-            slash.RegisterCommands(slashCommandsModule, guildSettings.GuildId);
+            slash.RegisterCommands(slashCommandsModule, guildSettings.GuildId, logger);
         }
-
-        await logger.DebugAsync($"Registered slash command modules: {string.Join("\n", slashCommandModules.Select(x => x.GetType().Name))}");
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
