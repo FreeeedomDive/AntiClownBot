@@ -10,6 +10,7 @@ using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.SlashCommands.Gaming;
 using AntiClownDiscordBotVersion2.SlashCommands.Inventory;
 using AntiClownDiscordBotVersion2.SlashCommands.Lohotron;
+using AntiClownDiscordBotVersion2.SlashCommands.Roles;
 using AntiClownDiscordBotVersion2.SlashCommands.SocialRating;
 using AntiClownDiscordBotVersion2.Statistics.Emotes;
 using AntiClownDiscordBotVersion2.UserBalance;
@@ -504,6 +505,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<InventoryCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<LohotronCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<RatingCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<RolesCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
