@@ -22,10 +22,10 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             this.guildSettingsService = guildSettingsService;
         }
 
-        [SlashCommand("quick", "Быстрое создание пати по-старому (с префиксом игры)")]
+        [SlashCommand("-g", "Быстрое создание пати по-старому")]
         public async Task CreateParty(
             InteractionContext context,
-            [Option("prefix", "Префикс игры")] PartyPrefix prefix
+            [Option("game", "Короткое название игры")] PartyPrefix prefix
         )
         {
             var guildSettings = guildSettingsService.GetGuildSettings();
@@ -54,7 +54,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             }
         }
 
-        [SlashCommand("create", "Создать пати")]
+        [SlashCommand("-c", "Создать пати")]
         public async Task CreateParty(
             InteractionContext context,
             [Option("Name", "Название вашей группы")]
@@ -93,13 +93,13 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             await discordClientWrapper.Messages.DeleteAsync(context);
         }
 
-        [SlashCommand("list", "Текущие пати")]
+        [SlashCommand("-a", "Список текущих пати")]
         public async Task GetCurrentParties(InteractionContext context)
         {
             await partyService.AddPartyObserverMessage(context);
         }
 
-        [SlashCommand("stats", "Статистика по времени сбора фулл пати")]
+        [SlashCommand("-s", "Статистика по времени сбора фулл пати")]
         public async Task GetStats(InteractionContext context)
         {
             var partyStats = partyService.PartiesInfo.PartyStats;
