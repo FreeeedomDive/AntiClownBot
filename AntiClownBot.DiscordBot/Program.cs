@@ -5,6 +5,7 @@ using AntiClownDiscordBotVersion2.Events;
 using AntiClownDiscordBotVersion2.ExceptionFilters;
 using AntiClownDiscordBotVersion2.MinecraftServer;
 using AntiClownDiscordBotVersion2.ServicesHealth;
+using DSharpPlus.SlashCommands;
 using Ninject;
 using TelemetryApp.Api.Client.Log;
 
@@ -87,7 +88,8 @@ public class Program
     private static async Task StartDiscordAsync(StandardKernel configurator)
     {
         var discordBehaviourConfigurator = configurator.Get<IDiscordBotBehaviour>();
-        await discordBehaviourConfigurator.ConfigureAsync();
+        var slashCommandModules = configurator.GetAll<ApplicationCommandModule>().ToArray();
+        await discordBehaviourConfigurator.ConfigureAsync(slashCommandModules);
         var discordClient = configurator.Get<IDiscordClientWrapper>();
         await discordClient.StartDiscord();
     }

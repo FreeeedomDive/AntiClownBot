@@ -1,6 +1,8 @@
-﻿namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
+﻿using DSharpPlus.SlashCommands;
+
+namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 
 public interface IDiscordBotBehaviour
 {
-    Task ConfigureAsync();
+    Task ConfigureAsync(ApplicationCommandModule[] slashCommandModules);
 }
