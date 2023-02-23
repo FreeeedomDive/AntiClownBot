@@ -29,7 +29,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
         )
         {
             var guildSettings = guildSettingsService.GetGuildSettings();
-            if (await IsMessageInRightChannelAsync(context, guildSettings))
+            if (!await IsMessageInRightChannelAsync(context, guildSettings))
             {
                 return;
             }
@@ -64,7 +64,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             [Option("Capacity", "Ограничение на количество людей в группе. Дефолтно 5")]
             long capacity = 5)
         {
-            if (await IsMessageInRightChannelAsync(context))
+            if (!await IsMessageInRightChannelAsync(context))
             {
                 return;
             }
