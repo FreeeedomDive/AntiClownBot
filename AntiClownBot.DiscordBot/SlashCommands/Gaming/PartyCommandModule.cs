@@ -22,7 +22,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             this.guildSettingsService = guildSettingsService;
         }
 
-        [SlashCommand("", "Создать пати по-старому (просто с префиксом игры)")]
+        [SlashCommand("quick", "Быстрое создание пати по-старому (с префиксом игры)")]
         public async Task CreateParty(
             InteractionContext context,
             [Option("prefix", "Префикс игры")] PartyPrefix prefix
