@@ -8,6 +8,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.OtherCommands;
 
+[ObsoleteCommand("/roles -a -n -g -r")]
 public class CreateRoleCommand : ICommand
 {
     public CreateRoleCommand(

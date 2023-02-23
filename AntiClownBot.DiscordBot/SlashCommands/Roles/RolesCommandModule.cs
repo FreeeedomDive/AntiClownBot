@@ -26,7 +26,7 @@ public class RolesCommandModule : ApplicationCommandModule
         this.partyService = partyService;
     }
 
-    [SlashCommand("-l", "Посмотреть доступные роли")]
+    [SlashCommand("-a", "Посмотреть доступные роли")]
     public async Task ListRolesAsync(
         InteractionContext context
     )
@@ -38,7 +38,7 @@ public class RolesCommandModule : ApplicationCommandModule
         );
     }
 
-    [SlashCommand("-c", "Создать новую роль и получить ее себе")]
+    [SlashCommand("-n", "Создать новую роль и получить ее себе")]
     public async Task CreateRoleAsync(
         InteractionContext context,
         [Option("name", "Название новой роли")]
@@ -79,7 +79,7 @@ public class RolesCommandModule : ApplicationCommandModule
         partyService.Save();
     }
 
-    [SlashCommand("-a", "Получить роль")]
+    [SlashCommand("-g", "Получить роль")]
     public async Task AddRoleToUser(
         InteractionContext context,
         [Option("role", "Роль")] DiscordRole role
@@ -163,7 +163,7 @@ public class RolesCommandModule : ApplicationCommandModule
         return partyService.PartiesInfo.JoinableRoles.Select(id => serverRoles[id]).ToArray();
     }
 
-    private static string JoinOrLeaveRoleHelp() => "Чтобы посмотреть все роли, которые можно получить или убрать, введи /roles -l";
+    private static string JoinOrLeaveRoleHelp() => "Чтобы посмотреть все роли, которые можно получить или убрать, введи /roles -a";
 
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IApiClient apiClient;
