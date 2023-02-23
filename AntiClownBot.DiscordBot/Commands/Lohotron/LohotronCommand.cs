@@ -6,7 +6,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.Lohotron
 {
-    public class LohotronCommand // : ICommand
+    public class LohotronCommand : ICommand
     {
         public LohotronCommand(
             IDiscordClientWrapper discordClientWrapper,
@@ -60,6 +60,7 @@ namespace AntiClownDiscordBotVersion2.Commands.Lohotron
         }
 
         public string Name => "lohotron";
+        public bool IsObsolete => true;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly AntiClownDiscordBotVersion2.Models.Lohotron.Lohotron lohotron;

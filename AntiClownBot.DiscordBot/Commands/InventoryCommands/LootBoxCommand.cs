@@ -6,7 +6,6 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.InventoryCommands
 {
-    [ObsoleteCommand]
     public class LootBoxCommand : ICommand
     {
         public LootBoxCommand(
@@ -57,6 +56,7 @@ namespace AntiClownDiscordBotVersion2.Commands.InventoryCommands
         }
 
         public string Name => "lootbox";
+        public bool IsObsolete => true;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IApiClient apiClient;

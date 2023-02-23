@@ -5,7 +5,6 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.Gaming
 {
-    [ObsoleteCommand]
     public class CreatePartyCommand : ICommand
     {
         public CreatePartyCommand(
@@ -92,6 +91,7 @@ namespace AntiClownDiscordBotVersion2.Commands.Gaming
         }
 
         public string Name => "party";
+        public bool IsObsolete => true;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IPartyService partyService;

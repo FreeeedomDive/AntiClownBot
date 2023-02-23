@@ -5,7 +5,6 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.Gaming;
 
-[ObsoleteCommand]
 public class PartyStatsCommand : ICommand
 {
     private readonly IDiscordClientWrapper discordClientWrapper;
@@ -37,4 +36,5 @@ public class PartyStatsCommand : ICommand
     public Task<string> Help() => Task.FromResult("Статистика по времени сбора фулл пати");
 
     public string Name => "partystats";
+    public bool IsObsolete => true;
 }

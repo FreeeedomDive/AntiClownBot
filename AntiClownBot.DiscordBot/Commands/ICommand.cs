@@ -8,4 +8,5 @@ public interface ICommand
     Task<string> Help();
 
     string Name { get; }
+    bool IsObsolete => false;
 }

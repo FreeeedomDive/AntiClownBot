@@ -8,7 +8,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.SocialRatingCommands
 {
-    public class RatingCommand // : ICommand
+    public class RatingCommand : ICommand
     {
         public RatingCommand(
             IDiscordClientWrapper discordClientWrapper,
@@ -132,6 +132,7 @@ namespace AntiClownDiscordBotVersion2.Commands.SocialRatingCommands
         }
 
         public string Name => "rating";
+        public bool IsObsolete => true;
 
         private readonly IDiscordClientWrapper discordClientWrapper;
         private readonly IApiClient apiClient;
