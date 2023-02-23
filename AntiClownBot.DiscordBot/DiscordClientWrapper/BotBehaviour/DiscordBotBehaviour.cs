@@ -513,6 +513,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<ChangeNicknameCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<DailyResetCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<RaceCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<TributeCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<WhenCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)

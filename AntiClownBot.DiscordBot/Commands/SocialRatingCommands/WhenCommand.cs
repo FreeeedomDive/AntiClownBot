@@ -8,6 +8,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.SocialRatingCommands
 {
+    [ObsoleteCommand("when")]
     public class WhenCommand : ICommand
     {
         public WhenCommand(

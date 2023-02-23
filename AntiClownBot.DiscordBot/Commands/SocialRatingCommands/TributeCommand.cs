@@ -6,6 +6,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.SocialRatingCommands
 {
+    [ObsoleteCommand("tribute")]
     public class TributeCommand : ICommand
     {
         public TributeCommand(
