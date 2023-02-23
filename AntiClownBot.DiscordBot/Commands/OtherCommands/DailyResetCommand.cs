@@ -5,7 +5,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.OtherCommands;
 
-[ObsoleteCommand("/dailyReset")]
+[ObsoleteCommand("dailyReset")]
 public class DailyResetCommand : ICommand
 {
     public DailyResetCommand(

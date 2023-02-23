@@ -7,7 +7,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.OtherCommands;
 
-[ObsoleteCommand("/nickname")]
+[ObsoleteCommand("nickname")]
 public class ChangeNicknameCommand : ICommand
 {
     public ChangeNicknameCommand(

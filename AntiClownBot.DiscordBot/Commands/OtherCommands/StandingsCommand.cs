@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Commands.OtherCommands;
 
+[ObsoleteCommand("standings")]
 public class StandingsCommand : ICommand
 {
     public StandingsCommand(IDiscordClientWrapper discordClientWrapper)

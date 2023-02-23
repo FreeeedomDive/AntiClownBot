@@ -4,7 +4,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.Lottery
 {
-    [ObsoleteCommand("/lottery")]
+    [ObsoleteCommand("lottery")]
     public class LotteryCommand : ICommand
     {
         public LotteryCommand(

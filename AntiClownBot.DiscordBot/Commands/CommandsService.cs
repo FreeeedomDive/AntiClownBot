@@ -51,7 +51,7 @@ public class CommandsService : ICommandsService
         if (attribute is ObsoleteCommandAttribute obsoleteCommandAttribute)
         {
             await discordClientWrapper.Messages.RespondAsync(e.Message,
-                $"Команда {name} устарела, воспользуйся аналогичной слеш-командой {obsoleteCommandAttribute.SlashCommand}");
+                $"Команда {name} устарела, воспользуйся аналогичной слеш-командой /{obsoleteCommandAttribute.SlashCommand}");
             return;
         }
 
