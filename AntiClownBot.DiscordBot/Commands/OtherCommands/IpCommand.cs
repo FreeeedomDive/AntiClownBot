@@ -6,6 +6,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.OtherCommands
 {
+    [ObsoleteCommand("ip")]
     public class IpCommand : ICommand
     {
         public IpCommand(

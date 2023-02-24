@@ -7,7 +7,15 @@ using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
-using AntiClownDiscordBotVersion2.SlashCommands;
+using AntiClownDiscordBotVersion2.SlashCommands.Dev;
+using AntiClownDiscordBotVersion2.SlashCommands.Gaming;
+using AntiClownDiscordBotVersion2.SlashCommands.Inventory;
+using AntiClownDiscordBotVersion2.SlashCommands.Lohotron;
+using AntiClownDiscordBotVersion2.SlashCommands.Other;
+using AntiClownDiscordBotVersion2.SlashCommands.Other.Ip;
+using AntiClownDiscordBotVersion2.SlashCommands.Random;
+using AntiClownDiscordBotVersion2.SlashCommands.Roles;
+using AntiClownDiscordBotVersion2.SlashCommands.SocialRating;
 using AntiClownDiscordBotVersion2.Statistics.Emotes;
 using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
@@ -497,10 +505,26 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         {
             Services = serviceProvider
         });
+        // TODO: хорошо бы автоматизировать, но он не хочет регать модули через дженерики и GetType
         slash.RegisterCommands<PartyCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<InventoryCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<LohotronCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<RatingCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<RolesCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<LotteryCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<ChangeNicknameCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<DailyResetCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<RaceCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<TributeCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<WhenCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<RollCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<IpCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<PlayYoutubeCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<SelectCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<EmojiStatsCommandModule>(guildSettings.GuildId);
+        // admin commands
+        slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<CreateMessageCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
@@ -508,10 +532,17 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         var pool = new[]
         {
             "Ты понимаешь, что общаешься с бинарником?",
-            $"{await discordClientWrapper.Emotes.FindEmoteAsync("PogOff")}",
             "*икает*",
-            $"{await discordClientWrapper.Emotes.FindEmoteAsync("gachiBASS")}",
-            $"{await discordClientWrapper.Emotes.FindEmoteAsync("monkaW")}",
+            await discordClientWrapper.Emotes.FindEmoteAsync("PogOff"),
+            await discordClientWrapper.Emotes.FindEmoteAsync("gachiBASS"),
+            await discordClientWrapper.Emotes.FindEmoteAsync("monkaW"),
+            await discordClientWrapper.Emotes.FindEmoteAsync("xdd"),
+            await discordClientWrapper.Emotes.FindEmoteAsync("ok"),
+            await discordClientWrapper.Emotes.FindEmoteAsync("SHTOOO"),
+            await discordClientWrapper.Emotes.FindEmoteAsync("Starege"),
+            await discordClientWrapper.Emotes.FindEmoteAsync("peepoPooPoo"),
+            await discordClientWrapper.Emotes.FindEmoteAsync("peepoRip"),
+            await discordClientWrapper.Emotes.FindEmoteAsync("aRolf"),
         };
         await discordClientWrapper.Messages.RespondAsync(message,
             pool[randomizer.GetRandomNumberBetween(0, pool.Length)]);

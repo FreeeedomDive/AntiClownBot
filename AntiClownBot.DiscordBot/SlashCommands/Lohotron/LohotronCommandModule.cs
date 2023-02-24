@@ -4,13 +4,13 @@ using AntiClownDiscordBotVersion2.Models.Lohotron;
 using AntiClownDiscordBotVersion2.UserBalance;
 using DSharpPlus.SlashCommands;
 
-namespace AntiClownDiscordBotVersion2.SlashCommands
+namespace AntiClownDiscordBotVersion2.SlashCommands.Lohotron
 {
     public class LohotronCommandModule : ApplicationCommandModule
     {
         public LohotronCommandModule(
             IDiscordClientWrapper discordClientWrapper,
-            Lohotron lohotron,
+            Models.Lohotron.Lohotron lohotron,
             IUserBalanceService userBalanceService,
             IApiClient apiClient
         )
@@ -58,7 +58,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands
         }
 
         private readonly IDiscordClientWrapper discordClientWrapper;
-        private readonly Lohotron lohotron;
+        private readonly Models.Lohotron.Lohotron lohotron;
         private readonly IUserBalanceService userBalanceService;
         private readonly IApiClient apiClient;
     }

@@ -23,16 +23,9 @@ public class CommandsService : ICommandsService
         this.commands = commands;
     }
 
-    public bool TryGetCommand(string name, out ICommand command)
+    public bool TryGetCommand(string name, out ICommand? command)
     {
-        if (commands.ContainsKey(name))
-        {
-            command = commands[name];
-            return true;
-        }
-
-        command = null;
-        return false;
+        return commands.TryGetValue(name, out command);
     }
 
     public async Task ExecuteCommand(string name, MessageCreateEventArgs e)
@@ -48,9 +41,17 @@ public class CommandsService : ICommandsService
             return;
         }
 
-        if (!TryGetCommand(name, out var command))
+        if (!TryGetCommand(name, out var command) && command is not null)
         {
             await discordClientWrapper.Messages.RespondAsync(e.Message, $"Нет команды с именем {name}");
+            return;
+        }
+
+        var attribute = Attribute.GetCustomAttribute(command!.GetType(), typeof(ObsoleteCommandAttribute));
+        if (attribute is ObsoleteCommandAttribute obsoleteCommandAttribute)
+        {
+            await discordClientWrapper.Messages.RespondAsync(e.Message,
+                $"Команда {name} устарела, воспользуйся аналогичной слеш-командой /{obsoleteCommandAttribute.SlashCommand}");
             return;
         }
 

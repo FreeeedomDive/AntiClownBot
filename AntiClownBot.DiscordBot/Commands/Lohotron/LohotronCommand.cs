@@ -6,7 +6,8 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.Lohotron
 {
-    public class LohotronCommand // : ICommand
+    [ObsoleteCommand("lohotron")]
+    public class LohotronCommand : ICommand
     {
         public LohotronCommand(
             IDiscordClientWrapper discordClientWrapper,

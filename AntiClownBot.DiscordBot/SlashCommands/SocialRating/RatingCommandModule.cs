@@ -3,11 +3,10 @@ using AntiClownApiClient.Dto.Constants;
 using AntiClownApiClient.Dto.Models.Items;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
-using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
-namespace AntiClownDiscordBotVersion2.SlashCommands;
+namespace AntiClownDiscordBotVersion2.SlashCommands.SocialRating;
 
 public class RatingCommandModule : ApplicationCommandModule
 {

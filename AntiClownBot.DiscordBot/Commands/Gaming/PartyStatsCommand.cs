@@ -5,6 +5,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.Gaming;
 
+[ObsoleteCommand("party -s")]
 public class PartyStatsCommand : ICommand
 {
     private readonly IDiscordClientWrapper discordClientWrapper;

@@ -5,6 +5,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.RandomSelectCommands
 {
+    [ObsoleteCommand("select")]
     public class SelectCommand : ICommand
     {
         public SelectCommand(

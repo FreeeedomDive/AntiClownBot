@@ -4,6 +4,7 @@ using DSharpPlus.EventArgs;
 
 namespace AntiClownDiscordBotVersion2.Commands.StatsCommands
 {
+    [ObsoleteCommand("emoji")]
     public class EmojiStatsCommand : ICommand
     {
         public EmojiStatsCommand(
