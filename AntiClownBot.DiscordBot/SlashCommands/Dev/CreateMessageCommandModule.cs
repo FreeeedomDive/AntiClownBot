@@ -13,7 +13,7 @@ public class CreateMessageCommandModule : ApplicationCommandModule
     }
 
     [SlashCommand("message", "Отправить сообщение от лица бота", false)]
-    [SlashCommandPermissions(Permissions.Administrator)]
+    [SlashCommandPermissions(Permissions.ViewAuditLog)]
     public async Task CreateMessage(
         InteractionContext context,
         [Option("channel", "Текстовый канал")] DiscordChannel channel,

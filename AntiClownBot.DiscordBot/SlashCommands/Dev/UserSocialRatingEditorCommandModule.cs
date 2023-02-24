@@ -8,7 +8,7 @@ using DSharpPlus.SlashCommands;
 namespace AntiClownDiscordBotVersion2.SlashCommands.Dev;
 
 [SlashCommandGroup("userEditor", "Изменить что-то в рейтинге юзера", false)]
-[SlashCommandPermissions(Permissions.Administrator)]
+[SlashCommandPermissions(Permissions.ViewAuditLog)]
 public class UserSocialRatingEditorCommandModule : ApplicationCommandModule
 {
     public UserSocialRatingEditorCommandModule(
