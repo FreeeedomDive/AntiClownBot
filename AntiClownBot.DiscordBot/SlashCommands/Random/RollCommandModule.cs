@@ -22,11 +22,6 @@ public class RollCommandModule : ApplicationCommandModule
         [Option("b", "b")] long b
     )
     {
-        if (a > b)
-        {
-            (a, b) = (b, a);
-        }
-
         await discordClientWrapper.Messages.RespondAsync(
             context,
             $"{randomizer.GetRandomNumberBetweenIncludeRange(a, b)}"
