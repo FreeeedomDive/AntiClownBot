@@ -7,12 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="12.0.1" />
-      <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.6" />
+        <PackageReference Include="AutoMapper" Version="12.0.1" />
+        <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.6" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Economy\Services" />
+        <Folder Include="Economy\Services" />
     </ItemGroup>
 
 </Project>
