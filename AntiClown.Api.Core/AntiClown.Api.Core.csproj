@@ -11,4 +11,8 @@
       <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.6" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Economy\Services" />
+    </ItemGroup>
+
 </Project>
