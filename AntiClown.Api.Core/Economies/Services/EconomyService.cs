@@ -34,6 +34,13 @@ public class EconomyService : IEconomyService
         await economyRepository.UpdateAsync(economy);
     }
 
+    public async Task CreateEmptyAsync(Guid userId)
+    {
+        var newUserEconomy = Economy.Default;
+        newUserEconomy.Id = userId;
+        await economyRepository.CreateAsync(newUserEconomy);
+    }
+
     private readonly IEconomyRepository economyRepository;
     private readonly ITransactionsService transactionsService;
 }

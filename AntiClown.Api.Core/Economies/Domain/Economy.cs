@@ -7,4 +7,11 @@ public class Economy
     public int ScamCoins { get; set; }
     public DateTime NextTribute { get; set; }
     public int LootBoxes { get; set; }
+
+    public static readonly Economy Default = new()
+    {
+        ScamCoins = 1500,
+        NextTribute = DateTime.UtcNow,
+        LootBoxes = 0,
+    };
 }

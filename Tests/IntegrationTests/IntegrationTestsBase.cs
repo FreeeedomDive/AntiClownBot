@@ -34,9 +34,9 @@ public class IntegrationTestsBase
         var transactionsRepository = new TransactionsRepository(transactionsSqlRepository, mapper);
         
         UsersService = new UsersService(usersRepository);
-        NewUserService = new NewUserService(usersRepository, mapper);
         TransactionsService = new TransactionsService(transactionsRepository);
         EconomyService = new EconomyService(economiesRepository, TransactionsService);
+        NewUserService = new NewUserService(usersRepository, EconomyService, mapper);
     }
     
     protected IUsersService UsersService { get; private set; }

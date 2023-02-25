@@ -1,4 +1,5 @@
-﻿using AntiClown.Api.Core.Users.Domain;
+﻿using AntiClown.Api.Core.Economies.Domain;
+using AntiClown.Api.Core.Users.Domain;
 using AutoFixture;
 using FluentAssertions;
 
@@ -23,5 +24,8 @@ public class UsersServiceTests : IntegrationTestsBase
         await readNewUserFunc.Should().NotThrowAsync();
         var newUser = await readNewUserFunc();
         newUser.DiscordId.Should().Be(discordId);
+        var newUserEconomy = await EconomyService.ReadEconomyAsync(newUserId);
+        newUserEconomy.Id.Should().Be(newUserId);
+        newUserEconomy.Should().BeEquivalentTo(Economy.Default);
     }
 }
