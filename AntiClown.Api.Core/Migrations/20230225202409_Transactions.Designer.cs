@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AntiClown.Api.Core.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230225185358_Economies")]
-    partial class Economies
+    [Migration("20230225202409_Transactions")]
+    partial class Transactions
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,8 +24,6 @@ namespace AntiClown.Api.Core.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.HasSequence("EconomiesVersion");
 
             modelBuilder.Entity("AntiClown.Api.Core.Economies.Repositories.EconomyStorageElement", b =>
                 {
@@ -44,12 +42,39 @@ namespace AntiClown.Api.Core.Migrations
 
                     b.Property<long>("Version")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasDefaultValueSql("NEXT VALUE FOR EconomiesVersion");
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Version"));
 
                     b.HasKey("Id");
 
                     b.ToTable("Economies");
+                });
+
+            modelBuilder.Entity("AntiClown.Api.Core.Transactions.Repositories.TransactionStorageElement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ScamCoinDiff")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "DateTime");
+
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("AntiClown.Api.Core.Users.Repositories.UserStorageElement", b =>
