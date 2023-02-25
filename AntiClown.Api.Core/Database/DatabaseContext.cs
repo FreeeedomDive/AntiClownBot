@@ -19,6 +19,16 @@ public class DatabaseContext : DbContext
         optionsBuilder.UseNpgsql(Options.ConnectionString);
     }
 
+    public DatabaseContext()
+    {
+        var connectionString = Environment.GetEnvironmentVariable("AntiClown.Tests.PostgreSqlConnectionString")
+                               ?? throw new InvalidOperationException("No ConnectionString was provided");
+        Options = new DatabaseOptions
+        {
+            ConnectionString = connectionString
+        };
+    }
+
     public DbSet<UserStorageElement> Users { get; set; }
     private DatabaseOptions Options { get; }
-} 
+}
