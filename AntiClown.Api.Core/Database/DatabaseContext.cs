@@ -1,6 +1,8 @@
-﻿using AntiClown.Api.Core.Users.Repositories;
+﻿using AntiClown.Api.Core.Economies.Repositories;
+using AntiClown.Api.Core.Users.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using SqlRepositoryBase.Core.Extensions;
 
 namespace AntiClown.Api.Core.Database;
 
@@ -14,11 +16,6 @@ public class DatabaseContext : DbContext
         Options = dbOptionsAccessor.Value;
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql(Options.ConnectionString);
-    }
-
     public DatabaseContext()
     {
         var connectionString = Environment.GetEnvironmentVariable("AntiClown.Tests.PostgreSqlConnectionString")
@@ -29,6 +26,17 @@ public class DatabaseContext : DbContext
         };
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.CreateVersionForTable<EconomyStorageElement>(nameof(Economies));
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql(Options.ConnectionString);
+    }
+
     public DbSet<UserStorageElement> Users { get; set; }
+    public DbSet<EconomyStorageElement> Economies { get; set; }
     private DatabaseOptions Options { get; }
 }

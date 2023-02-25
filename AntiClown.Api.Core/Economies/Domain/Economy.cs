@@ -1,4 +1,4 @@
-﻿namespace AntiClown.Api.Core.Economy.Domain;
+﻿namespace AntiClown.Api.Core.Economies.Domain;
 
 public class Economy
 {
