@@ -1,4 +1,8 @@
 ﻿using AntiClown.Api.Core.Database;
+using AntiClown.Api.Core.Economies.Repositories;
+using AntiClown.Api.Core.Economies.Services;
+using AntiClown.Api.Core.Transactions.Repositories;
+using AntiClown.Api.Core.Transactions.Services;
 using AntiClown.Api.Core.Users.Repositories;
 using AntiClown.Api.Core.Users.Services;
 using AutoMapper;
@@ -6,6 +10,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using SqlRepositoryBase.Configuration.Extensions;
+using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api;
 
@@ -30,13 +35,23 @@ public class Startup
         services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
         services.ConfigurePostgreSql();
 
+        // temp manual build VersionedSqlRepository
+        services.AddTransient<
+            IVersionedSqlRepository<EconomyStorageElement>,
+            VersionedSqlRepository<EconomyStorageElement>
+        >();
+
         // configure repositories
         services.AddTransient<IUsersRepository, UsersRepository>();
-        
+        services.AddTransient<ITransactionsRepository, TransactionsRepository>();
+        services.AddTransient<IEconomyRepository, EconomyRepository>();
+
         // configure services
         services.AddTransient<IUsersService, UsersService>();
         services.AddTransient<INewUserService, NewUserService>();
-        
+        services.AddTransient<ITransactionsService, TransactionsService>();
+        services.AddTransient<IEconomyService, EconomyService>();
+
         // configure HangFire
         services.AddHangfire(config =>
             config.UsePostgreSqlStorage(postgresSection["ConnectionString"])
