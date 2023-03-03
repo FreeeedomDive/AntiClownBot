@@ -7,4 +7,5 @@ public class JadeRod : BaseItem
     public int Length { get; set; }
     public int Thickness { get; set; }
     public override ItemType ItemType => ItemType.Negative;
+    public override ItemName ItemName => ItemName.JadeRod;
 }

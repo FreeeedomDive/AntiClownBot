@@ -1,6 +1,8 @@
 ﻿using AntiClown.Api.Core.Database;
 using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Economies.Services;
+using AntiClown.Api.Core.Inventory.Repositories;
+using AntiClown.Api.Core.Inventory.Services;
 using AntiClown.Api.Core.Transactions.Repositories;
 using AntiClown.Api.Core.Transactions.Services;
 using AntiClown.Api.Core.Users.Repositories;
@@ -45,12 +47,17 @@ public class Startup
         services.AddTransient<IUsersRepository, UsersRepository>();
         services.AddTransient<ITransactionsRepository, TransactionsRepository>();
         services.AddTransient<IEconomyRepository, EconomyRepository>();
+        services.AddTransient<IItemsRepository, ItemsRepository>();
+        
+        // configure validators
+        services.AddTransient<IItemsValidator, ItemsValidator>();
 
         // configure services
         services.AddTransient<IUsersService, UsersService>();
         services.AddTransient<INewUserService, NewUserService>();
         services.AddTransient<ITransactionsService, TransactionsService>();
         services.AddTransient<IEconomyService, EconomyService>();
+        services.AddTransient<IItemsService, ItemsService>();
 
         // configure HangFire
         services.AddHangfire(config =>

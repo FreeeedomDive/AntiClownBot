@@ -8,4 +8,5 @@ public class Internet : BaseItem
     public int Speed { get; set; }
     public int Ping { get; set; }
     public override ItemType ItemType => ItemType.Positive;
+    public override ItemName ItemName => ItemName.Internet;
 }

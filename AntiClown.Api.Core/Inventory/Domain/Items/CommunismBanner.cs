@@ -7,4 +7,5 @@ public class CommunismBanner : BaseItem
     public int DivideChance { get; set; }
     public int StealChance { get; set; }
     public override ItemType ItemType => ItemType.Negative;
+    public override ItemName ItemName => ItemName.CommunismBanner;
 }

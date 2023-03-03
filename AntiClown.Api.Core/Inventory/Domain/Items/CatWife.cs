@@ -6,4 +6,5 @@ public class CatWife : BaseItem
 {
     public int AutoTributeChance { get; set; }
     public override ItemType ItemType => ItemType.Positive;
+    public override ItemName ItemName => ItemName.CatWife;
 }

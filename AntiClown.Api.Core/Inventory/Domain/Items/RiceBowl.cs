@@ -7,4 +7,5 @@ public class RiceBowl : BaseItem
     public int NegativeRangeExtend { get; set; }
     public int PositiveRangeExtend { get; set; }
     public override ItemType ItemType => ItemType.Positive;
+    public override ItemName ItemName => ItemName.RiceBowl;
 }

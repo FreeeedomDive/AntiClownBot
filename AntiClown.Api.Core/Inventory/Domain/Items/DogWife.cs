@@ -6,4 +6,5 @@ public class DogWife : BaseItem
 {
     public int LootBoxFindChance { get; set; }
     public override ItemType ItemType => ItemType.Positive;
+    public override ItemName ItemName => ItemName.DogWife;
 }
