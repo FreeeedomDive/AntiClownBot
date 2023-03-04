@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Core.Economies.Repositories;
+using AntiClown.Api.Core.Inventory.Repositories;
 using AntiClown.Api.Core.Transactions.Repositories;
 using AntiClown.Api.Core.Users.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -34,5 +35,6 @@ public class DatabaseContext : DbContext
     public DbSet<UserStorageElement> Users { get; set; }
     public DbSet<EconomyStorageElement> Economies { get; set; }
     public DbSet<TransactionStorageElement> Transactions { get; set; }
+    public DbSet<ItemStorageElement> Items { get; set; }
     private DatabaseOptions Options { get; }
 }

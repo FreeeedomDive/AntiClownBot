@@ -41,7 +41,7 @@ namespace AntiClown.Api.Core.Migrations
                         .HasColumnType("integer");
 
                     b.Property<long>("Version")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Version"));

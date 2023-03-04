@@ -38,7 +38,7 @@ namespace AntiClown.Api.Core.Migrations
                         .HasColumnType("integer");
 
                     b.Property<long>("Version")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Version"));
@@ -46,6 +46,33 @@ namespace AntiClown.Api.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Economies");
+                });
+
+            modelBuilder.Entity("AntiClown.Api.Core.Inventory.Repositories.ItemStorageElement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ItemSpecs")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId", "IsActive", "Name");
+
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("AntiClown.Api.Core.Transactions.Repositories.TransactionStorageElement", b =>

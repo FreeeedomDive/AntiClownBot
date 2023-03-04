@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AntiClown.Api.Core.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230225202409_Transactions")]
-    partial class Transactions
+    [Migration("20230304143814_Items")]
+    partial class Items
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,33 @@ namespace AntiClown.Api.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Economies");
+                });
+
+            modelBuilder.Entity("AntiClown.Api.Core.Inventory.Repositories.ItemStorageElement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ItemSpecs")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId", "IsActive", "Name");
+
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("AntiClown.Api.Core.Transactions.Repositories.TransactionStorageElement", b =>
