@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\AntiClown.Api.Dto\AntiClown.Api.Dto.csproj" />
+      <ProjectReference Include="..\Utility\Utility.csproj" />
     </ItemGroup>
 
 </Project>

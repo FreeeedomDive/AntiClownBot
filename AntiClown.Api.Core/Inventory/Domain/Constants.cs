@@ -2,7 +2,7 @@
 
 namespace AntiClown.Api.Core.Inventory.Domain;
 
-// TODO: вынести в отдельный репозиторий? есть потенциал это потом вынести на редактирование в админку
+// TODO: вынести в отдельный репозиторий? есть потенциал потом это вынести на редактирование в админку
 public static class Constants
 {
     // максимальное количество предметов одного типа в инвентаре
@@ -37,20 +37,4 @@ public static class Constants
 
     // процент от стоимости предмета, который получает пользователь за продажу
     public const int SellItemPercent = 50;
-
-    public static readonly ItemName[] GoodItems =
-    {
-        ItemName.CatWife,
-        ItemName.DogWife,
-        ItemName.Internet,
-        ItemName.RiceBowl,
-    };
-
-    public static readonly ItemName[] BadItemNames =
-    {
-        ItemName.JadeRod,
-        ItemName.CommunismBanner,
-    };
-
-    public static readonly ItemName[] AllItemsNames = GoodItems.Union(BadItemNames).ToArray();
 }
