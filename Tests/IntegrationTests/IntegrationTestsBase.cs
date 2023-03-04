@@ -3,6 +3,7 @@ using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Economies.Services;
 using AntiClown.Api.Core.Transactions.Repositories;
 using AntiClown.Api.Core.Transactions.Services;
+using AntiClown.Api.Core.Users.Domain;
 using AntiClown.Api.Core.Users.Repositories;
 using AntiClown.Api.Core.Users.Services;
 using AutoFixture;
@@ -14,7 +15,7 @@ namespace IntegrationTests;
 public class IntegrationTestsBase
 {
     [OneTimeSetUp]
-    public void Setup()
+    public void SetUpDependencies()
     {
         // Build all dependencies
         Fixture = new Fixture();
@@ -38,10 +39,28 @@ public class IntegrationTestsBase
         EconomyService = new EconomyService(economiesRepository, TransactionsService);
         NewUserService = new NewUserService(usersRepository, EconomyService, mapper);
     }
+
+    [SetUp]
+    public async Task SetUp()
+    {
+        var newUserId = await NewUserService.CreateNewUserAsync(new NewUser
+        {
+            DiscordId = CreateUniqueUlong()
+        });
+        User = await UsersService.ReadAsync(newUserId);
+    }
+
+    protected ulong CreateUniqueUlong()
+    {
+        return Enumerable.Range(1, 8)
+            .Select(_ => Fixture.Create<ulong>())
+            .Aggregate((accumulate, x) => accumulate * x);
+    }
     
     protected IUsersService UsersService { get; private set; }
     protected INewUserService NewUserService { get; private set; }
     protected ITransactionsService TransactionsService { get; private set; }
     protected IEconomyService EconomyService { get; private set; }
     protected IFixture Fixture { get; private set; }
+    protected User User { get; private set; }
 }
