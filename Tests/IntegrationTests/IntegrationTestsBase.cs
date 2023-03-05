@@ -1,6 +1,8 @@
 ﻿using AntiClown.Api.Core.Database;
 using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Economies.Services;
+using AntiClown.Api.Core.Inventory.Repositories;
+using AntiClown.Api.Core.Inventory.Services;
 using AntiClown.Api.Core.Transactions.Repositories;
 using AntiClown.Api.Core.Transactions.Services;
 using AntiClown.Api.Core.Users.Domain;
@@ -33,11 +35,19 @@ public class IntegrationTestsBase
 
         var transactionsSqlRepository = new SqlRepository<TransactionStorageElement>(databaseContext);
         var transactionsRepository = new TransactionsRepository(transactionsSqlRepository, mapper);
-        
+
+        var itemsSqlRepository = new SqlRepository<ItemStorageElement>(databaseContext);
+        var itemsRepository = new ItemsRepository(itemsSqlRepository, mapper);
+
         UsersService = new UsersService(usersRepository);
         TransactionsService = new TransactionsService(transactionsRepository);
         EconomyService = new EconomyService(economiesRepository, TransactionsService);
         NewUserService = new NewUserService(usersRepository, EconomyService, mapper);
+        ItemsService = new ItemsService(
+            new ItemsValidator(EconomyService, itemsRepository),
+            itemsRepository,
+            EconomyService
+        );
     }
 
     [SetUp]
@@ -56,11 +66,12 @@ public class IntegrationTestsBase
             .Select(_ => Fixture.Create<ulong>())
             .Aggregate((accumulate, x) => accumulate * x);
     }
-    
-    protected IUsersService UsersService { get; private set; }
-    protected INewUserService NewUserService { get; private set; }
-    protected ITransactionsService TransactionsService { get; private set; }
-    protected IEconomyService EconomyService { get; private set; }
-    protected IFixture Fixture { get; private set; }
-    protected User User { get; private set; }
+
+    protected IUsersService UsersService { get; private set; } = null!;
+    protected INewUserService NewUserService { get; private set; } = null!;
+    protected ITransactionsService TransactionsService { get; private set; } = null!;
+    protected IEconomyService EconomyService { get; private set; } = null!;
+    protected IItemsService ItemsService { get; private set; } = null!;
+    protected IFixture Fixture { get; private set; } = null!;
+    protected User User { get; private set; } = null!;
 }

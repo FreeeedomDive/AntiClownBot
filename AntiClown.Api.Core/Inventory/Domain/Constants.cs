@@ -1,12 +1,10 @@
-﻿using AntiClown.Api.Core.Inventory.Domain.Items.Base;
-
-namespace AntiClown.Api.Core.Inventory.Domain;
+﻿namespace AntiClown.Api.Core.Inventory.Domain;
 
 // TODO: вынести в отдельный репозиторий? есть потенциал потом это вынести на редактирование в админку
 public static class Constants
 {
-    // максимальное количество предметов одного типа в инвентаре
-    public const int MaximumItemsOfOneType = 3;
+    // максимальное количество активных предметов одного типа в инвентаре
+    public const int MaximumActiveItemsOfOneType = 3;
 
     // максимальное количество предметов в магазине, доступных для покупки
     public const int MaximumItemsInShop = 5;

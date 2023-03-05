@@ -9,7 +9,7 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="12.0.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-        <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.9" />
+        <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.10" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
     </ItemGroup>
 

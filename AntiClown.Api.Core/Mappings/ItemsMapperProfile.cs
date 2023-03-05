@@ -16,12 +16,7 @@ public class ItemsMapperProfile : Profile
             )
             .ForMember(
                 se => se.ItemSpecs,
-                cfg => cfg.MapFrom(item => JsonConvert.SerializeObject(item))
-            );
-        CreateMap<ItemStorageElement, BaseItem>()
-            .ForMember(
-                item => item.ItemName,
-                cfg => cfg.MapFrom(se => Enum.Parse<ItemName>(se.Name))
+                cfg => cfg.MapFrom(item => JsonConvert.SerializeObject(item, Formatting.Indented))
             );
     }
 }

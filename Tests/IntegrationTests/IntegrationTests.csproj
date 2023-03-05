@@ -22,8 +22,4 @@
       <ProjectReference Include="..\..\AntiClown.Api.Core\AntiClown.Api.Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Items" />
-    </ItemGroup>
-
 </Project>

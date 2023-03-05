@@ -21,7 +21,6 @@ namespace AntiClown.Api.Core.Migrations
                     NextTribute = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LootBoxes = table.Column<int>(type: "integer", nullable: false),
                     Version = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 },
                 constraints: table =>
                 {

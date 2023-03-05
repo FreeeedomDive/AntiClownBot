@@ -35,7 +35,7 @@ public class ItemsValidator : IItemsValidator
             IsActive = true,
             Name = itemName,
         });
-        if (currentUserItemsOfThisType.Length >= Constants.MaximumItemsOfOneType)
+        if (currentUserItemsOfThisType.Length >= Constants.MaximumActiveItemsOfOneType)
         {
             throw new TooManyActiveItemsCountException(userId, itemName);
         }
