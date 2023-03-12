@@ -9,49 +9,17 @@ namespace AntiClown.Api.Core.Inventory.Domain.Items.Builders
             Id = Guid.NewGuid();
         }
 
-        public ItemBuilder WithRandomRarity()
+        public static BaseItem BuildRandomItem(Action<ItemBuilderOptions>? configureBuilderOptions = null)
         {
-            return WithRarity(RarityBuilder.Build());
-        }
-
-        public ItemBuilder WithRarity(Rarity rarity)
-        {
-            this.Rarity = rarity;
-
-            return this;
-        }
-
-        public ItemBuilder WithPriceForSelectedRarity()
-        {
-            if (!IsRarityDefined())
+            var builderOptions = new ItemBuilderOptions();
+            configureBuilderOptions?.Invoke(builderOptions);
+            var builder = new ItemBuilder
             {
-                throw new InvalidOperationException("Undefined item rarity");
-            }
-
-            return WithPrice(PriceBuilder.Build(Rarity));
-        }
-
-        public ItemBuilder WithPrice(int price)
-        {
-            this.Price = price;
-
-            return this;
-        }
-
-        public CatWifeBuilder AsCatWife() => new(Id, Rarity, Price);
-        public DogWifeBuilder AsDogWife() => new(Id, Rarity, Price);
-        public RiceBowlBuilder AsRiceBowl() => new(Id, Rarity, Price);
-        public InternetBuilder AsInternet() => new(Id, Rarity, Price);
-        public JadeRodBuilder AsJadeRod() => new(Id, Rarity, Price);
-        public CommunismBannerBuilder AsCommunismBanner() => new(Id, Rarity, Price);
-
-        public BaseItem BuildRandomItem()
-        {
-            var builder = new ItemBuilder()
-                .WithRandomRarity()
-                .WithPriceForSelectedRarity();
-            var itemName = ItemNameBuilder.Build();
-            return itemName switch
+                Rarity = builderOptions.Rarity ?? RarityBuilder.Build(),
+                Name = builderOptions.Name ?? ItemNameBuilder.Build(builderOptions.Type)
+            };
+            builder.Price = builderOptions.CustomPrice ?? PriceBuilder.Build(builder.Rarity);
+            return builder.Name switch
             {
                 ItemName.CatWife => builder
                     .AsCatWife()
@@ -85,11 +53,19 @@ namespace AntiClown.Api.Core.Inventory.Domain.Items.Builders
             };
         }
 
+        private CatWifeBuilder AsCatWife() => new(Id, Rarity, Price);
+        private DogWifeBuilder AsDogWife() => new(Id, Rarity, Price);
+        private RiceBowlBuilder AsRiceBowl() => new(Id, Rarity, Price);
+        private InternetBuilder AsInternet() => new(Id, Rarity, Price);
+        private JadeRodBuilder AsJadeRod() => new(Id, Rarity, Price);
+        private CommunismBannerBuilder AsCommunismBanner() => new(Id, Rarity, Price);
+
         protected bool IsRarityDefined() => Enum.IsDefined(Rarity);
 
-        protected Guid Id;
-        protected int Price;
-        protected Rarity Rarity;
-        protected bool IsActive;
+        protected Guid Id { get; set; }
+        protected int Price { get; set; }
+        protected Rarity Rarity { get; set; }
+        protected bool IsActive { get; set; }
+        protected ItemName Name { get; set; }
     }
 }

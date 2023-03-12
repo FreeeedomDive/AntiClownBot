@@ -1,4 +1,5 @@
-﻿using AntiClown.Api.Core.Economies.Domain;
+﻿using AntiClown.Api.Core.Common;
+using AntiClown.Api.Core.Economies.Domain;
 using AntiClown.Api.Core.Economies.Services;
 using AntiClown.Api.Core.Inventory.Domain;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base;
@@ -56,7 +57,7 @@ public class ItemsService : IItemsService
             ScamCoinsReward = Randomizer.GetRandomNumberBetween(0, 100),
             Items = itemsRewardRules
                 .Where(rule => rule())
-                .Select(_ => new ItemBuilder().BuildRandomItem())
+                .Select(_ => ItemBuilder.BuildRandomItem())
                 .ToArray()
         };
         await economyService.UpdateLootBoxesAsync(userId, -1);

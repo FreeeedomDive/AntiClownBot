@@ -4,7 +4,7 @@ using FluentAssertions;
 
 namespace IntegrationTests.Inventory;
 
-public class ItemBuilderTests : InventoryTestsBase
+public class ItemBuilderTests : IntegrationTestsBase
 {
     [Test]
     public void ItemBuilder_Should_BuildAllTypes([Values] ItemType itemType)
@@ -27,14 +27,14 @@ public class ItemBuilderTests : InventoryTestsBase
     [Test]
     public void PositiveItem_Should_BeInactiveByDefault()
     {
-        var positiveItem = GetItem(ItemType.Positive);
+        var positiveItem = ItemBuilder.BuildRandomItem(config => config.Type = ItemType.Positive);
         positiveItem.IsActive.Should().BeFalse();
     }
 
     [Test]
     public void NegativeItem_Should_BeActiveByDefault()
     {
-        var negativeItem = GetItem(ItemType.Negative);
+        var negativeItem = ItemBuilder.BuildRandomItem(config => config.Type = ItemType.Negative);
         negativeItem.IsActive.Should().BeTrue();
     }
 
@@ -51,17 +51,22 @@ public class ItemBuilderTests : InventoryTestsBase
         };
         for (var i = 0; i < TriesToBuild; i++)
         {
-            var item = new ItemBuilder().BuildRandomItem();
+            var item = ItemBuilder.BuildRandomItem();
             counter[item.Rarity]++;
         }
+
         Console.WriteLine(string.Join("\n", counter.Select(kv => $"{kv.Key}: {kv.Value}")));
     }
 
+    /// <summary>
+    ///     Функция для тестов на то, что в рандомайзере могут попасть все разновидности предметов
+    /// </summary>
+    /// <param name="propertyCheckFunc"></param>
     private static void ProcessItemBuildingWithPropertyCheck(Func<BaseItem, bool> propertyCheckFunc)
     {
         for (var i = 1; i <= TriesToBuild; i++)
         {
-            var item = new ItemBuilder().BuildRandomItem();
+            var item = ItemBuilder.BuildRandomItem();
             if (!propertyCheckFunc(item))
             {
                 continue;

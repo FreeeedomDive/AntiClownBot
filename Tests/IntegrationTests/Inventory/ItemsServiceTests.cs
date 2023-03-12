@@ -1,4 +1,5 @@
-﻿using AntiClown.Api.Core.Inventory.Domain;
+﻿using AntiClown.Api.Core.Common;
+using AntiClown.Api.Core.Inventory.Domain;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base;
 using AntiClown.Api.Core.Inventory.Domain.Items.Builders;
 using AntiClown.Api.Dto.Exceptions.Economy;
@@ -8,14 +9,14 @@ using SqlRepositoryBase.Core.Exceptions;
 
 namespace IntegrationTests.Inventory;
 
-public class ItemsServiceTests : InventoryTestsBase
+public class ItemsServiceTests : IntegrationTestsBase
 {
     [Test]
     public async Task ItemsService_Should_WriteItems()
     {
         var currentItems = await ItemsService.ReadAllItemsForUserAsync(User.Id);
         currentItems.Should().BeEmpty();
-        var item = new ItemBuilder().BuildRandomItem();
+        var item = ItemBuilder.BuildRandomItem();
         await ItemsService.WriteItemAsync(User.Id, item);
         currentItems = await ItemsService.ReadAllItemsForUserAsync(User.Id);
         currentItems.Should().BeEquivalentTo(new[] { item });
@@ -24,7 +25,7 @@ public class ItemsServiceTests : InventoryTestsBase
     [Test]
     public async Task ItemsService_SetInactiveStatusForNegativeItem_Should_ThrowOnValidation()
     {
-        var negativeItem = GetItem(ItemType.Negative);
+        var negativeItem = ItemBuilder.BuildRandomItem(config => config.Type = ItemType.Negative);
         negativeItem.IsActive.Should().BeTrue();
         await ItemsService.WriteItemAsync(User.Id, negativeItem);
         negativeItem = await ItemsService.ReadItemAsync(User.Id, negativeItem.Id);
@@ -38,12 +39,7 @@ public class ItemsServiceTests : InventoryTestsBase
     {
         var positiveItems = Enumerable
             .Range(0, Constants.MaximumActiveItemsOfOneType + 1)
-            .Select(_ => new ItemBuilder()
-                .WithRandomRarity()
-                .WithPriceForSelectedRarity()
-                .AsCatWife()
-                .WithRandomAutoTributeChance()
-                .Build())
+            .Select(_ => ItemBuilder.BuildRandomItem(config => config.Name = ItemName.CatWife))
             .ToArray();
         for (var i = 0; i < positiveItems.Length; i++)
         {
@@ -65,7 +61,7 @@ public class ItemsServiceTests : InventoryTestsBase
     [Test]
     public async Task ItemsService_SellPositiveItem_Should_IncreaseMoney()
     {
-        var item = GetItem(ItemType.Positive);
+        var item = ItemBuilder.BuildRandomItem(config => config.Type = ItemType.Positive);
         await ItemsService.WriteItemAsync(User.Id, item);
         var economyBefore = await EconomyService.ReadEconomyAsync(User.Id);
         await ItemsService.SellItemAsync(User.Id, item.Id);
@@ -78,7 +74,7 @@ public class ItemsServiceTests : InventoryTestsBase
     [Test]
     public async Task ItemsService_SellNegativeItem_Should_DecreaseMoney()
     {
-        var item = GetItem(ItemType.Negative);
+        var item = ItemBuilder.BuildRandomItem(config => config.Type = ItemType.Negative);
         await ItemsService.WriteItemAsync(User.Id, item);
         await EconomyService.UpdateScamCoinsAsync(User.Id, 10000, "Тест продажи предмета");
         var economyBefore = await EconomyService.ReadEconomyAsync(User.Id);
@@ -92,7 +88,7 @@ public class ItemsServiceTests : InventoryTestsBase
     [Test]
     public async Task ItemsService_SellNegativeItemIfNotEnoughMoney_Should_ThrowOnValidation()
     {
-        var item = GetItem(ItemType.Negative);
+        var item = ItemBuilder.BuildRandomItem(config => config.Type = ItemType.Negative);
         await ItemsService.WriteItemAsync(User.Id, item);
         await EconomyService.UpdateScamCoinsAsync(User.Id, -1499, "Тест валидации продажи предмета");
         var sellItem = () => ItemsService.SellItemAsync(User.Id, item.Id);

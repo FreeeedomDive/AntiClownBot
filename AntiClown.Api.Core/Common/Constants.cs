@@ -1,4 +1,4 @@
-﻿namespace AntiClown.Api.Core.Inventory.Domain;
+﻿namespace AntiClown.Api.Core.Common;
 
 // TODO: вынести в отдельный репозиторий? есть потенциал потом это вынести на редактирование в админку
 public static class Constants
@@ -19,7 +19,7 @@ public static class Constants
     public const int DefaultReRollPriceIncrease = 25;
 
     // стандартный начальный социальный рейтинг
-    public const int DefaultScamCoins = 1000;
+    public const int DefaultScamCoins = 1500;
 
     // 2% шанс срабатывания нефритового стержня для увеличения кулдауна
     public const int CooldownIncreaseChanceByOneJade = 2;
@@ -35,4 +35,7 @@ public static class Constants
 
     // процент от стоимости предмета, который получает пользователь за продажу
     public const int SellItemPercent = 50;
+
+    // процент от стоимости предмета в магазине, чтобы распознать его
+    public const int RevealShopItemPercent = 40;
 }

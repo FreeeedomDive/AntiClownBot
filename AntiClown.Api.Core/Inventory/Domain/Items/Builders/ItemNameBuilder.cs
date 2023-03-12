@@ -5,38 +5,12 @@ namespace AntiClown.Api.Core.Inventory.Domain.Items.Builders;
 
 public static class ItemNameBuilder
 {
-    public static ItemName Build()
+    public static ItemName Build(ItemType? type = null)
     {
-        var goodItemNames = GoodItemNames.SelectMany(x => Enumerable.Repeat(x, goodItemGenerationMultiplier));
-        var badItemNames = BadItemNames.SelectMany(x => Enumerable.Repeat(x, badItemGenerationMultiplier));
-        var allItemNames = goodItemNames.Concat(badItemNames);
-        return allItemNames.SelectRandomItem();
+        return type == null
+            ? Enum.GetValues<ItemType>()
+                .SelectMany(x => EnumMappings.TypeToNames[x].SelectMany(y => Enumerable.Repeat(y, EnumMappings.TypeToRandomnessWeight[x])))
+                .SelectRandomItem()
+            : EnumMappings.TypeToNames[type.Value].SelectRandomItem();
     }
-
-    public static ItemName BuildGoodItemName()
-    {
-        return GoodItemNames.SelectRandomItem();
-    }
-
-    public static ItemName BuildBadItemName()
-    {
-        return BadItemNames.SelectRandomItem();
-    }
-
-    private static readonly ItemName[] GoodItemNames =
-    {
-        ItemName.CatWife,
-        ItemName.DogWife,
-        ItemName.Internet,
-        ItemName.RiceBowl,
-    };
-
-    private static readonly ItemName[] BadItemNames =
-    {
-        ItemName.JadeRod,
-        ItemName.CommunismBanner,
-    };
-    
-    private static int goodItemGenerationMultiplier = 5;
-    private static int badItemGenerationMultiplier = 1;
 }

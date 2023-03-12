@@ -1,4 +1,7 @@
-﻿namespace AntiClown.Api.Core.Economies.Domain;
+﻿using AntiClown.Api.Core.Common;
+using AntiClown.Api.Core.Inventory.Domain;
+
+namespace AntiClown.Api.Core.Economies.Domain;
 
 public class Economy
 {
@@ -10,7 +13,7 @@ public class Economy
 
     public static readonly Economy Default = new()
     {
-        ScamCoins = 1500,
+        ScamCoins = Constants.DefaultScamCoins,
         NextTribute = DateTime.UtcNow,
         LootBoxes = 0,
     };
