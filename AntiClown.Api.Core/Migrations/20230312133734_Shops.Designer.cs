@@ -3,6 +3,7 @@ using System;
 using AntiClown.Api.Core.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AntiClown.Api.Core.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230312133734_Shops")]
+    partial class Shops
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,39 +75,6 @@ namespace AntiClown.Api.Core.Migrations
                     b.ToTable("Items");
                 });
 
-            modelBuilder.Entity("AntiClown.Api.Core.Shops.Repositories.Items.ShopItemStorageElement", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsOwned")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsRevealed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Rarity")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ShopId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShopId");
-
-                    b.ToTable("ShopItems");
-                });
-
             modelBuilder.Entity("AntiClown.Api.Core.Shops.Repositories.Shops.ShopStorageElement", b =>
                 {
                     b.Property<Guid>("Id")
@@ -123,38 +93,6 @@ namespace AntiClown.Api.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Shops");
-                });
-
-            modelBuilder.Entity("AntiClown.Api.Core.Shops.Repositories.Stats.ShopStatsStorageElement", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("ItemsBought")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ScamCoinsLostOnPurchases")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ScamCoinsLostOnReRolls")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ScamCoinsLostOnReveals")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TotalReRolls")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TotalReveals")
-                        .HasColumnType("integer");
-
-                    b.Property<long>("Version")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ShopStats");
                 });
 
             modelBuilder.Entity("AntiClown.Api.Core.Transactions.Repositories.TransactionStorageElement", b =>
