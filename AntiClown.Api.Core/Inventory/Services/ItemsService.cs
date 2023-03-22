@@ -54,7 +54,7 @@ public class ItemsService : IItemsService
         };
         var lootBoxReward = new LootBoxReward
         {
-            ScamCoinsReward = Randomizer.GetRandomNumberBetween(0, 100),
+            ScamCoinsReward = Randomizer.GetRandomNumberBetweenIncludeRange(100, 500),
             Items = itemsRewardRules
                 .Where(rule => rule())
                 .Select(_ => ItemBuilder.BuildRandomItem())
