@@ -44,13 +44,13 @@ public class IntegrationTestsBase
         var itemsRepository = new ItemsRepository(itemsSqlRepository, mapper);
 
         var shopsSqlRepository = new VersionedSqlRepository<ShopStorageElement>(databaseContext);
-        var shopsRepository = new ShopsRepository(shopsSqlRepository, mapper);
+        ShopsRepository = new ShopsRepository(shopsSqlRepository, mapper);
 
         var shopItemsSqlRepository = new SqlRepository<ShopItemStorageElement>(databaseContext);
-        var shopItemsRepository = new ShopItemsRepository(shopItemsSqlRepository, mapper);
+        ShopItemsRepository = new ShopItemsRepository(shopItemsSqlRepository, mapper);
 
         var shopStatsSqlRepository = new VersionedSqlRepository<ShopStatsStorageElement>(databaseContext);
-        var shopStatsRepository = new ShopStatsRepository(shopStatsSqlRepository, mapper);
+        ShopStatsRepository = new ShopStatsRepository(shopStatsSqlRepository, mapper);
 
         UsersService = new UsersService(usersRepository);
         TransactionsService = new TransactionsService(transactionsRepository);
@@ -61,10 +61,10 @@ public class IntegrationTestsBase
             EconomyService
         );
         ShopsService = new ShopsService(
-            shopsRepository,
-            shopItemsRepository,
-            shopStatsRepository,
-            new ShopsValidator(EconomyService, shopItemsRepository),
+            ShopsRepository,
+            ShopItemsRepository,
+            ShopStatsRepository,
+            new ShopsValidator(EconomyService, ShopItemsRepository),
             EconomyService,
             ItemsService,
             mapper
@@ -94,6 +94,9 @@ public class IntegrationTestsBase
     protected ITransactionsService TransactionsService { get; private set; } = null!;
     protected IEconomyService EconomyService { get; private set; } = null!;
     protected IItemsService ItemsService { get; private set; } = null!;
+    protected IShopsRepository ShopsRepository { get; private set; } = null!;
+    protected IShopItemsRepository ShopItemsRepository { get; private set; } = null!;
+    protected IShopStatsRepository ShopStatsRepository { get; private set; } = null!;
     protected IShopsService ShopsService { get; private set; } = null!;
     protected IFixture Fixture { get; private set; } = null!;
     protected User User { get; private set; } = null!;
