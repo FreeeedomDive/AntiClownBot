@@ -35,9 +35,28 @@ public class ShopsService : IShopsService
 
     public async Task CreateNewShopForUserAsync(Guid userId)
     {
-        await shopsRepository.CreateAsync(ResetShop(userId));
+        await ResetShop(userId, true);
         await ResetShopItemsAsync(userId);
         await shopStatsRepository.CreateAsync(new ShopStats { Id = userId });
+    }
+
+    public async Task ResetShop(Guid userId)
+    {
+        await ResetShop(userId, false);
+    }
+
+    private async Task ResetShop(Guid userId, bool create)
+    {
+        var shop = Shop.Default;
+        shop.Id = userId;
+        if (create)
+        {
+            await shopsRepository.CreateAsync(shop);
+        }
+        else
+        {
+            await shopsRepository.UpdateAsync(shop);
+        }
     }
 
     public async Task<CurrentShopInfo> ReadCurrentShopAsync(Guid userId)
@@ -143,13 +162,6 @@ public class ShopsService : IShopsService
             .Pipe(x => x.ShopId = shopId)
             .ToArray();
         await shopItemsRepository.CreateManyAsync(newItems);
-    }
-
-    private static Shop ResetShop(Guid userId)
-    {
-        var shop = Shop.Default;
-        shop.Id = userId;
-        return shop;
     }
 
     private readonly IShopsRepository shopsRepository;

@@ -3,6 +3,10 @@ using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Economies.Services;
 using AntiClown.Api.Core.Inventory.Repositories;
 using AntiClown.Api.Core.Inventory.Services;
+using AntiClown.Api.Core.Shops.Repositories.Items;
+using AntiClown.Api.Core.Shops.Repositories.Shops;
+using AntiClown.Api.Core.Shops.Repositories.Stats;
+using AntiClown.Api.Core.Shops.Services;
 using AntiClown.Api.Core.Transactions.Repositories;
 using AntiClown.Api.Core.Transactions.Services;
 using AntiClown.Api.Core.Users.Domain;
@@ -39,15 +43,33 @@ public class IntegrationTestsBase
         var itemsSqlRepository = new SqlRepository<ItemStorageElement>(databaseContext);
         var itemsRepository = new ItemsRepository(itemsSqlRepository, mapper);
 
+        var shopsSqlRepository = new VersionedSqlRepository<ShopStorageElement>(databaseContext);
+        var shopsRepository = new ShopsRepository(shopsSqlRepository, mapper);
+
+        var shopItemsSqlRepository = new SqlRepository<ShopItemStorageElement>(databaseContext);
+        var shopItemsRepository = new ShopItemsRepository(shopItemsSqlRepository, mapper);
+
+        var shopStatsSqlRepository = new VersionedSqlRepository<ShopStatsStorageElement>(databaseContext);
+        var shopStatsRepository = new ShopStatsRepository(shopStatsSqlRepository, mapper);
+
         UsersService = new UsersService(usersRepository);
         TransactionsService = new TransactionsService(transactionsRepository);
         EconomyService = new EconomyService(economiesRepository, TransactionsService);
-        NewUserService = new NewUserService(usersRepository, EconomyService, mapper);
         ItemsService = new ItemsService(
             new ItemsValidator(EconomyService, itemsRepository),
             itemsRepository,
             EconomyService
         );
+        ShopsService = new ShopsService(
+            shopsRepository,
+            shopItemsRepository,
+            shopStatsRepository,
+            new ShopsValidator(EconomyService, shopItemsRepository),
+            EconomyService,
+            ItemsService,
+            mapper
+        );
+        NewUserService = new NewUserService(usersRepository, EconomyService, ShopsService, mapper);
     }
 
     [SetUp]
@@ -72,6 +94,7 @@ public class IntegrationTestsBase
     protected ITransactionsService TransactionsService { get; private set; } = null!;
     protected IEconomyService EconomyService { get; private set; } = null!;
     protected IItemsService ItemsService { get; private set; } = null!;
+    protected IShopsService ShopsService { get; private set; } = null!;
     protected IFixture Fixture { get; private set; } = null!;
     protected User User { get; private set; } = null!;
 }
