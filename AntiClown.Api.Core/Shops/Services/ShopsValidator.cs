@@ -26,6 +26,11 @@ public class ShopsValidator : IShopsValidator
             throw new ShopItemNotFoundException(shop.Id, itemId);
         }
 
+        if (item.IsOwned)
+        {
+            throw new ShopItemAlreadyBoughtException(shop.Id, itemId);
+        }
+
         if (shop.FreeReveals > 0)
         {
             return;

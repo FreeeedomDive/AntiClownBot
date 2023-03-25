@@ -1,6 +1,7 @@
 ﻿using AntiClown.Api.Core.Common;
 using AntiClown.Api.Core.Shops.Domain;
 using AntiClown.Api.Dto.Exceptions.Economy;
+using AntiClown.Api.Dto.Exceptions.Shops;
 using AntiClown.Tools.Utility.Extensions;
 using FluentAssertions;
 using SqlRepositoryBase.Core.Exceptions;
@@ -90,7 +91,7 @@ public class ShopsServiceTests : IntegrationTestsBase
     }
 
     [Test]
-    public async Task ShopsService_Reveals_Should_ChangeStats()
+    public async Task ShopsService_Reveals_Should_ChangeStatistics()
     {
         var totalReveals = startShop.FreeReveals;
         await EconomyService.UpdateScamCoinsAsync(User.Id, 10000, "Тест распознавания предметов");
@@ -105,6 +106,7 @@ public class ShopsServiceTests : IntegrationTestsBase
             stats.TotalReveals.Should().Be(startStats.TotalReveals + i + 1);
             stats.ScamCoinsLostOnReveals.Should().Be(startStats.ScamCoinsLostOnReveals);
         }
+
         var items2 = await ShopItemsRepository.FindAsync(User.Id);
         var notRevealedItems2 = items2.Where(x => !x.IsRevealed);
         var itemToReveal2 = notRevealedItems2.SelectRandomItem();
@@ -113,6 +115,66 @@ public class ShopsServiceTests : IntegrationTestsBase
         var stats2 = await ShopStatsRepository.ReadAsync(User.Id);
         stats2.TotalReveals.Should().Be(startStats.TotalReveals + totalReveals + 1);
         stats2.ScamCoinsLostOnReveals.Should().Be(startStats.ScamCoinsLostOnReveals + revealPrice);
+    }
+
+    [Test]
+    public async Task ShopsService_Buy_Should_ThrowIfNotEnoughBalance()
+    {
+        var economy = await EconomyService.ReadEconomyAsync(User.Id);
+        await EconomyService.UpdateScamCoinsAsync(User.Id, -economy.ScamCoins,
+            "Тест валидации покупки предмета из магазина");
+        var item = startShop.Items.SelectRandomItem();
+        var action = () => ShopsService.BuyAsync(User.Id, item.Id);
+        await action.Should().ThrowAsync<NotEnoughBalanceException>();
+    }
+
+    [Test]
+    public async Task ShopsService_Buy_Should_ThrowIfItemAlreadyBought()
+    {
+        await EconomyService.UpdateScamCoinsAsync(User.Id, 20000,
+            "Тест валидации на повторную покупку предмета из магазина");
+        var item = startShop.Items.SelectRandomItem();
+        await ShopsService.BuyAsync(User.Id, item.Id);
+        var action = () => ShopsService.BuyAsync(User.Id, item.Id);
+        await action.Should().ThrowAsync<ShopItemAlreadyBoughtException>();
+    }
+
+    [Test]
+    public async Task ShopsService_Buy_Should_AddItemToUserInventory()
+    {
+        await EconomyService.UpdateScamCoinsAsync(User.Id, 20000,
+            "Тест покупки предмета из магазина");
+        var item = startShop.Items.SelectRandomItem();
+        var boughtItem = await ShopsService.BuyAsync(User.Id, item.Id);
+        var inventoryItem = await ItemsService.ReadItemAsync(User.Id, boughtItem.Id);
+        boughtItem.Should().BeEquivalentTo(inventoryItem);
+    }
+
+    [Test]
+    public async Task ShopsService_Buy_Should_GenerateInventoryItemWithSameCharacteristics()
+    {
+        await EconomyService.UpdateScamCoinsAsync(User.Id, 20000,
+            "Тест покупки предмета из магазина");
+        var item = startShop.Items.SelectRandomItem();
+        var boughtItem = await ShopsService.BuyAsync(User.Id, item.Id);
+        boughtItem.ItemName.Should().Be(item.Name);
+        boughtItem.Price.Should().Be(item.Price);
+        boughtItem.Rarity.Should().Be(item.Rarity);
+        boughtItem.OwnerId.Should().Be(item.ShopId);
+    }
+
+    [Test]
+    public async Task ShopsService_Buy_Should_ThrowWhenRevealAlreadyBoughtItem()
+    {
+        await EconomyService.UpdateScamCoinsAsync(User.Id, 20000,
+            "Тест покупки предмета из магазина");
+        var item = startShop.Items.SelectRandomItem();
+        await ShopsService.BuyAsync(User.Id, item.Id);
+        var boughtShopItem = await ShopItemsRepository.TryReadAsync(item.Id);
+        boughtShopItem!.IsRevealed.Should().BeFalse();
+        boughtShopItem.IsOwned.Should().BeTrue();
+        var action = () => ShopsService.RevealAsync(User.Id, item.Id);
+        await action.Should().ThrowAsync<ShopItemAlreadyBoughtException>();
     }
 
     private CurrentShopInfo startShop = null!;
