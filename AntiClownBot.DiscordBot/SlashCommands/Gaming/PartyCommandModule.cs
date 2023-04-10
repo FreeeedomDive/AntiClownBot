@@ -40,7 +40,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
                 description = $" - {description}";
             }
             var response = await discordClientWrapper.Emotes.FindEmoteAsync("Okayge");
-            await discordClientWrapper.Messages.RespondAsync(context, response);
+            await discordClientWrapper.Messages.RespondAsync(context, response, isEphemeral: true);
             switch (prefix)
             {
                 case PartyPrefix.Dota:
