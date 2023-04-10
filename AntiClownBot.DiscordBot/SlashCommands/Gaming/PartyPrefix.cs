@@ -9,7 +9,5 @@ public enum PartyPrefix
     [ChoiceName("csgo")]
     CsGo,
     [ChoiceName("sigame")]
-    SiGame,
-    [ChoiceName("test")]
-    Test,
+    SiGame
 }

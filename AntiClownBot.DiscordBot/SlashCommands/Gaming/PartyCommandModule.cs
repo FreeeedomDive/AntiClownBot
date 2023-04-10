@@ -25,7 +25,8 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
         [SlashCommand("-g", "Быстрое создание пати по-старому")]
         public async Task CreateParty(
             InteractionContext context,
-            [Option("game", "Короткое название игры")] PartyPrefix prefix
+            [Option("game", "Короткое название игры")] PartyPrefix prefix,
+            [Option("description", "Описание")] string? description = null
         )
         {
             var guildSettings = guildSettingsService.GetGuildSettings();
@@ -34,16 +35,22 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
                 return;
             }
 
+            if (!string.IsNullOrEmpty(description))
+            {
+                description = $" - {description}";
+            }
+            var response = await discordClientWrapper.Emotes.FindEmoteAsync("Okayge");
+            await discordClientWrapper.Messages.RespondAsync(context, response);
             switch (prefix)
             {
                 case PartyPrefix.Dota:
-                    await partyService.CreateNewParty(context.Member.Id, "Dota", 5, guildSettings.DotaRoleId);
+                    await partyService.CreateNewParty(context.Member.Id, $"Dota{description}", 5, guildSettings.DotaRoleId);
                     break;
                 case PartyPrefix.CsGo:
-                    await partyService.CreateNewParty(context.Member.Id, "CS GO", 5, guildSettings.CsRoleId);
+                    await partyService.CreateNewParty(context.Member.Id, $"CS GO{description}", 5, guildSettings.CsRoleId);
                     break;
                 case PartyPrefix.SiGame:
-                    await partyService.CreateNewParty(context.Member.Id, "ДЕРЖУ ИГРУ", 7, guildSettings.SiGameRoleId);
+                    await partyService.CreateNewParty(context.Member.Id, $"ДЕРЖУ ИГРУ{description}", 7, guildSettings.SiGameRoleId);
                     break;
                 default:
                     await discordClientWrapper.Messages.RespondAsync(
