@@ -29,6 +29,13 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             [Option("description", "Описание")] string? description = null
         )
         {
+            if (description?.Length >= 90)
+            {
+                var emote = await discordClientWrapper.Emotes.FindEmoteAsync("XyliPizdish");
+                await discordClientWrapper.Messages.RespondAsync(context, $"Слишком длинное описание {emote}", isEphemeral: true);
+                return;
+            }
+
             var guildSettings = guildSettingsService.GetGuildSettings();
             if (!await IsMessageInRightChannelAsync(context, guildSettings))
             {
