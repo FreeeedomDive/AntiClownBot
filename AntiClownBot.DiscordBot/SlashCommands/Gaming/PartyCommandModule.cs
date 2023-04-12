@@ -78,6 +78,13 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             [Option("Capacity", "Ограничение на количество людей в группе. Дефолтно 5")]
             long capacity = 5)
         {
+            if (name.Length >= 100)
+            {
+                var emote = await discordClientWrapper.Emotes.FindEmoteAsync("XyliPizdish");
+                await discordClientWrapper.Messages.RespondAsync(context, $"Слишком длинное название {emote}", isEphemeral: true);
+                return;
+            }
+
             if (!await IsMessageInRightChannelAsync(context))
             {
                 return;
