@@ -65,8 +65,9 @@ public static class StandardKernelExtensions
     public static StandardKernel WithTelemetryClientWithLogger(this StandardKernel ninjectkernel)
     {
         var settings = ninjectkernel.Get<IAppSettingsService>().GetSettings();
+        var zone = Environment.GetEnvironmentVariable("AntiClownBot.Zone");
 
-        return ninjectkernel.ConfigureTelemetryClientWithLogger("AntiClownBot", "DiscordBot", settings.TelemetryApiUrl);
+        return ninjectkernel.ConfigureTelemetryClientWithLogger($"AntiClownBot{zone}", "DiscordBot", settings.TelemetryApiUrl);
     }
 
     public static StandardKernel WithExceptionFilter(this StandardKernel ninjectKernel)

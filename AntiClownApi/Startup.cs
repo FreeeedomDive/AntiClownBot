@@ -38,7 +38,8 @@ namespace AntiClownBotApi
             services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton, ServiceLifetime.Singleton);
 
             var settings = new SettingsProvider().GetSettings();
-            services.ConfigureTelemetryClientWithLogger("AntiClownBot", "AntiClownBot.Api", settings.TelemetryApiUrl, filter =>
+            var zone = Environment.GetEnvironmentVariable("AntiClownBot.Zone");
+            services.ConfigureTelemetryClientWithLogger($"AntiClownBot{zone}", "AntiClownBot.Api", settings.TelemetryApiUrl, filter =>
             {
                 filter.ForbiddenRoutes = new[]
                 {
