@@ -155,6 +155,10 @@ public class MessagesClient : IMessagesClient
 
     public async Task<DiscordThreadChannel> CreateThreadAsync(DiscordMessage message, string content)
     {
+        if (content.Length >= ThreadNameLengthLimit)
+        {
+            content = $"{content[..30]}...";
+        }
         return await message.CreateThreadAsync(content, AutoArchiveDuration.Day);
     }
 
@@ -162,4 +166,6 @@ public class MessagesClient : IMessagesClient
     private readonly IEmotesClient emotesClient;
     private readonly IGuildSettingsService guildSettingsService;
     private readonly ILoggerClient logger;
+
+    private const int ThreadNameLengthLimit = 100;
 }

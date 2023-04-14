@@ -29,13 +29,6 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             [Option("description", "Описание")] string? description = null
         )
         {
-            if (description?.Length >= 90)
-            {
-                var emote = await discordClientWrapper.Emotes.FindEmoteAsync("XyliPizdish");
-                await discordClientWrapper.Messages.RespondAsync(context, $"Слишком длинное описание {emote}", isEphemeral: true);
-                return;
-            }
-
             var guildSettings = guildSettingsService.GetGuildSettings();
             if (!await IsMessageInRightChannelAsync(context, guildSettings))
             {
@@ -78,13 +71,6 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             [Option("Capacity", "Ограничение на количество людей в группе. Дефолтно 5")]
             long capacity = 5)
         {
-            if (name.Length >= 100)
-            {
-                var emote = await discordClientWrapper.Emotes.FindEmoteAsync("XyliPizdish");
-                await discordClientWrapper.Messages.RespondAsync(context, $"Слишком длинное название {emote}", isEphemeral: true);
-                return;
-            }
-
             if (!await IsMessageInRightChannelAsync(context))
             {
                 return;
