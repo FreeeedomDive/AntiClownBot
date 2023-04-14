@@ -104,7 +104,8 @@ public class MessagesClient : IMessagesClient
 
     public async Task<DiscordMessage> SendAsync(ulong channelId, string content)
     {
-        var message = await discordClient.Guilds[277096298761551872]
+        var guild = guildSettingsService.GetGuildSettings().GuildId;
+        var message = await discordClient.Guilds[guild]
             .GetChannel(channelId)
             .SendMessageAsync(content);
 
