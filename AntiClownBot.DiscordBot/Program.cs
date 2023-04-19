@@ -24,9 +24,9 @@ public class Program
         Console.WriteLine("Started DailyEvent scheduler");
         StartBackgroundEventScheduler(configurator);
         Console.WriteLine("Started Event scheduler");
-        StartBackgroundMinecraftServerInfoScheduler(configurator);
-        Console.WriteLine("Started MinecraftServerInfo scheduler");
-        StartTimeOffsetTestTask(configurator);
+        // StartBackgroundMinecraftServerInfoScheduler(configurator);
+        // Console.WriteLine("Started MinecraftServerInfo scheduler");
+        // StartTimeOffsetTestTask(configurator);
         Console.WriteLine("Start listening to discord events...");
         await StartDiscordAsync(configurator);
     }
