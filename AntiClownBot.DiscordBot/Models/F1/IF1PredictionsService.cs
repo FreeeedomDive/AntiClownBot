@@ -6,7 +6,7 @@ public interface IF1PredictionsService
     void PredictDnf(ulong userId, F1Driver f1Driver);
     Dictionary<ulong, F1Driver> GetTenthPlacePredictions();
     Dictionary<ulong, F1Driver> GetFirstDnfPredictions();
-    void AddPlayerToResult(F1Driver driver);
+    void AddDriverToResult(F1Driver driver);
     F1Driver[] DriversToAddToResult();
     (ulong userId, int tenthPlacePoints)[]? MakeFirstDnfResults(F1Driver firstDnf);
     (ulong userId, int tenthPlacePoints)[] MakeTenthPlaceResults();

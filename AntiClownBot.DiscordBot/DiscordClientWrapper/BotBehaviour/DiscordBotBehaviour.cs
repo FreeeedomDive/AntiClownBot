@@ -512,7 +512,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             var driver = Enum.TryParse(typeof(F1Driver), driverName, out var result)
                 ? (F1Driver)result
                 : throw new ArgumentException($"Unexpected driver {driverName}");
-            f1PredictionsService.AddPlayerToResult(driver);
+            f1PredictionsService.AddDriverToResult(driver);
             if (drivers.Length == 0)
             {
                 var results = f1PredictionsService.MakeTenthPlaceResults();
@@ -530,6 +530,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             }
         }
 
+        drivers = f1PredictionsService.DriversToAddToResult();
         var options = drivers.Select(x => new DiscordSelectComponentOption(
             x.ToString(),
             $"driver_select_{x.ToString()}"

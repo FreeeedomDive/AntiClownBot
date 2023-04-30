@@ -45,7 +45,7 @@ public class F1PredictionsService : IF1PredictionsService
         return firstDnfUserToDriverIndex;
     }
 
-    public void AddPlayerToResult(F1Driver driver)
+    public void AddDriverToResult(F1Driver driver)
     {
         raceResults.Add(driver);
     }
