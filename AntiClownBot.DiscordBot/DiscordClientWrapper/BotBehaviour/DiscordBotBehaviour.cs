@@ -26,6 +26,7 @@ using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
+using Newtonsoft.Json;
 using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
@@ -409,7 +410,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             await HandleInventoryInteraction(e);
         }
 
-        await logger.DebugAsync("Interaction {interaction}", e.Id);
+        await logger.DebugAsync("Interaction {interaction}", JsonConvert.SerializeObject(e));
         if (e.Id.StartsWith("driver_select_"))
         {
             await HandleRaceResultInput(e);
