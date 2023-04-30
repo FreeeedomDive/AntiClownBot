@@ -26,7 +26,6 @@ using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
-using Newtonsoft.Json;
 using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
@@ -410,7 +409,12 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             await HandleInventoryInteraction(e);
         }
 
-        if (e.Id.StartsWith("driver_select_") || e.Id.StartsWith("dropdown"))
+        if (e.Id.StartsWith("start_race_result_input"))
+        {
+            await HandleRaceResultInput(e, true);
+        }
+
+        if (e.Id.StartsWith("dropdown"))
         {
             await HandleRaceResultInput(e);
         }
@@ -419,7 +423,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private async Task HandleShopInteraction(ComponentInteractionCreateEventArgs e)
     {
         if (!shopService.TryRead(e.User.Id, out var shop))
+        {
             return;
+        }
 
         var builder = new DiscordWebhookBuilder();
         switch (e.Id)
@@ -493,28 +499,31 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             await builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()).SetInventoryButtons(discordClientWrapper));
     }
 
-    private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e)
+    private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
     {
-        var driverName = e.Values.First()["driver_select_".Length..];
-        var driver = Enum.TryParse(typeof(F1Driver), driverName, out var result)
-            ? (F1Driver)result
-            : throw new ArgumentException("Unexpected driver {driverName}");
-        f1PredictionsService.AddPlayerToResult(driver);
         var drivers = f1PredictionsService.DriversToAddToResult();
-        if (drivers.Length == 0)
+        if (!start)
         {
-            var results = f1PredictionsService.MakeTenthPlaceResults();
-            if (results.Length == 0)
+            var driverName = e.Values.First()["driver_select_".Length..];
+            var driver = Enum.TryParse(typeof(F1Driver), driverName, out var result)
+                ? (F1Driver)result
+                : throw new ArgumentException("Unexpected driver {driverName}");
+            f1PredictionsService.AddPlayerToResult(driver);
+            if (drivers.Length == 0)
             {
-                await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, new DiscordWebhookBuilder().WithContent("Никто не вносил предсказаний"));
+                var results = f1PredictionsService.MakeTenthPlaceResults();
+                if (results.Length == 0)
+                {
+                    await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, new DiscordWebhookBuilder().WithContent("Никто не вносил предсказаний"));
+                    return;
+                }
+
+                var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
+                var resultsStrings =
+                    results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");
+                await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, new DiscordWebhookBuilder().WithContent(string.Join("\n", resultsStrings)));
                 return;
             }
-
-            var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
-            var resultsStrings =
-                results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");
-            await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, new DiscordWebhookBuilder().WithContent(string.Join("\n", resultsStrings)));
-            return;
         }
 
         var options = drivers.Select(x => new DiscordSelectComponentOption(

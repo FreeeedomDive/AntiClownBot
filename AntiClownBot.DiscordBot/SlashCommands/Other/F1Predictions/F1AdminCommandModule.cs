@@ -42,7 +42,7 @@ public class F1AdminCommandModule : ApplicationCommandModule
             .AddComponents(
                 new DiscordButtonComponent(
                     ButtonStyle.Secondary,
-                    "driver_select_start",
+                    "start_race_result_input",
                     "Начать..."
                 )
             );
