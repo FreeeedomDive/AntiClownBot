@@ -40,6 +40,11 @@ public class F1CommandModule : ApplicationCommandModule
         var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
         var tenthPlacePredictions = f1PredictionsService.GetTenthPlacePredictions();
         var firstDnfPredictions = f1PredictionsService.GetFirstDnfPredictions();
+        if (tenthPlacePredictions.Count == 0 || firstDnfPredictions.Count == 0)
+        {
+            await discordClientWrapper.Messages.RespondAsync(interactionContext, "Никто не вносил свои предсказания");
+            return;
+        }
         var embed = new DiscordEmbedBuilder()
             .AddField("10 место",
                 string.Join(
