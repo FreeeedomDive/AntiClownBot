@@ -35,7 +35,7 @@ public class F1AdminCommandModule : ApplicationCommandModule
         await discordClientWrapper.Messages.RespondAsync(interactionContext, "Принято");
     }
 
-    [SlashCommand("race", "Внести результаты гонки")]
+    //[SlashCommand("race", "Внести результаты гонки")]
     public async Task MakeTenthPlaceResults(
         InteractionContext interactionContext,
         [Option("p1", "1 место")] F1Driver p1,
