@@ -1,5 +1,6 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using DSharpPlus;
+using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Base.Middlewares;
@@ -17,11 +18,9 @@ public class DeferredMessageMiddleware : ICommandMiddleware
 
     public async Task ExecuteAsync(InteractionContext context, Func<InteractionContext, Task> next)
     {
-        await discordClientWrapper.Messages.RespondAsync(
-            context,
-            null,
+        await context.CreateResponseAsync(
             InteractionResponseType.DeferredChannelMessageWithSource,
-            isEphemeral: true
+            new DiscordInteractionResponseBuilder().AsEphemeral()
         );
         await next(context);
     }
