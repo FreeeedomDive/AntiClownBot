@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using AntiClownDiscordBotVersion2.Commands;
 using AntiClownDiscordBotVersion2.EventServices;
+using AntiClownDiscordBotVersion2.Models.F1;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
@@ -47,6 +48,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IRaceService raceService,
         IGuessNumberService guessNumberService,
         IRandomizer randomizer,
+        IF1PredictionsService f1PredictionsService,
         ILoggerClient logger
     )
     {
@@ -65,6 +67,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.raceService = raceService;
         this.guessNumberService = guessNumberService;
         this.randomizer = randomizer;
+        this.f1PredictionsService = f1PredictionsService;
         this.logger = logger;
     }
 
@@ -170,13 +173,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             await commandsService.ExecuteCommand(message.GetCommandName(guildSettings.CommandsPrefix), e);
             return;
         }
-
-        /* TODO: temp disabled
-        if (_specialChannelsManager.AllChannels.Contains(e.Channel.Id))
-        {
-            _specialChannelsManager.ParseMessage(e);
-            return;
-        }*/
 
         CheckEmojiInMessage(message);
 
@@ -412,6 +408,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         {
             await HandleInventoryInteraction(e);
         }
+
+        if (e.Id.StartsWith("driver_select_"))
+        {
+            await HandleRaceResultInput(e);
+        }
     }
 
     private async Task HandleShopInteraction(ComponentInteractionCreateEventArgs e)
@@ -489,6 +490,35 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction,
             await builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()).SetInventoryButtons(discordClientWrapper));
+    }
+
+    private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e)
+    {
+        var index = "driver_select_".Length;
+        var input = Enum.TryParse(typeof(F1Driver), e.Id[..index], out var driver)
+            ? (F1Driver)driver
+            : throw new ArgumentException("Unexpected driver");
+        f1PredictionsService.AddPlayerToResult(input);
+        var drivers = f1PredictionsService.DriversToAddToResult();
+        if (drivers.Length == 0)
+        {
+            await discordClientWrapper.Messages.EditOriginalResponseAsync(
+                e.Interaction,
+                new DiscordWebhookBuilder().WithContent("Все гонщики внесены, можно подводить результаты")
+            );
+        }
+
+        var options = drivers.Select(driver => new DiscordSelectComponentOption(
+            driver.ToString(),
+            $"driver_select_{driver.ToString().ToLower()}"
+        ));
+        var currentPlaceToEnter = 20 - drivers.Length + 1;
+        var dropdown = new DiscordSelectComponent("dropdown", $"Гонщик на {currentPlaceToEnter} месте", options);
+        var builder = new DiscordWebhookBuilder()
+            .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
+            .AddComponents(dropdown);
+
+        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder);
     }
 
     private Task MessageDeleted(DiscordClient sender, MessageDeleteEventArgs e)
@@ -636,5 +666,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IRaceService raceService;
     private readonly IGuessNumberService guessNumberService;
     private readonly IRandomizer randomizer;
+    private readonly IF1PredictionsService f1PredictionsService;
     private readonly ILoggerClient logger;
 }
