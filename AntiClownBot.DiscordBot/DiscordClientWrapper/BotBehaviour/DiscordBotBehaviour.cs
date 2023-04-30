@@ -581,6 +581,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<CreateMessageCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<F1AdminCommandModule>(guildSettings.GuildId);
+
+        slash.RegisterCommands<TestCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)

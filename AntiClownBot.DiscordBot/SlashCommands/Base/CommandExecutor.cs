@@ -28,7 +28,7 @@ public class CommandExecutor : ICommandExecutor
         var commandWithMiddlewaresActionComposition = middlewares
             .Aggregate(
                 initialCommandAction,
-                (current, middleware) => context => middleware.ExecuteAsync(interactionContext, current)
+                (current, middleware) => context => middleware.ExecuteAsync(context, current)
             );
         await commandWithMiddlewaresActionComposition(interactionContext);
     }
