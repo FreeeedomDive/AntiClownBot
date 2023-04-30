@@ -20,7 +20,8 @@ public class DeferredMessageMiddleware : ICommandMiddleware
         await discordClientWrapper.Messages.RespondAsync(
             context,
             null,
-            InteractionResponseType.DeferredChannelMessageWithSource
+            InteractionResponseType.DeferredChannelMessageWithSource,
+            isEphemeral: true
         );
         await next(context);
     }
