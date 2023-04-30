@@ -44,6 +44,7 @@ public class F1AdminCommandModule : ApplicationCommandModule
                 interactionContext,
                 "Все гонщики внесены, можно подводить результаты"
             );
+            return;
         }
 
         var options = drivers.Select(driver => new DiscordSelectComponentOption(
@@ -63,6 +64,11 @@ public class F1AdminCommandModule : ApplicationCommandModule
     public async Task MakeTenthPlaceResults(InteractionContext interactionContext)
     {
         var results = f1PredictionsService.MakeTenthPlaceResults();
+        if (results.Length == 0)
+        {
+            await discordClientWrapper.Messages.RespondAsync(interactionContext, "Никто не вносил предсказаний");
+            return;
+        }
         var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
         var resultsStrings =
             results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");

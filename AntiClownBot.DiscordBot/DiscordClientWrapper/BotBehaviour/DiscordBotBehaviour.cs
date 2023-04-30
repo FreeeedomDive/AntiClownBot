@@ -497,7 +497,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     {
         var interactionDriverId = e.Values.First();
         var name = interactionDriverId["driver_select_".Length..];
-        await logger.DebugAsync("Parsed name from {id}: {name}", interactionDriverId, name);
         var input = Enum.TryParse(typeof(F1Driver), name, out var driver)
             ? (F1Driver)driver
             : throw new ArgumentException("Unexpected driver");
@@ -509,6 +508,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 e.Interaction,
                 new DiscordWebhookBuilder().WithContent("Все гонщики внесены, можно подводить результаты")
             );
+            return;
         }
 
         var options = drivers.Select(driver => new DiscordSelectComponentOption(
