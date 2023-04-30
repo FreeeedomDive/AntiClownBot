@@ -1,4 +1,5 @@
-﻿using AntiClownDiscordBotVersion2.SlashCommands.Base;
+﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
@@ -7,11 +8,14 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Dev;
 [SlashCommandGroup("test", "Тестовая команда")]
 public class TestCommandModule : SlashCommandModuleWithMiddlewares
 {
+    private readonly IDiscordClientWrapper discordClientWrapper;
+
     public TestCommandModule(
-        ICommandExecutor commandExecutor
+        ICommandExecutor commandExecutor,
+        IDiscordClientWrapper discordClientWrapper
     ) : base(commandExecutor)
     {
-        
+        this.discordClientWrapper = discordClientWrapper;
     }
 
     [SlashCommand("common", "Обычная команда")]
@@ -19,7 +23,7 @@ public class TestCommandModule : SlashCommandModuleWithMiddlewares
     {
         await ExecuteAsync(context, async () =>
         {
-            await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent("да"));
+            await discordClientWrapper.Messages.ModifyAsync(context, "да");
         });
     }
 
@@ -28,7 +32,7 @@ public class TestCommandModule : SlashCommandModuleWithMiddlewares
     {
         await ExecuteEphemeralAsync(context, async () =>
         {
-            await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent("эфемерное да"));
+            await discordClientWrapper.Messages.ModifyAsync(context, "эфемерное да");
         });
     }
 }
