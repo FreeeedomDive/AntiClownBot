@@ -505,7 +505,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
     {
         await logger.DebugAsync("Interaction id {id}", e.Id);
-        var drivers = f1PredictionsService.DriversToAddToResult();
         if (!start)
         {
             var driverName = e.Values.First()["driver_select_".Length..];
@@ -513,6 +512,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 ? (F1Driver)result
                 : throw new ArgumentException($"Unexpected driver {driverName}");
             f1PredictionsService.AddDriverToResult(driver);
+            var drivers = f1PredictionsService.DriversToAddToResult();
             if (drivers.Length == 0)
             {
                 var results = f1PredictionsService.MakeTenthPlaceResults();
@@ -530,12 +530,12 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             }
         }
 
-        drivers = f1PredictionsService.DriversToAddToResult();
-        var options = drivers.Select(x => new DiscordSelectComponentOption(
+        var updatedDrivers = f1PredictionsService.DriversToAddToResult();
+        var options = updatedDrivers.Select(x => new DiscordSelectComponentOption(
             x.ToString(),
             $"driver_select_{x.ToString()}"
         ));
-        var currentPlaceToEnter = 20 - drivers.Length + 1;
+        var currentPlaceToEnter = 20 - updatedDrivers.Length + 1;
         var dropdown = new DiscordSelectComponent("dropdown", $"Гонщик на {currentPlaceToEnter} месте", options);
         var builder = new DiscordWebhookBuilder()
             .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
