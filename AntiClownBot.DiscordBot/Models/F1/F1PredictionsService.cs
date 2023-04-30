@@ -10,6 +10,7 @@ public class F1PredictionsService : IF1PredictionsService
         firstDnfUserToDriverIndex = new Dictionary<ulong, F1Driver>();
         tenthPlaceDriverToUsersIndex = new Dictionary<F1Driver, List<ulong>>();
         firstDnfDriverToUsersIndex = new Dictionary<F1Driver, List<ulong>>();
+        raceResults = new List<F1Driver>();
     }
 
     public void PredictTenthPlace(ulong userId, F1Driver f1Driver)
@@ -44,18 +45,23 @@ public class F1PredictionsService : IF1PredictionsService
         return firstDnfUserToDriverIndex;
     }
 
-    public (ulong userId, int tenthPlacePoints)[] MakeTenthPlaceResults(params F1Driver[] standings)
+    public void AddPlayerToResult(F1Driver driver)
     {
-        if (standings.Length != 20)
+        raceResults.Add(driver);
+    }
+
+    public (ulong userId, int tenthPlacePoints)[] MakeTenthPlaceResults()
+    {
+        if (raceResults.Count != 20)
         {
-            throw new ArgumentException($"{nameof(standings)} should have exactly 20 elements");
+            throw new ArgumentException($"{nameof(raceResults)} should have exactly 20 elements");
         }
 
-        var userPointsDistribution = tenthPlaceUserToDriverIndex.Keys.ToDictionary(x => x, x => 0);
-        for (var i = 0; i < standings.Length; i++)
+        var userPointsDistribution = tenthPlaceUserToDriverIndex.Keys.ToDictionary(x => x, _ => 0);
+        for (var i = 0; i < raceResults.Count; i++)
         {
             var position = i + 1;
-            var usersPredictedThisDriver = tenthPlaceDriverToUsersIndex.TryGetValue(standings[i], out var users) ? users : new List<ulong>();
+            var usersPredictedThisDriver = tenthPlaceDriverToUsersIndex.TryGetValue(raceResults[i], out var users) ? users : new List<ulong>();
             if (usersPredictedThisDriver.Count == 0)
             {
                 continue;
@@ -72,7 +78,7 @@ public class F1PredictionsService : IF1PredictionsService
 
     public (ulong userId, int tenthPlacePoints)[]? MakeFirstDnfResults(F1Driver firstDnf)
     {
-        var userPointsDistribution = firstDnfUserToDriverIndex.Keys.ToDictionary(x => x, x => 0);
+        var userPointsDistribution = firstDnfUserToDriverIndex.Keys.ToDictionary(x => x, _ => 0);
         var usersPredictedThisDriver = firstDnfDriverToUsersIndex.TryGetValue(firstDnf, out var users) ? users : new List<ulong>();
         if (usersPredictedThisDriver.Count == 0)
         {
@@ -85,6 +91,11 @@ public class F1PredictionsService : IF1PredictionsService
         }
 
         return userPointsDistribution.Select(kv => (kv.Key, kv.Value)).ToArray();
+    }
+
+    public F1Driver[] DriversToAddToResult()
+    {
+        return Enum.GetValues<F1Driver>().Except(raceResults).ToArray();
     }
 
     private static readonly Dictionary<int, int> PointsDistribution = new()
@@ -111,6 +122,7 @@ public class F1PredictionsService : IF1PredictionsService
         {20, 1},
     };
 
+    private readonly List<F1Driver> raceResults;
     private readonly Dictionary<ulong, F1Driver> tenthPlaceUserToDriverIndex;
     private readonly Dictionary<ulong, F1Driver> firstDnfUserToDriverIndex;
     private readonly Dictionary<F1Driver, List<ulong>> tenthPlaceDriverToUsersIndex;
