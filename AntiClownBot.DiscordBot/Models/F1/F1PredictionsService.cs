@@ -73,7 +73,7 @@ public class F1PredictionsService : IF1PredictionsService
     public (ulong userId, int tenthPlacePoints)[]? MakeFirstDnfResults(F1Driver firstDnf)
     {
         var userPointsDistribution = firstDnfUserToDriverIndex.Keys.ToDictionary(x => x, x => 0);
-        var usersPredictedThisDriver = tenthPlaceDriverToUsersIndex.TryGetValue(firstDnf, out var users) ? users : new List<ulong>();
+        var usersPredictedThisDriver = firstDnfDriverToUsersIndex.TryGetValue(firstDnf, out var users) ? users : new List<ulong>();
         if (usersPredictedThisDriver.Count == 0)
         {
             return null;
