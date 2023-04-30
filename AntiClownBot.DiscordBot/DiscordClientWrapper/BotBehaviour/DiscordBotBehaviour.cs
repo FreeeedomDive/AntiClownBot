@@ -409,6 +409,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             await HandleInventoryInteraction(e);
         }
 
+        await logger.DebugAsync("Interaction {interaction}", e.Id);
         if (e.Id.StartsWith("driver_select_"))
         {
             await HandleRaceResultInput(e);
