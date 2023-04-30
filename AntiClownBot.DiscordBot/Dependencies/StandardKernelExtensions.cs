@@ -10,6 +10,7 @@ using AntiClownDiscordBotVersion2.ExceptionFilters;
 using AntiClownDiscordBotVersion2.ExceptionFilters.Rules;
 using AntiClownDiscordBotVersion2.MinecraftServer;
 using AntiClownDiscordBotVersion2.Models;
+using AntiClownDiscordBotVersion2.Models.F1;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Lohotron;
 using AntiClownDiscordBotVersion2.Models.Shop;
@@ -180,6 +181,13 @@ public static class StandardKernelExtensions
         ninjectKernel.Bind<Lohotron>().ToSelf().InSingletonScope();
 
         return ninjectKernel;
+    }
+
+    public static StandardKernel WithF1PredictionsService(this StandardKernel ninjectkernel)
+    {
+        ninjectkernel.Bind<IF1PredictionsService>().To<F1PredictionsService>().InSingletonScope();
+
+        return ninjectkernel;
     }
 
     public static StandardKernel WithInventoryService(this StandardKernel ninjectKernel)

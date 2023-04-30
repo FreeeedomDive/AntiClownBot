@@ -39,6 +39,7 @@ public class DependenciesConfigurator
             .WithInventoryService()
             .WithShopService()
             .WithTributeService()
+            .WithF1PredictionsService()
             // configure events and service
             .WithEvents()
             .WithNightEvents()

@@ -4,7 +4,8 @@ namespace AntiClownDiscordBotVersion2.Utils.Extensions;
 
 public static class DictionaryExtensions
 {
-    public static async Task<string> GetStats<T>(this Dictionary<T, int> dict, Func<T, Task<string>> func) where T : notnull
+    public static async Task<string> GetStats<T>(this Dictionary<T, int> dict, Func<T, Task<string>> func)
+        where T : notnull
     {
         var list = dict.ToList();
         list.Sort((pair1, pair2) => -pair1.Value.CompareTo(pair2.Value));
@@ -29,7 +30,7 @@ public static class DictionaryExtensions
 
         return sb.ToString();
     }
-    
+
     public static void AddRecord<T>(this Dictionary<T, int> dict, T key, int value = 1) where T : notnull
     {
         if (dict.ContainsKey(key))
@@ -54,6 +55,32 @@ public static class DictionaryExtensions
         else
         {
             dict[emoji] = value - 1;
+        }
+    }
+
+    public static void Add<T1, T2>(this Dictionary<T1, List<T2>> dictionary, T1 key, T2 value) where T1 : notnull
+    {
+        if (dictionary.TryGetValue(key, out var values))
+        {
+            values.Add(value);
+        }
+        else
+        {
+            dictionary[key] = new List<T2> { value };
+        }
+    }
+
+    public static void Remove<T1, T2>(this Dictionary<T1, List<T2>> dictionary, T1 key, T2 value) where T1 : notnull
+    {
+        if (!dictionary.TryGetValue(key, out var values))
+        {
+            return;
+        }
+
+        values.Remove(value);
+        if (values.Count == 0)
+        {
+            dictionary.Remove(key);
         }
     }
 }

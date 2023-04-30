@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using AntiClownDiscordBotVersion2.Commands;
 using AntiClownDiscordBotVersion2.EventServices;
+using AntiClownDiscordBotVersion2.Models.F1;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
@@ -12,6 +13,7 @@ using AntiClownDiscordBotVersion2.SlashCommands.Gaming;
 using AntiClownDiscordBotVersion2.SlashCommands.Inventory;
 using AntiClownDiscordBotVersion2.SlashCommands.Lohotron;
 using AntiClownDiscordBotVersion2.SlashCommands.Other;
+using AntiClownDiscordBotVersion2.SlashCommands.Other.F1Predictions;
 using AntiClownDiscordBotVersion2.SlashCommands.Other.Ip;
 using AntiClownDiscordBotVersion2.SlashCommands.Random;
 using AntiClownDiscordBotVersion2.SlashCommands.Roles;
@@ -46,6 +48,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IRaceService raceService,
         IGuessNumberService guessNumberService,
         IRandomizer randomizer,
+        IF1PredictionsService f1PredictionsService,
         ILoggerClient logger
     )
     {
@@ -64,6 +67,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.raceService = raceService;
         this.guessNumberService = guessNumberService;
         this.randomizer = randomizer;
+        this.f1PredictionsService = f1PredictionsService;
         this.logger = logger;
     }
 
@@ -169,13 +173,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             await commandsService.ExecuteCommand(message.GetCommandName(guildSettings.CommandsPrefix), e);
             return;
         }
-
-        /* TODO: temp disabled
-        if (_specialChannelsManager.AllChannels.Contains(e.Channel.Id))
-        {
-            _specialChannelsManager.ParseMessage(e);
-            return;
-        }*/
 
         CheckEmojiInMessage(message);
 
@@ -410,13 +407,28 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         if (e.Id.StartsWith("inventory_"))
         {
             await HandleInventoryInteraction(e);
+            return;
+        }
+
+        if (e.Id.StartsWith("start_race_result_input"))
+        {
+            await HandleRaceResultInput(e, true);
+            return;
+        }
+
+        if (e.Id.StartsWith("dropdown"))
+        {
+            await HandleRaceResultInput(e);
+            return;
         }
     }
 
     private async Task HandleShopInteraction(ComponentInteractionCreateEventArgs e)
     {
         if (!shopService.TryRead(e.User.Id, out var shop))
+        {
             return;
+        }
 
         var builder = new DiscordWebhookBuilder();
         switch (e.Id)
@@ -490,6 +502,48 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             await builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()).SetInventoryButtons(discordClientWrapper));
     }
 
+    private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
+    {
+        await logger.DebugAsync("Interaction id {id}", e.Id);
+        if (!start)
+        {
+            var driverName = e.Values.First()["driver_select_".Length..];
+            var driver = Enum.TryParse(typeof(F1Driver), driverName, out var result)
+                ? (F1Driver)result
+                : throw new ArgumentException($"Unexpected driver {driverName}");
+            f1PredictionsService.AddDriverToResult(driver);
+            var drivers = f1PredictionsService.DriversToAddToResult();
+            if (drivers.Length == 0)
+            {
+                var results = f1PredictionsService.MakeTenthPlaceResults();
+                if (results.Length == 0)
+                {
+                    await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, new DiscordWebhookBuilder().WithContent("Никто не вносил предсказаний"));
+                    return;
+                }
+
+                var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
+                var resultsStrings =
+                    results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");
+                await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, new DiscordWebhookBuilder().WithContent(string.Join("\n", resultsStrings)));
+                return;
+            }
+        }
+
+        var updatedDrivers = f1PredictionsService.DriversToAddToResult();
+        var options = updatedDrivers.Select(x => new DiscordSelectComponentOption(
+            x.ToString(),
+            $"driver_select_{x.ToString()}"
+        ));
+        var currentPlaceToEnter = 20 - updatedDrivers.Length + 1;
+        var dropdown = new DiscordSelectComponent("dropdown", $"Гонщик на {currentPlaceToEnter} месте", options);
+        var builder = new DiscordWebhookBuilder()
+            .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
+            .AddComponents(dropdown);
+
+        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder);
+    }
+
     private Task MessageDeleted(DiscordClient sender, MessageDeleteEventArgs e)
     {
         partyService.DeleteObserverIfExists(e.Message);
@@ -522,9 +576,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<PlayYoutubeCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<SelectCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<EmojiStatsCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<F1CommandModule>(guildSettings.GuildId);
         // admin commands
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<CreateMessageCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<F1AdminCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
@@ -633,5 +689,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IRaceService raceService;
     private readonly IGuessNumberService guessNumberService;
     private readonly IRandomizer randomizer;
+    private readonly IF1PredictionsService f1PredictionsService;
     private readonly ILoggerClient logger;
 }
