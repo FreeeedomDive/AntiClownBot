@@ -12,6 +12,7 @@ using AntiClownDiscordBotVersion2.SlashCommands.Gaming;
 using AntiClownDiscordBotVersion2.SlashCommands.Inventory;
 using AntiClownDiscordBotVersion2.SlashCommands.Lohotron;
 using AntiClownDiscordBotVersion2.SlashCommands.Other;
+using AntiClownDiscordBotVersion2.SlashCommands.Other.F1Predictions;
 using AntiClownDiscordBotVersion2.SlashCommands.Other.Ip;
 using AntiClownDiscordBotVersion2.SlashCommands.Random;
 using AntiClownDiscordBotVersion2.SlashCommands.Roles;
@@ -522,9 +523,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<PlayYoutubeCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<SelectCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<EmojiStatsCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<F1CommandModule>(guildSettings.GuildId);
         // admin commands
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<CreateMessageCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<F1AdminCommandModule>(guildSettings.GuildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
