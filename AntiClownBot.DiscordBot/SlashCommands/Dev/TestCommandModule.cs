@@ -4,6 +4,7 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Dev;
 
+[SlashCommandGroup("test", "Тестовая команда")]
 public class TestCommandModule : SlashCommandModuleWithMiddlewares
 {
     public TestCommandModule(
@@ -13,12 +14,21 @@ public class TestCommandModule : SlashCommandModuleWithMiddlewares
         
     }
 
-    [SlashCommand("test", "тест")]
-    public async Task Test(InteractionContext context)
+    [SlashCommand("common", "Обычная команда")]
+    public async Task TestCommon(InteractionContext context)
     {
         await ExecuteAsync(context, async () =>
         {
             await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent("да"));
+        });
+    }
+
+    [SlashCommand("ephemeral", "Эфемерная команда")]
+    public async Task TestEphemeral(InteractionContext context)
+    {
+        await ExecuteEphemeralAsync(context, async () =>
+        {
+            await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent("эфемерное да"));
         });
     }
 }

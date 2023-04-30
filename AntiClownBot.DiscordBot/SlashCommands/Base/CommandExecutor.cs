@@ -20,11 +20,11 @@ public class CommandExecutor : ICommandExecutor
     }
 
     public async Task ExecuteWithMiddlewares(
-        InteractionContext interactionContext,
+        SlashCommandContext interactionContext,
         Func<Task> command
     )
     {
-        Func<InteractionContext, Task> initialCommandAction = _ => command();
+        Func<SlashCommandContext, Task> initialCommandAction = _ => command();
         var commandWithMiddlewaresActionComposition = middlewares
             .Aggregate(
                 initialCommandAction,

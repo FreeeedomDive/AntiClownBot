@@ -15,9 +15,9 @@ public class LoggingMiddleware : ICommandMiddleware
         this.loggerClient = loggerClient;
     }
 
-    public async Task ExecuteAsync(InteractionContext context, Func<InteractionContext, Task> next)
+    public async Task ExecuteAsync(SlashCommandContext context, Func<SlashCommandContext, Task> next)
     {
-        var commandName = context.CommandName;
+        var commandName = context.Context.CommandName;
         var stopwatch = new Stopwatch();
         stopwatch.Start();
         try
@@ -32,7 +32,7 @@ public class LoggingMiddleware : ICommandMiddleware
         await loggerClient.InfoAsync(
             "COMMAND {commandName} executed by {userName} in {time}ms",
             commandName,
-            context.Member.ServerOrUserName(),
+            context.Context.Member.ServerOrUserName(),
             stopwatch.ElapsedMilliseconds
         );
     }
