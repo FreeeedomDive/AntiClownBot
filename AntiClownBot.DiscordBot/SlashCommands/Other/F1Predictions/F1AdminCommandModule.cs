@@ -42,29 +42,13 @@ public class F1AdminCommandModule : ApplicationCommandModule
             .AddComponents(
                 new DiscordButtonComponent(
                     ButtonStyle.Secondary,
-                    "drivers_select_start",
+                    "driver_select_start",
                     "Начать..."
                 )
             );
         await discordClientWrapper.Messages.RespondAsync(interactionContext, null,
             InteractionResponseType.DeferredChannelMessageWithSource);
         await discordClientWrapper.Messages.ModifyAsync(interactionContext, builder);
-    }
-
-    [SlashCommand("race", "Внести результаты гонки")]
-    public async Task MakeTenthPlaceResults(InteractionContext interactionContext)
-    {
-        var results = f1PredictionsService.MakeTenthPlaceResults();
-        if (results.Length == 0)
-        {
-            await discordClientWrapper.Messages.RespondAsync(interactionContext, "Никто не вносил предсказаний");
-            return;
-        }
-
-        var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
-        var resultsStrings =
-            results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");
-        await discordClientWrapper.Messages.RespondAsync(interactionContext, string.Join("\n", resultsStrings));
     }
 
     [SlashCommand("dnf", "Внести результаты первого выбывшего гонщика")]
