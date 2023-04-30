@@ -37,27 +37,18 @@ public class F1AdminCommandModule : ApplicationCommandModule
     [SlashCommand("results", "Внести результаты гонки")]
     public async Task CreateRaceResultsMessage(InteractionContext interactionContext)
     {
-        var drivers = f1PredictionsService.DriversToAddToResult();
-        if (drivers.Length == 0)
-        {
-            await discordClientWrapper.Messages.RespondAsync(
-                interactionContext,
-                "Все гонщики внесены, можно подводить результаты"
+        var builder = new DiscordWebhookBuilder()
+            .WithContent("Начать заполнение результатов гонки...")
+            .AddComponents(
+                new DiscordButtonComponent(
+                    ButtonStyle.Secondary,
+                    "drivers_select_start",
+                    "Начать..."
+                )
             );
-            return;
-        }
-
-        var options = drivers.Select(driver => new DiscordSelectComponentOption(
-            driver.ToString(),
-            $"driver_select_{driver.ToString()}"
-        ));
-        var currentPlaceToEnter = 20 - drivers.Length + 1;
-        var dropdown = new DiscordSelectComponent("dropdown", $"Гонщик на {currentPlaceToEnter} месте", options);
-        var builder = new DiscordInteractionResponseBuilder()
-            .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
-            .AddComponents(dropdown);
-
-        await discordClientWrapper.Messages.RespondAsync(interactionContext.Interaction, InteractionResponseType.ChannelMessageWithSource ,builder);
+        await discordClientWrapper.Messages.RespondAsync(interactionContext, null,
+            InteractionResponseType.DeferredChannelMessageWithSource);
+        await discordClientWrapper.Messages.ModifyAsync(interactionContext, builder);
     }
 
     [SlashCommand("race", "Внести результаты гонки")]
@@ -69,6 +60,7 @@ public class F1AdminCommandModule : ApplicationCommandModule
             await discordClientWrapper.Messages.RespondAsync(interactionContext, "Никто не вносил предсказаний");
             return;
         }
+
         var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
         var resultsStrings =
             results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");

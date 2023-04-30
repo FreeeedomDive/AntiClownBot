@@ -410,7 +410,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             await HandleInventoryInteraction(e);
         }
 
-        if (e.Id.StartsWith("dropdown"))
+        if (e.Id.StartsWith("driver_select_") || e.Id.StartsWith("dropdown"))
         {
             await HandleRaceResultInput(e);
         }
@@ -495,25 +495,31 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e)
     {
-        var interactionDriverId = e.Values.First();
-        var name = interactionDriverId["driver_select_".Length..];
-        var input = Enum.TryParse(typeof(F1Driver), name, out var driver)
-            ? (F1Driver)driver
-            : throw new ArgumentException("Unexpected driver");
-        f1PredictionsService.AddPlayerToResult(input);
+        var driverName = e.Values.First()["driver_select_".Length..];
+        var driver = Enum.TryParse(typeof(F1Driver), driverName, out var result)
+            ? (F1Driver)result
+            : throw new ArgumentException("Unexpected driver {driverName}");
+        f1PredictionsService.AddPlayerToResult(driver);
         var drivers = f1PredictionsService.DriversToAddToResult();
         if (drivers.Length == 0)
         {
-            await discordClientWrapper.Messages.EditOriginalResponseAsync(
-                e.Interaction,
-                new DiscordWebhookBuilder().WithContent("Все гонщики внесены, можно подводить результаты")
-            );
+            var results = f1PredictionsService.MakeTenthPlaceResults();
+            if (results.Length == 0)
+            {
+                await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, new DiscordWebhookBuilder().WithContent("Никто не вносил предсказаний"));
+                return;
+            }
+
+            var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
+            var resultsStrings =
+                results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");
+            await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, new DiscordWebhookBuilder().WithContent(string.Join("\n", resultsStrings)));
             return;
         }
 
-        var options = drivers.Select(driver => new DiscordSelectComponentOption(
-            driver.ToString(),
-            $"driver_select_{driver.ToString()}"
+        var options = drivers.Select(x => new DiscordSelectComponentOption(
+            x.ToString(),
+            $"driver_select_{x.ToString()}"
         ));
         var currentPlaceToEnter = 20 - drivers.Length + 1;
         var dropdown = new DiscordSelectComponent("dropdown", $"Гонщик на {currentPlaceToEnter} месте", options);

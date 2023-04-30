@@ -87,7 +87,7 @@ public class MessagesClient : IMessagesClient
         return await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent(content ?? $" {await emotesClient.FindEmoteAsync("YEP")} "));
     }
 
-    public async Task<DiscordMessage> ModifyEmbedAsync(InteractionContext context, DiscordWebhookBuilder builder)
+    public async Task<DiscordMessage> ModifyAsync(InteractionContext context, DiscordWebhookBuilder builder)
     {
         return await context.EditResponseAsync(builder);
     }

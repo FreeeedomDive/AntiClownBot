@@ -40,7 +40,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
             var builder = await new DiscordWebhookBuilder()
                 .AddEmbed(embed)
                 .SetInventoryButtons(discordClientWrapper);
-            await discordClientWrapper.Messages.ModifyEmbedAsync(context, builder);
+            await discordClientWrapper.Messages.ModifyAsync(context, builder);
         }
 
         [SlashCommand("lootbox", "Открыть лутбокс")]
@@ -76,7 +76,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
                                                                         .Select(kv => $"{kv.Key}: {kv.Value}")));
             }
 
-            await discordClientWrapper.Messages.ModifyEmbedAsync(context, new DiscordWebhookBuilder().AddEmbed(embedBuilder.Build()));
+            await discordClientWrapper.Messages.ModifyAsync(context, new DiscordWebhookBuilder().AddEmbed(embedBuilder.Build()));
         }
 
         [SlashCommand("shop", "Посмотреть свой магазин")]
@@ -95,7 +95,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
             var builder = await new DiscordWebhookBuilder()
                 .AddEmbed(embed)
                 .SetShopButtons(discordClientWrapper);
-            await discordClientWrapper.Messages.ModifyEmbedAsync(context, builder);
+            await discordClientWrapper.Messages.ModifyAsync(context, builder);
         }
 
         private readonly IDiscordClientWrapper discordClientWrapper;
