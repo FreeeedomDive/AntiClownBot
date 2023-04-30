@@ -1,6 +1,7 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils;
 using DSharpPlus;
 using DSharpPlus.Entities;
@@ -9,13 +10,14 @@ using DSharpPlus.SlashCommands;
 namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
 {
     [SlashCommandGroup("party", "Собирайте пати в разные игры :)")]
-    public class PartyCommandModule : ApplicationCommandModule
+    public class PartyCommandModule : SlashCommandModuleWithMiddlewares
     {
         public PartyCommandModule(
+            ICommandExecutor commandExecutor,
             IDiscordClientWrapper discordClientWrapper,
             IPartyService partyService,
             IGuildSettingsService guildSettingsService
-        )
+        ) : base(commandExecutor)
         {
             this.discordClientWrapper = discordClientWrapper;
             this.partyService = partyService;

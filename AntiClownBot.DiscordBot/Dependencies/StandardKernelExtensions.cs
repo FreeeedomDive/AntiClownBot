@@ -19,6 +19,8 @@ using AntiClownDiscordBotVersion2.ServicesHealth;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.SlashCommands.Base;
+using AntiClownDiscordBotVersion2.SlashCommands.Base.Middlewares;
 using AntiClownDiscordBotVersion2.Statistics.Daily;
 using AntiClownDiscordBotVersion2.Statistics.Emotes;
 using AntiClownDiscordBotVersion2.UserBalance;
@@ -69,6 +71,25 @@ public static class StandardKernelExtensions
         var zone = Environment.GetEnvironmentVariable("AntiClownBot.Zone");
 
         return ninjectkernel.ConfigureTelemetryClientWithLogger($"AntiClownBot{zone}", "DiscordBot", settings.TelemetryApiUrl);
+    }
+
+    public static StandardKernel AddMiddlewares(this StandardKernel ninjectKernel)
+    {
+        var middlewareTypes = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(s => s.GetTypes())
+            .Where(p => typeof(ICommandMiddleware).IsAssignableFrom(p) && !p.IsInterface);
+
+        foreach (var middlewareType in middlewareTypes)
+        {
+            ninjectKernel.Bind(middlewareType).ToSelf();
+            ninjectKernel.Bind<ICommandMiddleware>().To(middlewareType);
+        }
+        var commandExecutor = new CommandExecutor(ninjectKernel.Get<IServiceProvider>());
+        commandExecutor.AddMiddleware<LoggingMiddleware>();
+        commandExecutor.AddMiddleware<DeferredMessageMiddleware>();
+        ninjectKernel.Bind<ICommandExecutor>().ToConstant(commandExecutor);
+
+        return ninjectKernel;
     }
 
     public static StandardKernel WithExceptionFilter(this StandardKernel ninjectKernel)

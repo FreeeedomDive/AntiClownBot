@@ -51,6 +51,7 @@ public class DependenciesConfigurator
             .WithCommands()
             .ConfigureCommands()
             // final touches
+            .AddMiddlewares()
             .WithExceptionFilter()
             .WithApiEventFeedConsumer()
             .WithServicesHealthChecker()
