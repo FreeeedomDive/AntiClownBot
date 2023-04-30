@@ -52,11 +52,11 @@ public class F1AdminCommandModule : ApplicationCommandModule
         ));
         var currentPlaceToEnter = 20 - drivers.Length + 1;
         var dropdown = new DiscordSelectComponent("dropdown", $"Гонщик на {currentPlaceToEnter} месте", options);
-        var builder = new DiscordMessageBuilder()
+        var builder = new DiscordInteractionResponseBuilder()
             .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
             .AddComponents(dropdown);
 
-        await builder.SendAsync(interactionContext.Interaction.Channel);
+        await discordClientWrapper.Messages.RespondAsync(interactionContext.Interaction, InteractionResponseType.ChannelMessageWithSource ,builder);
     }
 
     [SlashCommand("race", "Внести результаты гонки")]
