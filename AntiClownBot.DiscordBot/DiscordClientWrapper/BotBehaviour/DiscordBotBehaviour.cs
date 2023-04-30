@@ -513,7 +513,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         var options = drivers.Select(driver => new DiscordSelectComponentOption(
             driver.ToString(),
-            $"driver_select_{driver.ToString().ToLower()}"
+            $"driver_select_{driver.ToString()}"
         ));
         var currentPlaceToEnter = 20 - drivers.Length + 1;
         var dropdown = new DiscordSelectComponent("dropdown", $"Гонщик на {currentPlaceToEnter} месте", options);
