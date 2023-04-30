@@ -496,9 +496,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e)
     {
         var interactionDriverId = e.Values.First();
-        await logger.InfoAsync(string.Join("\n", e.Values));
-        var index = "driver_select_".Length;
-        var input = Enum.TryParse(typeof(F1Driver), interactionDriverId[..index], out var driver)
+        var name = interactionDriverId[.."driver_select_".Length];
+        await logger.DebugAsync("Parsed name from {id}: {name}", interactionDriverId, name);
+        var input = Enum.TryParse(typeof(F1Driver), name, out var driver)
             ? (F1Driver)driver
             : throw new ArgumentException("Unexpected driver");
         f1PredictionsService.AddPlayerToResult(input);
