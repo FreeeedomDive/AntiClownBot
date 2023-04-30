@@ -407,16 +407,19 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         if (e.Id.StartsWith("inventory_"))
         {
             await HandleInventoryInteraction(e);
+            return;
         }
 
         if (e.Id.StartsWith("start_race_result_input"))
         {
             await HandleRaceResultInput(e, true);
+            return;
         }
 
         if (e.Id.StartsWith("dropdown"))
         {
             await HandleRaceResultInput(e);
+            return;
         }
     }
 
@@ -501,13 +504,14 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
     {
+        await logger.DebugAsync("Interaction id {id}", e.Id);
         var drivers = f1PredictionsService.DriversToAddToResult();
         if (!start)
         {
             var driverName = e.Values.First()["driver_select_".Length..];
             var driver = Enum.TryParse(typeof(F1Driver), driverName, out var result)
                 ? (F1Driver)result
-                : throw new ArgumentException("Unexpected driver {driverName}");
+                : throw new ArgumentException($"Unexpected driver {driverName}");
             f1PredictionsService.AddPlayerToResult(driver);
             if (drivers.Length == 0)
             {
