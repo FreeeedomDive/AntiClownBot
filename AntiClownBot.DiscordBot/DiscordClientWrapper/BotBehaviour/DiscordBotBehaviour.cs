@@ -496,6 +496,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e)
     {
         var interactionDriverId = e.Values.First();
+        await logger.InfoAsync(string.Join("\n", e.Values));
         var index = "driver_select_".Length;
         var input = Enum.TryParse(typeof(F1Driver), interactionDriverId[..index], out var driver)
             ? (F1Driver)driver
