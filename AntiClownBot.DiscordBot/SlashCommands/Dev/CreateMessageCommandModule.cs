@@ -24,8 +24,14 @@ public class CreateMessageCommandModule : SlashCommandModuleWithMiddlewares
         [Option("message", "Текст сообщения")] string message
     )
     {
-        await discordClientWrapper.Messages.SendAsync(channel.Id, message);
-        await discordClientWrapper.Messages.RespondAsync(context, "done");
+        await ExecuteAsync(context, async () =>
+        {
+            await discordClientWrapper.Messages.SendAsync(channel.Id, message);
+            await discordClientWrapper.Messages.EditOriginalResponseAsync(
+                context.Interaction,
+                new DiscordWebhookBuilder().WithContent("done")
+            );
+        });
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;
