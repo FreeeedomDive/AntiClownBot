@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using AntiClownDiscordBotVersion2.EventServices;
 using AntiClownDiscordBotVersion2.Models.F1;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.Party;
@@ -376,25 +377,25 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate,
             null);
-        if (e.Id.StartsWith("shop_"))
+        if (e.Id.StartsWith(Interactions.Buttons.ShopButtonsPrefix))
         {
             await HandleShopInteraction(e);
             return;
         }
 
-        if (e.Id.StartsWith("inventory_"))
+        if (e.Id.StartsWith(Interactions.Buttons.InventoryButtonsPrefix))
         {
             await HandleInventoryInteraction(e);
             return;
         }
 
-        if (e.Id.StartsWith("start_race_result_input"))
+        if (e.Id.StartsWith(Interactions.Buttons.StartRaceResultInputButton))
         {
             await HandleRaceResultInput(e, true);
             return;
         }
 
-        if (e.Id.StartsWith("dropdown"))
+        if (e.Id.StartsWith(Interactions.Dropdowns.DriversSelectDropdownItemPrefix))
         {
             await HandleRaceResultInput(e);
         }
@@ -410,25 +411,25 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         var builder = new DiscordWebhookBuilder();
         switch (e.Id)
         {
-            case "shop_one":
+            case Interactions.Buttons.ShopButtonItem1:
                 await shop.HandleItemInSlot(1, e.Interaction);
                 break;
-            case "shop_two":
+            case Interactions.Buttons.ShopButtonItem2:
                 await shop.HandleItemInSlot(2, e.Interaction);
                 break;
-            case "shop_three":
+            case Interactions.Buttons.ShopButtonItem3:
                 await shop.HandleItemInSlot(3, e.Interaction);
                 break;
-            case "shop_four":
+            case Interactions.Buttons.ShopButtonItem4:
                 await shop.HandleItemInSlot(4, e.Interaction);
                 break;
-            case "shop_five":
+            case Interactions.Buttons.ShopButtonItem5:
                 await shop.HandleItemInSlot(5, e.Interaction);
                 break;
-            case "shop_COGGERS":
+            case Interactions.Buttons.ShopButtonReroll:
                 await shop.ReRoll(e.Interaction);
                 break;
-            case "shop_pepeSearching":
+            case Interactions.Buttons.ShopButtonChangeTool:
                 shop.CurrentShopTool =
                     shop.CurrentShopTool == ShopTool.Revealing ? ShopTool.Buying : ShopTool.Revealing;
                 break;
@@ -446,31 +447,31 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         var builder = new DiscordWebhookBuilder();
         switch (e.Id)
         {
-            case "inventory_one":
+            case Interactions.Buttons.InventoryButton1:
                 builder.Content = await inventory.HandleItemInSlot(1);
                 break;
-            case "inventory_two":
+            case Interactions.Buttons.InventoryButton2:
                 builder.Content = await inventory.HandleItemInSlot(2);
                 break;
-            case "inventory_three":
+            case Interactions.Buttons.InventoryButton3:
                 builder.Content = await inventory.HandleItemInSlot(3);
                 break;
-            case "inventory_four":
+            case Interactions.Buttons.InventoryButton4:
                 builder.Content = await inventory.HandleItemInSlot(4);
                 break;
-            case "inventory_five":
+            case Interactions.Buttons.InventoryButton5:
                 builder.Content = await inventory.HandleItemInSlot(5);
                 break;
-            case "inventory_left":
+            case Interactions.Buttons.InventoryButtonLeft:
                 await inventory.SwitchLeftPage();
                 break;
-            case "inventory_right":
+            case Interactions.Buttons.InventoryButtonRight:
                 await inventory.SwitchRightPage();
                 break;
-            case "inventory_repeat":
+            case Interactions.Buttons.InventoryButtonChangeActiveStatus:
                 await inventory.EnableChangingStatus();
                 break;
-            case "inventory_x":
+            case Interactions.Buttons.InventoryButtonSell:
                 await inventory.EnableSelling();
                 break;
         }
@@ -481,10 +482,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
     {
-        await logger.DebugAsync("Interaction id {id}", e.Id);
         if (!start)
         {
-            var driverName = e.Values.First()["driver_select_".Length..];
+            var driverName = e.Values.First()[Interactions.Dropdowns.DriversSelectDropdownItemPrefix.Length..];
             var driver = Enum.TryParse(typeof(F1Driver), driverName, out var result)
                 ? (F1Driver)result
                 : throw new ArgumentException($"Unexpected driver {driverName}");
@@ -510,10 +510,10 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         var updatedDrivers = f1PredictionsService.DriversToAddToResult();
         var options = updatedDrivers.Select(x => new DiscordSelectComponentOption(
             x.ToString(),
-            $"driver_select_{x.ToString()}"
+            $"{Interactions.Dropdowns.DriversSelectDropdownItemPrefix}{x.ToString()}"
         ));
         var currentPlaceToEnter = 20 - updatedDrivers.Length + 1;
-        var dropdown = new DiscordSelectComponent("dropdown", $"Гонщик на {currentPlaceToEnter} месте", options);
+        var dropdown = new DiscordSelectComponent(Interactions.Dropdowns.DriversSelectDropdown, $"Гонщик на {currentPlaceToEnter} месте", options);
         var builder = new DiscordWebhookBuilder()
             .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
             .AddComponents(dropdown);

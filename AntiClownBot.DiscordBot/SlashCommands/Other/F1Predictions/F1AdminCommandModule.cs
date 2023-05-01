@@ -1,5 +1,6 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Models.F1;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus;
@@ -49,7 +50,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                 .AddComponents(
                     new DiscordButtonComponent(
                         ButtonStyle.Secondary,
-                        "start_race_result_input",
+                        Interactions.Buttons.StartRaceResultInputButton,
                         "Начать..."
                     )
                 );
