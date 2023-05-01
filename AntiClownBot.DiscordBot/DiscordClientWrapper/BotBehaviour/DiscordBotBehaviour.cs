@@ -395,7 +395,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             return;
         }
 
-        if (e.Id.StartsWith(Interactions.Dropdowns.DriversSelectDropdownItemPrefix))
+        if (e.Id.StartsWith(Interactions.Dropdowns.DriversSelectDropdown))
         {
             await HandleRaceResultInput(e);
         }
