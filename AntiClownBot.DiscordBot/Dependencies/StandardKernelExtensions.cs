@@ -1,6 +1,5 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.ApiEventFeed;
-using AntiClownDiscordBotVersion2.Commands;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
 using AntiClownDiscordBotVersion2.Events;
@@ -290,48 +289,6 @@ public static class StandardKernelExtensions
     public static StandardKernel WithDailyEventScheduler(this StandardKernel ninjectKernel)
     {
         ninjectKernel.Bind<DailyEventScheduler>().ToSelf();
-
-        return ninjectKernel;
-    }
-
-    public static StandardKernel WithCommands(this StandardKernel ninjectKernel)
-    {
-        var commandTypes = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(s => s.GetTypes())
-            .Where(p => typeof(ICommand).IsAssignableFrom(p))
-            .Where(p => p != typeof(ICommand))
-            .ToList();
-
-        foreach (var commandType in commandTypes)
-        {
-            ninjectKernel.Bind(commandType).ToSelf();
-            ninjectKernel.Bind<ICommand>().To(commandType);
-        }
-
-        return ninjectKernel;
-    }
-
-    public static StandardKernel WithCommandsService(this StandardKernel ninjectKernel)
-    {
-        var commandsService = new CommandsService(
-            ninjectKernel.Get<IDiscordClientWrapper>(),
-            ninjectKernel.Get<IAppSettingsService>(),
-            ninjectKernel.Get<IGuildSettingsService>()
-        );
-
-        ninjectKernel.Bind<ICommandsService>().ToConstant(commandsService);
-
-        return ninjectKernel;
-    }
-
-    public static StandardKernel ConfigureCommands(this StandardKernel ninjectKernel)
-    {
-        var commandsService = ninjectKernel.Get<ICommandsService>();
-        
-        var commands = ninjectKernel.GetAll<ICommand>();
-        var commandsByName = commands.ToDictionary(command => command.Name);
-        
-        commandsService.UseCommands(commandsByName);
 
         return ninjectKernel;
     }

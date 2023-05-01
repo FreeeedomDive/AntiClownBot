@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using AntiClownDiscordBotVersion2.Commands;
 using AntiClownDiscordBotVersion2.EventServices;
 using AntiClownDiscordBotVersion2.Models.F1;
 using AntiClownDiscordBotVersion2.Models.Inventory;
@@ -37,7 +36,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         DiscordClient discordClient,
         IDiscordClientWrapper discordClientWrapper,
         IUserBalanceService userBalanceService,
-        ICommandsService commandsService,
         IAppSettingsService appSettingsService,
         IGuildSettingsService guildSettingsService,
         IEmoteStatsService emoteStatsService,
@@ -56,7 +54,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.discordClient = discordClient;
         this.discordClientWrapper = discordClientWrapper;
         this.userBalanceService = userBalanceService;
-        this.commandsService = commandsService;
         this.appSettingsService = appSettingsService;
         this.guildSettingsService = guildSettingsService;
         this.emoteStatsService = emoteStatsService;
@@ -132,8 +129,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         var message = e.Message.Content;
 
-        await logger.InfoAsync($"{e.Author.Username}: {message}");
-
         // удаляем все сообщения из чата с пати, чтобы люди отвечали в треды
         if (e.Channel.Id == guildSettings.PartyChannelId)
         {
@@ -147,30 +142,13 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 .WithEmbed(embedBuilder.Build())
                 .WithAllowedMentions(Mentions.All)
                 .WithContent(e.Author.Mention);
-            var isCommand = message.IsCommand(guildSettings.CommandsPrefix);
-            var command = isCommand
-                ? message.IsCommand(guildSettings.CommandsPrefix)
-                  && commandsService.TryGetCommand(message.GetCommandName(guildSettings.CommandsPrefix), out var x)
-                    ? x
-                    : null
-                : null;
-            var deleteMessage = !isCommand || (isCommand && command != null && command.Name != "party");
-            if (deleteMessage)
+            Task.Run(async () =>
             {
-                Task.Run(async () =>
-                {
-                    var response = await discordClientWrapper.Messages.RespondAsync(e.Message, messageBuilder);
-                    await discordClientWrapper.Messages.DeleteAsync(e.Message);
-                    await Task.Delay(10000);
-                    await discordClientWrapper.Messages.DeleteAsync(response);
-                });
-                return;
-            }
-        }
-
-        if (message.StartsWith(guildSettings.CommandsPrefix))
-        {
-            await commandsService.ExecuteCommand(message.GetCommandName(guildSettings.CommandsPrefix), e);
+                var response = await discordClientWrapper.Messages.RespondAsync(e.Message, messageBuilder);
+                await discordClientWrapper.Messages.DeleteAsync(e.Message);
+                await Task.Delay(10000);
+                await discordClientWrapper.Messages.DeleteAsync(response);
+            });
             return;
         }
 
@@ -419,7 +397,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         if (e.Id.StartsWith("dropdown"))
         {
             await HandleRaceResultInput(e);
-            return;
         }
     }
 
@@ -573,7 +550,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<WhenCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<RollCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<IpCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<PlayYoutubeCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<SelectCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<EmojiStatsCommandModule>(guildSettings.GuildId);
         slash.RegisterCommands<F1CommandModule>(guildSettings.GuildId);
@@ -678,7 +654,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly DiscordClient discordClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IUserBalanceService userBalanceService;
-    private readonly ICommandsService commandsService;
     private readonly IAppSettingsService appSettingsService;
     private readonly IGuildSettingsService guildSettingsService;
     private readonly IEmoteStatsService emoteStatsService;

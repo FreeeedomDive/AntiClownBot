@@ -46,10 +46,6 @@ public class DependenciesConfigurator
             .WithEventScheduler()
             .WithDailyEvents()
             .WithDailyEventScheduler()
-            // configure commands and service
-            .WithCommandsService()
-            .WithCommands()
-            .ConfigureCommands()
             // final touches
             .AddMiddlewares()
             .WithExceptionFilter()
