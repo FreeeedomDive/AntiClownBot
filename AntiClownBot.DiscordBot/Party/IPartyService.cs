@@ -8,8 +8,7 @@ public interface IPartyService
     Task CreateNewParty(ulong authorId, string description, int maxPlayers, ulong? attachedRoleId = null);
     void RemoveOutdatedParty(ulong partyId);
 
-    Task AddPartyObserverMessage(DiscordMessage messageToRespond);
-    Task AddPartyObserverMessage(InteractionContext messageToRespond);
+    Task<DiscordEmbed> CreatePartyEmbed();
     void DeleteObserverIfExists(DiscordMessage message);
 
     void Save();

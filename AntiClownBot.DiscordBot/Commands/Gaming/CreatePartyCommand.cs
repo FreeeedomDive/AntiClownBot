@@ -46,7 +46,7 @@ namespace AntiClownDiscordBotVersion2.Commands.Gaming
             switch (args[1].ToLower())
             {
                 case "all":
-                    await partyService.AddPartyObserverMessage(e.Message);
+                    // await partyService.AddPartyObserverMessage(e.Message);
                     return;
                 case "dota":
                     await partyService.CreateNewParty(e.Author.Id, "Dota", 5, guildSettings.DotaRoleId);

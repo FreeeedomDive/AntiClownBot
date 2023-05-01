@@ -1,18 +1,20 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.UserBalance;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Other;
 
-public class ChangeNicknameCommandModule : ApplicationCommandModule
+public class ChangeNicknameCommandModule : SlashCommandModuleWithMiddlewares
 {
     public ChangeNicknameCommandModule(
+        ICommandExecutor commandExecutor,
         IDiscordClientWrapper discordClientWrapper,
         IApiClient apiClient,
         IUserBalanceService userBalanceService
-    )
+    ) : base(commandExecutor)
     {
         this.discordClientWrapper = discordClientWrapper;
         this.apiClient = apiClient;
@@ -27,36 +29,38 @@ public class ChangeNicknameCommandModule : ApplicationCommandModule
         [Option("newName", "Новое имя")] string newName
     )
     {
-        var userId = context.User.Id;
-        var selfChanging = userId == userToEdit.Id;
-        var cost = selfChanging ? -1000 : -2000;
-        var balance = (await apiClient.Users.RatingAsync(userId)).ScamCoins;
-        if (balance < -cost)
+        await ExecuteAsync(context, async () =>
         {
-            await discordClientWrapper.Messages.RespondAsync(
-                context,
-                "Недостаточно скам койнов для совершения операции"
-            );
-            return;
-        }
-        var member = await discordClientWrapper.Members.GetAsync(userToEdit.Id);
+            var userId = context.User.Id;
+            var selfChanging = userId == userToEdit.Id;
+            var cost = selfChanging ? -1000 : -2000;
+            var balance = (await apiClient.Users.RatingAsync(userId)).ScamCoins;
+            if (balance < -cost)
+            {
+                await RespondToInteractionAsync(
+                    context,
+                    "Недостаточно скам койнов для совершения операции"
+                );
+                return;
+            }
 
-        try
-        {
-            await discordClientWrapper.Members.ModifyAsync(member, model => { model.Nickname = newName; });
-            await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(userId, cost,
-                $"Изменение никнейма пользователю {member.Id}");
-        }
-        catch
-        {
-            await discordClientWrapper.Messages.RespondAsync(context, "Произошла неведомая хуйня");
-            return;
-        }
+            var member = await discordClientWrapper.Members.GetAsync(userToEdit.Id);
 
-        await discordClientWrapper.Messages.RespondAsync(
-            context,
-            $"{await discordClientWrapper.Emotes.FindEmoteAsync("YEP")}"
-        );
+            try
+            {
+                await discordClientWrapper.Members.ModifyAsync(member, model => { model.Nickname = newName; });
+                await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(userId, cost,
+                    $"Изменение никнейма пользователю {member.Id}");
+                await RespondToInteractionAsync(
+                    context,
+                    $"{await discordClientWrapper.Emotes.FindEmoteAsync("YEP")}"
+                );
+            }
+            catch
+            {
+                await RespondToInteractionAsync(context, "Произошла неведомая хуйня");
+            }
+        });
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;

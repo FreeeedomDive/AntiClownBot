@@ -1,5 +1,4 @@
 ﻿using AntiClownDiscordBotVersion2.SlashCommands.Base.Middlewares;
-using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Base;
 

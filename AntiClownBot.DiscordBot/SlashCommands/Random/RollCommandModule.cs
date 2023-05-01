@@ -1,17 +1,16 @@
-﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+﻿using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Random;
 
-public class RollCommandModule : ApplicationCommandModule
+public class RollCommandModule : SlashCommandModuleWithMiddlewares
 {
     public RollCommandModule(
-        IDiscordClientWrapper discordClientWrapper,
+        ICommandExecutor commandExecutor,
         IRandomizer randomizer
-    )
+    ) : base(commandExecutor)
     {
-        this.discordClientWrapper = discordClientWrapper;
         this.randomizer = randomizer;
     }
 
@@ -22,12 +21,14 @@ public class RollCommandModule : ApplicationCommandModule
         [Option("b", "b")] long b
     )
     {
-        await discordClientWrapper.Messages.RespondAsync(
-            context,
-            $"{randomizer.GetRandomNumberBetweenIncludeRange(a, b)}"
-        );
+        await ExecuteAsync(context, async () =>
+        {
+            await RespondToInteractionAsync(
+                context,
+                randomizer.GetRandomNumberBetweenIncludeRange(a, b).ToString()
+            );
+        });
     }
 
-    private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IRandomizer randomizer;
 }

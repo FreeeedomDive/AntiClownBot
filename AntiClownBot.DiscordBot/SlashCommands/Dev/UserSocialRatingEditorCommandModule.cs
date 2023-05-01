@@ -1,5 +1,4 @@
 ﻿using AntiClownApiClient;
-using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.UserBalance;
 using DSharpPlus;
@@ -14,12 +13,10 @@ public class UserSocialRatingEditorCommandModule : SlashCommandModuleWithMiddlew
 {
     public UserSocialRatingEditorCommandModule(
         ICommandExecutor commandExecutor,
-        IDiscordClientWrapper discordClientWrapper,
         IUserBalanceService userBalanceService,
         IApiClient apiClient
     ) : base(commandExecutor)
     {
-        this.discordClientWrapper = discordClientWrapper;
         this.userBalanceService = userBalanceService;
         this.apiClient = apiClient;
     }
@@ -36,10 +33,7 @@ public class UserSocialRatingEditorCommandModule : SlashCommandModuleWithMiddlew
         await ExecuteAsync(context, async () =>
         {
             await userBalanceService.ChangeUserBalanceWithDailyStatsAsync(user.Id, (int)diff, reason!);
-            await discordClientWrapper.Messages.EditOriginalResponseAsync(
-                context.Interaction,
-                new DiscordWebhookBuilder().WithContent("done")
-            );
+            await RespondToInteractionAsync(context, "done");
         });
     }
 
@@ -65,14 +59,10 @@ public class UserSocialRatingEditorCommandModule : SlashCommandModuleWithMiddlew
                     throw new ArgumentOutOfRangeException(nameof(operation), operation, null);
             }
 
-            await discordClientWrapper.Messages.EditOriginalResponseAsync(
-                context.Interaction,
-                new DiscordWebhookBuilder().WithContent("done")
-            );
+            await RespondToInteractionAsync(context, "done");
         });
     }
 
-    private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IUserBalanceService userBalanceService;
     private readonly IApiClient apiClient;
 }

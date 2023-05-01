@@ -32,7 +32,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
         {
             f1PredictionsService.PredictTenthPlace(interactionContext.Member.Id, tenthPlaceDriver);
             f1PredictionsService.PredictDnf(interactionContext.Member.Id, dnfDriver);
-            await discordClientWrapper.Messages.RespondAsync(interactionContext, "Принято");
+            await RespondToInteractionAsync(interactionContext, "Принято");
         });
     }
 
@@ -46,7 +46,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
             var firstDnfPredictions = f1PredictionsService.GetFirstDnfPredictions();
             if (tenthPlacePredictions.Count == 0 || firstDnfPredictions.Count == 0)
             {
-                await discordClientWrapper.Messages.RespondAsync(interactionContext, "Никто не вносил свои предсказания");
+                await RespondToInteractionAsync(interactionContext, "Никто не вносил свои предсказания");
                 return;
             }
             var embed = new DiscordEmbedBuilder()
@@ -61,7 +61,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                         firstDnfPredictions.Select(kv => $"{members[kv.Key].ServerOrUserName()}: {kv.Value}"))
                 )
                 .Build();
-            await discordClientWrapper.Messages.RespondAsync(interactionContext, embed);
+            await RespondToInteractionAsync(interactionContext, embed);
         });
     }
 

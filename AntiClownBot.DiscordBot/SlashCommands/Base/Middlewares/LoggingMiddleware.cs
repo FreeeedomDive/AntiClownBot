@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
-using DSharpPlus.SlashCommands;
 using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Base.Middlewares;

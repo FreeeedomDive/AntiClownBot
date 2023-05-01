@@ -51,28 +51,9 @@ public class PartyService : IPartyService
         return embedBuilder.Build();
     }
 
-    public async Task AddPartyObserverMessage(DiscordMessage messageToRespond)
+    public async Task<DiscordEmbed> CreatePartyEmbed()
     {
-        if (partyObserver != null)
-        {
-            await partyObserver.DeleteAsync();
-        }
-
-        var embed = await GetPartiesEmbed();
-        var message = await discordClientWrapper.Messages.RespondAsync(messageToRespond, embed);
-        partyObserver = message;
-    }
-
-    public async Task AddPartyObserverMessage(InteractionContext context)
-    {
-        if (partyObserver != null)
-        {
-            await partyObserver.DeleteAsync();
-        }
-
-        var embed = await GetPartiesEmbed();
-        var message = await discordClientWrapper.Messages.RespondAsync(context, embed);
-        partyObserver = message;
+        return await GetPartiesEmbed();
     }
 
     public void DeleteObserverIfExists(DiscordMessage message)
@@ -80,17 +61,6 @@ public class PartyService : IPartyService
         if (partyObserver == null) return;
         if (partyObserver.Id != message.Id) return;
         partyObserver = null;
-    }
-
-    public async Task UpdatePartyObservers()
-    {
-        if (partyObserver != null)
-        {
-            var embed = await GetPartiesEmbed();
-            await discordClientWrapper.Messages.ModifyAsync(partyObserver, embed);
-        }
-
-        Save();
     }
 
     private PartiesInfo CreateOrRestore()
@@ -123,7 +93,6 @@ public class PartyService : IPartyService
                     party.Value,
                     discordClientWrapper,
                     guildSettingsService,
-                    UpdatePartyObservers,
                     RemoveOutdatedParty,
                     UpdateStatsAfterFullParty
                 )
@@ -145,7 +114,6 @@ public class PartyService : IPartyService
             AttachedRoleId = attachedRoleId,
             OnPartyRemove = RemoveOutdatedParty,
             OnStatsUpdate = UpdateStatsAfterFullParty,
-            OnPartyObserverUpdate = UpdatePartyObservers
         };
 
         var message = await newParty.CreateMessage();
@@ -153,7 +121,6 @@ public class PartyService : IPartyService
         await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, "MEGALUL");
         await discordClientWrapper.Messages.CreateThreadAsync(message, description);
         PartiesInfo.OpenParties.Add(message.Id, newParty);
-        await UpdatePartyObservers();
     }
 
     public void RemoveOutdatedParty(ulong partyId)

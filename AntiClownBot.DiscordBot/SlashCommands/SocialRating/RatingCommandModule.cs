@@ -2,18 +2,20 @@
 using AntiClownApiClient.Dto.Constants;
 using AntiClownApiClient.Dto.Models.Items;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.SocialRating;
 
-public class RatingCommandModule : ApplicationCommandModule
+public class RatingCommandModule : SlashCommandModuleWithMiddlewares
 {
     public RatingCommandModule(
+        ICommandExecutor commandExecutor,
         IDiscordClientWrapper discordClientWrapper,
         IApiClient apiClient
-    )
+    ) : base(commandExecutor)
     {
         this.discordClientWrapper = discordClientWrapper;
         this.apiClient = apiClient;
@@ -22,52 +24,57 @@ public class RatingCommandModule : ApplicationCommandModule
     [SlashCommand("scamCoins", "Узнать свой баланс скамкойнов (остальные его не увидят)")]
     public async Task FetchScamCoins(InteractionContext context)
     {
-        var userId = context.Member.Id;
-        var userRating = await apiClient.Users.RatingAsync(userId);
+        await ExecuteEphemeralAsync(context, async () =>
+        {
+            var userId = context.Member.Id;
+            var userRating = await apiClient.Users.RatingAsync(userId);
 
-        await discordClientWrapper.Messages.RespondAsync(
-            context,
-            $"{userRating.ScamCoins} скам-койнов",
-            isEphemeral: true
-        );
+            await RespondToInteractionAsync(
+                context,
+                $"{userRating.ScamCoins} скам-койнов"
+            );
+        });
     }
 
     [SlashCommand("rating", "Полный паспорт пользователя с информацией о балансе и активных предметах")]
     public async Task Rating(InteractionContext context)
     {
-        var userId = context.Member.Id;
-        var member = await discordClientWrapper.Members.GetAsync(userId);
-        var response = await apiClient.Users.RatingAsync(userId);
-        var inventory = await apiClient.Items.AllItemsAsync(userId);
-
-        var embedBuilder = new DiscordEmbedBuilder
+        await ExecuteAsync(context, async () =>
         {
-            Color = member.Color
-        };
+            var userId = context.Member.Id;
+            var member = await discordClientWrapper.Members.GetAsync(userId);
+            var response = await apiClient.Users.RatingAsync(userId);
+            var inventory = await apiClient.Items.AllItemsAsync(userId);
 
-        var name = member.ServerOrUserName();
-        embedBuilder.WithThumbnail(context.Member.AvatarUrl);
-        var aRolf = await discordClientWrapper.Emotes.FindEmoteAsync("aRolf");
-        embedBuilder.WithTitle($"ЧЕЛА РЕАЛЬНО ЗОВУТ {name.ToUpper()} {aRolf} {aRolf} {aRolf}");
+            var embedBuilder = new DiscordEmbedBuilder
+            {
+                Color = member.Color
+            };
 
-        embedBuilder.AddField("SCAM COINS", $"{response.ScamCoins}");
-        embedBuilder.AddField("Общая ценность", $"{response.NetWorth}");
+            var name = member.ServerOrUserName();
+            embedBuilder.WithThumbnail(context.Member.AvatarUrl);
+            var aRolf = await discordClientWrapper.Emotes.FindEmoteAsync("aRolf");
+            embedBuilder.WithTitle($"ЧЕЛА РЕАЛЬНО ЗОВУТ {name.ToUpper()} {aRolf} {aRolf} {aRolf}");
 
-        foreach (var itemName in StringConstants.AllItemsNames)
-        {
-            var itemsOfType = response.Inventory.Where(item => item.Name.Equals(itemName)).ToList();
-            var descriptions = itemsOfType.Count == 0
-                ? "Нет предметов"
-                : $"{string.Join(" ", itemsOfType.Select(item => $"{item.Rarity}"))}\n" +
-                  $"{string.Join("\n", CalculateItemStats(itemsOfType, itemName).Select(kv => $"{kv.Key}: {kv.Value}"))}";
-            embedBuilder.AddField(
-                $"{itemName} - {itemsOfType.Count} (всего {inventory.Count(item => item.Name == itemName)})",
-                descriptions);
-        }
+            embedBuilder.AddField("SCAM COINS", $"{response.ScamCoins}");
+            embedBuilder.AddField("Общая ценность", $"{response.NetWorth}");
 
-        embedBuilder.AddField($"Добыча-коробка - {response.LootBoxes}", "Получение приза из лутбокса");
+            foreach (var itemName in StringConstants.AllItemsNames)
+            {
+                var itemsOfType = response.Inventory.Where(item => item.Name.Equals(itemName)).ToList();
+                var descriptions = itemsOfType.Count == 0
+                    ? "Нет предметов"
+                    : $"{string.Join(" ", itemsOfType.Select(item => $"{item.Rarity}"))}\n" +
+                      $"{string.Join("\n", CalculateItemStats(itemsOfType, itemName).Select(kv => $"{kv.Key}: {kv.Value}"))}";
+                embedBuilder.AddField(
+                    $"{itemName} - {itemsOfType.Count} (всего {inventory.Count(item => item.Name == itemName)})",
+                    descriptions);
+            }
 
-        await discordClientWrapper.Messages.RespondAsync(context, embedBuilder.Build());
+            embedBuilder.AddField($"Добыча-коробка - {response.LootBoxes}", "Получение приза из лутбокса");
+
+            await RespondToInteractionAsync(context, embedBuilder.Build());
+        });
     }
 
     private static Dictionary<string, string> CalculateItemStats(List<BaseItem> items, string itemType)

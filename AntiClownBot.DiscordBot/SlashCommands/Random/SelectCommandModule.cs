@@ -1,19 +1,18 @@
-﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
-using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+﻿using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Random;
 
-public class SelectCommandModule : ApplicationCommandModule
+public class SelectCommandModule : SlashCommandModuleWithMiddlewares
 {
     public SelectCommandModule(
-        IDiscordClientWrapper discordClientWrapper,
+        ICommandExecutor commandExecutor,
         IRandomizer randomizer,
         IGuildSettingsService guildSettingsService
-    )
+    ) : base(commandExecutor)
     {
-        this.discordClientWrapper = discordClientWrapper;
         this.randomizer = randomizer;
         this.guildSettingsService = guildSettingsService;
     }
@@ -25,18 +24,20 @@ public class SelectCommandModule : ApplicationCommandModule
         string options
     )
     {
-        var lines = options.Split("//");
-        if (lines.Length < 2)
+        await ExecuteAsync(context, async () =>
         {
-            await discordClientWrapper.Messages.RespondAsync(context, "Вариантов выбора должно быть 2 и более");
-            return;
-        }
+            var lines = options.Split("//");
+            if (lines.Length < 2)
+            {
+                await RespondToInteractionAsync(context, "Вариантов выбора должно быть 2 и более");
+                return;
+            }
 
-        var selected = randomizer.GetRandomNumberBetween(1, lines.Length);
-        await discordClientWrapper.Messages.RespondAsync(context, lines[selected]);
+            var selected = randomizer.GetRandomNumberBetween(1, lines.Length);
+            await RespondToInteractionAsync(context, lines[selected]);
+        });
     }
 
-    private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IRandomizer randomizer;
     private readonly IGuildSettingsService guildSettingsService;
 }

@@ -1,5 +1,6 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Models.F1;
+using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus;
 using DSharpPlus.Entities;
@@ -9,12 +10,13 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Other.F1Predictions;
 
 [SlashCommandGroup("f1admin", "Админка для предиктов ф1", false)]
 [SlashCommandPermissions(Permissions.ViewAuditLog)]
-public class F1AdminCommandModule : ApplicationCommandModule
+public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
 {
     public F1AdminCommandModule(
+        ICommandExecutor commandExecutor,
         IDiscordClientWrapper discordClientWrapper,
         IF1PredictionsService f1PredictionsService
-    )
+    ) : base(commandExecutor)
     {
         this.discordClientWrapper = discordClientWrapper;
         this.f1PredictionsService = f1PredictionsService;
@@ -29,26 +31,30 @@ public class F1AdminCommandModule : ApplicationCommandModule
         [Option("dnf", "Первый DNF в гонке")] F1Driver dnfDriver
     )
     {
-        f1PredictionsService.PredictTenthPlace(user.Id, tenthPlaceDriver);
-        f1PredictionsService.PredictDnf(user.Id, dnfDriver);
-        await discordClientWrapper.Messages.RespondAsync(interactionContext, "Принято");
+        await ExecuteAsync(interactionContext, async () =>
+        {
+            f1PredictionsService.PredictTenthPlace(user.Id, tenthPlaceDriver);
+            f1PredictionsService.PredictDnf(user.Id, dnfDriver);
+            await RespondToInteractionAsync(interactionContext, "Принято");
+        });
     }
 
     [SlashCommand("results", "Внести результаты гонки")]
     public async Task CreateRaceResultsMessage(InteractionContext interactionContext)
     {
-        var builder = new DiscordWebhookBuilder()
-            .WithContent("Начать заполнение результатов гонки...")
-            .AddComponents(
-                new DiscordButtonComponent(
-                    ButtonStyle.Secondary,
-                    "start_race_result_input",
-                    "Начать..."
-                )
-            );
-        await discordClientWrapper.Messages.RespondAsync(interactionContext, null,
-            InteractionResponseType.DeferredChannelMessageWithSource);
-        await discordClientWrapper.Messages.ModifyAsync(interactionContext, builder);
+        await ExecuteAsync(interactionContext, async () =>
+        {
+            var builder = new DiscordWebhookBuilder()
+                .WithContent("Начать заполнение результатов гонки...")
+                .AddComponents(
+                    new DiscordButtonComponent(
+                        ButtonStyle.Secondary,
+                        "start_race_result_input",
+                        "Начать..."
+                    )
+                );
+            await RespondToInteractionAsync(interactionContext, builder);
+        });
     }
 
     [SlashCommand("dnf", "Внести результаты первого выбывшего гонщика")]
@@ -58,17 +64,20 @@ public class F1AdminCommandModule : ApplicationCommandModule
         F1Driver dnfDriver
     )
     {
-        var results = f1PredictionsService.MakeFirstDnfResults(dnfDriver);
-        if (results == null || results.Length == 0)
+        await ExecuteAsync(interactionContext, async () =>
         {
-            await discordClientWrapper.Messages.RespondAsync(interactionContext, "Никто не угадал");
-            return;
-        }
+            var results = f1PredictionsService.MakeFirstDnfResults(dnfDriver);
+            if (results == null || results.Length == 0)
+            {
+                await RespondToInteractionAsync(interactionContext, "Никто не угадал");
+                return;
+            }
 
-        var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
-        var resultsStrings =
-            results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");
-        await discordClientWrapper.Messages.RespondAsync(interactionContext, string.Join("\n", resultsStrings));
+            var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
+            var resultsStrings =
+                results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");
+            await RespondToInteractionAsync(interactionContext, string.Join("\n", resultsStrings));
+        });
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;

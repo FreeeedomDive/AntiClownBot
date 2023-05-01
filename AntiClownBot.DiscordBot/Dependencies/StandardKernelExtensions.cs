@@ -84,7 +84,7 @@ public static class StandardKernelExtensions
             ninjectKernel.Bind(middlewareType).ToSelf();
             ninjectKernel.Bind<ICommandMiddleware>().To(middlewareType);
         }
-        var commandExecutor = new CommandExecutor(ninjectKernel.Get<IServiceProvider>());
+        ICommandExecutor commandExecutor = new CommandExecutor(ninjectKernel.Get<IServiceProvider>());
         commandExecutor.AddMiddleware<LoggingMiddleware>();
         commandExecutor.AddMiddleware<DeferredMessageMiddleware>();
         ninjectKernel.Bind<ICommandExecutor>().ToConstant(commandExecutor);

@@ -1,20 +1,19 @@
 ﻿using System.Net.Sockets;
-using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using CommonServices.IpService;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Other.Ip;
 
-public class IpCommandModule : ApplicationCommandModule
+public class IpCommandModule : SlashCommandModuleWithMiddlewares
 {
     public IpCommandModule(
-        IDiscordClientWrapper discordClientWrapper,
+        ICommandExecutor commandExecutor,
         IGuildSettingsService guildSettingsService,
         IIpService ipService
-    )
+    ) : base(commandExecutor)
     {
-        this.discordClientWrapper = discordClientWrapper;
         this.guildSettingsService = guildSettingsService;
         this.ipService = ipService;
     }
@@ -26,49 +25,49 @@ public class IpCommandModule : ApplicationCommandModule
         Ping? ping = null
     )
     {
-        var guildSettings = guildSettingsService.GetGuildSettings();
-        var respondMessageContent = await discordClientWrapper.Emotes.FindEmoteAsync("HACKERMANS");
-        var respondMessage = await discordClientWrapper.Messages.RespondAsync(context, respondMessageContent);
-        using var tcpClient = new TcpClient();
-        try
+        await ExecuteAsync(context, async () =>
         {
-            var serverPath = guildSettings.MinecraftServerFolder;
-            var isModded = Directory.Exists($"{serverPath}\\mods");
-            const string serverDescription = "Версия: 1.19";
-            var ip = await ipService.GetIp();
-            var mods = new List<string>();
-            if (isModded)
+            var guildSettings = guildSettingsService.GetGuildSettings();
+            using var tcpClient = new TcpClient();
+            try
             {
-                var modDir = $"{serverPath}\\mods";
-                mods = Directory.GetFiles(modDir).Select(file => file[(modDir.Length + 1)..]).ToList();
-            }
+                var serverPath = guildSettings.MinecraftServerFolder;
+                var isModded = Directory.Exists($"{serverPath}\\mods");
+                const string serverDescription = "Версия: 1.19";
+                var ip = await ipService.GetIp();
+                var mods = new List<string>();
+                if (isModded)
+                {
+                    var modDir = $"{serverPath}\\mods";
+                    mods = Directory.GetFiles(modDir).Select(file => file[(modDir.Length + 1)..]).ToList();
+                }
 
-            tcpClient.SendTimeout = 1000;
-            tcpClient.ReceiveTimeout = 1000;
-            await tcpClient.ConnectAsync(guildSettings.MinecraftServerLocalAddress, guildSettings.MinecraftServerPort);
-            var messageContent = $"IP: {ip}:{guildSettings.MinecraftServerPort}\n{serverDescription}";
-            if (isModded)
+                tcpClient.SendTimeout = 1000;
+                tcpClient.ReceiveTimeout = 1000;
+                await tcpClient.ConnectAsync(guildSettings.MinecraftServerLocalAddress,
+                    guildSettings.MinecraftServerPort);
+                var messageContent = $"IP: {ip}:{guildSettings.MinecraftServerPort}\n{serverDescription}";
+                if (isModded)
+                {
+                    messageContent += $"\nУстановленные моды:\n{string.Join("\n", mods)}";
+                }
+
+                await RespondToInteractionAsync(context, messageContent);
+            }
+            catch (Exception)
             {
-                messageContent += $"\nУстановленные моды:\n{string.Join("\n", mods)}";
-            }
+                if (ping is null)
+                {
+                    await RespondToInteractionAsync(context, "Сервер не запущен");
+                    return;
+                }
 
-            await discordClientWrapper.Messages.ModifyAsync(respondMessage, messageContent);
-        }
-        catch (Exception)
-        {
-            if (ping is null)
-            {
-                await discordClientWrapper.Messages.ModifyAsync(respondMessage, "Сервер не запущен");
-                return;
+                var admin = await context.Guild.GetMemberAsync(guildSettings.AdminId);
+                await RespondToInteractionAsync(context, $"Сервер не запущен\n{admin.Mention} запусти сервак!!!");
             }
-
-            var admin = await context.Guild.GetMemberAsync(guildSettings.AdminId);
-            await discordClientWrapper.Messages.ModifyAsync(respondMessage,
-                $"Сервер не запущен\n{admin.Mention} запусти сервак!!!");
-        }
+        });
     }
 
-    private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IGuildSettingsService guildSettingsService;
     private readonly IIpService ipService;
 }

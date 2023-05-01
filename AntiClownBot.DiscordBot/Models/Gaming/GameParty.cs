@@ -26,7 +26,6 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
             Players.Add(discordId);
             await UpdateMessage();
             await CreatePingIfFullParty();
-            await OnPartyObserverUpdate();
         }
 
         public async Task LeaveParty(ulong discordId)
@@ -34,7 +33,6 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
             if (!Players.Contains(discordId)) return;
             Players.Remove(discordId);
             await UpdateMessage();
-            await OnPartyObserverUpdate();
         }
 
         public async Task<DiscordMessage> CreateMessage()
@@ -170,14 +168,12 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
             OnPartyRemove(MessageId);
             isOpened = false;
             await UpdateMessage();
-            await OnPartyObserverUpdate();
         }
 
         public static GameParty RestoreWithDependencies(
             GameParty deserialized,
             IDiscordClientWrapper discordClientWrapper,
             IGuildSettingsService guildSettingsService,
-            Func<Task> onPartyObserverUpdate,
             Action<ulong> onPartyRemove,
             Action<double> onStatsUpdate
         )
@@ -191,7 +187,6 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
                 AttachedRoleId = deserialized.AttachedRoleId,
                 MessageId = deserialized.MessageId,
                 CreationDate = deserialized.CreationDate,
-                OnPartyObserverUpdate = onPartyObserverUpdate,
                 OnPartyRemove = onPartyRemove,
                 OnStatsUpdate = onStatsUpdate
             };
