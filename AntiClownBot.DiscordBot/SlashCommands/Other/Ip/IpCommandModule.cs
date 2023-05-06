@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using CommonServices.IpService;
@@ -18,7 +19,7 @@ public class IpCommandModule : SlashCommandModuleWithMiddlewares
         this.ipService = ipService;
     }
 
-    [SlashCommand("ip", "Узнать адрес майнкрафт-сервера")]
+    [SlashCommand(Interactions.Commands.Ip, "Узнать адрес майнкрафт-сервера")]
     public async Task GetServerIp(
         InteractionContext context,
         [Option("ping", "Призвать админа, чтобы он запустил сервак?")]

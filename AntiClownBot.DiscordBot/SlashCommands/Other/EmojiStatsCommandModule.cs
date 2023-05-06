@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Statistics.Emotes;
 using DSharpPlus.SlashCommands;
@@ -16,7 +17,7 @@ public class EmojiStatsCommandModule : SlashCommandModuleWithMiddlewares
         this.emoteStatsService = emoteStatsService;
     }
 
-    [SlashCommand("emoji", "Статистика использованных на сервере эмоджи")]
+    [SlashCommand(Interactions.Commands.EmojiStats, "Статистика использованных на сервере эмоджи")]
     public async Task GetStats(InteractionContext context)
     {
         await ExecuteAsync(context, async () =>

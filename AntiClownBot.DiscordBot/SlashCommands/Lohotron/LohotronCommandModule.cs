@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Models.Lohotron;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.UserBalance;
@@ -23,7 +24,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Lohotron
             this.apiClient = apiClient;
         }
 
-        [SlashCommand("lohotron", "Прокрутить колесо лохотрона (1 раз в день)")]
+        [SlashCommand(Interactions.Commands.Lohotron, "Прокрутить колесо лохотрона (1 раз в день)")]
         public async Task PlayLohotron(InteractionContext context)
         {
             await ExecuteAsync(context, async () =>

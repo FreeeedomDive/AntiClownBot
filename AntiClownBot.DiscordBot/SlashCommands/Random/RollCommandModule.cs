@@ -1,4 +1,5 @@
-﻿using AntiClownDiscordBotVersion2.SlashCommands.Base;
+﻿using AntiClownDiscordBotVersion2.Models.Interactions;
+using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils;
 using DSharpPlus.SlashCommands;
 
@@ -14,7 +15,7 @@ public class RollCommandModule : SlashCommandModuleWithMiddlewares
         this.randomizer = randomizer;
     }
 
-    [SlashCommand("roll", "Рандомное число от a до b включительно")]
+    [SlashCommand(Interactions.Commands.Roll, "Рандомное число от a до b включительно")]
     public async Task Roll(
         InteractionContext context,
         [Option("a", "a")] long a,

@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils;
@@ -25,7 +26,7 @@ public class WhenCommandModule : SlashCommandModuleWithMiddlewares
         this.randomizer = randomizer;
     }
 
-    [SlashCommand("when", "Узнать время следующего подношения императору")]
+    [SlashCommand(Interactions.Commands.When, "Узнать время следующего подношения императору")]
     public async Task When(InteractionContext context)
     {
         await ExecuteAsync(context, async () =>

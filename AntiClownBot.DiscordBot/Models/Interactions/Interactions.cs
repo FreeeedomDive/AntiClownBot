@@ -32,4 +32,67 @@ public static class Interactions
         public const string DriversSelectDropdown = "DriversSelectDropdown";
         public const string DriversSelectDropdownItemPrefix = "DriversSelectDropdownItem_";
     }
+
+    public static class Commands
+    {
+        // ReSharper disable InconsistentNaming
+        public const string Dev_CreateMessage = "message";
+
+        public const string Dev_DailyReset = "dailyReset";
+
+        public const string Dev_UserEditor_Group = "userEditor";
+        public const string Dev_UserEditor_Coins = "coins";
+        public const string Dev_UserEditor_Lootbox = "lootbox";
+
+        public const string Party_Group = "party";
+        public const string Party_CreateWithOldPrefix = "-g";
+        public const string Party_Create = "-c";
+        public const string Party_All = "-c";
+        public const string Party_Stats = "-s";
+
+        public const string Inventory = "inventory";
+        public const string Lootbox = "lootbox";
+        public const string Shop = "shop";
+
+        public const string Lohotron = "lohotron";
+
+        public const string F1Admin_Group = "f1admin";
+        public const string F1Admin_Predict = "predict";
+        public const string F1Admin_Results = "results";
+        public const string F1Admin_Dnf = "dnf";
+
+        public const string F1_Group = "f1";
+        public const string F1_Predict = "predict";
+        public const string F1_List = "list";
+
+        public const string Ip = "ip";
+
+        public const string ChangeNickname = "nickname";
+
+        public const string EmojiStats = "emoji";
+
+        public const string Lottery = "lottery";
+
+        public const string Race_Group = "race";
+        public const string Race_Drivers = "drivers";
+        public const string Race_Standings = "standings";
+
+        public const string Roll = "roll";
+
+        public const string Select = "select";
+
+        public const string Roles_Group = "roles";
+        public const string Roles_All = "-a";
+        public const string Roles_New = "-n";
+        public const string Roles_Grant = "-g";
+        public const string Roles_Revoke = "-r";
+
+        public const string ScamCoins = "scamCoins";
+
+        public const string Rating = "rating";
+
+        public const string Tribute = "tribute";
+
+        public const string When = "when";
+    }
 }

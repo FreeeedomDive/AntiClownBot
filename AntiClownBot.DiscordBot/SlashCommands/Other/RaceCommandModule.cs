@@ -1,18 +1,19 @@
-﻿using AntiClownDiscordBotVersion2.Models.Race;
+﻿using AntiClownDiscordBotVersion2.Models.Interactions;
+using AntiClownDiscordBotVersion2.Models.Race;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using DSharpPlus.SlashCommands;
 using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Other;
 
-[SlashCommandGroup("race", "Статистика гонок")]
+[SlashCommandGroup(Interactions.Commands.Race_Group, "Статистика гонок")]
 public class RaceCommandModule : SlashCommandModuleWithMiddlewares
 {
     public RaceCommandModule(ICommandExecutor commandExecutor) : base(commandExecutor)
     {
     }
 
-    [SlashCommand("drivers", "Уровень прокачки гонщиков")]
+    [SlashCommand(Interactions.Commands.Race_Drivers, "Уровень прокачки гонщиков")]
     public async Task Drivers(InteractionContext context)
     {
         await ExecuteAsync(context, async () =>
@@ -42,7 +43,7 @@ public class RaceCommandModule : SlashCommandModuleWithMiddlewares
         });
     }
 
-    [SlashCommand("standings", "Личный зачет")]
+    [SlashCommand(Interactions.Commands.Race_Standings, "Личный зачет")]
     public async Task Standings(InteractionContext context)
     {
         await ExecuteAsync(context, async () =>

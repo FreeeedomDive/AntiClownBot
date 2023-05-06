@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
@@ -9,7 +10,7 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
 {
-    [SlashCommandGroup("party", "Собирайте пати в разные игры :)")]
+    [SlashCommandGroup(Interactions.Commands.Party_Group, "Собирайте пати в разные игры :)")]
     public class PartyCommandModule : SlashCommandModuleWithMiddlewares
     {
         public PartyCommandModule(
@@ -24,7 +25,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             this.guildSettingsService = guildSettingsService;
         }
 
-        [SlashCommand("-g", "Быстрое создание пати по-старому")]
+        [SlashCommand(Interactions.Commands.Party_CreateWithOldPrefix, "Быстрое создание пати по-старому")]
         public async Task CreateParty(
             InteractionContext context,
             [Option("game", "Короткое название игры")]
@@ -71,7 +72,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             });
         }
 
-        [SlashCommand("-c", "Создать пати")]
+        [SlashCommand(Interactions.Commands.Party_Create, "Создать пати")]
         public async Task CreateParty(
             InteractionContext context,
             [Option("Name", "Название вашей группы")]
@@ -108,7 +109,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             });
         }
 
-        [SlashCommand("-a", "Список текущих пати")]
+        [SlashCommand(Interactions.Commands.Party_All, "Список текущих пати")]
         public async Task GetCurrentParties(InteractionContext context)
         {
             await ExecuteAsync(context, async () =>
@@ -118,7 +119,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             });
         }
 
-        [SlashCommand("-s", "Статистика по времени сбора фулл пати")]
+        [SlashCommand(Interactions.Commands.Party_Stats, "Статистика по времени сбора фулл пати")]
         public async Task GetStats(InteractionContext context)
         {
             await ExecuteAsync(context, async () =>

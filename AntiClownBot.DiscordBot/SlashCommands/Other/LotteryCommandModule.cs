@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using DSharpPlus.SlashCommands;
 
@@ -14,7 +15,7 @@ public class LotteryCommandModule : SlashCommandModuleWithMiddlewares
         this.discordClientWrapper = discordClientWrapper;
     }
 
-    [SlashCommand("lottery", "Информация о лотерее")]
+    [SlashCommand(Interactions.Commands.Lottery, "Информация о лотерее")]
     public async Task LotteryInfo(InteractionContext context)
     {
         await ExecuteAsync(context, async () =>

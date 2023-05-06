@@ -1,6 +1,7 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Models;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using DSharpPlus.SlashCommands;
@@ -23,7 +24,7 @@ public class TributeCommandModule : SlashCommandModuleWithMiddlewares
         this.guildSettingsService = guildSettingsService;
     }
 
-    [SlashCommand("tribute", "Подношение императору XI")]
+    [SlashCommand(Interactions.Commands.Tribute, "Подношение императору XI")]
     public async Task Tribute(InteractionContext context)
     {
         await ExecuteAsync(context, async () =>
