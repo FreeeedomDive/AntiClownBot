@@ -47,7 +47,7 @@ public static class Interactions
         public const string Party_Group = "party";
         public const string Party_CreateWithOldPrefix = "-g";
         public const string Party_Create = "-c";
-        public const string Party_All = "-c";
+        public const string Party_All = "-a";
         public const string Party_Stats = "-s";
 
         public const string Inventory = "inventory";
