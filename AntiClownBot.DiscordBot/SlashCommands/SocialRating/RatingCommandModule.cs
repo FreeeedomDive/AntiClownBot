@@ -2,6 +2,7 @@
 using AntiClownApiClient.Dto.Constants;
 using AntiClownApiClient.Dto.Models.Items;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
@@ -21,7 +22,7 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
         this.apiClient = apiClient;
     }
 
-    [SlashCommand("scamCoins", "Узнать свой баланс скамкойнов (остальные его не увидят)")]
+    [SlashCommand(Interactions.Commands.ScamCoins, "Узнать свой баланс скамкойнов (остальные его не увидят)")]
     public async Task FetchScamCoins(InteractionContext context)
     {
         await ExecuteEphemeralAsync(context, async () =>
@@ -36,7 +37,7 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
         });
     }
 
-    [SlashCommand("rating", "Полный паспорт пользователя с информацией о балансе и активных предметах")]
+    [SlashCommand(Interactions.Commands.Rating, "Полный паспорт пользователя с информацией о балансе и активных предметах")]
     public async Task Rating(InteractionContext context)
     {
         await ExecuteAsync(context, async () =>

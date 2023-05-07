@@ -1,5 +1,6 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Models.F1;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
@@ -7,7 +8,7 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Other.F1Predictions;
 
-[SlashCommandGroup("f1", "Команды, связанные с гонками Ф1")]
+[SlashCommandGroup(Interactions.Commands.F1_Group, "Команды, связанные с гонками Ф1")]
 public class F1CommandModule : SlashCommandModuleWithMiddlewares
 {
     public F1CommandModule(
@@ -20,7 +21,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
         this.f1PredictionsService = f1PredictionsService;
     }
 
-    [SlashCommand("predict", "Добавить или изменить свое текущее предсказание")]
+    [SlashCommand(Interactions.Commands.F1_Predict, "Добавить или изменить свое текущее предсказание")]
     public async Task Predict(
         InteractionContext interactionContext,
         [Option("tenthPlace", "10 место в гонке")]
@@ -36,7 +37,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
         });
     }
 
-    [SlashCommand("list", "Показать текущие предсказания")]
+    [SlashCommand(Interactions.Commands.F1_List, "Показать текущие предсказания")]
     public async Task ListPredictions(InteractionContext interactionContext)
     {
         await ExecuteAsync(interactionContext, async () =>

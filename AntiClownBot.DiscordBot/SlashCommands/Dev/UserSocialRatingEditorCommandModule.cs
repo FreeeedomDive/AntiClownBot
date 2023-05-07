@@ -1,4 +1,5 @@
 ﻿using AntiClownApiClient;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.UserBalance;
 using DSharpPlus;
@@ -7,7 +8,7 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Dev;
 
-[SlashCommandGroup("userEditor", "Изменить что-то в рейтинге юзера", false)]
+[SlashCommandGroup(Interactions.Commands.Dev_UserEditor_Group, "Изменить что-то в рейтинге юзера", false)]
 [SlashCommandPermissions(Permissions.ViewAuditLog)]
 public class UserSocialRatingEditorCommandModule : SlashCommandModuleWithMiddlewares
 {
@@ -21,7 +22,7 @@ public class UserSocialRatingEditorCommandModule : SlashCommandModuleWithMiddlew
         this.apiClient = apiClient;
     }
 
-    [SlashCommand("coins", "Добавить / убавить скам-койнов")]
+    [SlashCommand(Interactions.Commands.Dev_UserEditor_Coins, "Добавить / убавить скам-койнов")]
     public async Task EditCoins(
         InteractionContext context,
         [Option("user", "Юзер")] DiscordUser user,
@@ -37,7 +38,7 @@ public class UserSocialRatingEditorCommandModule : SlashCommandModuleWithMiddlew
         });
     }
 
-    [SlashCommand("lootbox", "Выдать или забрать лутбокс")]
+    [SlashCommand(Interactions.Commands.Dev_UserEditor_Lootbox, "Выдать или забрать лутбокс")]
     public async Task EditLootboxes(
         InteractionContext context,
         [Option("user", "Юзер")] DiscordUser user,

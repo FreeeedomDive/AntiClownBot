@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.UserBalance;
 using DSharpPlus.Entities;
@@ -21,7 +22,7 @@ public class ChangeNicknameCommandModule : SlashCommandModuleWithMiddlewares
         this.userBalanceService = userBalanceService;
     }
 
-    [SlashCommand("nickname", "Изменить никнейм себе или другому челу")]
+    [SlashCommand(Interactions.Commands.ChangeNickname, "Изменить никнейм себе или другому челу")]
     public async Task ChangeNickname(
         InteractionContext context,
         [Option("member", "Чел, которому хочешь поменять никнейм")]

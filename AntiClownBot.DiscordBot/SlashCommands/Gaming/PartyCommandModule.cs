@@ -1,15 +1,15 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils;
-using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
 {
-    [SlashCommandGroup("party", "Собирайте пати в разные игры :)")]
+    [SlashCommandGroup(Interactions.Commands.Party_Group, "Собирайте пати в разные игры :)")]
     public class PartyCommandModule : SlashCommandModuleWithMiddlewares
     {
         public PartyCommandModule(
@@ -24,7 +24,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             this.guildSettingsService = guildSettingsService;
         }
 
-        [SlashCommand("-g", "Быстрое создание пати по-старому")]
+        [SlashCommand(Interactions.Commands.Party_CreateWithOldPrefix, "Быстрое создание пати по-старому")]
         public async Task CreateParty(
             InteractionContext context,
             [Option("game", "Короткое название игры")]
@@ -35,10 +35,6 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             await ExecuteEphemeralAsync(context, async () =>
             {
                 var guildSettings = guildSettingsService.GetGuildSettings();
-                if (!await IsMessageInRightChannelAsync(context, guildSettings))
-                {
-                    return;
-                }
 
                 if (!string.IsNullOrEmpty(description))
                 {
@@ -71,7 +67,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             });
         }
 
-        [SlashCommand("-c", "Создать пати")]
+        [SlashCommand(Interactions.Commands.Party_Create, "Создать пати")]
         public async Task CreateParty(
             InteractionContext context,
             [Option("Name", "Название вашей группы")]
@@ -83,11 +79,6 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
         {
             await ExecuteEphemeralAsync(context, async () =>
             {
-                if (!await IsMessageInRightChannelAsync(context))
-                {
-                    return;
-                }
-
                 if (string.IsNullOrEmpty(name))
                 {
                     await RespondToInteractionAsync(context,
@@ -108,7 +99,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             });
         }
 
-        [SlashCommand("-a", "Список текущих пати")]
+        [SlashCommand(Interactions.Commands.Party_All, "Список текущих пати")]
         public async Task GetCurrentParties(InteractionContext context)
         {
             await ExecuteAsync(context, async () =>
@@ -118,7 +109,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
             });
         }
 
-        [SlashCommand("-s", "Статистика по времени сбора фулл пати")]
+        [SlashCommand(Interactions.Commands.Party_Stats, "Статистика по времени сбора фулл пати")]
         public async Task GetStats(InteractionContext context)
         {
             await ExecuteAsync(context, async () =>
@@ -135,24 +126,6 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
                     $"В среднем пати собиралось за {Utility.GetTimeDiff(TimeSpan.FromSeconds(partyStats.TotalSeconds / partyStats.TotalFullParties))}";
                 await RespondToInteractionAsync(context, content);
             });
-        }
-
-        private async Task<bool> IsMessageInRightChannelAsync(InteractionContext context,
-            GuildSettings? guildSettings = null)
-        {
-            guildSettings ??= guildSettingsService.GetGuildSettings();
-            if (context.Channel.Id == guildSettings.PartyChannelId ||
-                context.Channel.Id == guildSettings.HiddenTestChannelId)
-            {
-                return true;
-            }
-
-            await RespondToInteractionAsync(context,
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("Madge")} " +
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("point_right")} " +
-                $"{(await discordClientWrapper.Guilds.FindDiscordChannel(guildSettings.PartyChannelId)).Mention}"
-            );
-            return false;
         }
 
         private readonly IDiscordClientWrapper discordClientWrapper;

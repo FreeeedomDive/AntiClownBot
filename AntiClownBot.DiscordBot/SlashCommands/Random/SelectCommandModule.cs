@@ -1,4 +1,5 @@
-﻿using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+﻿using AntiClownDiscordBotVersion2.Models.Interactions;
+using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils;
 using DSharpPlus.SlashCommands;
@@ -17,7 +18,7 @@ public class SelectCommandModule : SlashCommandModuleWithMiddlewares
         this.guildSettingsService = guildSettingsService;
     }
 
-    [SlashCommand("select", "Если вы не можете решиться между несколькими вариантами, бот сделает это за вас")]
+    [SlashCommand(Interactions.Commands.Select, "Если вы не можете решиться между несколькими вариантами, бот сделает это за вас")]
     public async Task Select(
         InteractionContext context,
         [Option("options", "Варианты, разделенные между собой символами // (минимум 2)")]

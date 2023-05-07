@@ -9,7 +9,7 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Other.F1Predictions;
 
-[SlashCommandGroup("f1admin", "Админка для предиктов ф1", false)]
+[SlashCommandGroup(Interactions.Commands.F1Admin_Group, "Админка для предиктов ф1", false)]
 [SlashCommandPermissions(Permissions.ViewAuditLog)]
 public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
 {
@@ -23,7 +23,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         this.f1PredictionsService = f1PredictionsService;
     }
 
-    [SlashCommand("predict", "Добавить или изменить текущее предсказание конкретному челику")]
+    [SlashCommand(Interactions.Commands.F1Admin_Predict, "Добавить или изменить текущее предсказание конкретному челику")]
     public async Task Predict(
         InteractionContext interactionContext,
         [Option("user", "Челик, которому засчитать предсказание")]
@@ -40,7 +40,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         });
     }
 
-    [SlashCommand("results", "Внести результаты гонки")]
+    [SlashCommand(Interactions.Commands.F1Admin_Results, "Внести результаты гонки")]
     public async Task CreateRaceResultsMessage(InteractionContext interactionContext)
     {
         await ExecuteAsync(interactionContext, async () =>
@@ -58,7 +58,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         });
     }
 
-    [SlashCommand("dnf", "Внести результаты первого выбывшего гонщика")]
+    [SlashCommand(Interactions.Commands.F1Admin_Dnf, "Внести результаты первого выбывшего гонщика")]
     public async Task MakeTenthPlaceResults(
         InteractionContext interactionContext,
         [Option("driver", "Первый выбывший гонщик")]

@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Shop;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
@@ -28,7 +29,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
             this.shopService = shopService;
         }
 
-        [SlashCommand("inventory", "Посмотреть свой инветарь")]
+        [SlashCommand(Interactions.Commands.Inventory, "Посмотреть свой инветарь")]
         public async Task GetInventory(InteractionContext context)
         {
             await ExecuteAsync(context, async () =>
@@ -46,7 +47,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
             });
         }
 
-        [SlashCommand("lootbox", "Открыть лутбокс")]
+        [SlashCommand(Interactions.Commands.Lootbox, "Открыть лутбокс")]
         public async Task OpenLootbox(InteractionContext context)
         {
             await ExecuteAsync(context, async () =>
@@ -81,7 +82,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
             });
         }
 
-        [SlashCommand("shop", "Посмотреть свой магазин")]
+        [SlashCommand(Interactions.Commands.Shop, "Открыть магазин")]
         public async Task GetShop(InteractionContext context)
         {
             await ExecuteAsync(context, async () =>

@@ -86,6 +86,7 @@ public static class StandardKernelExtensions
         ICommandExecutor commandExecutor = new CommandExecutor(ninjectKernel.Get<IServiceProvider>());
         commandExecutor.AddMiddleware<LoggingMiddleware>();
         commandExecutor.AddMiddleware<DeferredMessageMiddleware>();
+        commandExecutor.AddMiddleware<CorrectChatCommandUsageMiddleware>();
         ninjectKernel.Bind<ICommandExecutor>().ToConstant(commandExecutor);
 
         return ninjectKernel;

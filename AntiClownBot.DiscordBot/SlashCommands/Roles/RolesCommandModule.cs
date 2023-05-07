@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
@@ -9,7 +10,7 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClownDiscordBotVersion2.SlashCommands.Roles;
 
-[SlashCommandGroup("roles", "Управление ролями")]
+[SlashCommandGroup(Interactions.Commands.Roles_Group, "Управление ролями")]
 public class RolesCommandModule : SlashCommandModuleWithMiddlewares
 {
     public RolesCommandModule(
@@ -28,7 +29,7 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
         this.partyService = partyService;
     }
 
-    [SlashCommand("-a", "Посмотреть доступные роли")]
+    [SlashCommand(Interactions.Commands.Roles_All, "Посмотреть доступные роли")]
     public async Task ListRolesAsync(
         InteractionContext context
     )
@@ -43,7 +44,7 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
         });
     }
 
-    [SlashCommand("-n", "Создать новую роль и получить ее себе")]
+    [SlashCommand(Interactions.Commands.Roles_New, "Создать новую роль и получить ее себе")]
     public async Task CreateRoleAsync(
         InteractionContext context,
         [Option("name", "Название новой роли")]
@@ -87,7 +88,7 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
         });
     }
 
-    [SlashCommand("-g", "Получить роль")]
+    [SlashCommand(Interactions.Commands.Roles_Grant, "Получить роль")]
     public async Task AddRoleToUser(
         InteractionContext context,
         [Option("role", "Роль")] DiscordRole role
@@ -135,8 +136,8 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
         });
     }
 
-    [SlashCommand("-r", "Убрать роль")]
-    public async Task LeaveRoleAsync(
+    [SlashCommand(Interactions.Commands.Roles_Revoke, "Убрать роль")]
+    public async Task RevokeRoleAsync(
         InteractionContext context,
         [Option("role", "Роль")] DiscordRole role
     )

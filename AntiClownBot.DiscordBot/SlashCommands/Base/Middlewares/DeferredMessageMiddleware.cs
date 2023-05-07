@@ -10,11 +10,6 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Base.Middlewares;
 /// </summary>
 public class DeferredMessageMiddleware : ICommandMiddleware
 {
-    public DeferredMessageMiddleware(IDiscordClientWrapper discordClientWrapper)
-    {
-        this.discordClientWrapper = discordClientWrapper;
-    }
-
     public async Task ExecuteAsync(SlashCommandContext context, Func<SlashCommandContext, Task> next)
     {
         await context.Context.CreateResponseAsync(
@@ -23,6 +18,4 @@ public class DeferredMessageMiddleware : ICommandMiddleware
         );
         await next(context);
     }
-
-    private readonly IDiscordClientWrapper discordClientWrapper;
 }

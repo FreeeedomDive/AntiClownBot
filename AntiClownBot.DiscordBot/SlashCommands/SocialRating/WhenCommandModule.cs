@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils;
@@ -15,34 +16,19 @@ public class WhenCommandModule : SlashCommandModuleWithMiddlewares
         ICommandExecutor commandExecutor,
         IDiscordClientWrapper discordClientWrapper,
         IApiClient apiClient,
-        IGuildSettingsService guildSettingsService,
         IRandomizer randomizer
     ) : base(commandExecutor)
     {
         this.discordClientWrapper = discordClientWrapper;
         this.apiClient = apiClient;
-        this.guildSettingsService = guildSettingsService;
         this.randomizer = randomizer;
     }
 
-    [SlashCommand("when", "Узнать время следующего подношения императору")]
+    [SlashCommand(Interactions.Commands.When, "Узнать время следующего подношения императору")]
     public async Task When(InteractionContext context)
     {
         await ExecuteAsync(context, async () =>
         {
-            var guildSettings = guildSettingsService.GetGuildSettings();
-            if (context.Channel.Id != guildSettings.TributeChannelId &&
-                context.Channel.Id != guildSettings.HiddenTestChannelId)
-            {
-                var madgeEmote = await discordClientWrapper.Emotes.FindEmoteAsync("Madge");
-                var pointRightEmote = await discordClientWrapper.Emotes.FindEmoteAsync("point_right");
-                var tributeChannel =
-                    await discordClientWrapper.Guilds.FindDiscordChannel(guildSettings.TributeChannelId);
-                await RespondToInteractionAsync(context,
-                    $"{madgeEmote} {pointRightEmote} {tributeChannel.Mention}");
-                return;
-            }
-
             var embedBuilder = new DiscordEmbedBuilder();
             embedBuilder.WithTitle("А когда же подношение???");
 
@@ -82,6 +68,5 @@ public class WhenCommandModule : SlashCommandModuleWithMiddlewares
 
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IApiClient apiClient;
-    private readonly IGuildSettingsService guildSettingsService;
     private readonly IRandomizer randomizer;
 }

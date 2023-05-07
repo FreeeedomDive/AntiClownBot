@@ -1,10 +1,11 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using DSharpPlus;
 using DSharpPlus.SlashCommands;
 
-namespace AntiClownDiscordBotVersion2.SlashCommands.Other;
+namespace AntiClownDiscordBotVersion2.SlashCommands.Dev;
 
 public class DailyResetCommandModule : SlashCommandModuleWithMiddlewares
 {
@@ -20,8 +21,8 @@ public class DailyResetCommandModule : SlashCommandModuleWithMiddlewares
         this.lohotron = lohotron;
     }
 
-    [SlashCommand("dailyReset", "Ручной ежедневный сброс (если автоматический не сработал)", false)]
-    [SlashCommandPermissions(Permissions.Administrator)]
+    [SlashCommand(Interactions.Commands.Dev_DailyReset, "Ручной ежедневный сброс (если автоматический не сработал)", false)]
+    [SlashCommandPermissions(Permissions.ViewAuditLog)]
     public async Task ManualDailyReset(InteractionContext context)
     {
         await ExecuteAsync(context, async () =>

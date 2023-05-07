@@ -1,4 +1,5 @@
-﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+﻿using System.Text;
+using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Statistics.Daily;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
@@ -28,17 +29,21 @@ namespace AntiClownDiscordBotVersion2.Events.DailyEvents
 
         public async Task<DiscordMessage> TellBackStory()
         {
-            var (majorKey, majorValue) = dailyStatisticsService.DailyStatistics.CreditsById.OrderBy(x => x.Value).Last();
-            var majorUserName = (await discordClientWrapper.Members.GetAsync(majorKey)).ServerOrUserName();
-            var (bomjKey, bomjValue) = dailyStatisticsService.DailyStatistics.CreditsById.OrderBy(x => x.Value).First();
-            var bomjUserName = (await discordClientWrapper.Members.GetAsync(bomjKey)).ServerOrUserName();
+            var messageContentBuilder = new StringBuilder()
+                .AppendLine($"Граждане наш Clown-City за день заработать {dailyStatisticsService.DailyStatistics.CreditsCollected}")
+                .AppendLine($"Мною было проводить {dailyStatisticsService.DailyStatistics.EventsCount} событий");
+            if (dailyStatisticsService.DailyStatistics.CreditsById.Count > 0)
+            {
+                var (majorKey, majorValue) = dailyStatisticsService.DailyStatistics.CreditsById.MaxBy(x => x.Value);
+                var majorUserName = (await discordClientWrapper.Members.GetAsync(majorKey)).ServerOrUserName();
+                var (bomjKey, bomjValue) = dailyStatisticsService.DailyStatistics.CreditsById.MinBy(x => x.Value);
+                var bomjUserName = (await discordClientWrapper.Members.GetAsync(bomjKey)).ServerOrUserName();
+                messageContentBuilder
+                    .AppendLine($"Мажор дня - {majorUserName} : {majorValue}")
+                    .Append($"Бомж дня - {bomjUserName} : {bomjValue}");
+            }
 
-            var messageContent = "Добрый вечер, Clown-City!\n" +
-                   $"Граждане наш Clown-City за день заработать {dailyStatisticsService.DailyStatistics.CreditsCollected}\n" +
-                   $"Мною было проводить {dailyStatisticsService.DailyStatistics.EventsCount} событий\n" +
-                   $"Мажор дня - {majorUserName} : {majorValue}\n" +
-                   $"Бомж дня - {bomjUserName} : {bomjValue}";
-            return await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId, messageContent);
+            return await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId, messageContentBuilder.ToString());
         }
 
         public bool HasRelatedEvents() => RelatedEvents.Count > 0;
