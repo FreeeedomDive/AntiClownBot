@@ -6,7 +6,7 @@ using AntiClown.Tools.Utility.Extensions;
 using FluentAssertions;
 using SqlRepositoryBase.Core.Exceptions;
 
-namespace IntegrationTests.Shops;
+namespace AntiClown.Api.Core.IntegrationTests.Shops;
 
 public class ShopsServiceTests : IntegrationTestsBase
 {

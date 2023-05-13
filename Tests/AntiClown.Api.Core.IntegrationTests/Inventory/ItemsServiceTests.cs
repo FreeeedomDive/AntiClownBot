@@ -7,7 +7,7 @@ using AntiClown.Api.Dto.Exceptions.Items;
 using FluentAssertions;
 using SqlRepositoryBase.Core.Exceptions;
 
-namespace IntegrationTests.Inventory;
+namespace AntiClown.Api.Core.IntegrationTests.Inventory;
 
 public class ItemsServiceTests : IntegrationTestsBase
 {

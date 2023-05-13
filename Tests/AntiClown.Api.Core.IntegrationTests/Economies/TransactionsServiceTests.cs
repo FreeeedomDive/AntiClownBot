@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 
-namespace IntegrationTests.Economies;
+namespace AntiClown.Api.Core.IntegrationTests.Economies;
 
 public class TransactionsServiceTests : IntegrationTestsBase
 {

@@ -16,7 +16,7 @@ using AutoFixture;
 using AutoMapper;
 using SqlRepositoryBase.Core.Repository;
 
-namespace IntegrationTests;
+namespace AntiClown.Api.Core.IntegrationTests;
 
 public class IntegrationTestsBase
 {

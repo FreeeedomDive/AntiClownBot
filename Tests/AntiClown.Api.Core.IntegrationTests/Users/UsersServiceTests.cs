@@ -1,7 +1,7 @@
 ﻿using AntiClown.Api.Core.Users.Domain;
 using FluentAssertions;
 
-namespace IntegrationTests.Users;
+namespace AntiClown.Api.Core.IntegrationTests.Users;
 
 public class UsersServiceTests : IntegrationTestsBase
 {

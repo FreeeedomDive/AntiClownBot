@@ -2,7 +2,7 @@
 using AntiClown.Api.Core.Inventory.Domain.Items.Builders;
 using FluentAssertions;
 
-namespace IntegrationTests.Inventory;
+namespace AntiClown.Api.Core.IntegrationTests.Inventory;
 
 public class ItemBuilderTests : IntegrationTestsBase
 {

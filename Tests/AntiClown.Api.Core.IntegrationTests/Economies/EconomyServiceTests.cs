@@ -3,7 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using SqlRepositoryBase.Core.Exceptions;
 
-namespace IntegrationTests.Economies;
+namespace AntiClown.Api.Core.IntegrationTests.Economies;
 
 public class EconomyServiceTests : IntegrationTestsBase
 {
