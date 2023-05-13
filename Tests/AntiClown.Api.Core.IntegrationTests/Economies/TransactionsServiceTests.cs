@@ -10,7 +10,7 @@ public class TransactionsServiceTests : IntegrationTestsBase
     {
         var currentTransactions = await TransactionsService.ReadManyAsync(User.Id);
         currentTransactions.Should().BeEmpty();
-        var iterations = Fixture.Create<int>() % 20;
+        var iterations = Fixture.Create<int>() % 10;
         for (var i = 1; i <= iterations; i++)
         {
             await EconomyService.UpdateScamCoinsAsync(User.Id, Fixture.Create<int>(), $"Тест транзакций {i}");

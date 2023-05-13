@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/inventories")]
 public class InventoryController : Controller
 {
     public InventoryController(

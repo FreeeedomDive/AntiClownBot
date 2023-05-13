@@ -5,4 +5,5 @@ namespace AntiClown.Api.Core.Economies.Services;
 public interface ITributeService
 {
     Task<Tribute> MakeTributeAsync(Guid userId);
+    Task<DateTime> WhenNextTributeAsync(Guid userId);
 }

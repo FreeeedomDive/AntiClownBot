@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/users")]
 public class UsersController : Controller
 {
     public UsersController(

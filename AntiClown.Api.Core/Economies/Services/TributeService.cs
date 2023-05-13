@@ -25,6 +25,12 @@ public class TributeService : ITributeService
         this.scheduler = scheduler;
     }
 
+    public async Task<DateTime> WhenNextTributeAsync(Guid userId)
+    {
+        var economy = await economyService.ReadEconomyAsync(userId);
+        return economy.NextTribute;
+    }
+
     public async Task<Tribute> MakeTributeAsync(Guid userId)
     {
         return await InnerMakeTributeAsync(userId, false);
@@ -65,7 +71,7 @@ public class TributeService : ITributeService
             UserId = userId,
             TributeDateTime = DateTime.UtcNow,
             IsAutomatic = isAutomatic,
-            CooldownInSeconds = cooldown,
+            CooldownInMilliseconds = cooldown,
             CooldownModifiers = modifiers,
             ScamCoins = tributeQuality,
             IsNextAutomatic = isNextTributeAutomatic,
@@ -148,8 +154,7 @@ public class TributeService : ITributeService
     private async Task MakeTributeAsync(Tribute tribute)
     {
         await economyService.UpdateScamCoinsAsync(tribute.UserId, tribute.ScamCoins, "Подношение");
-        await economyService.UpdateNextTributeAsync(tribute.UserId,
-            tribute.TributeDateTime.AddSeconds(tribute.CooldownInSeconds));
+        await economyService.UpdateNextTributeAsync(tribute.UserId, tribute.TributeDateTime.AddMilliseconds(tribute.CooldownInMilliseconds));
 
         if (tribute.HasGiftedLootBox)
         {
@@ -183,7 +188,7 @@ public class TributeService : ITributeService
             catch (TributeIsOnCooldownException)
             {
             }
-        }, TimeSpan.FromSeconds(tribute.CooldownInSeconds + 1));
+        }, TimeSpan.FromMilliseconds(tribute.CooldownInMilliseconds + 1000));
     }
 
     private readonly IEconomyService economyService;

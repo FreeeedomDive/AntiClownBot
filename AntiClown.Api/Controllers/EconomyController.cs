@@ -1,10 +1,11 @@
 ﻿using AntiClown.Api.Core.Economies.Services;
+using AntiClown.Api.Dto.Economies;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/economy/{userId:guid}")]
 public class EconomyController : Controller
 {
     public EconomyController(
@@ -14,6 +15,27 @@ public class EconomyController : Controller
     {
         this.economyService = economyService;
         this.mapper = mapper;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<EconomyDto>> Read([FromRoute] Guid userId)
+    {
+        var economy = await economyService.ReadEconomyAsync(userId);
+        return mapper.Map<EconomyDto>(economy);
+    }
+
+    [HttpPost("scamCoins")]
+    public async Task<ActionResult> UpdateScamCoins([FromRoute] Guid userId, [FromBody] UpdateScamCoinsDto updateScamCoinsDto)
+    {
+        await economyService.UpdateScamCoinsAsync(updateScamCoinsDto.UserId, updateScamCoinsDto.ScamCoinsDiff, updateScamCoinsDto.Reason);
+        return Ok();
+    }
+
+    [HttpPost("lootboxes")]
+    public async Task<ActionResult> UpdateLootboxes([FromRoute] Guid userId, [FromBody] UpdateLootBoxesDto lootBoxesDto)
+    {
+        await economyService.UpdateLootBoxesAsync(lootBoxesDto.UserId, lootBoxesDto.LootBoxesDiff);
+        return Ok();
     }
 
     private readonly IEconomyService economyService;

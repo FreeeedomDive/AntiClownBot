@@ -4,6 +4,7 @@ using AntiClown.Api.Core.Economies.Services;
 using AntiClown.Api.Core.Inventory.Repositories;
 using AntiClown.Api.Core.Inventory.Services;
 using AntiClown.Api.Core.Options;
+using AntiClown.Api.Core.Schedules;
 using AntiClown.Api.Core.Shops.Repositories.Items;
 using AntiClown.Api.Core.Shops.Repositories.Shops;
 using AntiClown.Api.Core.Shops.Repositories.Stats;
@@ -12,6 +13,7 @@ using AntiClown.Api.Core.Transactions.Repositories;
 using AntiClown.Api.Core.Transactions.Services;
 using AntiClown.Api.Core.Users.Repositories;
 using AntiClown.Api.Core.Users.Services;
+using AntiClown.Api.Middlewares;
 using Hangfire;
 using Hangfire.PostgreSql;
 using MassTransit;
@@ -43,6 +45,7 @@ public class Startup
         services.AddTransient<DbContext, DatabaseContext>();
         services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
         services.ConfigurePostgreSql();
+
         services.AddMassTransit(massTransitConfiguration =>
         {
             massTransitConfiguration.UsingRabbitMq((context, rabbitMqConfiguration) =>
@@ -74,6 +77,10 @@ public class Startup
         services.AddTransient<IItemsValidator, ItemsValidator>();
         services.AddTransient<IShopsValidator, ShopsValidator>();
 
+        // configure other stuff
+        services.AddTransient<ITributeMessageProducer, TributeMessageProducer>();
+        services.AddTransient<IScheduler, HangfireScheduler>();
+
         // configure services
         services.AddTransient<IUsersService, UsersService>();
         services.AddTransient<INewUserService, NewUserService>();
@@ -81,6 +88,7 @@ public class Startup
         services.AddTransient<IEconomyService, EconomyService>();
         services.AddTransient<IItemsService, ItemsService>();
         services.AddTransient<IShopsService, ShopsService>();
+        services.AddTransient<ITributeService, TributeService>();
 
         // configure HangFire
         services.AddHangfire(config =>
@@ -97,6 +105,8 @@ public class Startup
 
         app.UseRouting();
         app.UseWebSockets();
+
+        app.UseMiddleware<ServiceExceptionHandlingMiddleware>();
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
         app.UseHangfireDashboard();
