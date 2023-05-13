@@ -40,27 +40,27 @@ public class ShopsService : IShopsService
         await shopStatsRepository.CreateAsync(new ShopStats { Id = userId });
     }
 
-    public async Task ResetShop(Guid userId)
+    public async Task ResetShop(Guid shopId)
     {
-        await ResetShop(userId, false);
+        await ResetShop(shopId, false);
     }
 
-    public async Task<CurrentShopInfo> ReadCurrentShopAsync(Guid userId)
+    public async Task<CurrentShopInfo> ReadCurrentShopAsync(Guid shopId)
     {
-        var shop = await shopsRepository.ReadAsync(userId);
-        var items = await shopItemsRepository.FindAsync(userId);
+        var shop = await shopsRepository.ReadAsync(shopId);
+        var items = await shopItemsRepository.FindAsync(shopId);
         return new CurrentShopInfo
         {
-            Id = userId,
+            Id = shopId,
             ReRollPrice = shop.ReRollPrice,
             FreeReveals = shop.FreeReveals,
             Items = items,
         };
     }
 
-    public async Task<ShopItem> RevealAsync(Guid userId, Guid itemId)
+    public async Task<ShopItem> RevealAsync(Guid shopId, Guid itemId)
     {
-        var shop = await shopsRepository.ReadAsync(userId);
+        var shop = await shopsRepository.ReadAsync(shopId);
         await shopsValidator.ValidateRevealAsync(shop, itemId);
         var item = (await shopItemsRepository.TryReadAsync(itemId))!;
         if (item.IsRevealed || item.IsOwned)
@@ -79,10 +79,10 @@ public class ShopsService : IShopsService
         }
         else
         {
-            await economyService.UpdateScamCoinsAsync(userId, -price, $"Распознавание предмета {itemId}");
+            await economyService.UpdateScamCoinsAsync(shopId, -price, $"Распознавание предмета {itemId}");
         }
 
-        var stats = await shopStatsRepository.ReadAsync(userId);
+        var stats = await shopStatsRepository.ReadAsync(shopId);
         stats.TotalReveals++;
         stats.ScamCoinsLostOnReveals += price;
         await shopStatsRepository.UpdateAsync(stats);
@@ -90,9 +90,9 @@ public class ShopsService : IShopsService
         return item;
     }
 
-    public async Task<BaseItem> BuyAsync(Guid userId, Guid itemId)
+    public async Task<BaseItem> BuyAsync(Guid shopId, Guid itemId)
     {
-        var shop = await shopsRepository.ReadAsync(userId);
+        var shop = await shopsRepository.ReadAsync(shopId);
         await shopsValidator.ValidateBuyAsync(shop, itemId);
         var shopItem = (await shopItemsRepository.TryReadAsync(itemId))!;
         var newInventoryItem = ItemBuilder.BuildRandomItem(options =>
@@ -104,11 +104,11 @@ public class ShopsService : IShopsService
         shopItem.IsOwned = true;
         await shopItemsRepository.UpdateAsync(shopItem);
 
-        await itemsService.WriteItemAsync(userId, newInventoryItem);
+        await itemsService.WriteItemAsync(shopId, newInventoryItem);
 
-        await economyService.UpdateScamCoinsAsync(userId, -shopItem.Price, $"Покупка предмета {newInventoryItem.Id}");
+        await economyService.UpdateScamCoinsAsync(shopId, -shopItem.Price, $"Покупка предмета {newInventoryItem.Id}");
 
-        var stats = await shopStatsRepository.ReadAsync(userId);
+        var stats = await shopStatsRepository.ReadAsync(shopId);
         stats.ItemsBought++;
         stats.ScamCoinsLostOnPurchases += shopItem.Price;
         await shopStatsRepository.UpdateAsync(stats);
@@ -116,12 +116,12 @@ public class ShopsService : IShopsService
         return newInventoryItem;
     }
 
-    public async Task ReRollAsync(Guid userId)
+    public async Task ReRollAsync(Guid shopId)
     {
-        var shop = await shopsRepository.ReadAsync(userId);
+        var shop = await shopsRepository.ReadAsync(shopId);
         await shopsValidator.ValidateReRollAsync(shop);
 
-        await ResetShopItemsAsync(userId);
+        await ResetShopItemsAsync(shopId);
 
         var price = shop.ReRollPrice;
         shop.ReRollPrice = Math.Max(
@@ -130,12 +130,17 @@ public class ShopsService : IShopsService
         );
         await shopsRepository.UpdateAsync(shop);
 
-        await economyService.UpdateScamCoinsAsync(userId, price, "Реролл магазина");
+        await economyService.UpdateScamCoinsAsync(shopId, -price, "Реролл магазина");
 
-        var stats = await shopStatsRepository.ReadAsync(userId);
+        var stats = await shopStatsRepository.ReadAsync(shopId);
         stats.TotalReRolls++;
         stats.ScamCoinsLostOnReRolls += price;
         await shopStatsRepository.UpdateAsync(stats);
+    }
+
+    public async Task<ShopStats> ReasStats(Guid shopId)
+    {
+        return await shopStatsRepository.ReadAsync(shopId);
     }
 
     private async Task ResetShopItemsAsync(Guid shopId)
@@ -150,10 +155,10 @@ public class ShopsService : IShopsService
         await shopItemsRepository.CreateManyAsync(newItems);
     }
 
-    private async Task ResetShop(Guid userId, bool create)
+    private async Task ResetShop(Guid shopId, bool create)
     {
         var shop = Shop.Default;
-        shop.Id = userId;
+        shop.Id = shopId;
         if (create)
         {
             await shopsRepository.CreateAsync(shop);

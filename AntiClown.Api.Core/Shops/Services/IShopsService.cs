@@ -6,9 +6,10 @@ namespace AntiClown.Api.Core.Shops.Services;
 public interface IShopsService
 {
     Task CreateNewShopForUserAsync(Guid userId);
-    Task ResetShop(Guid userId);
-    Task<CurrentShopInfo> ReadCurrentShopAsync(Guid userId);
-    Task<ShopItem> RevealAsync(Guid userId, Guid itemId);
-    Task<BaseItem> BuyAsync(Guid userId, Guid itemId);
-    Task ReRollAsync(Guid userId);
+    Task ResetShop(Guid shopId);
+    Task<CurrentShopInfo> ReadCurrentShopAsync(Guid shopId);
+    Task<ShopItem> RevealAsync(Guid shopId, Guid itemId);
+    Task<BaseItem> BuyAsync(Guid shopId, Guid itemId);
+    Task ReRollAsync(Guid shopId);
+    Task<ShopStats> ReasStats(Guid shopId);
 }
