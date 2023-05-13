@@ -1,11 +1,10 @@
-﻿namespace AntiClown.Api.Core.Economies.Domain;
+﻿namespace AntiClown.Messages.Dto;
 
-public class Tribute
+public class TributeMessageDto
 {
     public Guid UserId { get; set; }
     public DateTime TributeDateTime { get; set; }
     public int ScamCoins { get; set; }
-    public int CooldownInSeconds { get; set; }
     public bool IsAutomatic { get; set; }
     public bool IsNextAutomatic { get; set; }
     public Dictionary<Guid, int> CooldownModifiers { get; set; }

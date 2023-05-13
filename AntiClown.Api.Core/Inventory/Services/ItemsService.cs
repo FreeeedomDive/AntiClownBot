@@ -35,6 +35,14 @@ public class ItemsService : IItemsService
         });
     }
 
+    public async Task<BaseItem[]> ReadItemsWithNameAsync(ItemName name)
+    {
+        return await itemsRepository.FindAsync(new ItemsFilter
+        {
+            Name = name.ToString()
+        });
+    }
+
     public async Task<BaseItem[]> ReadAllActiveItemsForUserAsync(Guid userId)
     {
         return await itemsRepository.FindAsync(new ItemsFilter
@@ -54,7 +62,7 @@ public class ItemsService : IItemsService
         };
         var lootBoxReward = new LootBoxReward
         {
-            ScamCoinsReward = Randomizer.GetRandomNumberBetweenIncludeRange(100, 500),
+            ScamCoinsReward = Randomizer.GetRandomNumberInclusive(100, 500),
             Items = itemsRewardRules
                 .Where(rule => rule())
                 .Select(_ => ItemBuilder.BuildRandomItem())

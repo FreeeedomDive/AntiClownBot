@@ -108,11 +108,11 @@ namespace AntiClown.Api.Core.Inventory.Domain.Items.Builders
 
         private static readonly Dictionary<Rarity, Func<int>> RandomStatsDistributions = new()
         {
-            { Rarity.Common, () => Randomizer.GetRandomNumberBetweenIncludeRange(1, 3) },
-            { Rarity.Rare, () => Randomizer.GetRandomNumberBetweenIncludeRange(1, 4) },
-            { Rarity.Epic, () => Randomizer.GetRandomNumberBetweenIncludeRange(2, 4) },
-            { Rarity.Legendary, () => Randomizer.GetRandomNumberBetweenIncludeRange(2, 5) },
-            { Rarity.BlackMarket, () => Randomizer.GetRandomNumberBetweenIncludeRange(3, 5) }
+            { Rarity.Common, () => Randomizer.GetRandomNumberInclusive(1, 3) },
+            { Rarity.Rare, () => Randomizer.GetRandomNumberInclusive(1, 4) },
+            { Rarity.Epic, () => Randomizer.GetRandomNumberInclusive(2, 4) },
+            { Rarity.Legendary, () => Randomizer.GetRandomNumberInclusive(2, 5) },
+            { Rarity.BlackMarket, () => Randomizer.GetRandomNumberInclusive(3, 5) }
         };
 
         private const int BaseCooldownReducePercent = 8;

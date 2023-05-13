@@ -72,20 +72,20 @@ namespace AntiClown.Api.Core.Inventory.Domain.Items.Builders
 
         private static readonly Dictionary<Rarity, Func<int>> TributeDecreaseGenerator = new()
         {
-            { Rarity.Common, () => BaseTributeDecrease + Randomizer.GetRandomNumberBetweenIncludeRange(0, 9) },
-            { Rarity.Rare, () => BaseTributeDecrease + Randomizer.GetRandomNumberBetweenIncludeRange(10, 19) },
-            { Rarity.Epic, () => BaseTributeDecrease + Randomizer.GetRandomNumberBetweenIncludeRange(20, 24) },
-            { Rarity.Legendary, () => BaseTributeDecrease + Randomizer.GetRandomNumberBetweenIncludeRange(25, 30) },
-            { Rarity.BlackMarket, () => BaseTributeDecrease + Randomizer.GetRandomNumberBetweenIncludeRange(0, 30) }
+            { Rarity.Common, () => BaseTributeDecrease + Randomizer.GetRandomNumberInclusive(0, 9) },
+            { Rarity.Rare, () => BaseTributeDecrease + Randomizer.GetRandomNumberInclusive(10, 19) },
+            { Rarity.Epic, () => BaseTributeDecrease + Randomizer.GetRandomNumberInclusive(20, 24) },
+            { Rarity.Legendary, () => BaseTributeDecrease + Randomizer.GetRandomNumberInclusive(25, 30) },
+            { Rarity.BlackMarket, () => BaseTributeDecrease + Randomizer.GetRandomNumberInclusive(0, 30) }
         };
 
         private static readonly Dictionary<Rarity, Func<int>> TributeIncreaseGenerator = new()
         {
-            { Rarity.Common, () => BaseTributeIncrease + Randomizer.GetRandomNumberBetweenIncludeRange(10, 24) },
-            { Rarity.Rare, () => BaseTributeIncrease + Randomizer.GetRandomNumberBetweenIncludeRange(25, 39) },
-            { Rarity.Epic, () => BaseTributeIncrease + Randomizer.GetRandomNumberBetweenIncludeRange(40, 54) },
-            { Rarity.Legendary, () => BaseTributeIncrease + Randomizer.GetRandomNumberBetweenIncludeRange(55, 70) },
-            { Rarity.BlackMarket, () => BaseTributeIncrease + Randomizer.GetRandomNumberBetweenIncludeRange(71, 100) }
+            { Rarity.Common, () => BaseTributeIncrease + Randomizer.GetRandomNumberInclusive(10, 24) },
+            { Rarity.Rare, () => BaseTributeIncrease + Randomizer.GetRandomNumberInclusive(25, 39) },
+            { Rarity.Epic, () => BaseTributeIncrease + Randomizer.GetRandomNumberInclusive(40, 54) },
+            { Rarity.Legendary, () => BaseTributeIncrease + Randomizer.GetRandomNumberInclusive(55, 70) },
+            { Rarity.BlackMarket, () => BaseTributeIncrease + Randomizer.GetRandomNumberInclusive(71, 100) }
         };
 
         private static readonly Dictionary<Rarity, int> RandomStatsDistributions = new()

@@ -36,11 +36,11 @@ namespace AntiClown.Api.Core.Inventory.Domain.Items.Builders
 
         private static readonly Dictionary<Rarity, Func<int>> AutoTributeChanceGenerator = new()
         {
-            { Rarity.Common, () => BaseChanceValue + Randomizer.GetRandomNumberBetweenIncludeRange(5, 8) },
-            { Rarity.Rare, () => BaseChanceValue + Randomizer.GetRandomNumberBetweenIncludeRange(9, 12) },
-            { Rarity.Epic, () => BaseChanceValue + Randomizer.GetRandomNumberBetweenIncludeRange(13, 16) },
-            { Rarity.Legendary, () => BaseChanceValue + Randomizer.GetRandomNumberBetweenIncludeRange(17, 20) },
-            { Rarity.BlackMarket, () => BaseChanceValue + Randomizer.GetRandomNumberBetweenIncludeRange(21, 25) }
+            { Rarity.Common, () => BaseChanceValue + Randomizer.GetRandomNumberInclusive(5, 8) },
+            { Rarity.Rare, () => BaseChanceValue + Randomizer.GetRandomNumberInclusive(9, 12) },
+            { Rarity.Epic, () => BaseChanceValue + Randomizer.GetRandomNumberInclusive(13, 16) },
+            { Rarity.Legendary, () => BaseChanceValue + Randomizer.GetRandomNumberInclusive(17, 20) },
+            { Rarity.BlackMarket, () => BaseChanceValue + Randomizer.GetRandomNumberInclusive(21, 25) }
         };
 
         private const int BaseChanceValue = 0;

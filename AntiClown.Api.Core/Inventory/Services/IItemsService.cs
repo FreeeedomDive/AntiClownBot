@@ -7,6 +7,7 @@ public interface IItemsService
 {
     Task<BaseItem> ReadItemAsync(Guid userId, Guid itemId);
     Task<BaseItem[]> ReadAllItemsForUserAsync(Guid userId);
+    Task<BaseItem[]> ReadItemsWithNameAsync(ItemName name);
     Task<BaseItem[]> ReadAllActiveItemsForUserAsync(Guid userId);
     Task<LootBoxReward> OpenLootBoxAsync(Guid userId);
     Task ChangeItemActiveStatusAsync(Guid userId, Guid itemId, bool isActive);

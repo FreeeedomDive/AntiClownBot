@@ -2,7 +2,7 @@
 
 namespace AntiClown.Api.Core.Economies.Services;
 
-public interface ITributeService
+public interface ITributeMessageProducer
 {
-    Task<Tribute> MakeTributeAsync(Guid userId);
+    Task ProduceAsync(Tribute tribute);
 }

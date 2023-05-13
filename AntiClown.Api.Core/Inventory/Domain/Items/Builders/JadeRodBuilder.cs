@@ -49,10 +49,10 @@ namespace AntiClown.Api.Core.Inventory.Domain.Items.Builders
 
         private static readonly Dictionary<Rarity, Func<int>> RandomStatsDistributions = new()
         {
-            { Rarity.Common, () => Randomizer.GetRandomNumberBetweenIncludeRange(1, 2) },
-            { Rarity.Rare, () => Randomizer.GetRandomNumberBetweenIncludeRange(2, 3) },
-            { Rarity.Epic, () => Randomizer.GetRandomNumberBetweenIncludeRange(3, 4) },
-            { Rarity.Legendary, () => Randomizer.GetRandomNumberBetweenIncludeRange(4, 5) },
+            { Rarity.Common, () => Randomizer.GetRandomNumberInclusive(1, 2) },
+            { Rarity.Rare, () => Randomizer.GetRandomNumberInclusive(2, 3) },
+            { Rarity.Epic, () => Randomizer.GetRandomNumberInclusive(3, 4) },
+            { Rarity.Legendary, () => Randomizer.GetRandomNumberInclusive(4, 5) },
             { Rarity.BlackMarket, () => 6 }
         };
 

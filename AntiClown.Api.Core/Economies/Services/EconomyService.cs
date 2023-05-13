@@ -43,6 +43,13 @@ public class EconomyService : IEconomyService
         await economyRepository.UpdateAsync(economy);
     }
 
+    public async Task UpdateNextTributeAsync(Guid userId, DateTime nextTribute)
+    {
+        var economy = await ReadEconomyAsync(userId);
+        economy.NextTribute = nextTribute;
+        await economyRepository.UpdateAsync(economy);
+    }
+
     public async Task CreateEmptyAsync(Guid userId)
     {
         var newUserEconomy = Economy.Default;

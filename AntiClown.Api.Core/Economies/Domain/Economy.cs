@@ -11,6 +11,11 @@ public class Economy
     public DateTime NextTribute { get; set; }
     public int LootBoxes { get; set; }
 
+    public bool IsTributeReady()
+    {
+        return DateTime.UtcNow > NextTribute;
+    }
+
     public static readonly Economy Default = new()
     {
         ScamCoins = Constants.DefaultScamCoins,

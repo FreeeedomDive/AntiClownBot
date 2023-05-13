@@ -33,10 +33,10 @@ namespace AntiClown.Api.Core.Inventory.Domain.Items.Builders
         private static readonly Dictionary<Rarity, Func<int>> LootBoxFindChanceDistribution = new()
         {
             { Rarity.Common, () => BaseLootBoxFindChance + 0 },
-            { Rarity.Rare, () => BaseLootBoxFindChance + Randomizer.GetRandomNumberBetweenIncludeRange(1, 2) },
-            { Rarity.Epic, () => BaseLootBoxFindChance + Randomizer.GetRandomNumberBetweenIncludeRange(3, 4) },
-            { Rarity.Legendary, () => BaseLootBoxFindChance + Randomizer.GetRandomNumberBetweenIncludeRange(5, 7) },
-            { Rarity.BlackMarket, () => BaseLootBoxFindChance + Randomizer.GetRandomNumberBetweenIncludeRange(8, 10) }
+            { Rarity.Rare, () => BaseLootBoxFindChance + Randomizer.GetRandomNumberInclusive(1, 2) },
+            { Rarity.Epic, () => BaseLootBoxFindChance + Randomizer.GetRandomNumberInclusive(3, 4) },
+            { Rarity.Legendary, () => BaseLootBoxFindChance + Randomizer.GetRandomNumberInclusive(5, 7) },
+            { Rarity.BlackMarket, () => BaseLootBoxFindChance + Randomizer.GetRandomNumberInclusive(8, 10) }
         };
 
         private const int BaseLootBoxFindChance = 10;

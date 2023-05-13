@@ -7,5 +7,6 @@ public interface IEconomyService
     Task<Economy> ReadEconomyAsync(Guid userId);
     Task UpdateScamCoinsAsync(Guid userId, int diff, string reason);
     Task UpdateLootBoxesAsync(Guid userId, int diff);
+    Task UpdateNextTributeAsync(Guid userId, DateTime nextTribute);
     Task CreateEmptyAsync(Guid userId);
 }
