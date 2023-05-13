@@ -9,3 +9,4 @@ start.bat
 build/
 node_modules/
 AntiClownApi/appsettings.Production.json
+AntiClown.Api/appsettings.Production.json
