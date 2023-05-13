@@ -1,5 +1,5 @@
 using AntiClown.Api.Core.Economies.Domain;
-using AntiClown.Messages.Dto;
+using AntiClown.Messages.Dto.Tributes;
 using AutoMapper;
 using MassTransit;
 

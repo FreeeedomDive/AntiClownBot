@@ -1,6 +1,7 @@
 ﻿using AntiClown.Api.Core.Database;
 using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Economies.Services;
+using AntiClown.Api.Core.IntegrationTests.Mocks;
 using AntiClown.Api.Core.Inventory.Repositories;
 using AntiClown.Api.Core.Inventory.Services;
 using AntiClown.Api.Core.Shops.Repositories.Items;
@@ -70,6 +71,8 @@ public class IntegrationTestsBase
             mapper
         );
         NewUserService = new NewUserService(usersRepository, EconomyService, ShopsService, mapper);
+        Scheduler = new SchedulerMock();
+        TributeService = new TributeService(EconomyService, ItemsService, new TributeMessageProducerMock(), Scheduler);
     }
 
     [SetUp]
@@ -98,6 +101,8 @@ public class IntegrationTestsBase
     protected IShopItemsRepository ShopItemsRepository { get; private set; } = null!;
     protected IShopStatsRepository ShopStatsRepository { get; private set; } = null!;
     protected IShopsService ShopsService { get; private set; } = null!;
+    protected SchedulerMock Scheduler { get; private set; } = null!;
+    protected ITributeService TributeService { get; private set; } = null!;
     protected IFixture Fixture { get; private set; } = null!;
     protected User User { get; private set; } = null!;
 }

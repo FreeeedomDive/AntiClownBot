@@ -1,4 +1,4 @@
-﻿namespace AntiClown.Messages.Dto;
+﻿namespace AntiClown.Messages.Dto.Tributes;
 
 public class TributeMessageDto
 {
