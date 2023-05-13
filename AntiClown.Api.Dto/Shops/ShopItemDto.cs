@@ -1,4 +1,6 @@
-﻿namespace AntiClown.Api.Dto.Shops;
+﻿using AntiClown.Api.Dto.Inventories;
+
+namespace AntiClown.Api.Dto.Shops;
 
 public class ShopItemDto
 {

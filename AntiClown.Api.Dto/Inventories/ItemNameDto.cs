@@ -1,4 +1,4 @@
-﻿namespace AntiClown.Api.Dto.Shops;
+﻿namespace AntiClown.Api.Dto.Inventories;
 
 public enum ItemNameDto
 {
