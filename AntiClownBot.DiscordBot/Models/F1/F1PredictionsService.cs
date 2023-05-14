@@ -1,4 +1,4 @@
-﻿using AntiClownDiscordBotVersion2.Utils.Extensions;
+﻿using AntiClown.Tools.Utility.Extensions;
 
 namespace AntiClownDiscordBotVersion2.Models.F1;
 

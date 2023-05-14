@@ -1,4 +1,5 @@
-﻿using AntiClownDiscordBotVersion2.Models.DailyStatistics;
+﻿using AntiClown.Tools.Utility.Extensions;
+using AntiClownDiscordBotVersion2.Models.DailyStatistics;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using Newtonsoft.Json;
 

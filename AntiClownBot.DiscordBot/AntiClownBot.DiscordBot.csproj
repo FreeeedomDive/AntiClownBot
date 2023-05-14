@@ -24,6 +24,7 @@
       <ProjectReference Include="..\AntiClownApi.Client\AntiClownApi.Client.csproj" />
       <ProjectReference Include="..\CommonServices\CommonServices.csproj" />
       <ProjectReference Include="..\RestClient\RestClient.csproj" />
+      <ProjectReference Include="..\Utility\Utility.csproj" />
     </ItemGroup>
 
     <ItemGroup>

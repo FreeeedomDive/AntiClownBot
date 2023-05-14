@@ -8,6 +8,16 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="12.0.1" />
+      <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.10" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="CommonEvents\Services" />
+      <Folder Include="Mappings" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Utility\Utility.csproj" />
     </ItemGroup>
 
 </Project>

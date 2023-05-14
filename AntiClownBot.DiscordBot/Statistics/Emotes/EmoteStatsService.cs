@@ -1,23 +1,22 @@
-﻿using AntiClownDiscordBotVersion2.Emotes;
-using AntiClownDiscordBotVersion2.Utils.Extensions;
+﻿using AntiClown.Tools.Utility.Extensions;
+using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using Newtonsoft.Json;
 
 namespace AntiClownDiscordBotVersion2.Statistics.Emotes;
 
 public class EmoteStatsService : IEmoteStatsService
 {
-    public EmoteStatsService(IEmotesProvider emotesProvider)
+    public EmoteStatsService(IDiscordClientWrapper discordClientWrapper)
     {
-        var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory")
-                             ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
+        var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
         fileName = $"{filesDirectory}/StatisticsFiles/emotes.json";
-        this.emotesProvider = emotesProvider;
+        this.discordClientWrapper = discordClientWrapper;
         emoteStatistics = TryRead(out var dict) ? dict : new Dictionary<string, int>();
     }
-
+    
     public async Task<string> GetStats()
     {
-        return await emoteStatistics.GetStats(key => emotesProvider.GetEmoteAsTextAsync(key));
+        return await emoteStatistics.GetStats(async key => await discordClientWrapper.Emotes.FindEmoteAsync(key));
     }
 
     public void AddStats(string emote)
@@ -45,7 +44,6 @@ public class EmoteStatsService : IEmoteStatsService
         {
             return false;
         }
-
         dict = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText(fileName))!;
         return dict != null;
     }
@@ -53,5 +51,5 @@ public class EmoteStatsService : IEmoteStatsService
     private static string fileName = "";
 
     private readonly Dictionary<string, int> emoteStatistics;
-    private readonly IEmotesProvider emotesProvider;
+    private readonly IDiscordClientWrapper discordClientWrapper;
 }

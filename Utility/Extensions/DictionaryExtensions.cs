@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace AntiClownDiscordBotVersion2.Utils.Extensions;
+namespace AntiClown.Tools.Utility.Extensions;
 
 public static class DictionaryExtensions
 {
