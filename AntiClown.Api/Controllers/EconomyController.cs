@@ -24,18 +24,18 @@ public class EconomyController : Controller
         return mapper.Map<EconomyDto>(economy);
     }
 
-    [HttpPost("scamCoins")]
+    [HttpPatch("scamCoins")]
     public async Task<ActionResult> UpdateScamCoins([FromRoute] Guid userId, [FromBody] UpdateScamCoinsDto updateScamCoinsDto)
     {
         await economyService.UpdateScamCoinsAsync(updateScamCoinsDto.UserId, updateScamCoinsDto.ScamCoinsDiff, updateScamCoinsDto.Reason);
-        return Ok();
+        return NoContent();
     }
 
-    [HttpPost("lootboxes")]
+    [HttpPatch("lootboxes")]
     public async Task<ActionResult> UpdateLootboxes([FromRoute] Guid userId, [FromBody] UpdateLootBoxesDto lootBoxesDto)
     {
         await economyService.UpdateLootBoxesAsync(lootBoxesDto.UserId, lootBoxesDto.LootBoxesDiff);
-        return Ok();
+        return NoContent();
     }
 
     private readonly IEconomyService economyService;

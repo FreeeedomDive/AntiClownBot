@@ -1,5 +1,7 @@
 ﻿using AntiClown.Api.Core.Shops.Services;
+using AntiClown.Api.Dto.Inventories;
 using AntiClown.Api.Dto.Shops;
+using AntiClown.Api.Mappings;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,9 +34,10 @@ public class ShopController : Controller
     }
 
     [HttpPost("items/{itemId:guid}/buy")]
-    public async Task<ActionResult> Buy([FromRoute] Guid shopId, [FromRoute] Guid itemId)
+    public async Task<ActionResult<BaseItemDto>> Buy([FromRoute] Guid shopId, [FromRoute] Guid itemId)
     {
-        return Ok();
+        var newItem = await shopsService.BuyAsync(shopId, itemId);
+        return mapper.Map(newItem);
     }
 
     [HttpPost("reroll")]

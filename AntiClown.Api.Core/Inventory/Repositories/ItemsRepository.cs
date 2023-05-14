@@ -51,7 +51,13 @@ public class ItemsRepository : IItemsRepository
 
     public async Task UpdateAsync(BaseItem item)
     {
-        await sqlRepository.UpdateAsync(item.Id, x => { x.IsActive = item.IsActive; });
+        var newStorageElement = mapper.Map<ItemStorageElement>(item);
+        await sqlRepository.UpdateAsync(item.Id, x =>
+        {
+            x.OwnerId = newStorageElement.OwnerId;
+            x.IsActive = newStorageElement.IsActive;
+            x.ItemSpecs = newStorageElement.ItemSpecs;
+        });
     }
 
     public async Task DeleteAsync(Guid id)

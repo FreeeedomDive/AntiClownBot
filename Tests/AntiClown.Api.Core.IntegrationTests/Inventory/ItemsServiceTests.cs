@@ -1,5 +1,4 @@
 ﻿using AntiClown.Api.Core.Common;
-using AntiClown.Api.Core.Inventory.Domain;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base;
 using AntiClown.Api.Core.Inventory.Domain.Items.Builders;
 using AntiClown.Api.Dto.Exceptions.Economy;
@@ -50,10 +49,14 @@ public class ItemsServiceTests : IntegrationTestsBase
             if (i < Constants.MaximumActiveItemsOfOneType)
             {
                 await setActiveStatus.Should().NotThrowAsync<TooManyActiveItemsCountException>();
+                var activeItem = await ItemsService.ReadItemAsync(User.Id, item.Id);
+                activeItem.IsActive.Should().BeTrue();
             }
             else
             {
                 await setActiveStatus.Should().ThrowAsync<TooManyActiveItemsCountException>();
+                var inactiveItem = await ItemsService.ReadItemAsync(User.Id, item.Id);
+                inactiveItem.IsActive.Should().BeFalse();
             }
         }
     }
