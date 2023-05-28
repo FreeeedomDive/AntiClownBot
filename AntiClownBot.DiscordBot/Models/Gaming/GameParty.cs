@@ -104,7 +104,7 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
                 .Select((player, index) => $"{index + 1}. {guild.Members[player].ServerOrUserName()}");
 
             embedBuilder.AddField(
-                $"{Math.Max(MaxPlayersCount, Players.Count)} / {MaxPlayersCount} игроков",
+                $"{Math.Min(MaxPlayersCount, Players.Count)} / {MaxPlayersCount} игроков",
                 Players.Count == 0 ? "Пока никто не записался..." : string.Join("\n", playersList)
             );
 
