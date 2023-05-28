@@ -98,29 +98,24 @@ namespace AntiClownDiscordBotVersion2.Models.Gaming
                 .WithTitle($"СБОР ПАТИ {Description}")
                 .WithColor(role?.Color ?? DiscordColor.White);
 
-            var stringBuilder = new StringBuilder();
-            for (var i = 0; i < MaxPlayersCount; i++)
-            {
-                stringBuilder.Append($"{i + 1}. ");
-                var player = i < Players.Count
-                    ? (await discordClientWrapper.Members.GetAsync(Players[i])).ServerOrUserName()
-                    : "";
-                stringBuilder.Append(player).Append('\n');
-            }
+            var guild = await discordClientWrapper.Guilds.GetGuildAsync();
+            var playersList = Players
+                .Take(MaxPlayersCount)
+                .Select((player, index) => $"{index + 1}. {guild.Members[player].ServerOrUserName()}");
 
-            embedBuilder.AddField("Состав", stringBuilder.ToString());
+            embedBuilder.AddField(
+                $"{Math.Max(MaxPlayersCount, Players.Count)} / {MaxPlayersCount} игроков",
+                Players.Count == 0 ? "Пока никто не записался..." : string.Join("\n", playersList)
+            );
 
             if (Players.Count > MaxPlayersCount)
             {
-                stringBuilder.Clear();
-                for (var i = MaxPlayersCount; i < Players.Count; i++)
-                {
-                    stringBuilder.Append($"{i + 1}. ");
-                    var player = (await discordClientWrapper.Members.GetAsync(Players[i])).ServerOrUserName();
-                    stringBuilder.Append(player).Append('\n');
-                }
+                var playersQueueList = Players
+                    .Skip(MaxPlayersCount)
+                    .Select((player, index) =>
+                        $"{MaxPlayersCount + index + 1}. {guild.Members[player].ServerOrUserName()}");
 
-                embedBuilder.AddField("Очередь", stringBuilder.ToString());
+                embedBuilder.AddField("Очередь", string.Join("\n", playersQueueList));
             }
 
             if (!isOpened)
