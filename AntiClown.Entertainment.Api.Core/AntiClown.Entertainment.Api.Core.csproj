@@ -8,12 +8,13 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="12.0.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
       <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.10" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="CommonEvents\Services" />
-      <Folder Include="Mappings" />
     </ItemGroup>
 
     <ItemGroup>
