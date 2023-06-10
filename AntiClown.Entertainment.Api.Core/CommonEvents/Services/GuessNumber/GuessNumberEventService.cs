@@ -1,4 +1,6 @@
-﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
+﻿using AntiClown.Core.Schedules;
+using AntiClown.Entertainment.Api.Core.Common;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
 using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
@@ -10,11 +12,18 @@ public class GuessNumberEventService : IGuessNumberEventService
 {
     public GuessNumberEventService(
         ICommonEventsRepository commonEventsRepository,
-        IEventsMessageProducer eventsMessageProducer
+        IEventsMessageProducer eventsMessageProducer,
+        IScheduler scheduler
     )
     {
         this.commonEventsRepository = commonEventsRepository;
         this.eventsMessageProducer = eventsMessageProducer;
+        this.scheduler = scheduler;
+    }
+
+    public async Task<GuessNumberEvent> ReadAsync(Guid eventId)
+    {
+        return (await commonEventsRepository.ReadAsync(eventId) as GuessNumberEvent)!;
     }
 
     public async Task<Guid> StartNewEventAsync()
@@ -30,6 +39,7 @@ public class GuessNumberEventService : IGuessNumberEventService
         };
         await commonEventsRepository.CreateAsync(newEvent);
         await eventsMessageProducer.ProduceAsync(newEvent);
+        ScheduleEventFinish(newEvent.Id);
 
         return newEvent.Id;
     }
@@ -46,11 +56,22 @@ public class GuessNumberEventService : IGuessNumberEventService
         await commonEventsRepository.UpdateAsync(@event);
     }
 
-    public async Task<GuessNumberEvent> ReadAsync(Guid eventId)
+    public async Task<GuessNumberEvent> FinishAsync(Guid eventId)
     {
-        return (await commonEventsRepository.ReadAsync(eventId) as GuessNumberEvent)!;
+        var @event = await ReadAsync(eventId);
+        @event.Finished = true;
+        await commonEventsRepository.UpdateAsync(@event);
+        // award winners
+        return @event;
+    }
+
+    private void ScheduleEventFinish(Guid eventId)
+    {
+        scheduler.Schedule(() => FinishAsync(eventId),
+            TimeSpan.FromMilliseconds(Constants.GuessNumberEventWaitingTimeInMilliseconds));
     }
 
     private readonly ICommonEventsRepository commonEventsRepository;
     private readonly IEventsMessageProducer eventsMessageProducer;
+    private readonly IScheduler scheduler;
 }
