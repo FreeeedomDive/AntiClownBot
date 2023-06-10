@@ -61,6 +61,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{5E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Messages.Dto", "AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj", "{4C2778B5-1F1F-4A76-A50F-36B4E7A0E108}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.EntertainmentApi.Dto", "AntiClown.EntertainmentApi.Dto\AntiClown.EntertainmentApi.Dto.csproj", "{1A95E74B-2C86-43F3-B14E-9CB288F04C73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,10 @@ Global
 		{4C2778B5-1F1F-4A76-A50F-36B4E7A0E108}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C2778B5-1F1F-4A76-A50F-36B4E7A0E108}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C2778B5-1F1F-4A76-A50F-36B4E7A0E108}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A95E74B-2C86-43F3-B14E-9CB288F04C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A95E74B-2C86-43F3-B14E-9CB288F04C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A95E74B-2C86-43F3-B14E-9CB288F04C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A95E74B-2C86-43F3-B14E-9CB288F04C73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -167,5 +173,6 @@ Global
 		{B86331A6-6F1E-44EE-9941-3563E0C8795B} = {23556088-296A-4CB7-8209-CC5B4532BF57}
 		{E1384FA0-4102-4C62-BE6C-AB9B6335523B} = {7D5D4EF2-7274-4F7D-A847-7FB8511F7A15}
 		{4C2778B5-1F1F-4A76-A50F-36B4E7A0E108} = {5E534A63-D914-4514-B782-5A9BC3AEDB9E}
+		{1A95E74B-2C86-43F3-B14E-9CB288F04C73} = {FD8C2265-D1BC-4808-B209-8D794440BEDE}
 	EndGlobalSection
 EndGlobal

@@ -6,11 +6,11 @@ public class GuessNumberEvent : CommonEventBase
 {
     public override CommonEventType Type => CommonEventType.GuessNumber;
 
-    public Dictionary<Guid, int> Picks { get; set; } = new();
-    public Dictionary<int, List<Guid>> NumberToUsers { get; set; } = new();
-    public int Result { get; set; }
+    public Dictionary<Guid, GuessNumberPick> Picks { get; set; } = new();
+    public Dictionary<GuessNumberPick, List<Guid>> NumberToUsers { get; set; } = new();
+    public GuessNumberPick Result { get; set; }
 
-    public void AddPick(Guid userId, int newPick)
+    public void AddPick(Guid userId, GuessNumberPick newPick)
     {
         var hasPick = Picks.TryGetValue(userId, out var pick);
         if (hasPick)
