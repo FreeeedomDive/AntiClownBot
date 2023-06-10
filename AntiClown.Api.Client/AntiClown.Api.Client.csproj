@@ -7,10 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Exceptions\Base\" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+      <PackageReference Include="RestSharp" Version="108.0.3" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\AntiClown.Api.Dto\AntiClown.Api.Dto.csproj" />
       <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj" />
     </ItemGroup>
 

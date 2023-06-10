@@ -34,7 +34,7 @@ public class UsersController : Controller
         return mapper.Map<UserDto>(result);
     }
 
-    [HttpPost("[action]")]
+    [HttpPost("find")]
     public async Task<ActionResult<UserDto[]>> Find([FromBody] UserFilterDto filter)
     {
         var result = await usersService.FindAsync(mapper.Map<UserFilter>(filter));

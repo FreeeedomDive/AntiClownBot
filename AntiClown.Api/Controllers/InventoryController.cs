@@ -32,7 +32,7 @@ public class InventoryController : Controller
         return mapper.Map(item);
     }
 
-    [HttpPost("lootboxes/open")]
+    [HttpPost("lootBoxes/open")]
     public async Task<ActionResult<LootBoxRewardDto>> OpenLootBox([FromRoute] Guid userId)
     {
         var reward = await itemsService.OpenLootBoxAsync(userId);

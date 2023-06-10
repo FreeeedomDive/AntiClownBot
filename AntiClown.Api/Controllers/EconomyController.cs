@@ -31,8 +31,8 @@ public class EconomyController : Controller
         return NoContent();
     }
 
-    [HttpPatch("lootboxes")]
-    public async Task<ActionResult> UpdateLootboxes([FromRoute] Guid userId, [FromBody] UpdateLootBoxesDto lootBoxesDto)
+    [HttpPatch("lootBoxes")]
+    public async Task<ActionResult> UpdateLootBoxes([FromRoute] Guid userId, [FromBody] UpdateLootBoxesDto lootBoxesDto)
     {
         await economyService.UpdateLootBoxesAsync(lootBoxesDto.UserId, lootBoxesDto.LootBoxesDiff);
         return NoContent();
