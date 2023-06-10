@@ -20,6 +20,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\AntiClown.Api.Core\AntiClown.Api.Core.csproj" />
+      <ProjectReference Include="..\..\AntiClown.Core\AntiClown.Core.csproj" />
     </ItemGroup>
 
 </Project>

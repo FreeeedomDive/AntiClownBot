@@ -1,4 +1,4 @@
-﻿using AntiClown.Api.Core.Schedules;
+﻿using AntiClown.Core.Schedules;
 
 namespace AntiClown.Api.Core.IntegrationTests.Mocks;
 

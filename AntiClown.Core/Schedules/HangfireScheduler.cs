@@ -1,6 +1,6 @@
 using Hangfire;
 
-namespace AntiClown.Api.Core.Schedules;
+namespace AntiClown.Core.Schedules;
 
 public class HangfireScheduler : IScheduler
 {

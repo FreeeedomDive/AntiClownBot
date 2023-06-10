@@ -1,4 +1,4 @@
-﻿namespace AntiClown.Api.Core.Schedules;
+﻿namespace AntiClown.Core.Schedules;
 
 public interface IScheduler
 {

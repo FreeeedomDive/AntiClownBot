@@ -3,8 +3,8 @@ using AntiClown.Api.Core.Economies.Domain;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base.Extensions;
 using AntiClown.Api.Core.Inventory.Services;
-using AntiClown.Api.Core.Schedules;
 using AntiClown.Api.Dto.Exceptions.Tribute;
+using AntiClown.Core.Schedules;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
 
