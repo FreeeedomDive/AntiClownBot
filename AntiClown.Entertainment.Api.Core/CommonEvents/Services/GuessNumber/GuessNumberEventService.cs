@@ -1,4 +1,5 @@
-﻿using AntiClown.Core.Schedules;
+﻿using AntiClown.Api.Client;
+using AntiClown.Core.Schedules;
 using AntiClown.Entertainment.Api.Core.Common;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
@@ -11,11 +12,13 @@ namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
 public class GuessNumberEventService : IGuessNumberEventService
 {
     public GuessNumberEventService(
+        IAntiClownApiClient antiClownApiClient,
         ICommonEventsRepository commonEventsRepository,
         IEventsMessageProducer eventsMessageProducer,
         IScheduler scheduler
     )
     {
+        this.antiClownApiClient = antiClownApiClient;
         this.commonEventsRepository = commonEventsRepository;
         this.eventsMessageProducer = eventsMessageProducer;
         this.scheduler = scheduler;
@@ -61,7 +64,13 @@ public class GuessNumberEventService : IGuessNumberEventService
         var @event = await ReadAsync(eventId);
         @event.Finished = true;
         await commonEventsRepository.UpdateAsync(@event);
-        // award winners
+
+        var winners = @event.NumberToUsers[@event.Result];
+        foreach (var winnerUserId in winners)
+        {
+            await antiClownApiClient.Economy.UpdateLootBoxesAsync(winnerUserId, 1);
+        }
+
         return @event;
     }
 
@@ -71,6 +80,7 @@ public class GuessNumberEventService : IGuessNumberEventService
             TimeSpan.FromMilliseconds(Constants.GuessNumberEventWaitingTimeInMilliseconds));
     }
 
+    private readonly IAntiClownApiClient antiClownApiClient;
     private readonly ICommonEventsRepository commonEventsRepository;
     private readonly IEventsMessageProducer eventsMessageProducer;
     private readonly IScheduler scheduler;
