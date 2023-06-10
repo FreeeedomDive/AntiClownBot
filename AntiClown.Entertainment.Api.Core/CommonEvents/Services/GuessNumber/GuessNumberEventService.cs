@@ -1,15 +1,20 @@
 ﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
 using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
 using AntiClown.Tools.Utility.Extensions;
 
-namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services;
+namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
 
 public class GuessNumberEventService : IGuessNumberEventService
 {
-    public GuessNumberEventService(ICommonEventsRepository commonEventsRepository)
+    public GuessNumberEventService(
+        ICommonEventsRepository commonEventsRepository,
+        IEventsMessageProducer eventsMessageProducer
+    )
     {
         this.commonEventsRepository = commonEventsRepository;
+        this.eventsMessageProducer = eventsMessageProducer;
     }
 
     public async Task<Guid> StartNewEventAsync()
@@ -24,6 +29,7 @@ public class GuessNumberEventService : IGuessNumberEventService
             Result = Enum.GetValues<GuessNumberPick>().SelectRandomItem()
         };
         await commonEventsRepository.CreateAsync(newEvent);
+        await eventsMessageProducer.ProduceAsync(newEvent);
 
         return newEvent.Id;
     }
@@ -35,6 +41,7 @@ public class GuessNumberEventService : IGuessNumberEventService
         {
             throw new EventAlreadyFinishedException(eventId);
         }
+
         @event.AddPick(userId, userPick);
         await commonEventsRepository.UpdateAsync(@event);
     }
@@ -45,4 +52,5 @@ public class GuessNumberEventService : IGuessNumberEventService
     }
 
     private readonly ICommonEventsRepository commonEventsRepository;
+    private readonly IEventsMessageProducer eventsMessageProducer;
 }

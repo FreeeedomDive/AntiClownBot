@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="12.0.1" />
+      <PackageReference Include="MassTransit.Abstractions" Version="8.0.15" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
       <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.10" />
@@ -15,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\AntiClown.EntertainmentApi.Dto\AntiClown.EntertainmentApi.Dto.csproj" />
+      <ProjectReference Include="..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj" />
       <ProjectReference Include="..\Utility\Utility.csproj" />
     </ItemGroup>
 

@@ -1,6 +1,8 @@
-﻿namespace AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
+﻿using AntiClown.Core.Dto.Exceptions;
 
-public class EventAlreadyFinishedException : Exception
+namespace AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
+
+public class EventAlreadyFinishedException : AntiClownConflictException
 {
     public EventAlreadyFinishedException(Guid eventId) : base($"Event {eventId} is already finished")
     {

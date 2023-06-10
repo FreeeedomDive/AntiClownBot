@@ -1,5 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
+using AntiClown.Messages.Dto.Events.Common;
 using AutoMapper;
 using Newtonsoft.Json;
 
@@ -18,5 +19,7 @@ public class CommonEventsMapperProfile : Profile
                 se => se.Details,
                 cfg => cfg.MapFrom(commonEvent => JsonConvert.SerializeObject(commonEvent, Formatting.Indented))
             );
+        CreateMap<CommonEventType, CommonEventTypeDto>();
+        CreateMap<CommonEventBase, CommonEventMessageDto>();
     }
 }

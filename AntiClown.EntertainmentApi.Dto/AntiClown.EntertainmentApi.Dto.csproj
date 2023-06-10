@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj" />
+    </ItemGroup>
+
 </Project>

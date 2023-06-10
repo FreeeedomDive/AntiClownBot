@@ -1,6 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 
-namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services;
+namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
 
 public interface IGuessNumberEventService : IBaseEventService<GuessNumberEvent>
 {
