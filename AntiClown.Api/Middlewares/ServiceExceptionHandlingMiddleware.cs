@@ -1,4 +1,4 @@
-﻿using AntiClown.Api.Dto.Exceptions.Base;
+﻿using AntiClown.Core.Dto.Exceptions;
 using Newtonsoft.Json;
 
 namespace AntiClown.Api.Middlewares;
@@ -18,7 +18,7 @@ public class ServiceExceptionHandlingMiddleware
         {
             await next(context);
         }
-        catch (AntiClownApiBaseException antiClownApiBaseException)
+        catch (AntiClownBaseException antiClownApiBaseException)
         {
             await WriteExceptionAsync(context, antiClownApiBaseException, antiClownApiBaseException.StatusCode);
         }

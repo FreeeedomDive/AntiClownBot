@@ -1,8 +1,8 @@
-﻿using AntiClown.Api.Dto.Exceptions.Base;
+﻿using AntiClown.Core.Dto.Exceptions;
 
 namespace AntiClown.Api.Dto.Exceptions.Items;
 
-public class LootBoxNotFoundException : AntiClownApiNotFoundException
+public class LootBoxNotFoundException : AntiClownNotFoundException
 {
     public LootBoxNotFoundException(Guid userId)
         : base($"User {userId} has no lootboxes")

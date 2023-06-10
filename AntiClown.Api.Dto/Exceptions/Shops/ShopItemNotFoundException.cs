@@ -1,8 +1,8 @@
-﻿using AntiClown.Api.Dto.Exceptions.Base;
+﻿using AntiClown.Core.Dto.Exceptions;
 
 namespace AntiClown.Api.Dto.Exceptions.Shops;
 
-public class ShopItemNotFoundException : AntiClownApiNotFoundException
+public class ShopItemNotFoundException : AntiClownNotFoundException
 {
     public ShopItemNotFoundException(Guid shopId, Guid itemId)
         : base($"Item {itemId} not found in shop {shopId}")

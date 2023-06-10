@@ -6,4 +6,12 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Exceptions\Base\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj" />
+    </ItemGroup>
+
 </Project>

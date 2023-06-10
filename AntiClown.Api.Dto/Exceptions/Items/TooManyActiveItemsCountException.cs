@@ -1,8 +1,8 @@
-﻿using AntiClown.Api.Dto.Exceptions.Base;
+﻿using AntiClown.Core.Dto.Exceptions;
 
 namespace AntiClown.Api.Dto.Exceptions.Items;
 
-public class TooManyActiveItemsCountException : AntiClownApiConflictException
+public class TooManyActiveItemsCountException : AntiClownConflictException
 {
     public TooManyActiveItemsCountException(Guid userId, string itemType)
         : base($"User {userId} already has maximum amount of active items of type {itemType}")
