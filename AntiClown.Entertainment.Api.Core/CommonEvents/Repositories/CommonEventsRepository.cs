@@ -54,7 +54,7 @@ public class CommonEventsRepository : ICommonEventsRepository
             CommonEventType.GuessNumber => JsonConvert.DeserializeObject<GuessNumberEvent>(serialized)!,
             CommonEventType.Lottery => JsonConvert.DeserializeObject<LotteryEvent>(serialized)!,
             CommonEventType.Race => JsonConvert.DeserializeObject<RaceEvent>(serialized)!,
-            CommonEventType.RemoveCooldowns => JsonConvert.DeserializeObject<RemoveCooldownsEvent>(serialized)!,
+            CommonEventType.RemoveCoolDowns => JsonConvert.DeserializeObject<RemoveCoolDownsEvent>(serialized)!,
             CommonEventType.Transfusion => JsonConvert.DeserializeObject<TransfusionEvent>(serialized)!,
             _ => throw new ArgumentOutOfRangeException(nameof(eventType))
         };

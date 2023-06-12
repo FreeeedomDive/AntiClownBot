@@ -5,6 +5,6 @@ public enum CommonEventType
     GuessNumber,
     Lottery,
     Race,
-    RemoveCooldowns,
+    RemoveCoolDowns,
     Transfusion
 }
