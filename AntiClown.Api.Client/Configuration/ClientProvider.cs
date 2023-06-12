@@ -8,7 +8,7 @@ public static class ClientProvider
     {
         var restClientOptions = new RestClientOptions
         {
-            BaseUrl = new Uri(baseApiUrl),
+            BaseUrl = new Uri($"{baseApiUrl}/api"),
             RemoteCertificateValidationCallback = (_, _, _, _) => true
         };
         var restClient = new RestClient(restClientOptions);
