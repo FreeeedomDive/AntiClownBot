@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Core.Economies.Domain;
+using AntiClown.Api.Core.Economies.Domain.MassActions;
 using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Transactions.Domain;
 using AntiClown.Api.Core.Transactions.Services;
@@ -43,18 +44,26 @@ public class EconomyService : IEconomyService
         await economyRepository.UpdateAsync(economy);
     }
 
-    public async Task UpdateNextTributeAsync(Guid userId, DateTime nextTribute)
+    public async Task CreateEmptyAsync(Guid userId)
+    {
+        var newUserEconomy = Economy.Default;
+        newUserEconomy.Id = userId;
+        await economyRepository.CreateAsync(newUserEconomy);
+    }
+
+    public async Task UpdateNextTributeCoolDownAsync(Guid userId, DateTime nextTribute)
     {
         var economy = await ReadEconomyAsync(userId);
         economy.NextTribute = nextTribute;
         await economyRepository.UpdateAsync(economy);
     }
 
-    public async Task CreateEmptyAsync(Guid userId)
+    public async Task ResetAllCoolDownsAsync()
     {
-        var newUserEconomy = Economy.Default;
-        newUserEconomy.Id = userId;
-        await economyRepository.CreateAsync(newUserEconomy);
+        await economyRepository.UpdateAllAsync(new MassEconomyUpdate
+        {
+            NextTribute = DateTime.UtcNow,
+        });
     }
 
     private readonly IEconomyRepository economyRepository;

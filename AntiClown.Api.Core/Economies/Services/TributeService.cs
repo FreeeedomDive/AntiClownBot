@@ -154,7 +154,7 @@ public class TributeService : ITributeService
     private async Task MakeTributeAsync(Tribute tribute)
     {
         await economyService.UpdateScamCoinsAsync(tribute.UserId, tribute.ScamCoins, "Подношение");
-        await economyService.UpdateNextTributeAsync(tribute.UserId, tribute.TributeDateTime.AddMilliseconds(tribute.CooldownInMilliseconds));
+        await economyService.UpdateNextTributeCoolDownAsync(tribute.UserId, tribute.TributeDateTime.AddMilliseconds(tribute.CooldownInMilliseconds));
 
         if (tribute.HasGiftedLootBox)
         {

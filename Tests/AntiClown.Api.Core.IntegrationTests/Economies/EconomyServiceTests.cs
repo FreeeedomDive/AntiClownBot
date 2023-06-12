@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Core.Economies.Domain;
+using AntiClown.Tools.Utility.Extensions;
 using AutoFixture;
 using FluentAssertions;
 using SqlRepositoryBase.Core.Exceptions;
@@ -45,6 +46,20 @@ public class EconomyServiceTests : IntegrationTestsBase
         await EconomyService.UpdateLootBoxesAsync(User.Id, diff);
         var economyAfter = await EconomyService.ReadEconomyAsync(User.Id);
         economyAfter.LootBoxes.Should().Be(balanceBefore + diff);
+    }
+
+    [Test]
+    public async Task EconomyService_Should_ResetAllCoolDowns()
+    {
+        const int economiesCount = 5;
+        var ids = Enumerable.Range(1, economiesCount).Select(_ => Guid.NewGuid()).ToArray();
+        ids.ForEach(id => EconomyService.CreateEmptyAsync(id).GetAwaiter().GetResult());
+        var economies = ids.Select(id => EconomyService.ReadEconomyAsync(id).GetAwaiter().GetResult()).ToArray();
+        var resetMoment = DateTime.UtcNow;
+        economies.Select(x => x.NextTribute).Select(x => x < resetMoment).Should().AllBeEquivalentTo(true);
+        await EconomyService.ResetAllCoolDownsAsync();
+        economies = ids.Select(id => EconomyService.ReadEconomyAsync(id).GetAwaiter().GetResult()).ToArray();
+        economies.Select(x => x.NextTribute).Select(x => x > resetMoment).Should().AllBeEquivalentTo(true);
     }
 
     private Economy economy = null!;

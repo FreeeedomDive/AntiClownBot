@@ -11,7 +11,7 @@
       <PackageReference Include="MassTransit.Abstractions" Version="8.0.15" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
-      <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.10" />
+      <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.14" />
     </ItemGroup>
 
     <ItemGroup>

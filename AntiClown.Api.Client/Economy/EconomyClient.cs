@@ -13,14 +13,14 @@ public class EconomyClient : IEconomyClient
 
     public async Task<EconomyDto> ReadAsync(Guid userId)
     {
-        var request = new RestRequest(BuildApiUrl(userId));
+        var request = new RestRequest($"economy/{userId}");
         var response = await restClient.ExecuteGetAsync(request);
         return response.TryDeserialize<EconomyDto>();
     }
 
     public async Task UpdateScamCoinsAsync(Guid userId, int scamCoinsDiff, string reason)
     {
-        var request = new RestRequest($"{BuildApiUrl(userId)}/scamCoins");
+        var request = new RestRequest($"economy/{userId}/scamCoins");
         request.AddJsonBody(new UpdateScamCoinsDto
         {
             UserId = userId,
@@ -33,7 +33,7 @@ public class EconomyClient : IEconomyClient
 
     public async Task UpdateLootBoxesAsync(Guid userId, int lootBoxesDiff)
     {
-        var request = new RestRequest($"{BuildApiUrl(userId)}/lootBoxes");
+        var request = new RestRequest($"economy/{userId}/lootBoxes");
         request.AddJsonBody(new UpdateLootBoxesDto
         {
             UserId = userId,
@@ -43,7 +43,12 @@ public class EconomyClient : IEconomyClient
         response.ThrowIfNotSuccessful();
     }
 
-    private static string BuildApiUrl(Guid userId) => $"economy/{userId}";
+    public async Task ResetAllCoolDownsAsync()
+    {
+        var request = new RestRequest($"economy/resetAllCoolDowns");
+        var response = await restClient.PatchAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
 
     private readonly RestClient restClient;
 }

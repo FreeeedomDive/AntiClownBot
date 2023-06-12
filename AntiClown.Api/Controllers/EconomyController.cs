@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Api.Controllers;
 
-[Route("api/economy/{userId:guid}")]
+[Route("api/economy")]
 public class EconomyController : Controller
 {
     public EconomyController(
@@ -17,24 +17,31 @@ public class EconomyController : Controller
         this.mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet("{userId:guid}")]
     public async Task<ActionResult<EconomyDto>> Read([FromRoute] Guid userId)
     {
         var economy = await economyService.ReadEconomyAsync(userId);
         return mapper.Map<EconomyDto>(economy);
     }
 
-    [HttpPatch("scamCoins")]
+    [HttpPatch("{userId:guid}/scamCoins")]
     public async Task<ActionResult> UpdateScamCoins([FromRoute] Guid userId, [FromBody] UpdateScamCoinsDto updateScamCoinsDto)
     {
         await economyService.UpdateScamCoinsAsync(updateScamCoinsDto.UserId, updateScamCoinsDto.ScamCoinsDiff, updateScamCoinsDto.Reason);
         return NoContent();
     }
 
-    [HttpPatch("lootBoxes")]
+    [HttpPatch("{userId:guid}/lootBoxes")]
     public async Task<ActionResult> UpdateLootBoxes([FromRoute] Guid userId, [FromBody] UpdateLootBoxesDto lootBoxesDto)
     {
         await economyService.UpdateLootBoxesAsync(lootBoxesDto.UserId, lootBoxesDto.LootBoxesDiff);
+        return NoContent();
+    }
+
+    [HttpPost("resetAllCoolDowns")]
+    public async Task<ActionResult> ResetAllCoolDowns()
+    {
+        await economyService.ResetAllCoolDownsAsync();
         return NoContent();
     }
 
