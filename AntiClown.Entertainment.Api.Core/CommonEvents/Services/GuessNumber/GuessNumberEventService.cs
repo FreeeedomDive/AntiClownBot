@@ -62,6 +62,11 @@ public class GuessNumberEventService : IGuessNumberEventService
     public async Task<GuessNumberEvent> FinishAsync(Guid eventId)
     {
         var @event = await ReadAsync(eventId);
+        if (@event.Finished)
+        {
+            return @event;
+        }
+
         @event.Finished = true;
         await commonEventsRepository.UpdateAsync(@event);
 

@@ -28,7 +28,7 @@ public class RemoveCoolDownsEventService : IRemoveCoolDownsEventService
         var newEvent = new RemoveCoolDownsEvent
         {
             Id = Guid.NewGuid(),
-            Finished = false,
+            Finished = true,
             EventDateTime = DateTime.UtcNow,
         };
         await commonEventsRepository.CreateAsync(newEvent);
