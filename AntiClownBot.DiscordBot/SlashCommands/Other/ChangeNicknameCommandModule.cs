@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.UserBalance;
@@ -13,11 +14,13 @@ public class ChangeNicknameCommandModule : SlashCommandModuleWithMiddlewares
     public ChangeNicknameCommandModule(
         ICommandExecutor commandExecutor,
         IDiscordClientWrapper discordClientWrapper,
+        IEmotesProvider emotesProvider,
         IApiClient apiClient,
         IUserBalanceService userBalanceService
     ) : base(commandExecutor)
     {
         this.discordClientWrapper = discordClientWrapper;
+        this.emotesProvider = emotesProvider;
         this.apiClient = apiClient;
         this.userBalanceService = userBalanceService;
     }
@@ -54,7 +57,7 @@ public class ChangeNicknameCommandModule : SlashCommandModuleWithMiddlewares
                     $"Изменение никнейма пользователю {member.Id}");
                 await RespondToInteractionAsync(
                     context,
-                    $"{await discordClientWrapper.Emotes.FindEmoteAsync("YEP")}"
+                    await emotesProvider.GetEmoteAsTextAsync("YEP")
                 );
             }
             catch
@@ -65,6 +68,7 @@ public class ChangeNicknameCommandModule : SlashCommandModuleWithMiddlewares
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;
+    private readonly IEmotesProvider emotesProvider;
     private readonly IApiClient apiClient;
     private readonly IUserBalanceService userBalanceService;
 }

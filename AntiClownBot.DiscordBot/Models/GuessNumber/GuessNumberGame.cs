@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
@@ -11,12 +12,14 @@ namespace AntiClownDiscordBotVersion2.Models.GuessNumber
     {
         public GuessNumberGame(
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IGuildSettingsService guildSettingsService,
             IRandomizer randomizer,
             IApiClient apiClient
         )
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.guildSettingsService = guildSettingsService;
             this.randomizer = randomizer;
             this.apiClient = apiClient;
@@ -61,7 +64,7 @@ namespace AntiClownDiscordBotVersion2.Models.GuessNumber
 
             if (count == 0)
             {
-                sb.Append($"\nНикто не угадал {await discordClientWrapper.Emotes.FindEmoteAsync("peepoFinger")}!");
+                sb.Append($"\nНикто не угадал {await emotesProvider.GetEmoteAsTextAsync("peepoFinger")}!");
             }
 
             await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId, sb.ToString());
@@ -75,6 +78,7 @@ namespace AntiClownDiscordBotVersion2.Models.GuessNumber
 
         private int generatedNumber;
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IGuildSettingsService guildSettingsService;
         private readonly IRandomizer randomizer;
         private readonly IApiClient apiClient;

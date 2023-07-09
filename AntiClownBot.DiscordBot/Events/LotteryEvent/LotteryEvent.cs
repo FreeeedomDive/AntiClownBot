@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.EventServices;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
@@ -12,6 +13,7 @@ namespace AntiClownDiscordBotVersion2.Events.LotteryEvent
     {
         public LotteryEvent(
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IGuildSettingsService guildSettingsService,
             ILotteryService lotteryService,
             IEventSettingsService eventSettingsService,
@@ -19,6 +21,7 @@ namespace AntiClownDiscordBotVersion2.Events.LotteryEvent
         )
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.guildSettingsService = guildSettingsService;
             this.lotteryService = lotteryService;
             this.eventSettingsService = eventSettingsService;
@@ -35,7 +38,7 @@ namespace AntiClownDiscordBotVersion2.Events.LotteryEvent
 
         public async Task<DiscordMessage> TellBackStory()
         {
-            var noted = await discordClientWrapper.Emotes.FindEmoteAsync("NOTED");
+            var noted = await emotesProvider.GetEmoteAsync("NOTED");
             var text = (DateTime.Now.IsNightTime() || !appSettingsService.GetSettings().PingOnEvents
                            ? ""
                            : "@everyone ") +
@@ -55,6 +58,7 @@ namespace AntiClownDiscordBotVersion2.Events.LotteryEvent
         public List<IEvent> RelatedEvents => new();
 
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IGuildSettingsService guildSettingsService;
         private readonly ILotteryService lotteryService;
         private readonly IEventSettingsService eventSettingsService;

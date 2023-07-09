@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Models.Inventory;
 using AntiClownDiscordBotVersion2.Models.Shop;
@@ -16,6 +17,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
         public InventoryCommandModule(
             ICommandExecutor commandExecutor,
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IApiClient apiClient,
             IUserInventoryService userInventoryService,
             IShopService shopService,
@@ -23,6 +25,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
         ) : base(commandExecutor)
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.apiClient = apiClient;
             this.userInventoryService = userInventoryService;
             this.randomizer = randomizer;
@@ -42,7 +45,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
                 var embed = inventory.UpdateEmbedForCurrentPage();
                 var builder = await new DiscordWebhookBuilder()
                     .AddEmbed(embed)
-                    .SetInventoryButtons(discordClientWrapper);
+                    .SetInventoryButtons(emotesProvider);
                 await RespondToInteractionAsync(context, builder);
             });
         }
@@ -56,7 +59,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
                 if (!result.IsSuccessful)
                 {
                     await RespondToInteractionAsync(context,
-                        $"Нет доступных лутбоксов {await discordClientWrapper.Emotes.FindEmoteAsync("modCheck")}");
+                        $"Нет доступных лутбоксов {await emotesProvider.GetEmoteAsTextAsync("modCheck")}");
                     return;
                 }
 
@@ -88,7 +91,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
             await ExecuteAsync(context, async () =>
             {
                 var member = await discordClientWrapper.Members.GetAsync(context.Member.Id);
-                var shop = new Shop(discordClientWrapper, apiClient, randomizer)
+                var shop = new Shop(discordClientWrapper, emotesProvider, apiClient, randomizer)
                 {
                     UserId = context.Member.Id,
                     Member = member
@@ -98,12 +101,13 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Inventory
                 var embed = await shop.GetNewShopEmbed();
                 var builder = await new DiscordWebhookBuilder()
                     .AddEmbed(embed)
-                    .SetShopButtons(discordClientWrapper);
+                    .SetShopButtons(emotesProvider);
                 await RespondToInteractionAsync(context, builder);
             });
         }
 
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IApiClient apiClient;
         private readonly IUserInventoryService userInventoryService;
         private readonly IRandomizer randomizer;

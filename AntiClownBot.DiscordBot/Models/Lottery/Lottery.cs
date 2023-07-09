@@ -2,6 +2,7 @@
 using System.Text;
 using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.UserBalance;
@@ -16,6 +17,7 @@ namespace AntiClownDiscordBotVersion2.Models.Lottery
     {
         public Lottery(
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IRandomizer randomizer,
             IEventSettingsService eventSettingsService,
             IGuildSettingsService guildSettingsService,
@@ -24,6 +26,7 @@ namespace AntiClownDiscordBotVersion2.Models.Lottery
         )
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.randomizer = randomizer;
             this.eventSettingsService = eventSettingsService;
             this.guildSettingsService = guildSettingsService;
@@ -75,7 +78,7 @@ namespace AntiClownDiscordBotVersion2.Models.Lottery
         {
             var allEmotes = GetAllEmotes();
             var discordEmotes = await
-                Task.WhenAll(allEmotes.Select(async emote => await discordClientWrapper.Emotes.FindEmoteAsync(emote.ToString())));
+                Task.WhenAll(allEmotes.Select(emote => emotesProvider.GetEmoteAsync(emote.ToString())));
             await Task.Delay(eventSettingsService.GetEventSettings().LotteryStartDelayInMinutes * 60 * 1000);
             IsJoinable = false;
             foreach (var user in GenerateLotteryResults())
@@ -216,6 +219,7 @@ namespace AntiClownDiscordBotVersion2.Models.Lottery
         public Action OnLotteryEnd { get; init; }
 
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IRandomizer randomizer;
         private readonly IEventSettingsService eventSettingsService;
         private readonly IGuildSettingsService guildSettingsService;

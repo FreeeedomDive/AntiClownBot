@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.EventServices;
 using AntiClownDiscordBotVersion2.Models.Race;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
@@ -13,6 +14,7 @@ namespace AntiClownDiscordBotVersion2.Events.RaceEvent
     {
         public RaceEvent(
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IGuildSettingsService guildSettingsService,
             IRaceService raceService,
             IEventSettingsService eventSettingsService,
@@ -20,6 +22,7 @@ namespace AntiClownDiscordBotVersion2.Events.RaceEvent
         )
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.guildSettingsService = guildSettingsService;
             this.raceService = raceService;
             this.eventSettingsService = eventSettingsService;
@@ -35,23 +38,24 @@ namespace AntiClownDiscordBotVersion2.Events.RaceEvent
 
             var delayInMinutes = eventSettingsService.GetEventSettings().RaceStartDelayInMinutes;
             await Task.Delay(delayInMinutes * 60 * 1000);
-            raceService.Race.StartRace();
+            raceService.Race!.StartRace();
         }
 
         public async Task<DiscordMessage> TellBackStory()
         {
+            var monkaSteer = await emotesProvider.GetEmoteAsync("monkaSTEER");
             var delayInMinutes = eventSettingsService.GetEventSettings().RaceStartDelayInMinutes;
             var messageContent = (DateTime.Now.IsNightTime()  || !appSettingsService.GetSettings().PingOnEvents ? "" : "@everyone ") + "Начинаем гоночку!!!" +
                                  "\nСоревнуйтесь друг с другом и, главное, со мной, ведь тот, кто сможет обойти меня (и попасть в топ-10), получит социальный рейтинг" +
                                  $"\nРаспределение рейтинга - {string.Join(", ", RaceModel.Rewards)}" +
                                  "\nДля получения рейтинга обязательно нужно быть впереди меня" +
-                                 $"\nЖми {await discordClientWrapper.Emotes.FindEmoteAsync("monkaSTEER")}, чтобы участвовать." +
+                                 $"\nЖми {monkaSteer}, чтобы участвовать." +
                                  $"\nСтарт через {delayInMinutes} минут\n";
             var message = await discordClientWrapper.Messages.SendAsync(
                 guildSettingsService.GetGuildSettings().BotChannelId,
                 messageContent
             );
-            await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, await discordClientWrapper.Emotes.FindEmoteAsync("monkaSTEER"));
+            await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, monkaSteer);
 
             return message;
         }
@@ -61,6 +65,7 @@ namespace AntiClownDiscordBotVersion2.Events.RaceEvent
         public List<IEvent> RelatedEvents => new();
 
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IGuildSettingsService guildSettingsService;
         private readonly IRaceService raceService;
         private readonly IEventSettingsService eventSettingsService;

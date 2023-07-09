@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Utils;
 
 namespace AntiClownDiscordBotVersion2.Models.SlotMachine
@@ -7,10 +8,12 @@ namespace AntiClownDiscordBotVersion2.Models.SlotMachine
     {
         public SlotMachine(
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IRandomizer randomizer
         )
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.randomizer = randomizer;
         }
 
@@ -52,14 +55,14 @@ namespace AntiClownDiscordBotVersion2.Models.SlotMachine
             
             AllCells = new ISlotCell[]
             {
-                new DefaultSlotCell(4, await discordClientWrapper.Emotes.FindEmoteAsync("BASED")),
-                new DefaultSlotCell(15  , await discordClientWrapper.Emotes.FindEmoteAsync("popCat")),
-                new DefaultSlotCell(25  , await discordClientWrapper.Emotes.FindEmoteAsync("peepoClap")),
-                new DefaultSlotCell(50  , await discordClientWrapper.Emotes.FindEmoteAsync("ricardoFlick")),
-                new DefaultSlotCell(100 , await discordClientWrapper.Emotes.FindEmoteAsync("BOOBA")),
-                new DefaultSlotCell(500 , await discordClientWrapper.Emotes.FindEmoteAsync("RainbowPls")),
-                new DefaultSlotCell(1500, await discordClientWrapper.Emotes.FindEmoteAsync("PATREGO")),
-                new CherrySlotCell(2, 5, 20, await discordClientWrapper.Emotes.FindEmoteAsync("")),
+                new DefaultSlotCell(4, await emotesProvider.GetEmoteAsync("BASED")),
+                new DefaultSlotCell(15  , await emotesProvider.GetEmoteAsync("popCat")),
+                new DefaultSlotCell(25  , await emotesProvider.GetEmoteAsync("peepoClap")),
+                new DefaultSlotCell(50  , await emotesProvider.GetEmoteAsync("ricardoFlick")),
+                new DefaultSlotCell(100 , await emotesProvider.GetEmoteAsync("BOOBA")),
+                new DefaultSlotCell(500 , await emotesProvider.GetEmoteAsync("RainbowPls")),
+                new DefaultSlotCell(1500, await emotesProvider.GetEmoteAsync("PATREGO")),
+                new CherrySlotCell(2, 5, 20, await emotesProvider.GetEmoteAsync("")),
             };
 
             return this;
@@ -116,6 +119,7 @@ namespace AntiClownDiscordBotVersion2.Models.SlotMachine
         }
 
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IRandomizer randomizer;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.EventServices;
 using AntiClownDiscordBotVersion2.Models.F1;
 using AntiClownDiscordBotVersion2.Models.Interactions;
@@ -48,6 +49,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IGuessNumberService guessNumberService,
         IRandomizer randomizer,
         IF1PredictionsService f1PredictionsService,
+        IEmotesProvider emotesProvider,
         ILoggerClient logger
     )
     {
@@ -66,6 +68,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.guessNumberService = guessNumberService;
         this.randomizer = randomizer;
         this.f1PredictionsService = f1PredictionsService;
+        this.emotesProvider = emotesProvider;
         this.logger = logger;
     }
 
@@ -90,8 +93,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         if (e.EmojisAfter.Count > e.EmojisBefore.Count)
         {
-            var messageBuilder = new StringBuilder($"{await discordClientWrapper.Emotes.FindEmoteAsync("pepeLaugh")} " +
-                                                   $"{await discordClientWrapper.Emotes.FindEmoteAsync("point_right")}");
+            var messageBuilder = new StringBuilder($"{await emotesProvider.GetEmoteAsTextAsync("pepeLaugh")} " +
+                                                   $"{await emotesProvider.GetEmoteAsTextAsync("point_right")}");
             foreach (var (key, emoji) in e.EmojisAfter)
             {
                 if (!e.EmojisBefore.ContainsKey(key))
@@ -116,7 +119,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 }
             }
 
-            messageBuilder.Append($"удалили {await discordClientWrapper.Emotes.FindEmoteAsync("BibleThump")}");
+            messageBuilder.Append($"удалили {await emotesProvider.GetEmoteAsTextAsync("BibleThump")}");
             await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId,
                 messageBuilder.ToString());
         }
@@ -176,12 +179,12 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             if (randomizer.FlipACoin())
             {
                 await discordClientWrapper.Messages.RespondAsync(e.Message,
-                    $"{await discordClientWrapper.Emotes.FindEmoteAsync("YEP")}");
+                    $"{await emotesProvider.GetEmoteAsTextAsync("YEP")}");
             }
             else
             {
                 await discordClientWrapper.Messages.RespondAsync(e.Message,
-                    $"{await discordClientWrapper.Emotes.FindEmoteAsync("NOPE")}");
+                    $"{await emotesProvider.GetEmoteAsTextAsync("NOPE")}");
             }
 
             return;
@@ -215,9 +218,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         {
             if (cocks)
             {
-                var didSomeoneSayCock = await discordClientWrapper.Emotes.FindEmoteAsync("DIDSOMEONESAYCOCK");
+                var didSomeoneSayCock = await emotesProvider.GetEmoteAsTextAsync("DIDSOMEONESAYCOCK");
                 await discordClientWrapper.Emotes.AddReactionToMessageAsync(e.Message, didSomeoneSayCock);
-                var yep = await discordClientWrapper.Emotes.FindEmoteAsync("YEP");
+                var yep = await emotesProvider.GetEmoteAsTextAsync("YEP");
                 await discordClientWrapper.Messages.RespondAsync(e.Message, $"{yep} COCK");
             }
 
@@ -238,7 +241,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             if (anime)
             {
                 await discordClientWrapper.Emotes.AddReactionToMessageAsync(e.Message,
-                    await discordClientWrapper.Emotes.FindEmoteAsync("AYAYABASS"));
+                    await emotesProvider.GetEmoteAsTextAsync("AYAYABASS"));
             }
         }
     }
@@ -372,7 +375,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 InteractionResponseType.ChannelMessageWithSource,
                 responseBuilder.WithContent($"{member.Mention} " +
                                             $"НЕ НАДО ЮЗАТЬ ЧУЖИЕ КНОПКИ " +
-                                            $"{await discordClientWrapper.Emotes.FindEmoteAsync("Madge")}"));
+                                            $"{await emotesProvider.GetEmoteAsTextAsync("Madge")}"));
         }
 
         await discordClientWrapper.Messages.RespondAsync(e.Interaction, InteractionResponseType.DeferredMessageUpdate,
@@ -436,7 +439,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
 
         await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction,
-            await builder.AddEmbed(await shop.GetNewShopEmbed()).SetShopButtons(discordClientWrapper));
+            await builder.AddEmbed(await shop.GetNewShopEmbed()).SetShopButtons(emotesProvider));
     }
 
     private async Task HandleInventoryInteraction(ComponentInteractionCreateEventArgs e)
@@ -477,7 +480,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
 
         await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction,
-            await builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()).SetInventoryButtons(discordClientWrapper));
+            await builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()).SetInventoryButtons(emotesProvider));
     }
 
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
@@ -565,16 +568,16 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         {
             "Ты понимаешь, что общаешься с бинарником?",
             "*икает*",
-            await discordClientWrapper.Emotes.FindEmoteAsync("PogOff"),
-            await discordClientWrapper.Emotes.FindEmoteAsync("gachiBASS"),
-            await discordClientWrapper.Emotes.FindEmoteAsync("monkaW"),
-            await discordClientWrapper.Emotes.FindEmoteAsync("xdd"),
-            await discordClientWrapper.Emotes.FindEmoteAsync("ok"),
-            await discordClientWrapper.Emotes.FindEmoteAsync("SHTOOO"),
-            await discordClientWrapper.Emotes.FindEmoteAsync("Starege"),
-            await discordClientWrapper.Emotes.FindEmoteAsync("peepoPooPoo"),
-            await discordClientWrapper.Emotes.FindEmoteAsync("peepoRip"),
-            await discordClientWrapper.Emotes.FindEmoteAsync("aRolf"),
+            await emotesProvider.GetEmoteAsTextAsync("PogOff"),
+            await emotesProvider.GetEmoteAsTextAsync("gachiBASS"),
+            await emotesProvider.GetEmoteAsTextAsync("monkaW"),
+            await emotesProvider.GetEmoteAsTextAsync("xdd"),
+            await emotesProvider.GetEmoteAsTextAsync("ok"),
+            await emotesProvider.GetEmoteAsTextAsync("SHTOOO"),
+            await emotesProvider.GetEmoteAsTextAsync("Starege"),
+            await emotesProvider.GetEmoteAsTextAsync("peepoPooPoo"),
+            await emotesProvider.GetEmoteAsTextAsync("peepoRip"),
+            await emotesProvider.GetEmoteAsTextAsync("aRolf"),
         };
         await discordClientWrapper.Messages.RespondAsync(message,
             pool[randomizer.GetRandomNumberBetween(0, pool.Length)]);
@@ -665,5 +668,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IGuessNumberService guessNumberService;
     private readonly IRandomizer randomizer;
     private readonly IF1PredictionsService f1PredictionsService;
+    private readonly IEmotesProvider emotesProvider;
     private readonly ILoggerClient logger;
 }

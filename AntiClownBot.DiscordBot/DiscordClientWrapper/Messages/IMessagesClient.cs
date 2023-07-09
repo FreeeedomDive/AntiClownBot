@@ -17,19 +17,14 @@ public interface IMessagesClient
         bool isEphemeral = false
     );
 
-    Task<DiscordMessage> RespondAsync(InteractionContext context, DiscordEmbed? embed, bool isEphemeral = false);
     Task RespondAsync(DiscordInteraction interaction, InteractionResponseType interactionResponseType, DiscordInteractionResponseBuilder? builder);
     Task EditOriginalResponseAsync(DiscordInteraction interaction, DiscordWebhookBuilder builder);
     Task<DiscordMessage> ModifyAsync(DiscordMessage message, string content);
     Task<DiscordMessage> ModifyAsync(DiscordMessage message, DiscordEmbed embed);
-    Task<DiscordMessage> ModifyAsync(DiscordMessage message, DiscordMessageBuilder builder);
-    Task<DiscordMessage> ModifyAsync(InteractionContext context, string? content);
-    Task<DiscordMessage> ModifyAsync(InteractionContext context, DiscordWebhookBuilder builder);
     Task<DiscordMessage> SendAsync(ulong channelId, string content);
     Task<DiscordMessage> SendAsync(ulong channelId, DiscordEmbed embed);
     Task<DiscordMessage> SendAsync(ulong channelId, DiscordMessageBuilder builder);
     Task<DiscordMessage> FindMessageAsync(ulong channelId, ulong messageId);
     Task<DiscordThreadChannel> CreateThreadAsync(DiscordMessage message, string content);
-    Task DeleteAsync(InteractionContext interaction);
     Task DeleteAsync(DiscordMessage message);
 }

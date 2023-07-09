@@ -9,13 +9,11 @@ public class GuildsClient : IGuildsClient
 {
     public GuildsClient(
         DiscordClient discordClient,
-        IGuildSettingsService guildSettingsService,
-        ILoggerClient logger
+        IGuildSettingsService guildSettingsService
     )
     {
         this.discordClient = discordClient;
         this.guildSettingsService = guildSettingsService;
-        this.logger = logger;
     }
 
     public async Task<DiscordGuild> GetGuildAsync()
@@ -49,5 +47,4 @@ public class GuildsClient : IGuildsClient
 
     private readonly DiscordClient discordClient;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILoggerClient logger;
 }

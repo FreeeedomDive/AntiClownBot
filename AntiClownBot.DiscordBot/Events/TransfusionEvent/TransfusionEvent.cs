@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
@@ -12,6 +13,7 @@ namespace AntiClownDiscordBotVersion2.Events.TransfusionEvent
     {
         public TransfusionEvent(
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IApiClient apiClient,
             IRandomizer randomizer,
             IGuildSettingsService guildSettingsService,
@@ -19,6 +21,7 @@ namespace AntiClownDiscordBotVersion2.Events.TransfusionEvent
         )
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.apiClient = apiClient;
             this.randomizer = randomizer;
             this.guildSettingsService = guildSettingsService;
@@ -47,8 +50,8 @@ namespace AntiClownDiscordBotVersion2.Events.TransfusionEvent
 
             var messageContent = "Я решил выделить немного кредитов рандомному челу, " +
                                  "но свой бюджет я тратить не буду, возьму из кармана самого богатого " +
-                                 $"{await discordClientWrapper.Emotes.FindEmoteAsync("MEGALUL")} " +
-                                 $"{await discordClientWrapper.Emotes.FindEmoteAsync("point_right")} " +
+                                 $"{await emotesProvider.GetEmoteAsTextAsync("MEGALUL")} " +
+                                 $"{await emotesProvider.GetEmoteAsTextAsync("point_right")} " +
                                  $"{richestMember.ServerOrUserName()}. " +
                                  $"Отдай {exchangeMember.ServerOrUserName()} {exchange} social credits"; 
 
@@ -62,6 +65,7 @@ namespace AntiClownDiscordBotVersion2.Events.TransfusionEvent
         public List<IEvent> RelatedEvents => new();
         
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IApiClient apiClient;
         private readonly IRandomizer randomizer;
         private readonly IGuildSettingsService guildSettingsService;

@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.EventServices;
 using AntiClownDiscordBotVersion2.Settings.AppSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
@@ -11,12 +12,14 @@ namespace AntiClownDiscordBotVersion2.Events.GuessNumberEvent
     {
         public GuessNumberEvent(
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IGuildSettingsService guildSettingsService,
             IGuessNumberService guessNumberService,
             IAppSettingsService appSettingsService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.guildSettingsService = guildSettingsService;
             this.guessNumberService = guessNumberService;
             this.appSettingsService = appSettingsService;
@@ -39,10 +42,10 @@ namespace AntiClownDiscordBotVersion2.Events.GuessNumberEvent
                        + "У вас 10 минут";
 
             var message = await discordClientWrapper.Messages.SendAsync(guildSettingsService.GetGuildSettings().BotChannelId, text);
-            await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, await discordClientWrapper.Emotes.FindEmoteAsync("one"));
-            await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, await discordClientWrapper.Emotes.FindEmoteAsync("two"));
-            await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, await discordClientWrapper.Emotes.FindEmoteAsync("three"));
-            await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, await discordClientWrapper.Emotes.FindEmoteAsync("four"));
+            await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, await emotesProvider.GetEmoteAsync("one"));
+            await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, await emotesProvider.GetEmoteAsync("two"));
+            await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, await emotesProvider.GetEmoteAsync("three"));
+            await discordClientWrapper.Emotes.AddReactionToMessageAsync(message, await emotesProvider.GetEmoteAsync("four"));
             return message;
         }
 
@@ -51,6 +54,7 @@ namespace AntiClownDiscordBotVersion2.Events.GuessNumberEvent
         public List<IEvent> RelatedEvents => new();
 
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IGuildSettingsService guildSettingsService;
         private readonly IGuessNumberService guessNumberService;
         private readonly IAppSettingsService appSettingsService;

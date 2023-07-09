@@ -9,13 +9,18 @@ public class EmotesClient : IEmotesClient
 {
     public EmotesClient(
         DiscordClient discordClient,
-        IGuildSettingsService guildSettingsService,
-        ILoggerClient logger
+        IGuildSettingsService guildSettingsService
     )
     {
         this.discordClient = discordClient;
         this.guildSettingsService = guildSettingsService;
-        this.logger = logger;
+    }
+
+    public Task<DiscordEmoji[]> GetAllGuildEmojisAsync(ulong guildId)
+    {
+        return discordClient.Guilds.TryGetValue(guildId, out var guild)
+            ? Task.FromResult(guild.Emojis.Values.ToArray())
+            : throw new ArgumentException("Can not find guild with given id", nameof(guildId));
     }
 
     public Task<DiscordEmoji> FindEmoteAsync(string emoteName)
@@ -51,5 +56,4 @@ public class EmotesClient : IEmotesClient
 
     private readonly DiscordClient discordClient;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILoggerClient logger;
 }
