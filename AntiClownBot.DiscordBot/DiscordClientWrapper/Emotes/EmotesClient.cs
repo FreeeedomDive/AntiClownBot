@@ -18,6 +18,13 @@ public class EmotesClient : IEmotesClient
         this.logger = logger;
     }
 
+    public Task<DiscordEmoji[]> GetAllGuildEmojisAsync(ulong guildId)
+    {
+        return discordClient.Guilds.TryGetValue(guildId, out var guild)
+            ? Task.FromResult(guild.Emojis.Values.ToArray())
+            : throw new ArgumentException("Can not find guild with given id", nameof(guildId));
+    }
+
     public Task<DiscordEmoji> FindEmoteAsync(string emoteName)
     {
         var correctEmoteName =
