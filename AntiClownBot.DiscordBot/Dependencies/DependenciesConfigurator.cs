@@ -1,5 +1,4 @@
 ﻿using Ninject;
-using TelemetryApp.Utilities.Extensions;
 
 namespace AntiClownDiscordBotVersion2.Dependencies;
 
@@ -25,6 +24,7 @@ public class DependenciesConfigurator
             .WithApiClients()
             .WithDiscordClient()
             .WithDiscordWrapper()
+            .WithEmotesProvider()
             // configure statistic service
             .WithEmoteStatisticService()
             .WithDailyStatisticService()

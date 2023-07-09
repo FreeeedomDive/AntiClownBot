@@ -2,6 +2,7 @@
 using AntiClownDiscordBotVersion2.ApiEventFeed;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.BotBehaviour;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Events;
 using AntiClownDiscordBotVersion2.Events.NightEvents;
 using AntiClownDiscordBotVersion2.EventServices;
@@ -64,12 +65,13 @@ public static class StandardKernelExtensions
         return ninjectKernel;
     }
 
-    public static StandardKernel WithTelemetryClientWithLogger(this StandardKernel ninjectkernel)
+    public static StandardKernel WithTelemetryClientWithLogger(this StandardKernel ninjectKernel)
     {
-        var settings = ninjectkernel.Get<IAppSettingsService>().GetSettings();
+        var settings = ninjectKernel.Get<IAppSettingsService>().GetSettings();
         var zone = Environment.GetEnvironmentVariable("AntiClownBot.Zone");
 
-        return ninjectkernel.ConfigureTelemetryClientWithLogger($"AntiClownBot{zone}", "DiscordBot", settings.TelemetryApiUrl);
+        return ninjectKernel.ConfigureTelemetryClientWithLogger($"AntiClownBot{zone}", "DiscordBot",
+            settings.TelemetryApiUrl);
     }
 
     public static StandardKernel AddMiddlewares(this StandardKernel ninjectKernel)
@@ -83,6 +85,7 @@ public static class StandardKernelExtensions
             ninjectKernel.Bind(middlewareType).ToSelf();
             ninjectKernel.Bind<ICommandMiddleware>().To(middlewareType);
         }
+
         ICommandExecutor commandExecutor = new CommandExecutor(ninjectKernel.Get<IServiceProvider>());
         commandExecutor.AddMiddleware<LoggingMiddleware>();
         commandExecutor.AddMiddleware<DeferredMessageMiddleware>();
@@ -137,6 +140,13 @@ public static class StandardKernelExtensions
     public static StandardKernel WithDiscordWrapper(this StandardKernel ninjectKernel)
     {
         ninjectKernel.Bind<IDiscordClientWrapper>().To<DiscordClientWrapper.DiscordClientWrapper>();
+
+        return ninjectKernel;
+    }
+
+    public static StandardKernel WithEmotesProvider(this StandardKernel ninjectKernel)
+    {
+        ninjectKernel.Bind<IEmotesProvider>().To<EmotesProvider>();
 
         return ninjectKernel;
     }
@@ -204,11 +214,11 @@ public static class StandardKernelExtensions
         return ninjectKernel;
     }
 
-    public static StandardKernel WithF1PredictionsService(this StandardKernel ninjectkernel)
+    public static StandardKernel WithF1PredictionsService(this StandardKernel ninjectKernel)
     {
-        ninjectkernel.Bind<IF1PredictionsService>().To<F1PredictionsService>().InSingletonScope();
+        ninjectKernel.Bind<IF1PredictionsService>().To<F1PredictionsService>().InSingletonScope();
 
-        return ninjectkernel;
+        return ninjectKernel;
     }
 
     public static StandardKernel WithInventoryService(this StandardKernel ninjectKernel)
