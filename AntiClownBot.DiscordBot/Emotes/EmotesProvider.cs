@@ -26,12 +26,20 @@ public class EmotesProvider : IEmotesProvider
 
     public async Task<DiscordEmoji> GetEmoteAsync(string emoteName)
     {
+        if (!isInitialized)
+        {
+            await InitializeAsync();
+            isInitialized = true;
+            Console.WriteLine($"Cache has been initialized with {emotesCache.Count} emotes");
+        }
         if (emotesCache.TryGetValue(emoteName, out var cachedEmote))
         {
+            Console.WriteLine($"Get emote {emoteName} from cache");
             return cachedEmote;
         }
         var emote = await discordClientWrapper.Emotes.FindEmoteAsync(emoteName);
         emotesCache.TryAdd(emoteName, emote);
+        Console.WriteLine($"Add emote {emoteName} to cache");
         return emote;
     }
 
@@ -41,6 +49,7 @@ public class EmotesProvider : IEmotesProvider
         return emote.ToString()!;
     }
 
+    private bool isInitialized = false;
     private ConcurrentDictionary<string, DiscordEmoji> emotesCache;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IGuildSettingsService guildSettingsService;

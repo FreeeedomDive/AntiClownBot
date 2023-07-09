@@ -149,7 +149,6 @@ public static class StandardKernelExtensions
         var discordClientWrapper = ninjectKernel.Get<IDiscordClientWrapper>();
         var guidSettings = ninjectKernel.Get<IGuildSettingsService>();
         var emotesProvider = new EmotesProvider(discordClientWrapper, guidSettings);
-        emotesProvider.InitializeAsync().GetAwaiter().GetResult();
 
         ninjectKernel.Bind<IEmotesProvider>().ToConstant(emotesProvider);
 
