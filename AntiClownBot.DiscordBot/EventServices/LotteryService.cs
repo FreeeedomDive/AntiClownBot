@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Models.Lottery;
 using AntiClownDiscordBotVersion2.Settings.EventSettings;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
@@ -12,6 +13,7 @@ public class LotteryService : ILotteryService
 {
     public LotteryService(
         IDiscordClientWrapper discordClientWrapper,
+        IEmotesProvider emotesProvider,
         IRandomizer randomizer,
         IEventSettingsService eventSettingsService,
         IGuildSettingsService guildSettingsService,
@@ -20,6 +22,7 @@ public class LotteryService : ILotteryService
     )
     {
         this.discordClientWrapper = discordClientWrapper;
+        this.emotesProvider = emotesProvider;
         this.randomizer = randomizer;
         this.eventSettingsService = eventSettingsService;
         this.guildSettingsService = guildSettingsService;
@@ -31,6 +34,7 @@ public class LotteryService : ILotteryService
     {
         Lottery = new Lottery(
             discordClientWrapper,
+            emotesProvider,
             randomizer,
             eventSettingsService,
             guildSettingsService,
@@ -45,6 +49,7 @@ public class LotteryService : ILotteryService
     public Lottery? Lottery { get; set; }
 
     private readonly IDiscordClientWrapper discordClientWrapper;
+    private readonly IEmotesProvider emotesProvider;
     private readonly IRandomizer randomizer;
     private readonly IEventSettingsService eventSettingsService;
     private readonly IGuildSettingsService guildSettingsService;

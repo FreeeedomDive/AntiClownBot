@@ -2,6 +2,7 @@
 using AntiClownApiClient.Dto.Constants;
 using AntiClownApiClient.Dto.Models.Items;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
@@ -15,10 +16,12 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
     public RatingCommandModule(
         ICommandExecutor commandExecutor,
         IDiscordClientWrapper discordClientWrapper,
+        IEmotesProvider emotesProvider,
         IApiClient apiClient
     ) : base(commandExecutor)
     {
         this.discordClientWrapper = discordClientWrapper;
+        this.emotesProvider = emotesProvider;
         this.apiClient = apiClient;
     }
 
@@ -54,7 +57,7 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
 
             var name = member.ServerOrUserName();
             embedBuilder.WithThumbnail(context.Member.AvatarUrl);
-            var aRolf = await discordClientWrapper.Emotes.FindEmoteAsync("aRolf");
+            var aRolf = await emotesProvider.GetEmoteAsTextAsync("aRolf");
             embedBuilder.WithTitle($"ЧЕЛА РЕАЛЬНО ЗОВУТ {name.ToUpper()} {aRolf} {aRolf} {aRolf}");
 
             embedBuilder.AddField("SCAM COINS", $"{response.ScamCoins}");
@@ -151,5 +154,6 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;
+    private readonly IEmotesProvider emotesProvider;
     private readonly IApiClient apiClient;
 }

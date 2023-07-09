@@ -2,6 +2,7 @@
 using AntiClownApiClient.Dto.Models.Items;
 using AntiClownApiClient.Dto.Responses.UserCommandResponses;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus.Entities;
@@ -12,11 +13,13 @@ namespace AntiClownDiscordBotVersion2.Models
     {
         public TributeService(
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IApiClient apiClient,
             IUserBalanceService userBalanceService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.apiClient = apiClient;
             this.userBalanceService = userBalanceService;
         }
@@ -36,9 +39,9 @@ namespace AntiClownDiscordBotVersion2.Models
                 case TributeResult.AutoTributeWasCancelledByEarlierTribute:
                     return null;
                 case TributeResult.CooldownHasNotPassed:
-                    messageEmbedBuilder.AddField(await discordClientWrapper.Emotes.FindEmoteAsync("NOPERS"),
+                    messageEmbedBuilder.AddField(await emotesProvider.GetEmoteAsTextAsync("NOPERS"),
                         "Не злоупотребляй подношение император XI"
-                        + $" {await discordClientWrapper.Emotes.FindEmoteAsync("PepegaGun")}");
+                        + $" {await emotesProvider.GetEmoteAsTextAsync("PepegaGun")}");
                     return messageEmbedBuilder.Build();
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -50,7 +53,7 @@ namespace AntiClownDiscordBotVersion2.Models
             {
                 var sharedUser = await discordClientWrapper.Members.GetAsync(response.SharedCommunistUserId);
                 messageEmbedBuilder.AddField(
-                    $"Произошел коммунизм {await discordClientWrapper.Emotes.FindEmoteAsync("cykaPls")}",
+                    $"Произошел коммунизм {await emotesProvider.GetEmoteAsTextAsync("cykaPls")}",
                     $"Разделение подношения с {sharedUser.ServerOrUserName()}"
                 );
                 userBalanceService.ChangeDailyStats(response.SharedCommunistUserId, response.TributeQuality);
@@ -68,7 +71,7 @@ namespace AntiClownDiscordBotVersion2.Models
                         "Ну и ну! Вы разочаровать партию!");
                     break;
                 default:
-                    var starege = await discordClientWrapper.Emotes.FindEmoteAsync("Starege");
+                    var starege = await emotesProvider.GetEmoteAsTextAsync("Starege");
                     messageEmbedBuilder.AddField("Партия не оценить ваших усилий",
                         $"{starege} {starege} {starege}");
                     break;
@@ -101,11 +104,11 @@ namespace AntiClownDiscordBotVersion2.Models
 
             if (response.IsNextTributeAutomatic)
             {
-                var rainbowEmote = await discordClientWrapper.Emotes.FindEmoteAsync("RainbowPls");
+                var rainbowEmote = await emotesProvider.GetEmoteAsTextAsync("RainbowPls");
                 messageEmbedBuilder.AddField(
                     $"{rainbowEmote} Кошка-жена {rainbowEmote}",
                     "Кошка-жена подарить тебе автоматический следующий подношение "
-                    + $"{await discordClientWrapper.Emotes.FindEmoteAsync("Pog")}"
+                    + $"{await emotesProvider.GetEmoteAsTextAsync("Pog")}"
                 );
             }
 
@@ -120,6 +123,7 @@ namespace AntiClownDiscordBotVersion2.Models
         }
 
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IApiClient apiClient;
         private readonly IUserBalanceService userBalanceService;
     }

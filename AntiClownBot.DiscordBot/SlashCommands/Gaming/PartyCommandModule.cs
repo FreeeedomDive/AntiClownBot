@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Party;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
@@ -15,11 +16,13 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
         public PartyCommandModule(
             ICommandExecutor commandExecutor,
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IPartyService partyService,
             IGuildSettingsService guildSettingsService
         ) : base(commandExecutor)
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.partyService = partyService;
             this.guildSettingsService = guildSettingsService;
         }
@@ -41,7 +44,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
                     description = $" - {description}";
                 }
 
-                var response = await discordClientWrapper.Emotes.FindEmoteAsync("Okayge");
+                var response = await emotesProvider.GetEmoteAsTextAsync("Okayge");
                 await RespondToInteractionAsync(context, response);
                 switch (prefix)
                 {
@@ -60,7 +63,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
                     default:
                         await discordClientWrapper.Messages.RespondAsync(
                             context,
-                            $"Такую игру я не знаю {await discordClientWrapper.Emotes.FindEmoteAsync("CockInspector")}"
+                            $"Такую игру я не знаю {await emotesProvider.GetEmoteAsTextAsync("CockInspector")}"
                         );
                         break;
                 }
@@ -82,18 +85,18 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
                 if (string.IsNullOrEmpty(name))
                 {
                     await RespondToInteractionAsync(context,
-                        $"Не вижу название игры {await discordClientWrapper.Emotes.FindEmoteAsync("modCheck")}");
+                        $"Не вижу название игры {await emotesProvider.GetEmoteAsTextAsync("modCheck")}");
                     return;
                 }
 
                 if (capacity is < 1 or > 20)
                 {
                     await RespondToInteractionAsync(context,
-                        $"Ага как скажешь {await discordClientWrapper.Emotes.FindEmoteAsync("Agakakskagesh")}");
+                        $"Ага как скажешь {await emotesProvider.GetEmoteAsTextAsync("Agakakskagesh")}");
                     return;
                 }
 
-                var response = await discordClientWrapper.Emotes.FindEmoteAsync("Okayge");
+                var response = await emotesProvider.GetEmoteAsTextAsync("Okayge");
                 await RespondToInteractionAsync(context, response);
                 await partyService.CreateNewParty(context.Member.Id, name, (int)capacity, role?.Id);
             });
@@ -129,6 +132,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Gaming
         }
 
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IPartyService partyService;
         private readonly IGuildSettingsService guildSettingsService;
     }

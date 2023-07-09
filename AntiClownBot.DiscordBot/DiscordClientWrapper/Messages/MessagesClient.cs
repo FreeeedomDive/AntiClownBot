@@ -1,9 +1,7 @@
-﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper.Emotes;
-using AntiClownDiscordBotVersion2.Settings.GuildSettings;
+﻿using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper.Messages;
 
@@ -11,15 +9,11 @@ public class MessagesClient : IMessagesClient
 {
     public MessagesClient(
         DiscordClient discordClient,
-        IEmotesClient emotesClient,
-        IGuildSettingsService guildSettingsService,
-        ILoggerClient logger
+        IGuildSettingsService guildSettingsService
     )
     {
         this.discordClient = discordClient;
-        this.emotesClient = emotesClient;
         this.guildSettingsService = guildSettingsService;
-        this.logger = logger;
     }
 
     public async Task<DiscordMessage> RespondAsync(DiscordMessage message, string content)
@@ -54,13 +48,6 @@ public class MessagesClient : IMessagesClient
         return await context.GetOriginalResponseAsync();
     }
 
-    public async Task<DiscordMessage> RespondAsync(InteractionContext context, DiscordEmbed? embed, bool isEphemeral = false)
-    {
-        var builder = embed == null ? null : new DiscordInteractionResponseBuilder().AddEmbed(embed).AsEphemeral(isEphemeral);
-        await context.CreateResponseAsync(builder);
-        return await context.GetOriginalResponseAsync();
-    }
-
     public async Task<DiscordMessage> ModifyAsync(DiscordMessage message, string content)
     {
         var modified = await message.ModifyAsync(content);
@@ -73,18 +60,6 @@ public class MessagesClient : IMessagesClient
         var modified = await message.ModifyAsync(embed);
 
         return modified;
-    }
-
-    public async Task<DiscordMessage> ModifyAsync(DiscordMessage message, DiscordMessageBuilder builder)
-    {
-        var modified = await message.ModifyAsync(builder);
-
-        return modified;
-    }
-
-    public async Task<DiscordMessage> ModifyAsync(InteractionContext context, string? content)
-    {
-        return await context.EditResponseAsync(new DiscordWebhookBuilder().WithContent(content ?? $" {await emotesClient.FindEmoteAsync("YEP")} "));
     }
 
     public async Task<DiscordMessage> ModifyAsync(InteractionContext context, DiscordWebhookBuilder builder)
@@ -164,9 +139,7 @@ public class MessagesClient : IMessagesClient
     }
 
     private readonly DiscordClient discordClient;
-    private readonly IEmotesClient emotesClient;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILoggerClient logger;
 
     private const int ThreadNameLengthLimit = 100;
 }

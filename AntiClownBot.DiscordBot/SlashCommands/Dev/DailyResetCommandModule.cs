@@ -1,5 +1,5 @@
 ﻿using AntiClownApiClient;
-using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using DSharpPlus;
@@ -11,12 +11,12 @@ public class DailyResetCommandModule : SlashCommandModuleWithMiddlewares
 {
     public DailyResetCommandModule(
         ICommandExecutor commandExecutor,
-        IDiscordClientWrapper discordClientWrapper,
+        IEmotesProvider emotesProvider,
         IApiClient apiClient,
         Models.Lohotron.Lohotron lohotron
     ) : base(commandExecutor)
     {
-        this.discordClientWrapper = discordClientWrapper;
+        this.emotesProvider = emotesProvider;
         this.apiClient = apiClient;
         this.lohotron = lohotron;
     }
@@ -29,11 +29,11 @@ public class DailyResetCommandModule : SlashCommandModuleWithMiddlewares
         {
             await apiClient.Users.DailyResetAsync();
             lohotron.Reset();
-            await RespondToInteractionAsync(context, await discordClientWrapper.Emotes.FindEmoteAsync("YEP"));
+            await RespondToInteractionAsync(context, await emotesProvider.GetEmoteAsTextAsync("YEP"));
         });
     }
 
-    private readonly IDiscordClientWrapper discordClientWrapper;
+    private readonly IEmotesProvider emotesProvider;
     private readonly IApiClient apiClient;
     private readonly Models.Lohotron.Lohotron lohotron;
 }

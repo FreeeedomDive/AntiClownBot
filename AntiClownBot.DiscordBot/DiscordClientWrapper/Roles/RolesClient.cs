@@ -13,15 +13,13 @@ public class RolesClient : IRolesClient
         DiscordClient discordClient,
         IGuildSettingsService guildSettingsService,
         IGuildsClient guildsClient,
-        IMembersClient membersClient,
-        ILoggerClient logger
+        IMembersClient membersClient
     )
     {
         this.discordClient = discordClient;
         this.guildSettingsService = guildSettingsService;
         this.guildsClient = guildsClient;
         this.membersClient = membersClient;
-        this.logger = logger;
     }
 
     public async Task<DiscordRole> CreateNewRoleAsync(string roleName)
@@ -59,5 +57,4 @@ public class RolesClient : IRolesClient
     private readonly IGuildSettingsService guildSettingsService;
     private readonly IGuildsClient guildsClient;
     private readonly IMembersClient membersClient;
-    private readonly ILoggerClient logger;
 }

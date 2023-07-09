@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
 using DSharpPlus.SlashCommands;
@@ -9,10 +10,12 @@ public class LotteryCommandModule : SlashCommandModuleWithMiddlewares
 {
     public LotteryCommandModule(
         ICommandExecutor commandExecutor,
-        IDiscordClientWrapper discordClientWrapper
+        IDiscordClientWrapper discordClientWrapper,
+        IEmotesProvider emotesProvider
     ) : base(commandExecutor)
     {
         this.discordClientWrapper = discordClientWrapper;
+        this.emotesProvider = emotesProvider;
     }
 
     [SlashCommand(Interactions.Commands.Lottery, "Информация о лотерее")]
@@ -27,7 +30,7 @@ public class LotteryCommandModule : SlashCommandModuleWithMiddlewares
                 .OrderBy(Models.Lottery.Lottery.EmoteToInt)
                 .ToArray();
             var discordEmotesTasks = emotes
-                .Select(emote => discordClientWrapper.Emotes.FindEmoteAsync(emote.ToString()));
+                .Select(emote => emotesProvider.GetEmoteAsTextAsync(emote.ToString()));
             var discordEmotes = await Task.WhenAll(discordEmotesTasks);
             var emotesPrice = emotes.Select(Models.Lottery.Lottery.EmoteToInt).ToArray();
             var emotesInfo = discordEmotes.Select((x, i) => $"\t{x} = {emotesPrice[i]}");
@@ -42,4 +45,5 @@ public class LotteryCommandModule : SlashCommandModuleWithMiddlewares
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;
+    private readonly IEmotesProvider emotesProvider;
 }

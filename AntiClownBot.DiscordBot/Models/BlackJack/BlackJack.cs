@@ -3,6 +3,7 @@ using System.Timers;
 using AntiClownApiClient;
 using AntiClownBot.Models.BlackJack;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.UserBalance;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
@@ -27,12 +28,14 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
     {
         public BlackJack(
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IApiClient apiClient,
             IRandomizer randomizer,
             IUserBalanceService userBalanceService
         )
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.apiClient = apiClient;
             this.randomizer = randomizer;
             this.userBalanceService = userBalanceService;
@@ -82,7 +85,7 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
         {
             var member = await discordClientWrapper.Members.GetAsync(userId);
             Players.Enqueue(new Player { UserId = userId, Value = 0, Name = member.ServerOrUserName() });
-            return $"{member.ServerOrUserName()} присоединился к игре {await discordClientWrapper.Emotes.FindEmoteAsync("peepoArrive")}";
+            return $"{member.ServerOrUserName()} присоединился к игре {await emotesProvider.GetEmoteAsTextAsync("peepoArrive")}";
         }
 
         public async Task<string> Leave(ulong userId)
@@ -97,7 +100,7 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
 
                 var p = Players.Dequeue();
                 if (IsActive) StartTimer();
-                return $"{p.Name} вышел из игры {await discordClientWrapper.Emotes.FindEmoteAsync("peepoLeave")}\n";
+                return $"{p.Name} вышел из игры {await emotesProvider.GetEmoteAsTextAsync("peepoLeave")}\n";
             }
 
             var potentialRemovableUser = Players.Where(p => userId.Equals(p.UserId)).ToList();
@@ -113,7 +116,7 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
                     "Выход из активной игры блекджека");
             }
 
-            return $"{player.Name} вышел из игры {await discordClientWrapper.Emotes.FindEmoteAsync("peepoLeave")}\n";
+            return $"{player.Name} вышел из игры {await emotesProvider.GetEmoteAsTextAsync("peepoLeave")}\n";
         }
 
         public Result GetCard(bool isDouble, Player player)
@@ -152,7 +155,7 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
         {
             if (Players.Count < 2)
             {
-                return $"А почему дилер играет один??? {await discordClientWrapper.Emotes.FindEmoteAsync("weirdChamp")}";
+                return $"А почему дилер играет один??? {await emotesProvider.GetEmoteAsTextAsync("weirdChamp")}";
             }
 
             CurrentDeck = new Deck(randomizer).Init();
@@ -182,7 +185,7 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
             if (Players.Count < 2)
             {
                 stringBuilder.Append(
-                    $"Все оказались слишком бедными, и я остался один {await discordClientWrapper.Emotes.FindEmoteAsync("BibleThump")}");
+                    $"Все оказались слишком бедными, и я остался один {await emotesProvider.GetEmoteAsTextAsync("BibleThump")}");
                 return stringBuilder.ToString();
             }
 
@@ -191,7 +194,7 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
             stringBuilder.Append(firstCard.Message + "\n");
             dealer.ReservedCard = CurrentDeck.Cards.Last();
             stringBuilder.Append(
-                $"{dealer.Name} получил вторую карту, но какую же... {await discordClientWrapper.Emotes.FindEmoteAsync("monkaHmm")}\n");
+                $"{dealer.Name} получил вторую карту, но какую же... {await emotesProvider.GetEmoteAsTextAsync("monkaHmm")}\n");
             CurrentDeck.Cards.RemoveAt(CurrentDeck.Cards.Count - 1);
             foreach (var player in Players)
             {
@@ -335,6 +338,7 @@ namespace AntiClownDiscordBotVersion2.Models.BlackJack
 
         private readonly Timer timer;
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IApiClient apiClient;
         private readonly IRandomizer randomizer;
         private readonly IUserBalanceService userBalanceService;

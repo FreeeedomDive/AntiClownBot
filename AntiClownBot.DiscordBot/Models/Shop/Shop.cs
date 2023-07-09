@@ -4,6 +4,7 @@ using AntiClownApiClient.Dto.Responses;
 using AntiClownApiClient.Dto.Responses.ShopResponses;
 using AntiClownApiClient.Dto.Responses.UserCommandResponses;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Utils;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
 using DSharpPlus;
@@ -15,11 +16,13 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
     {
         public Shop(
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             IApiClient apiClient,
             IRandomizer randomizer
         )
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.apiClient = apiClient;
             this.randomizer = randomizer;
         }
@@ -35,13 +38,13 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
         {
             var loadingEmotes = new List<string>()
             {
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("pigRoll")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("Applecatrun")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("SCAMMED")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("COGGERS")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("RainbowPls")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("PolarStrut")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("popCat")}",
+                await emotesProvider.GetEmoteAsTextAsync("pigRoll"),
+                await emotesProvider.GetEmoteAsTextAsync("Applecatrun"),
+                await emotesProvider.GetEmoteAsTextAsync("SCAMMED"),
+                await emotesProvider.GetEmoteAsTextAsync("COGGERS"),
+                await emotesProvider.GetEmoteAsTextAsync("RainbowPls"),
+                await emotesProvider.GetEmoteAsTextAsync("PolarStrut"),
+                await emotesProvider.GetEmoteAsTextAsync("popCat"),
             };
 
             var loadingEmbedBuilder = new DiscordEmbedBuilder();
@@ -143,7 +146,7 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
             var newItemResponse = await apiClient.Users.GetItemByIdAsync(UserId, buyResponse.ItemId);
             if (newItemResponse.Result != ItemResult.Success)
             {
-                var starege = await discordClientWrapper.Emotes.FindEmoteAsync("Starege");
+                var starege = await emotesProvider.GetEmoteAsTextAsync("Starege");
                 responseBuilder.WithContent($"{Member.Mention} хуйня {starege}");
                 await discordClientWrapper.Messages.RespondAsync(interaction, InteractionResponseType.ChannelMessageWithSource, responseBuilder);
                 return;
@@ -169,7 +172,7 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
 
         private async Task<DiscordEmbed> CreateNewShopEmbed(UserShopResponseDto shop)
         {
-            var pepegaCredit = await discordClientWrapper.Emotes.FindEmoteAsync("PepegaCredit");
+            var pepegaCredit = await emotesProvider.GetEmoteAsTextAsync("PepegaCredit");
             var embedBuilder = new DiscordEmbedBuilder();
             embedBuilder.WithTitle(
                 $"Магазин пользователя {Member.ServerOrUserName()} {pepegaCredit} {pepegaCredit} {pepegaCredit}");
@@ -182,7 +185,7 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
             foreach (var shopItem in shop.Items)
             {
                 var itemContent = shopItem.IsOwned
-                    ? "КУПЛЕН" + (boughtItemsInfo.ContainsKey(itemIndex) ? $"\n{boughtItemsInfo[itemIndex]}" : "")
+                    ? "КУПЛЕН" + (boughtItemsInfo.TryGetValue(itemIndex, out var itemInfo) ? $"\n{itemInfo}" : "")
                     : $"Редкость: {Rarity[shopItem.Rarity]}\n" +
                       $"Цена: {shopItem.Price}";
                 embedBuilder.AddField(
@@ -228,6 +231,7 @@ namespace AntiClownDiscordBotVersion2.Models.Shop
 
         private readonly Dictionary<int, string> boughtItemsInfo = new();
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly IApiClient apiClient;
         private readonly IRandomizer randomizer;
     }

@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus.Entities;
@@ -10,10 +11,12 @@ public class CorrectChatCommandUsageMiddleware : ICommandMiddleware
 {
     public CorrectChatCommandUsageMiddleware(
         IGuildSettingsService guildSettingsService,
+        IEmotesProvider emotesProvider,
         IDiscordClientWrapper discordClientWrapper
     )
     {
         this.guildSettingsService = guildSettingsService;
+        this.emotesProvider = emotesProvider;
         this.discordClientWrapper = discordClientWrapper;
     }
 
@@ -33,8 +36,8 @@ public class CorrectChatCommandUsageMiddleware : ICommandMiddleware
         // запрещаем использовать команды пати в любых других каналах, кроме канала для пати
         if (command == Interactions.Commands.Party_Group && channelId != guildSettings.PartyChannelId)
         {
-            var madgeEmote = await discordClientWrapper.Emotes.FindEmoteAsync("Madge");
-            var pointRightEmote = await discordClientWrapper.Emotes.FindEmoteAsync("point_right");
+            var madgeEmote = await emotesProvider.GetEmoteAsTextAsync("Madge");
+            var pointRightEmote = await emotesProvider.GetEmoteAsTextAsync("point_right");
             var partyChannel = await discordClientWrapper.Guilds.FindDiscordChannel(guildSettings.PartyChannelId);
             
             await RespondWithErrorAsync(
@@ -53,8 +56,8 @@ public class CorrectChatCommandUsageMiddleware : ICommandMiddleware
                     or Interactions.Commands.When
             && channelId != guildSettings.TributeChannelId)
         {
-            var madgeEmote = await discordClientWrapper.Emotes.FindEmoteAsync("Madge");
-            var pointRightEmote = await discordClientWrapper.Emotes.FindEmoteAsync("point_right");
+            var madgeEmote = await emotesProvider.GetEmoteAsTextAsync("Madge");
+            var pointRightEmote = await emotesProvider.GetEmoteAsTextAsync("point_right");
             var tributeChannel = await discordClientWrapper.Guilds.FindDiscordChannel(guildSettings.TributeChannelId);
             await RespondWithErrorAsync(context.Context, $"{madgeEmote} {pointRightEmote} {tributeChannel.Mention}");
             return;
@@ -63,7 +66,7 @@ public class CorrectChatCommandUsageMiddleware : ICommandMiddleware
         // запрещаем использовать любые команды, кроме пати, в канале для пати
         if (command != Interactions.Commands.Party_Group && channelId == guildSettings.PartyChannelId)
         {
-            var madgeEmote = await discordClientWrapper.Emotes.FindEmoteAsync("Madge");
+            var madgeEmote = await emotesProvider.GetEmoteAsTextAsync("Madge");
             await RespondWithErrorAsync(context.Context, $"{madgeEmote} не срать в чате для пати!");
             return;
         }
@@ -77,5 +80,6 @@ public class CorrectChatCommandUsageMiddleware : ICommandMiddleware
     }
 
     private readonly IGuildSettingsService guildSettingsService;
+    private readonly IEmotesProvider emotesProvider;
     private readonly IDiscordClientWrapper discordClientWrapper;
 }

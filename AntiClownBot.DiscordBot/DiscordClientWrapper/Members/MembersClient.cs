@@ -10,13 +10,11 @@ public class MembersClient : IMembersClient
 {
     public MembersClient(
         DiscordClient discordClient,
-        IGuildSettingsService guildSettingsService,
-        ILoggerClient logger
+        IGuildSettingsService guildSettingsService
     )
     {
         this.discordClient = discordClient;
         this.guildSettingsService = guildSettingsService;
-        this.logger = logger;
     }
     
     public Task<ulong> GetBotIdAsync()
@@ -46,6 +44,4 @@ public class MembersClient : IMembersClient
 
     private readonly DiscordClient discordClient;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILoggerClient logger;
-
 }

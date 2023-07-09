@@ -4,7 +4,6 @@ using AntiClownDiscordBotVersion2.DiscordClientWrapper.Guilds;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Members;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Messages;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Roles;
-using AntiClownDiscordBotVersion2.DiscordClientWrapper.Voice;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper;
 
@@ -17,6 +16,5 @@ public interface IDiscordClientWrapper
     IMembersClient Members { get; }
     IMessagesClient Messages { get; }
     IRolesClient Roles { get; }
-    IVoiceClient Voice { get; }
     IChannelsClient Channels { get; }
 }

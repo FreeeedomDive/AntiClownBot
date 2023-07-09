@@ -9,13 +9,11 @@ public class EmotesClient : IEmotesClient
 {
     public EmotesClient(
         DiscordClient discordClient,
-        IGuildSettingsService guildSettingsService,
-        ILoggerClient logger
+        IGuildSettingsService guildSettingsService
     )
     {
         this.discordClient = discordClient;
         this.guildSettingsService = guildSettingsService;
-        this.logger = logger;
     }
 
     public Task<DiscordEmoji[]> GetAllGuildEmojisAsync(ulong guildId)
@@ -58,5 +56,4 @@ public class EmotesClient : IEmotesClient
 
     private readonly DiscordClient discordClient;
     private readonly IGuildSettingsService guildSettingsService;
-    private readonly ILoggerClient logger;
 }

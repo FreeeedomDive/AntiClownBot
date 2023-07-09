@@ -1,4 +1,5 @@
 ﻿using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Models.Gaming;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using AntiClownDiscordBotVersion2.Utils.Extensions;
@@ -12,12 +13,14 @@ public class PartyService : IPartyService
 {
     public PartyService(
         IDiscordClientWrapper discordClientWrapper,
+        IEmotesProvider emotesProvider,
         IGuildSettingsService guildSettingsService
     )
     {
         var filesDirectory = Environment.GetEnvironmentVariable("AntiClownBotFilesDirectory") ?? throw new Exception("AntiClownBotFilesDirectory env variable was null");
         fileName = $"{filesDirectory}/StatisticsFiles/parties.json";
         this.discordClientWrapper = discordClientWrapper;
+        this.emotesProvider = emotesProvider;
         this.guildSettingsService = guildSettingsService;
         PartiesInfo = CreateOrRestore();
     }
@@ -29,13 +32,13 @@ public class PartyService : IPartyService
         var partiesLinks = PartiesInfo
             .OpenParties
             .Values
-            .ToDictionary(p => p, p => @$"https://discord.com/channels/{guildSettings.GuildId}/{guildSettings.PartyChannelId}/{p.MessageId}");
+            .ToDictionary(p => p, p => $"https://discord.com/channels/{guildSettings.GuildId}/{guildSettings.PartyChannelId}/{p.MessageId}");
 
         embedBuilder.WithTitle("ТЕКУЩИЕ ПАТИ");
         if (PartiesInfo.OpenParties.Count == 0)
         {
             embedBuilder.Color = new Optional<DiscordColor>(DiscordColor.DarkRed);
-            embedBuilder.AddField($"{await discordClientWrapper.Emotes.FindEmoteAsync("BibleThump")}",
+            embedBuilder.AddField($"{await emotesProvider.GetEmoteAsTextAsync("BibleThump")}",
                 "Сейчас никто не играет");
         }
         else
@@ -45,7 +48,7 @@ public class PartyService : IPartyService
             _ = partiesLinks.ForEach(
                 (kv) => embedBuilder.AddField(
                     $"{kv.Key.Description} - {kv.Key.Players.Count} / {kv.Key.MaxPlayersCount} игроков",
-                    @$"[Ссылка]({kv.Value})")).ToList();
+                    $"[Ссылка]({kv.Value})")).ToList();
         }
 
         return embedBuilder.Build();
@@ -147,5 +150,6 @@ public class PartyService : IPartyService
     private static string fileName = "";
     private DiscordMessage? partyObserver;
     private readonly IDiscordClientWrapper discordClientWrapper;
+    private readonly IEmotesProvider emotesProvider;
     private readonly IGuildSettingsService guildSettingsService;
 }

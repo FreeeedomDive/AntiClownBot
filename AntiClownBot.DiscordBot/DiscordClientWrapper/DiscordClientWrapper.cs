@@ -4,10 +4,8 @@ using AntiClownDiscordBotVersion2.DiscordClientWrapper.Guilds;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Members;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Messages;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper.Roles;
-using AntiClownDiscordBotVersion2.DiscordClientWrapper.Voice;
 using AntiClownDiscordBotVersion2.Settings.GuildSettings;
 using DSharpPlus;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClownDiscordBotVersion2.DiscordClientWrapper;
 
@@ -15,17 +13,15 @@ public class DiscordClientWrapper : IDiscordClientWrapper
 {
     public DiscordClientWrapper(
         DiscordClient discordClient,
-        IGuildSettingsService guildSettingsService,
-        ILoggerClient logger
+        IGuildSettingsService guildSettingsService
     )
     {
         this.discordClient = discordClient;
-        Emotes = new EmotesClient(discordClient, guildSettingsService, logger);
-        Guilds = new GuildsClient(discordClient, guildSettingsService, logger);
-        Members = new MembersClient(discordClient, guildSettingsService, logger);
-        Messages = new MessagesClient(discordClient, Emotes, guildSettingsService, logger);
-        Roles = new RolesClient(discordClient, guildSettingsService, Guilds, Members, logger);
-        Voice = new VoiceClient(discordClient, Guilds, guildSettingsService, logger);
+        Emotes = new EmotesClient(discordClient, guildSettingsService);
+        Guilds = new GuildsClient(discordClient, guildSettingsService);
+        Members = new MembersClient(discordClient, guildSettingsService);
+        Messages = new MessagesClient(discordClient, guildSettingsService);
+        Roles = new RolesClient(discordClient, guildSettingsService, Guilds, Members);
         Channels = new ChannelsClient(discordClient, Guilds);
     }
 
@@ -40,7 +36,6 @@ public class DiscordClientWrapper : IDiscordClientWrapper
     public IMembersClient Members { get; }
     public IMessagesClient Messages { get; }
     public IRolesClient Roles { get; }
-    public IVoiceClient Voice { get; }
     public IChannelsClient Channels { get; }
 
     private readonly DiscordClient discordClient;

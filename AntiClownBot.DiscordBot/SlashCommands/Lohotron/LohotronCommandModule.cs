@@ -1,5 +1,6 @@
 ﻿using AntiClownApiClient;
 using AntiClownDiscordBotVersion2.DiscordClientWrapper;
+using AntiClownDiscordBotVersion2.Emotes;
 using AntiClownDiscordBotVersion2.Models.Interactions;
 using AntiClownDiscordBotVersion2.Models.Lohotron;
 using AntiClownDiscordBotVersion2.SlashCommands.Base;
@@ -13,12 +14,14 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Lohotron
         public LohotronCommandModule(
             ICommandExecutor commandExecutor,
             IDiscordClientWrapper discordClientWrapper,
+            IEmotesProvider emotesProvider,
             Models.Lohotron.Lohotron lohotron,
             IUserBalanceService userBalanceService,
             IApiClient apiClient
         ) : base(commandExecutor)
         {
             this.discordClientWrapper = discordClientWrapper;
+            this.emotesProvider = emotesProvider;
             this.lohotron = lohotron;
             this.userBalanceService = userBalanceService;
             this.apiClient = apiClient;
@@ -32,7 +35,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Lohotron
                 var userId = context.Member.Id;
                 if (lohotron.UsersId.Contains(userId))
                 {
-                    await RespondToInteractionAsync(context, $"Чел, 2 раза нельзя! {await discordClientWrapper.Emotes.FindEmoteAsync("peepoFinger")}");
+                    await RespondToInteractionAsync(context, $"Чел, 2 раза нельзя! {await emotesProvider.GetEmoteAsTextAsync("peepoFinger")}");
                     return;
                 }
 
@@ -46,7 +49,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Lohotron
                         await RespondToInteractionAsync(context, $"Ты получаешь {count} scam coins");
                         return;
                     case "Nothing":
-                        await RespondToInteractionAsync(context, $"Ты получаешь {await discordClientWrapper.Emotes.FindEmoteAsync("peepoFinger")}!");
+                        await RespondToInteractionAsync(context, $"Ты получаешь {await emotesProvider.GetEmoteAsTextAsync("peepoFinger")}!");
                         return;
                     case "LootBox":
                         await RespondToInteractionAsync(context, "Ты получаешь добычу-коробку!");
@@ -59,6 +62,7 @@ namespace AntiClownDiscordBotVersion2.SlashCommands.Lohotron
         }
 
         private readonly IDiscordClientWrapper discordClientWrapper;
+        private readonly IEmotesProvider emotesProvider;
         private readonly Models.Lohotron.Lohotron lohotron;
         private readonly IUserBalanceService userBalanceService;
         private readonly IApiClient apiClient;

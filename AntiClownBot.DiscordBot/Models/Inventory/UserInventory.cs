@@ -156,25 +156,6 @@ namespace AntiClownDiscordBotVersion2.Models.Inventory
 
         private async Task<IEnumerable<BaseItem>> RefreshItemsFromApi() => await apiClient.Items.AllItemsAsync(UserId);
 
-        public async Task<DiscordEmbed> CreateLoadingInventoryEmbed()
-        {
-            var loadingEmotes = new List<string>()
-            {
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("pigRoll")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("Applecatrun")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("SCAMMED")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("COGGERS")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("RainbowPls")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("PolarStrut")}",
-                $"{await discordClientWrapper.Emotes.FindEmoteAsync("popCat")}",
-            };
-
-            var loadingEmbedBuilder = new DiscordEmbedBuilder();
-            loadingEmbedBuilder.WithTitle($"Загрузка инвентаря... {loadingEmotes.SelectRandomItem(randomizer).Multiply(5)}");
-
-            return loadingEmbedBuilder.Build();
-        }
-
         private string StringTool() => CurrentInventoryTool switch
         {
             InventoryTool.Sell => "продажа",
