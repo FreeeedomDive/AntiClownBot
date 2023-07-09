@@ -244,6 +244,36 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                     await emotesProvider.GetEmoteAsTextAsync("AYAYABASS"));
             }
         }
+
+        var settings = appSettingsService.GetSettings();
+        if (settings.XddAnswersEnabled && randomizer.GetRandomNumberBetween(0, 25) == 0)
+        {
+            var xddPool = new[]
+            {
+                "xdd",
+                "xdd666",
+                "xpp",
+                "xddx",
+                "xddnerd",
+                "xddshy",
+                "xddDespair",
+                "xddfdhjsd0f76ds5r26FDSFHD88hjdbs",
+                "xddktulhu",
+                "xddxdd",
+                "amongdd",
+                "ddx",
+                "xdd258069758",
+                "xdd53153120598203958230958259038",
+                "xddsittingverycomfortable",
+                "xddriki",
+                "odpuzzle",
+                "xddWHAT",
+                "xddJam",
+                "xddChatting",
+            };
+            var xdd = await emotesProvider.GetEmoteAsTextAsync(xddPool.SelectRandomItem(randomizer));
+            await discordClientWrapper.Messages.RespondAsync(e.Message, xdd);
+        }
     }
 
     private async Task MessageReactionAdded(DiscordClient sender, MessageReactionAddEventArgs e)
@@ -498,14 +528,16 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 var results = f1PredictionsService.MakeTenthPlaceResults();
                 if (results.Length == 0)
                 {
-                    await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, new DiscordWebhookBuilder().WithContent("Никто не вносил предсказаний"));
+                    await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction,
+                        new DiscordWebhookBuilder().WithContent("Никто не вносил предсказаний"));
                     return;
                 }
 
                 var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
                 var resultsStrings =
                     results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");
-                await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, new DiscordWebhookBuilder().WithContent(string.Join("\n", resultsStrings)));
+                await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction,
+                    new DiscordWebhookBuilder().WithContent(string.Join("\n", resultsStrings)));
                 return;
             }
         }
@@ -516,7 +548,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             $"{Interactions.Dropdowns.DriversSelectDropdownItemPrefix}{x.ToString()}"
         ));
         var currentPlaceToEnter = 20 - updatedDrivers.Length + 1;
-        var dropdown = new DiscordSelectComponent(Interactions.Dropdowns.DriversSelectDropdown, $"Гонщик на {currentPlaceToEnter} месте", options);
+        var dropdown = new DiscordSelectComponent(Interactions.Dropdowns.DriversSelectDropdown,
+            $"Гонщик на {currentPlaceToEnter} месте", options);
         var builder = new DiscordWebhookBuilder()
             .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
             .AddComponents(dropdown);

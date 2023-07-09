@@ -8,5 +8,6 @@
   "MinecraftServerCheckIntervalInSeconds": 10,
   "IsBackendFeedReadingEnabled": true,
   "PingOnEvents": false,
-  "LogLevel": "Information"
+  "LogLevel": "Information",
+  "XddAnswersEnabled": true
 }
