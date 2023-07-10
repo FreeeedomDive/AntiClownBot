@@ -103,6 +103,8 @@ public class RaceService : IRaceService
                 await raceDriversRepository.UpdateAsync(driver.Driver);
             }
         }
+
+        await eventsMessageProducer.ProduceAsync(@event);
     }
 
     private static IEnumerable<RaceSnapshotForDriverOnSector> GetOrderedDriversFromSector(RaceSnapshotOnSector sector)

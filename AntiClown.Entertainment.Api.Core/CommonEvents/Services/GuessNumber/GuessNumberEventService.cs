@@ -74,6 +74,8 @@ public class GuessNumberEventService : IGuessNumberEventService
         {
             await antiClownApiClient.Economy.UpdateLootBoxesAsync(winnerUserId, 1);
         }
+
+        await eventsMessageProducer.ProduceAsync(@event);
     }
 
     private void ScheduleEventFinish(Guid eventId)

@@ -73,6 +73,8 @@ public class LotteryService : ILotteryService
             .Select(x => x.Value)
             .Select(x => antiClownApiClient.Economy.UpdateScamCoinsAsync(x.UserId, x.Prize, $"Лотерея {eventId}"));
         await Task.WhenAll(tasks);
+
+        await eventsMessageProducer.ProduceAsync(@event);
     }
 
     private void ScheduleEventFinish(Guid eventId)
