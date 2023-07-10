@@ -1,16 +1,16 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Core.Schedules;
 using AntiClown.Entertainment.Api.Core.Common;
-using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Lottery;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
 using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
 
-namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
+namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.Lottery;
 
-public class GuessNumberEventService : IGuessNumberEventService
+public class LotteryService : ILotteryService
 {
-    public GuessNumberEventService(
+    public LotteryService(
         IAntiClownApiClient antiClownApiClient,
         ICommonEventsRepository commonEventsRepository,
         IEventsMessageProducer eventsMessageProducer,
@@ -23,14 +23,14 @@ public class GuessNumberEventService : IGuessNumberEventService
         this.scheduler = scheduler;
     }
 
-    public async Task<GuessNumberEvent> ReadAsync(Guid eventId)
+    public async Task<LotteryEvent> ReadAsync(Guid eventId)
     {
-        return (await commonEventsRepository.ReadAsync(eventId) as GuessNumberEvent)!;
+        return (await commonEventsRepository.ReadAsync(eventId) as LotteryEvent)!;
     }
 
     public async Task<Guid> StartNewEventAsync()
     {
-        var newEvent = GuessNumberEvent.Create();
+        var newEvent = LotteryEvent.Create();
         await commonEventsRepository.CreateAsync(newEvent);
         await eventsMessageProducer.ProduceAsync(newEvent);
         ScheduleEventFinish(newEvent.Id);
@@ -38,7 +38,7 @@ public class GuessNumberEventService : IGuessNumberEventService
         return newEvent.Id;
     }
 
-    public async Task AddParticipantAsync(Guid eventId, Guid userId, GuessNumberPick userPick)
+    public async Task AddParticipantAsync(Guid eventId, Guid userId)
     {
         var @event = await ReadAsync(eventId);
         if (@event.Finished)
@@ -46,11 +46,11 @@ public class GuessNumberEventService : IGuessNumberEventService
             throw new EventAlreadyFinishedException(eventId);
         }
 
-        @event.AddPick(userId, userPick);
+        @event.AddParticipant(userId);
         await commonEventsRepository.UpdateAsync(@event);
     }
 
-    public async Task<GuessNumberEvent> FinishAsync(Guid eventId)
+    public async Task<LotteryEvent> FinishAsync(Guid eventId)
     {
         var @event = await ReadAsync(eventId);
         if (@event.Finished)
@@ -61,11 +61,10 @@ public class GuessNumberEventService : IGuessNumberEventService
         @event.Finished = true;
         await commonEventsRepository.UpdateAsync(@event);
 
-        var winners = @event.NumberToUsers[@event.Result];
-        foreach (var winnerUserId in winners)
-        {
-            await antiClownApiClient.Economy.UpdateLootBoxesAsync(winnerUserId, 1);
-        }
+        var tasks = @event.Participants
+            .Select(x => x.Value)
+            .Select(x => antiClownApiClient.Economy.UpdateScamCoinsAsync(x.UserId, x.Prize, $"Лотерея {eventId}"));
+        await Task.WhenAll(tasks);
 
         return @event;
     }
@@ -74,7 +73,7 @@ public class GuessNumberEventService : IGuessNumberEventService
     {
         scheduler.Schedule(
             () => FinishAsync(eventId),
-            TimeSpan.FromMilliseconds(Constants.GuessNumberEventWaitingTimeInMilliseconds)
+            TimeSpan.FromMilliseconds(Constants.LotteryEventWaitingTimeInMilliseconds)
         );
     }
 

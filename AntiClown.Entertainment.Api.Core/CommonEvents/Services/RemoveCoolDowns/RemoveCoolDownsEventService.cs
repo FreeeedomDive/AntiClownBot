@@ -1,5 +1,5 @@
 ﻿using AntiClown.Api.Client;
-using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.RemoveCooldowns;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.RemoveCoolDowns;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
 
@@ -25,12 +25,7 @@ public class RemoveCoolDownsEventService : IRemoveCoolDownsEventService
 
     public async Task<Guid> StartNewEventAsync()
     {
-        var newEvent = new RemoveCoolDownsEvent
-        {
-            Id = Guid.NewGuid(),
-            Finished = true,
-            EventDateTime = DateTime.UtcNow,
-        };
+        var newEvent = RemoveCoolDownsEvent.Create();
         await commonEventsRepository.CreateAsync(newEvent);
         await eventsMessageProducer.ProduceAsync(newEvent);
         await antiClownApiClient.Economy.ResetAllCoolDownsAsync();

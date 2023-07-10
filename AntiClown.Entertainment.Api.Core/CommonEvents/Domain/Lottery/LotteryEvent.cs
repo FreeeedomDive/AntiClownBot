@@ -6,22 +6,38 @@ public class LotteryEvent : CommonEventBase
 {
     public override CommonEventType Type => CommonEventType.Lottery;
 
-    public Dictionary<Guid, LotterySlot[]> Results { get; set; } = new();
+    public Dictionary<Guid, LotteryParticipant> Participants { get; set; } = new();
 
     public void AddParticipant(Guid userId)
     {
-        if (Results.ContainsKey(userId))
+        if (Participants.ContainsKey(userId))
         {
             return;
         }
 
         var possiblePrizes = Enum.GetValues<LotterySlot>();
         var userPrizes = Enumerable
-            .Range(0, SlotsForParticipants)
+            .Range(0, SlotsForParticipant)
             .Select(_ => possiblePrizes.SelectRandomItem())
             .ToArray();
-        Results[userId] = userPrizes;
+        Participants[userId] = new LotteryParticipant
+        {
+            UserId = userId,
+            Slots = userPrizes,
+            Prize = 0,
+        };
     }
 
-    private const int SlotsForParticipants = 7;
+    public static LotteryEvent Create()
+    {
+        return new LotteryEvent
+        {
+            Id = Guid.NewGuid(),
+            Finished = false,
+            EventDateTime = DateTime.UtcNow,
+            Participants = new Dictionary<Guid, LotteryParticipant>(),
+        };
+    }
+
+    private const int SlotsForParticipant = 7;
 }

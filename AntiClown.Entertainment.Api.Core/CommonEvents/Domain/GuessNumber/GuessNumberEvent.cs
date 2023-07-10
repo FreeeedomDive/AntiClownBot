@@ -20,4 +20,17 @@ public class GuessNumberEvent : CommonEventBase
         Picks[userId] = newPick;
         NumberToUsers.Add(newPick, userId);
     }
+
+    public static GuessNumberEvent Create()
+    {
+        return new GuessNumberEvent
+        {
+            Id = Guid.NewGuid(),
+            Finished = false,
+            EventDateTime = DateTime.UtcNow,
+            Picks = new Dictionary<Guid, GuessNumberPick>(),
+            NumberToUsers = new Dictionary<GuessNumberPick, List<Guid>>(),
+            Result = Enum.GetValues<GuessNumberPick>().SelectRandomItem()
+        };
+    }
 }

@@ -3,7 +3,7 @@ using AntiClown.EntertainmentApi.Dto.CommonEvents.RemoveCoolDowns;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AntiClown.Entertainment.Api.Controllers;
+namespace AntiClown.Entertainment.Api.Controllers.Events.Common;
 
 [Route("entertainmentApi/events/common/removeCoolDowns")]
 public class RemoveCoolDownsEventController : Controller

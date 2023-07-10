@@ -4,7 +4,7 @@ using AntiClown.EntertainmentApi.Dto.CommonEvents.GuessNumber;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AntiClown.Entertainment.Api.Controllers;
+namespace AntiClown.Entertainment.Api.Controllers.Events.Common;
 
 [Route("entertainmentApi/events/common/guessNumber")]
 public class GuessNumberEventController : Controller

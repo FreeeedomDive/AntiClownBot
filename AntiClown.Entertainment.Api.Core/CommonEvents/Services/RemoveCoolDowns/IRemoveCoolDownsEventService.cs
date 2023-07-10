@@ -1,4 +1,4 @@
-﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.RemoveCooldowns;
+﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.RemoveCoolDowns;
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.RemoveCoolDowns;
 

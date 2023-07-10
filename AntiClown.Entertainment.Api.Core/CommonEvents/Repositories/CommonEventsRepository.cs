@@ -2,7 +2,7 @@
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Lottery;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Race;
-using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.RemoveCooldowns;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.RemoveCoolDowns;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Transfusion;
 using AutoMapper;
 using Newtonsoft.Json;
