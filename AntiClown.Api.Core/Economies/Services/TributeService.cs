@@ -7,6 +7,7 @@ using AntiClown.Api.Dto.Exceptions.Tribute;
 using AntiClown.Core.Schedules;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
+using Hangfire;
 
 namespace AntiClown.Api.Core.Economies.Services;
 
@@ -154,7 +155,8 @@ public class TributeService : ITributeService
     private async Task MakeTributeAsync(Tribute tribute)
     {
         await economyService.UpdateScamCoinsAsync(tribute.UserId, tribute.ScamCoins, "Подношение");
-        await economyService.UpdateNextTributeCoolDownAsync(tribute.UserId, tribute.TributeDateTime.AddMilliseconds(tribute.CooldownInMilliseconds));
+        await economyService.UpdateNextTributeCoolDownAsync(tribute.UserId,
+            tribute.TributeDateTime.AddMilliseconds(tribute.CooldownInMilliseconds));
 
         if (tribute.HasGiftedLootBox)
         {
@@ -175,20 +177,25 @@ public class TributeService : ITributeService
             return;
         }
 
-        scheduler.Schedule(async () =>
+        scheduler.Schedule(() => BackgroundJob.Schedule(
+            () => ExecuteAutoTributeAsync(tribute),
+            TimeSpan.FromMilliseconds(tribute.CooldownInMilliseconds + 1000))
+        );
+    }
+
+    private async Task ExecuteAutoTributeAsync(Tribute tribute)
+    {
+        try
         {
-            try
-            {
-                var newTribute = await MakeTributeAsync(tribute.UserId);
-                await tributeMessageProducer.ProduceAsync(newTribute);
-            }
-            catch (AutoTributeWasCancelledByEarlierTributeException)
-            {
-            }
-            catch (TributeIsOnCooldownException)
-            {
-            }
-        }, TimeSpan.FromMilliseconds(tribute.CooldownInMilliseconds + 1000));
+            var newTribute = await MakeTributeAsync(tribute.UserId);
+            await tributeMessageProducer.ProduceAsync(newTribute);
+        }
+        catch (AutoTributeWasCancelledByEarlierTributeException)
+        {
+        }
+        catch (TributeIsOnCooldownException)
+        {
+        }
     }
 
     private readonly IEconomyService economyService;

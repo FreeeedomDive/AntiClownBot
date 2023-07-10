@@ -5,6 +5,7 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
 using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
+using Hangfire;
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
 
@@ -61,7 +62,7 @@ public class GuessNumberEventService : IGuessNumberEventService
         @event.Finished = true;
         await commonEventsRepository.UpdateAsync(@event);
 
-        var winners = @event.NumberToUsers[@event.Result];
+        var winners = @event.NumberToUsers.TryGetValue(@event.Result, out var result) ? result : new List<Guid>();
         foreach (var winnerUserId in winners)
         {
             await antiClownApiClient.Economy.UpdateLootBoxesAsync(winnerUserId, 1);
@@ -72,10 +73,10 @@ public class GuessNumberEventService : IGuessNumberEventService
 
     private void ScheduleEventFinish(Guid eventId)
     {
-        scheduler.Schedule(
+        scheduler.Schedule(() => BackgroundJob.Schedule(
             () => FinishAsync(eventId),
             TimeSpan.FromMilliseconds(Constants.GuessNumberEventWaitingTimeInMilliseconds)
-        );
+        ));
     }
 
     private readonly IAntiClownApiClient antiClownApiClient;

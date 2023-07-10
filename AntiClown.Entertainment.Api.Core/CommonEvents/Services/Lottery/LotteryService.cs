@@ -5,6 +5,7 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Lottery;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
 using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
+using Hangfire;
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.Lottery;
 
@@ -72,8 +73,9 @@ public class LotteryService : ILotteryService
     private void ScheduleEventFinish(Guid eventId)
     {
         scheduler.Schedule(
-            () => FinishAsync(eventId),
-            TimeSpan.FromMilliseconds(Constants.LotteryEventWaitingTimeInMilliseconds)
+            () => BackgroundJob.Schedule(
+                () => FinishAsync(eventId),
+                TimeSpan.FromMilliseconds(Constants.LotteryEventWaitingTimeInMilliseconds))
         );
     }
 

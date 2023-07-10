@@ -2,7 +2,7 @@
 
 namespace AntiClown.Api.Client.Configuration;
 
-public static class ClientProvider
+public static class AntiClownApiClientProvider
 {
     public static IAntiClownApiClient Build(string baseApiUrl = "https://localhost:7221")
     {

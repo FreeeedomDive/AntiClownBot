@@ -1,4 +1,6 @@
-﻿using AntiClown.Core.Schedules;
+﻿using AntiClown.Api.Client;
+using AntiClown.Api.Client.Configuration;
+using AntiClown.Core.Schedules;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Lottery;
@@ -59,6 +61,7 @@ public class Startup
         // configure other stuff
         services.AddTransient<IEventsMessageProducer, EventsMessageProducer>();
         services.AddTransient<IScheduler, HangfireScheduler>();
+        services.AddTransient<IAntiClownApiClient>(_ => AntiClownApiClientProvider.Build());
 
         // configure services
         services.AddTransient<IGuessNumberEventService, GuessNumberEventService>();
