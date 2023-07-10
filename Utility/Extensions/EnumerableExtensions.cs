@@ -26,4 +26,9 @@ public static class EnumerableExtensions
             yield return element;
         }
     }
+
+    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> enumerable)
+    {
+        return enumerable.OrderBy(_ => Randomizer.GetRandomNumberBetween(0, 100000000));
+    }
 }
