@@ -2,4 +2,5 @@
 
 public class RemoveCoolDownsEventDto : CommonEventBaseDto
 {
+    public override CommonEventTypeDto Type => CommonEventTypeDto.RemoveCoolDowns;
 }
