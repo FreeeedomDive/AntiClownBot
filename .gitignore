@@ -10,3 +10,4 @@ build/
 node_modules/
 AntiClownApi/appsettings.Production.json
 AntiClown.Api/appsettings.Production.json
+AntiClown.Entertainment.Api/appsettings.Production.json
