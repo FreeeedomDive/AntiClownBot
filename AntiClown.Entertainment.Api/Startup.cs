@@ -6,6 +6,7 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Lottery;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.RemoveCoolDowns;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Transfusion;
 using AntiClown.Entertainment.Api.Core.Database;
 using AntiClown.Entertainment.Api.Core.Options;
 using AntiClown.Entertainment.Api.Middlewares;
@@ -67,6 +68,7 @@ public class Startup
         services.AddTransient<IGuessNumberEventService, GuessNumberEventService>();
         services.AddTransient<ILotteryService, LotteryService>();
         services.AddTransient<IRemoveCoolDownsEventService, RemoveCoolDownsEventService>();
+        services.AddTransient<ITransfusionEventService, TransfusionEventService>();
 
         // configure HangFire
         services.AddHangfire(config =>

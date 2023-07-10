@@ -4,6 +4,6 @@ namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services;
 
 public interface IBaseEventService<T> where T : CommonEventBase
 {
-    Task<Guid> StartNewEventAsync();
     Task<T> ReadAsync(Guid eventId);
+    Task<Guid> StartNewEventAsync();
 }

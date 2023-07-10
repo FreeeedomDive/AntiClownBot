@@ -6,6 +6,7 @@ public class TransfusionEvent : CommonEventBase
 
     public Guid DonorUserId { get; set; }
     public Guid RecipientUserId { get; set; }
+    public int Exchange { get; set; }
 
     public static TransfusionEvent Create()
     {
