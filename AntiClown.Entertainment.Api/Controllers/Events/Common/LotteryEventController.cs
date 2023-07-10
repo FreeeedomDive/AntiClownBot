@@ -38,10 +38,10 @@ public class LotteryEventController : Controller
     }
 
     [HttpPatch("{eventId:guid}/finish")]
-    public async Task<ActionResult<LotteryEventDto>> Finish([FromRoute] Guid eventId)
+    public async Task<ActionResult> Finish([FromRoute] Guid eventId)
     {
-        var result = await lotteryService.FinishAsync(eventId);
-        return mapper.Map<LotteryEventDto>(result);
+        await lotteryService.FinishAsync(eventId);
+        return NoContent();
     }
 
     private readonly ILotteryService lotteryService;

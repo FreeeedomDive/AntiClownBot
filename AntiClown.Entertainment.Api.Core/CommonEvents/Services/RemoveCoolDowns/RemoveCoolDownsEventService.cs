@@ -1,7 +1,9 @@
 ﻿using AntiClown.Api.Client;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.RemoveCoolDowns;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
+using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.RemoveCoolDowns;
 
@@ -20,7 +22,13 @@ public class RemoveCoolDownsEventService : IRemoveCoolDownsEventService
 
     public async Task<RemoveCoolDownsEvent> ReadAsync(Guid eventId)
     {
-        return (await commonEventsRepository.ReadAsync(eventId) as RemoveCoolDownsEvent)!;
+        var @event = await commonEventsRepository.ReadAsync(eventId);
+        if (@event.Type != CommonEventType.RemoveCoolDowns)
+        {
+            throw new WrongEventTypeException($"Event {eventId} is not a remove cooldown");
+        }
+
+        return (@event as RemoveCoolDownsEvent)!;
     }
 
     public async Task<Guid> StartNewEventAsync()

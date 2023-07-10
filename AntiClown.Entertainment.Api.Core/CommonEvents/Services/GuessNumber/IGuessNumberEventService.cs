@@ -5,5 +5,5 @@ namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
 public interface IGuessNumberEventService : IBaseEventService<GuessNumberEvent>
 {
     Task AddParticipantAsync(Guid eventId, Guid userId, GuessNumberPick userPick);
-    Task<GuessNumberEvent> FinishAsync(Guid eventId);
+    Task FinishAsync(Guid eventId);
 }

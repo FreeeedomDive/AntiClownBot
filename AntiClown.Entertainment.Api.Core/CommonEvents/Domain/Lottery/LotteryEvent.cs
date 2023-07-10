@@ -24,7 +24,7 @@ public class LotteryEvent : CommonEventBase
         {
             UserId = userId,
             Slots = userPrizes,
-            Prize = 0,
+            Prize = LotteryPrizeCalculator.Calculate(userPrizes),
         };
     }
 

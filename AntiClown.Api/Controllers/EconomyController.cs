@@ -38,7 +38,7 @@ public class EconomyController : Controller
         return NoContent();
     }
 
-    [HttpPost("resetAllCoolDowns")]
+    [HttpPatch("resetAllCoolDowns")]
     public async Task<ActionResult> ResetAllCoolDowns()
     {
         await economyService.ResetAllCoolDownsAsync();

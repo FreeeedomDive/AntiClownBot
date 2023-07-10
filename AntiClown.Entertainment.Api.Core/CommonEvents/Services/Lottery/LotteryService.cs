@@ -1,6 +1,7 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Core.Schedules;
 using AntiClown.Entertainment.Api.Core.Common;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Lottery;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
@@ -26,7 +27,13 @@ public class LotteryService : ILotteryService
 
     public async Task<LotteryEvent> ReadAsync(Guid eventId)
     {
-        return (await commonEventsRepository.ReadAsync(eventId) as LotteryEvent)!;
+        var @event = await commonEventsRepository.ReadAsync(eventId);
+        if (@event.Type != CommonEventType.Lottery)
+        {
+            throw new WrongEventTypeException($"Event {eventId} is not a lottery");
+        }
+
+        return (@event as LotteryEvent)!;
     }
 
     public async Task<Guid> StartNewEventAsync()
@@ -51,12 +58,12 @@ public class LotteryService : ILotteryService
         await commonEventsRepository.UpdateAsync(@event);
     }
 
-    public async Task<LotteryEvent> FinishAsync(Guid eventId)
+    public async Task FinishAsync(Guid eventId)
     {
         var @event = await ReadAsync(eventId);
         if (@event.Finished)
         {
-            return @event;
+            throw new EventAlreadyFinishedException(eventId);
         }
 
         @event.Finished = true;
@@ -66,8 +73,6 @@ public class LotteryService : ILotteryService
             .Select(x => x.Value)
             .Select(x => antiClownApiClient.Economy.UpdateScamCoinsAsync(x.UserId, x.Prize, $"Лотерея {eventId}"));
         await Task.WhenAll(tasks);
-
-        return @event;
     }
 
     private void ScheduleEventFinish(Guid eventId)

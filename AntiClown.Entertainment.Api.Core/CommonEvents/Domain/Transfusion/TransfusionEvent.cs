@@ -6,4 +6,14 @@ public class TransfusionEvent : CommonEventBase
 
     public Guid DonorUserId { get; set; }
     public Guid RecipientUserId { get; set; }
+
+    public static TransfusionEvent Create()
+    {
+        return new TransfusionEvent
+        {
+            Id = Guid.NewGuid(),
+            Finished = true,
+            EventDateTime = DateTime.UtcNow,
+        };
+    }
 }

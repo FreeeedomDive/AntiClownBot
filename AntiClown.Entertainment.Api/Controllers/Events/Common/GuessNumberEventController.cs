@@ -39,10 +39,10 @@ public class GuessNumberEventController : Controller
     }
 
     [HttpPatch("{eventId:guid}/finish")]
-    public async Task<ActionResult<GuessNumberEventDto>> Finish([FromRoute] Guid eventId)
+    public async Task<ActionResult> Finish([FromRoute] Guid eventId)
     {
-        var result = await guessNumberEventService.FinishAsync(eventId);
-        return mapper.Map<GuessNumberEventDto>(result);
+        await guessNumberEventService.FinishAsync(eventId);
+        return NoContent();
     }
 
     private readonly IGuessNumberEventService guessNumberEventService;

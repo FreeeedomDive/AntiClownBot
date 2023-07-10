@@ -1,6 +1,7 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Core.Schedules;
 using AntiClown.Entertainment.Api.Core.Common;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
@@ -26,7 +27,13 @@ public class GuessNumberEventService : IGuessNumberEventService
 
     public async Task<GuessNumberEvent> ReadAsync(Guid eventId)
     {
-        return (await commonEventsRepository.ReadAsync(eventId) as GuessNumberEvent)!;
+        var @event = await commonEventsRepository.ReadAsync(eventId);
+        if (@event.Type != CommonEventType.GuessNumber)
+        {
+            throw new WrongEventTypeException($"Event {eventId} is not a guess number");
+        }
+
+        return (@event as GuessNumberEvent)!;
     }
 
     public async Task<Guid> StartNewEventAsync()
@@ -51,12 +58,12 @@ public class GuessNumberEventService : IGuessNumberEventService
         await commonEventsRepository.UpdateAsync(@event);
     }
 
-    public async Task<GuessNumberEvent> FinishAsync(Guid eventId)
+    public async Task FinishAsync(Guid eventId)
     {
         var @event = await ReadAsync(eventId);
         if (@event.Finished)
         {
-            return @event;
+            throw new EventAlreadyFinishedException(eventId);
         }
 
         @event.Finished = true;
@@ -67,8 +74,6 @@ public class GuessNumberEventService : IGuessNumberEventService
         {
             await antiClownApiClient.Economy.UpdateLootBoxesAsync(winnerUserId, 1);
         }
-
-        return @event;
     }
 
     private void ScheduleEventFinish(Guid eventId)
