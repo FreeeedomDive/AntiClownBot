@@ -34,7 +34,7 @@ public class LotteryEvent : CommonEventBase
         {
             Id = Guid.NewGuid(),
             Finished = false,
-            EventDateTime = DateTime.Now,
+            EventDateTime = DateTime.UtcNow,
             Participants = new Dictionary<Guid, LotteryParticipant>(),
         };
     }

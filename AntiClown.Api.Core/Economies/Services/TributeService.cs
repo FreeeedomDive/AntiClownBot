@@ -70,7 +70,7 @@ public class TributeService : ITributeService
         var tribute = new Tribute
         {
             UserId = userId,
-            TributeDateTime = DateTime.Now,
+            TributeDateTime = DateTime.UtcNow,
             IsAutomatic = isAutomatic,
             CooldownInMilliseconds = cooldown,
             CooldownModifiers = modifiers,

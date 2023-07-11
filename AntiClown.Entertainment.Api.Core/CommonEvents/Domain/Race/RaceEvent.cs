@@ -34,7 +34,7 @@ public class RaceEvent : CommonEventBase
         {
             Id = Guid.NewGuid(),
             Finished = false,
-            EventDateTime = DateTime.Now,
+            EventDateTime = DateTime.UtcNow,
         };
     }
 }

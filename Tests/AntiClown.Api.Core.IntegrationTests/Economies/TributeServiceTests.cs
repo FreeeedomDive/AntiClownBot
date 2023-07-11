@@ -9,7 +9,7 @@ public class TributeServiceTests : IntegrationTestsBase
     public async Task TributeService_Should_MakeCorrectTributes()
     {
         var economyBefore = await EconomyService.ReadEconomyAsync(User.Id);
-        var now = DateTime.Now;
+        var now = DateTime.UtcNow;
         economyBefore.NextTribute.Should().BeBefore(now);
         var tribute = await TributeService.MakeTributeAsync(User.Id);
         var economyAfter = await EconomyService.ReadEconomyAsync(User.Id);
