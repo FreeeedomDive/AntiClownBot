@@ -28,14 +28,14 @@ public class LotteryClient : ILotteryClient
     public async Task AddParticipantAsync(Guid eventId, Guid userId)
     {
         var request = new RestRequest($"{ControllerUrl}/{eventId}/addParticipant").AddQueryParameter("userId", userId);
-        var response = await restClient.PatchAsync(request);
+        var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }
 
     public async Task FinishAsync(Guid eventId)
     {
         var request = new RestRequest($"{ControllerUrl}/{eventId}/finish");
-        var response = await restClient.PatchAsync(request);
+        var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }
 

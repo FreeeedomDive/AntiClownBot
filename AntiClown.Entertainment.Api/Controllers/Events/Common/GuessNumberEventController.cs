@@ -31,14 +31,14 @@ public class GuessNumberEventController : Controller
         return await guessNumberEventService.StartNewEventAsync();
     }
 
-    [HttpPatch("{eventId:guid}/addPick")]
+    [HttpPost("{eventId:guid}/addPick")]
     public async Task<ActionResult> AddPick([FromRoute] Guid eventId, [FromBody] GuessNumberUserPickDto guessNumberUserPickDto)
     {
         await guessNumberEventService.AddParticipantAsync(eventId, guessNumberUserPickDto.UserId, mapper.Map<GuessNumberPick>(guessNumberUserPickDto.Pick));
         return NoContent();
     }
 
-    [HttpPatch("{eventId:guid}/finish")]
+    [HttpPost("{eventId:guid}/finish")]
     public async Task<ActionResult> Finish([FromRoute] Guid eventId)
     {
         await guessNumberEventService.FinishAsync(eventId);

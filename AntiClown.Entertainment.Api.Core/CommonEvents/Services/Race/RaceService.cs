@@ -96,9 +96,9 @@ public class RaceService : IRaceService
             }
 
             var diff = t.Position - startSectorPositions[t.Name];
-            ApplySkillResults(diff, driver.Driver);
+            ApplyResultsToDriver(driver.Driver, diff, points);
 
-            if (points > 0 && diff > 0)
+            if (points > 0 || diff > 0)
             {
                 await raceDriversRepository.UpdateAsync(driver.Driver);
             }
@@ -114,8 +114,9 @@ public class RaceService : IRaceService
             .OrderBy(x => x.TotalTime);
     }
 
-    private static void ApplySkillResults(int skillsToImprove, RaceDriver raceDriver)
+    private static void ApplyResultsToDriver(RaceDriver raceDriver, int skillsToImprove, int points)
     {
+        raceDriver.Points += points;
         for (var i = 0; i < skillsToImprove; i++)
         {
             switch (Randomizer.GetRandomNumberBetween(0, 3))
@@ -137,9 +138,20 @@ public class RaceService : IRaceService
     {
         scheduler.Schedule(
             () => BackgroundJob.Schedule(
-                () => FinishAsync(eventId),
+                () => SafeFinishAsync(eventId),
                 TimeSpan.FromMilliseconds(Constants.LotteryEventWaitingTimeInMilliseconds))
         );
+    }
+
+    public async Task SafeFinishAsync(Guid eventId)
+    {
+        try
+        {
+            await FinishAsync(eventId);
+        }
+        catch (EventAlreadyFinishedException)
+        {
+        }
     }
 
     private readonly ICommonEventsRepository commonEventsRepository;

@@ -30,14 +30,14 @@ public class LotteryEventController : Controller
         return await lotteryService.StartNewEventAsync();
     }
 
-    [HttpPatch("{eventId:guid}/addParticipant")]
+    [HttpPost("{eventId:guid}/addParticipant")]
     public async Task<ActionResult> AddParticipant([FromRoute] Guid eventId, [FromQuery] Guid userId)
     {
         await lotteryService.AddParticipantAsync(eventId, userId);
         return NoContent();
     }
 
-    [HttpPatch("{eventId:guid}/finish")]
+    [HttpPost("{eventId:guid}/finish")]
     public async Task<ActionResult> Finish([FromRoute] Guid eventId)
     {
         await lotteryService.FinishAsync(eventId);

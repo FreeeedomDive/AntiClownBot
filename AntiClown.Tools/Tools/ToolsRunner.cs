@@ -28,7 +28,7 @@ public class ToolsRunner : IToolsRunner
             return;
         }
 
-        await tool.RunAsync();
+        await tool.ExecuteAsync();
     }
 
     private string GetToolName()

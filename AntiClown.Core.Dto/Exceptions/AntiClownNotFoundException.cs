@@ -1,6 +1,6 @@
 ﻿namespace AntiClown.Core.Dto.Exceptions;
 
-public class AntiClownNotFoundException : AntiClownBaseException
+public abstract class AntiClownNotFoundException : AntiClownBaseException
 {
     public AntiClownNotFoundException(string message) : base(message)
     {

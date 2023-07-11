@@ -30,7 +30,10 @@ public class ServiceExceptionHandlingMiddleware
 
     private static async Task WriteExceptionAsync(HttpContext context, Exception ex, int statusCode)
     {
-        var result = JsonConvert.SerializeObject(ex);
+        var result = JsonConvert.SerializeObject(ex, Formatting.Indented, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All,
+        });
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = statusCode;

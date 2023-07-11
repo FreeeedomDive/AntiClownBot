@@ -30,14 +30,14 @@ public class RaceEventController : Controller
         return await raceService.StartNewEventAsync();
     }
 
-    [HttpPatch("{eventId:guid}/addParticipant")]
+    [HttpPost("{eventId:guid}/addParticipant")]
     public async Task<ActionResult> AddParticipant([FromRoute] Guid eventId, [FromQuery] Guid userId)
     {
         await raceService.AddParticipantAsync(eventId, userId);
         return NoContent();
     }
 
-    [HttpPatch("{eventId:guid}/finish")]
+    [HttpPost("{eventId:guid}/finish")]
     public async Task<ActionResult> Finish([FromRoute] Guid eventId)
     {
         await raceService.FinishAsync(eventId);

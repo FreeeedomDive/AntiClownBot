@@ -2,20 +2,20 @@ namespace AntiClown.Tools.Tools;
 
 public class ToolsProvider : IToolsProvider
 {
-    public ToolsProvider(IEnumerable<ITool> tools)
+    public ToolsProvider(IEnumerable<ToolBase> tools)
     {
         this.tools = tools.ToArray();
     }
 
-    public ITool[] GetAll()
+    public ToolBase[] GetAll()
     {
         return tools;
     }
 
-    public ITool? FindByName(string name)
+    public ToolBase? FindByName(string name)
     {
         return tools.FirstOrDefault(x => x.Name == name);
     }
 
-    private readonly ITool[] tools;
+    private readonly ToolBase[] tools;
 }

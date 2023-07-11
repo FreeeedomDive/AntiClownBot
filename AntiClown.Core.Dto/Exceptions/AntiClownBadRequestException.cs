@@ -1,6 +1,6 @@
 ﻿namespace AntiClown.Core.Dto.Exceptions;
 
-public class AntiClownBadRequestException : AntiClownBaseException
+public abstract class AntiClownBadRequestException : AntiClownBaseException
 {
     public AntiClownBadRequestException(string message) : base(message)
     {

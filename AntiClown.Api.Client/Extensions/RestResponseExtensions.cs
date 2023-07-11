@@ -15,7 +15,10 @@ internal static class RestResponseExtensions
             throw new Exception("Content is null");
         }
 
-        var knownApiException = JsonConvert.DeserializeObject<AntiClownBaseException>(restResponse.Content);
+        var knownApiException = JsonConvert.DeserializeObject<AntiClownBaseException>(restResponse.Content, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All
+        });
         throw knownApiException ?? new Exception("Unknown API error");
     }
 
