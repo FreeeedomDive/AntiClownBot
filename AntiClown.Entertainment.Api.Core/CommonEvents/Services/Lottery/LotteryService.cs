@@ -81,9 +81,20 @@ public class LotteryService : ILotteryService
     {
         scheduler.Schedule(
             () => BackgroundJob.Schedule(
-                () => FinishAsync(eventId),
+                () => SafeFinishAsync(eventId),
                 TimeSpan.FromMilliseconds(Constants.LotteryEventWaitingTimeInMilliseconds))
         );
+    }
+
+    public async Task SafeFinishAsync(Guid eventId)
+    {
+        try
+        {
+            await FinishAsync(eventId);
+        }
+        catch (EventAlreadyFinishedException)
+        {
+        }
     }
 
     private readonly IAntiClownApiClient antiClownApiClient;

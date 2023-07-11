@@ -139,7 +139,7 @@ public class RaceService : IRaceService
         scheduler.Schedule(
             () => BackgroundJob.Schedule(
                 () => SafeFinishAsync(eventId),
-                TimeSpan.FromMilliseconds(Constants.LotteryEventWaitingTimeInMilliseconds))
+                TimeSpan.FromMilliseconds(Constants.RaceEventWaitingTimeInMilliseconds))
         );
     }
 
