@@ -92,6 +92,7 @@ public class RaceGenerator : IRaceGenerator
         {
             var isFirstSector = i == 0;
             var previousSector = isFirstSector ? lastSector : result[i - 1];
+            result[i].FastestLap = previousSector.FastestLap;
             result[i].DriversOnSector = participants.Select(driver => GenerateDriverSector(
                 driver,
                 result[i].SectorType,
