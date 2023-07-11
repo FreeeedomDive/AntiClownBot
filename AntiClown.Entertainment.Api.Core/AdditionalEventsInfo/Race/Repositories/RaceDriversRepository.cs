@@ -1,4 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Domain;
+using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
 using AutoMapper;
 using SqlRepositoryBase.Core.Repository;
 
@@ -46,7 +47,7 @@ public class RaceDriversRepository : IRaceDriversRepository
 
     private async Task<RaceDriverStorageElement> FindFirstAsync(string name)
     {
-        return (await sqlRepository.FindAsync(x => x.DriverName == name)).First();
+        return (await sqlRepository.FindAsync(x => x.DriverName == name)).FirstOrDefault() ?? throw new DriverNotFoundException(name);
     }
 
     private readonly ISqlRepository<RaceDriverStorageElement> sqlRepository;

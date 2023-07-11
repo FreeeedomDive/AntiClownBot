@@ -28,8 +28,8 @@ public class CommonEventsMapperProfile : Profile
 
         CreateMap<TransfusionEvent, TransfusionEventDto>();
 
-        CreateMap<RaceTrack, RaceTrackDto>();
-        CreateMap<RaceDriver, RaceDriverDto>();
+        CreateMap<RaceTrack, RaceTrackDto>().ReverseMap();
+        CreateMap<RaceDriver, RaceDriverDto>().ReverseMap();
         CreateMap<RaceParticipant, RaceParticipantDto>();
         CreateMap<RaceSectorType, RaceSectorTypeDto>();
         CreateMap<RaceSnapshotForDriverOnSector, RaceSnapshotForDriverOnSectorDto>();
