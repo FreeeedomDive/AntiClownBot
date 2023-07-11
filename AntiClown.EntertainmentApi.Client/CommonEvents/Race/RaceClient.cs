@@ -1,21 +1,23 @@
 ﻿using AntiClown.EntertainmentApi.Client.Extensions;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.GuessNumber;
+using AntiClown.EntertainmentApi.Dto.CommonEvents.Race;
 using RestSharp;
 
-namespace AntiClown.EntertainmentApi.Client.CommonEvents.GuessNumber;
+namespace AntiClown.EntertainmentApi.Client.CommonEvents.Race;
 
-public class GuessNumberEventClient : IGuessNumberEventClient
+public class RaceClient : IRaceClient
 {
-    public GuessNumberEventClient(RestClient restClient)
+    public RaceClient(RestClient restClient)
     {
         this.restClient = restClient;
+        Drivers = new RaceDriversClient(restClient);
+        Tracks = new RaceTracksClient(restClient);
     }
 
-    public async Task<GuessNumberEventDto> ReadAsync(Guid eventId)
+    public async Task<RaceEventDto> ReadAsync(Guid eventId)
     {
         var request = new RestRequest($"{ControllerUrl}/{eventId}");
         var response = await restClient.ExecuteGetAsync(request);
-        return response.TryDeserialize<GuessNumberEventDto>();
+        return response.TryDeserialize<RaceEventDto>();
     }
 
     public async Task<Guid> StartNewAsync()
@@ -25,14 +27,9 @@ public class GuessNumberEventClient : IGuessNumberEventClient
         return response.TryDeserialize<Guid>();
     }
 
-    public async Task AddPickAsync(Guid eventId, Guid userId, GuessNumberPickDto pick)
+    public async Task AddParticipantAsync(Guid eventId, Guid userId)
     {
-        var request = new RestRequest($"{ControllerUrl}/{eventId}/addPick");
-        request.AddJsonBody(new GuessNumberUserPickDto
-        {
-            UserId = userId,
-            Pick = pick
-        });
+        var request = new RestRequest($"{ControllerUrl}/{eventId}/addParticipant").AddQueryParameter("userId", userId);
         var response = await restClient.PatchAsync(request);
         response.ThrowIfNotSuccessful();
     }
@@ -44,6 +41,9 @@ public class GuessNumberEventClient : IGuessNumberEventClient
         response.ThrowIfNotSuccessful();
     }
 
-    private const string ControllerUrl = "events/common/guessNumber";
+    public IRaceDriversClient Drivers { get; set; }
+    public IRaceTracksClient Tracks { get; set; }
+    
+    private const string ControllerUrl = "events/common/race";
     private readonly RestClient restClient;
 }

@@ -1,21 +1,21 @@
 ﻿using AntiClown.EntertainmentApi.Client.Extensions;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.GuessNumber;
+using AntiClown.EntertainmentApi.Dto.CommonEvents.Lottery;
 using RestSharp;
 
-namespace AntiClown.EntertainmentApi.Client.CommonEvents.GuessNumber;
+namespace AntiClown.EntertainmentApi.Client.CommonEvents.Lottery;
 
-public class GuessNumberEventClient : IGuessNumberEventClient
+public class LotteryClient : ILotteryClient
 {
-    public GuessNumberEventClient(RestClient restClient)
+    public LotteryClient(RestClient restClient)
     {
         this.restClient = restClient;
     }
 
-    public async Task<GuessNumberEventDto> ReadAsync(Guid eventId)
+    public async Task<LotteryEventDto> ReadAsync(Guid eventId)
     {
         var request = new RestRequest($"{ControllerUrl}/{eventId}");
         var response = await restClient.ExecuteGetAsync(request);
-        return response.TryDeserialize<GuessNumberEventDto>();
+        return response.TryDeserialize<LotteryEventDto>();
     }
 
     public async Task<Guid> StartNewAsync()
@@ -25,14 +25,9 @@ public class GuessNumberEventClient : IGuessNumberEventClient
         return response.TryDeserialize<Guid>();
     }
 
-    public async Task AddPickAsync(Guid eventId, Guid userId, GuessNumberPickDto pick)
+    public async Task AddParticipantAsync(Guid eventId, Guid userId)
     {
-        var request = new RestRequest($"{ControllerUrl}/{eventId}/addPick");
-        request.AddJsonBody(new GuessNumberUserPickDto
-        {
-            UserId = userId,
-            Pick = pick
-        });
+        var request = new RestRequest($"{ControllerUrl}/{eventId}/addParticipant").AddQueryParameter("userId", userId);
         var response = await restClient.PatchAsync(request);
         response.ThrowIfNotSuccessful();
     }
@@ -44,6 +39,6 @@ public class GuessNumberEventClient : IGuessNumberEventClient
         response.ThrowIfNotSuccessful();
     }
 
-    private const string ControllerUrl = "events/common/guessNumber";
+    private const string ControllerUrl = "events/common/lottery";
     private readonly RestClient restClient;
 }
