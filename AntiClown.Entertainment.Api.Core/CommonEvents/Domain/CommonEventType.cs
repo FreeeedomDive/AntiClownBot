@@ -6,5 +6,6 @@ public enum CommonEventType
     Lottery,
     Race,
     RemoveCoolDowns,
-    Transfusion
+    Transfusion,
+    Bedge
 }

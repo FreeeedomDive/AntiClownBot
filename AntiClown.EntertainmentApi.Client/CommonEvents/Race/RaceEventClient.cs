@@ -4,9 +4,9 @@ using RestSharp;
 
 namespace AntiClown.EntertainmentApi.Client.CommonEvents.Race;
 
-public class RaceClient : IRaceClient
+public class RaceEventClient : IRaceEventClient
 {
-    public RaceClient(RestClient restClient)
+    public RaceEventClient(RestClient restClient)
     {
         this.restClient = restClient;
         Drivers = new RaceDriversClient(restClient);

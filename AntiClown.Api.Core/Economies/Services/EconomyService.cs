@@ -33,7 +33,7 @@ public class EconomyService : IEconomyService
             UserId = userId,
             ScamCoinDiff = diff,
             Reason = reason,
-            DateTime = DateTime.UtcNow,
+            DateTime = DateTime.Now,
         });
     }
 
@@ -62,7 +62,7 @@ public class EconomyService : IEconomyService
     {
         await economyRepository.UpdateAllAsync(new MassEconomyUpdate
         {
-            NextTribute = DateTime.UtcNow,
+            NextTribute = DateTime.Now,
         });
     }
 

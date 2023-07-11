@@ -13,13 +13,13 @@ public class Economy
 
     public bool IsTributeReady()
     {
-        return DateTime.UtcNow > NextTribute;
+        return DateTime.Now > NextTribute;
     }
 
     public static readonly Economy Default = new()
     {
         ScamCoins = Constants.DefaultScamCoins,
-        NextTribute = DateTime.UtcNow,
+        NextTribute = DateTime.Now,
         LootBoxes = 0,
     };
 }

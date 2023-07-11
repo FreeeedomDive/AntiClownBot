@@ -2,7 +2,7 @@
 
 namespace AntiClown.EntertainmentApi.Client.CommonEvents.Transfusion;
 
-public interface ITransfusionClient
+public interface ITransfusionEventClient
 {
     Task<TransfusionEventDto> ReadAsync(Guid eventId);
     Task<Guid> StartNewAsync();

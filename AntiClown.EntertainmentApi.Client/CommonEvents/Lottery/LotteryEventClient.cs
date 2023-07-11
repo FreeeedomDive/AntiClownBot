@@ -4,9 +4,9 @@ using RestSharp;
 
 namespace AntiClown.EntertainmentApi.Client.CommonEvents.Lottery;
 
-public class LotteryClient : ILotteryClient
+public class LotteryEventClient : ILotteryEventClient
 {
-    public LotteryClient(RestClient restClient)
+    public LotteryEventClient(RestClient restClient)
     {
         this.restClient = restClient;
     }

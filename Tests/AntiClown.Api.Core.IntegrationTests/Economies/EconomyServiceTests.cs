@@ -55,7 +55,7 @@ public class EconomyServiceTests : IntegrationTestsBase
         var ids = Enumerable.Range(1, economiesCount).Select(_ => Guid.NewGuid()).ToArray();
         ids.ForEach(id => EconomyService.CreateEmptyAsync(id).GetAwaiter().GetResult());
         var economies = ids.Select(id => EconomyService.ReadEconomyAsync(id).GetAwaiter().GetResult()).ToArray();
-        var resetMoment = DateTime.UtcNow;
+        var resetMoment = DateTime.Now;
         economies.Select(x => x.NextTribute).Select(x => x < resetMoment).Should().AllBeEquivalentTo(true);
         await EconomyService.ResetAllCoolDownsAsync();
         economies = ids.Select(id => EconomyService.ReadEconomyAsync(id).GetAwaiter().GetResult()).ToArray();

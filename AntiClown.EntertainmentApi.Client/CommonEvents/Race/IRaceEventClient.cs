@@ -2,7 +2,7 @@
 
 namespace AntiClown.EntertainmentApi.Client.CommonEvents.Race;
 
-public interface IRaceClient
+public interface IRaceEventClient
 {
     Task<RaceEventDto> ReadAsync(Guid eventId);
     Task<Guid> StartNewAsync();

@@ -4,9 +4,9 @@ using RestSharp;
 
 namespace AntiClown.EntertainmentApi.Client.CommonEvents.Transfusion;
 
-public class TransfusionClient : ITransfusionClient
+public class TransfusionEventClient : ITransfusionEventClient
 {
-    public TransfusionClient(RestClient restClient)
+    public TransfusionEventClient(RestClient restClient)
     {
         this.restClient = restClient;
     }

@@ -14,7 +14,7 @@ public class TransfusionEvent : CommonEventBase
         {
             Id = Guid.NewGuid(),
             Finished = true,
-            EventDateTime = DateTime.UtcNow,
+            EventDateTime = DateTime.Now,
         };
     }
 }

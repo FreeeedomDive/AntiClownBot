@@ -1,5 +1,7 @@
 ﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories.ActiveEventsIndex;
+using AntiClown.Entertainment.Api.Core.Extensions;
+using AntiClown.Tools.Utility.Extensions;
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.ActiveEventsIndex;
 
@@ -18,7 +20,11 @@ public class ActiveEventsIndexService : IActiveEventsIndexService
     public async Task<CommonEventType[]> ReadActiveEventsAsync()
     {
         var events = await ReadAllEventTypesAsync();
-        return events.Where(kv => kv.Value).Select(kv => kv.Key).ToArray();
+        var activeEvents = events.Where(kv => kv.Value).Select(kv => kv.Key).ToArray();
+        var isNightTime = DateTime.Now.IsNightTime();
+        return isNightTime
+            ? activeEvents.Where(x => x.IsNightTimeEvent()).ToArray()
+            : activeEvents.Where(x => !x.IsNightTimeEvent()).ToArray();
     }
 
     public async Task CreateAsync(CommonEventType eventType, bool isActiveByDefault)

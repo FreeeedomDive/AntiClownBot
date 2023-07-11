@@ -10,7 +10,7 @@ public class RemoveCoolDownsEvent : CommonEventBase
         {
             Id = Guid.NewGuid(),
             Finished = true,
-            EventDateTime = DateTime.UtcNow,
+            EventDateTime = DateTime.Now,
         };
     }
 }

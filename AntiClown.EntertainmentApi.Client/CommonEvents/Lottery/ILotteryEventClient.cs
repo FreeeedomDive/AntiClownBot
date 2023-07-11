@@ -2,7 +2,7 @@
 
 namespace AntiClown.EntertainmentApi.Client.CommonEvents.Lottery;
 
-public interface ILotteryClient
+public interface ILotteryEventClient
 {
     Task<LotteryEventDto> ReadAsync(Guid eventId);
     Task<Guid> StartNewAsync();

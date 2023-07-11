@@ -27,7 +27,7 @@ public class GuessNumberEvent : CommonEventBase
         {
             Id = Guid.NewGuid(),
             Finished = false,
-            EventDateTime = DateTime.UtcNow,
+            EventDateTime = DateTime.Now,
             Picks = new Dictionary<Guid, GuessNumberPick>(),
             NumberToUsers = new Dictionary<GuessNumberPick, List<Guid>>(),
             Result = Enum.GetValues<GuessNumberPick>().SelectRandomItem()
