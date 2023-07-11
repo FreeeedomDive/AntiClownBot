@@ -1,4 +1,5 @@
-﻿using AntiClown.EntertainmentApi.Client.CommonEvents.GuessNumber;
+﻿using AntiClown.EntertainmentApi.Client.CommonEvents.ActiveEventsIndex;
+using AntiClown.EntertainmentApi.Client.CommonEvents.GuessNumber;
 using AntiClown.EntertainmentApi.Client.CommonEvents.Lottery;
 using AntiClown.EntertainmentApi.Client.CommonEvents.Race;
 using AntiClown.EntertainmentApi.Client.CommonEvents.RemoveCoolDowns;
@@ -9,8 +10,9 @@ namespace AntiClown.EntertainmentApi.Client.CommonEvents;
 public interface ICommonEventsClient
 {
     IGuessNumberEventClient GuessNumber { get; }
-    IRemoveCoolDownsEventClient RemoveCoolDowns { get; set; }
-    ILotteryClient Lottery { get; set; }
-    IRaceClient Race { get; set; }
-    ITransfusionClient Transfusion { get; set; }
+    IRemoveCoolDownsEventClient RemoveCoolDowns { get; }
+    ILotteryClient Lottery { get; }
+    IRaceClient Race { get; }
+    ITransfusionClient Transfusion { get;  }
+    IActiveEventsIndexClient ActiveEventsIndex { get; }
 }

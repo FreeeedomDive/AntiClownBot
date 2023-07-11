@@ -3,6 +3,8 @@ using AntiClown.Api.Client.Configuration;
 using AntiClown.Core.Schedules;
 using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories.ActiveEventsIndex;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Services.ActiveEventsIndex;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Lottery;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
@@ -60,6 +62,7 @@ public class Startup
         services.AddTransient<ICommonEventsRepository, CommonEventsRepository>();
         services.AddTransient<IRaceTracksRepository, RaceTracksRepository>();
         services.AddTransient<IRaceDriversRepository, RaceDriversRepository>();
+        services.AddTransient<IActiveEventsIndexRepository, ActiveEventsIndexRepository>();
 
         // configure other stuff
         services.AddTransient<IEventsMessageProducer, EventsMessageProducer>();
@@ -73,6 +76,7 @@ public class Startup
         services.AddTransient<IRemoveCoolDownsEventService, RemoveCoolDownsEventService>();
         services.AddTransient<ITransfusionEventService, TransfusionEventService>();
         services.AddTransient<IRaceService, RaceService>();
+        services.AddTransient<IActiveEventsIndexService, ActiveEventsIndexService>();
 
         // configure HangFire
         services.AddHangfire(config =>

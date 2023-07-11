@@ -1,9 +1,11 @@
 ﻿using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Domain;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Lottery;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Race;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.RemoveCoolDowns;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Transfusion;
+using AntiClown.EntertainmentApi.Dto.CommonEvents;
 using AntiClown.EntertainmentApi.Dto.CommonEvents.GuessNumber;
 using AntiClown.EntertainmentApi.Dto.CommonEvents.Lottery;
 using AntiClown.EntertainmentApi.Dto.CommonEvents.Race;
@@ -17,6 +19,7 @@ public class CommonEventsMapperProfile : Profile
 {
     public CommonEventsMapperProfile()
     {
+        CreateMap<CommonEventType, CommonEventTypeDto>().ReverseMap();
         CreateMap<GuessNumberPick, GuessNumberPickDto>();
         CreateMap<GuessNumberEvent, GuessNumberEventDto>();
 

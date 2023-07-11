@@ -1,4 +1,5 @@
-﻿using AntiClown.EntertainmentApi.Client.CommonEvents.GuessNumber;
+﻿using AntiClown.EntertainmentApi.Client.CommonEvents.ActiveEventsIndex;
+using AntiClown.EntertainmentApi.Client.CommonEvents.GuessNumber;
 using AntiClown.EntertainmentApi.Client.CommonEvents.Lottery;
 using AntiClown.EntertainmentApi.Client.CommonEvents.Race;
 using AntiClown.EntertainmentApi.Client.CommonEvents.RemoveCoolDowns;
@@ -16,11 +17,13 @@ public class CommonEventsClient : ICommonEventsClient
         Lottery = new LotteryClient(restClient);
         Race = new RaceClient(restClient);
         Transfusion = new TransfusionClient(restClient);
+        ActiveEventsIndex = new ActiveEventsIndexClient(restClient);
     }
 
     public IGuessNumberEventClient GuessNumber { get; }
-    public IRemoveCoolDownsEventClient RemoveCoolDowns { get; set; }
-    public ILotteryClient Lottery { get; set; }
-    public IRaceClient Race { get; set; }
-    public ITransfusionClient Transfusion { get; set; }
+    public IRemoveCoolDownsEventClient RemoveCoolDowns { get; }
+    public ILotteryClient Lottery { get; }
+    public IRaceClient Race { get; }
+    public ITransfusionClient Transfusion { get; }
+    public IActiveEventsIndexClient ActiveEventsIndex { get; }
 }

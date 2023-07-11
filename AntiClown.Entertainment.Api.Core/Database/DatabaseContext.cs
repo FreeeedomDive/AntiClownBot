@@ -1,5 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories.ActiveEventsIndex;
 using AntiClown.Entertainment.Api.Core.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -24,6 +25,7 @@ public class DatabaseContext : DbContext
     public DbSet<CommonEventStorageElement> CommonEvents { get; set; }
     public DbSet<RaceDriverStorageElement> RaceDrivers { get; set; }
     public DbSet<RaceTrackStorageElement> RaceTracks { get; set; }
+    public DbSet<ActiveEventsIndexStorageElement> ActiveEventsIndex { get; set; }
 
     private DatabaseOptions Options { get; }
 }
