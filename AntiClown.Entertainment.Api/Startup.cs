@@ -1,10 +1,12 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
 using AntiClown.Core.Schedules;
+using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Lottery;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
+using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Race;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.RemoveCoolDowns;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Transfusion;
 using AntiClown.Entertainment.Api.Core.Database;
@@ -56,19 +58,21 @@ public class Startup
 
         // configure repositories
         services.AddTransient<ICommonEventsRepository, CommonEventsRepository>();
-        
-        // configure validators
+        services.AddTransient<IRaceTracksRepository, RaceTracksRepository>();
+        services.AddTransient<IRaceDriversRepository, RaceDriversRepository>();
 
         // configure other stuff
         services.AddTransient<IEventsMessageProducer, EventsMessageProducer>();
         services.AddTransient<IScheduler, HangfireScheduler>();
         services.AddTransient<IAntiClownApiClient>(_ => AntiClownApiClientProvider.Build());
+        services.AddTransient<IRaceGenerator, RaceGenerator>();
 
         // configure services
         services.AddTransient<IGuessNumberEventService, GuessNumberEventService>();
         services.AddTransient<ILotteryService, LotteryService>();
         services.AddTransient<IRemoveCoolDownsEventService, RemoveCoolDownsEventService>();
         services.AddTransient<ITransfusionEventService, TransfusionEventService>();
+        services.AddTransient<IRaceService, RaceService>();
 
         // configure HangFire
         services.AddHangfire(config =>
