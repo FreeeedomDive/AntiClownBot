@@ -1,4 +1,4 @@
-﻿namespace AntiClown.Api.Core.Options;
+﻿namespace AntiClown.Api.Core.Database;
 
 public class DatabaseOptions
 {

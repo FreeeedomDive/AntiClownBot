@@ -1,6 +1,5 @@
 ﻿using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Inventory.Repositories;
-using AntiClown.Api.Core.Options;
 using AntiClown.Api.Core.Shops.Repositories.Items;
 using AntiClown.Api.Core.Shops.Repositories.Shops;
 using AntiClown.Api.Core.Shops.Repositories.Stats;

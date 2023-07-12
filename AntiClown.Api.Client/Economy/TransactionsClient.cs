@@ -18,6 +18,14 @@ public class TransactionsClient : ITransactionsClient
         return response.TryDeserialize<TransactionDto[]>();
     }
 
+    public async Task<TransactionDto[]> FindAsync(TransactionsFilterDto filter)
+    {
+        var request = new RestRequest("economy/transactions/find");
+        request.AddJsonBody(filter);
+        var response = await restClient.ExecutePostAsync(request);
+        return response.TryDeserialize<TransactionDto[]>();
+    }
+
     private static string BuildApiUrl(Guid userId) => $"economy/{userId}/transactions";
 
     private readonly RestClient restClient;

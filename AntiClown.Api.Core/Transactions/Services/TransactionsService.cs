@@ -15,6 +15,11 @@ public class TransactionsService : ITransactionsService
         return await transactionsRepository.ReadManyAsync(userId, skip, take);
     }
 
+    public async Task<Transaction[]> FindAsync(TransactionsFilter filter)
+    {
+        return await transactionsRepository.FindAsync(filter);
+    }
+
     public async Task CreateAsync(Transaction transaction)
     {
         await transactionsRepository.CreateAsync(transaction);

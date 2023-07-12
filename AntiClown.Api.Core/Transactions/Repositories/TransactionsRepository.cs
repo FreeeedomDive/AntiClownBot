@@ -1,6 +1,7 @@
 ﻿using AntiClown.Api.Core.Transactions.Domain;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using SqlRepositoryBase.Core.Extensions;
 using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api.Core.Transactions.Repositories;
@@ -24,6 +25,19 @@ public class TransactionsRepository : ITransactionsRepository
             .OrderByDescending(x => x.DateTime)
             .Skip(skip)
             .Take(take)
+            .ToArrayAsync();
+
+        return mapper.Map<Transaction[]>(result);
+    }
+
+    public async Task<Transaction[]> FindAsync(TransactionsFilter filter)
+    {
+        var result = await sqlRepository
+            .BuildCustomQuery()
+            .WhereIf(filter.UserId.HasValue, x => x.UserId == filter.UserId!.Value)
+            .WhereIf(filter.DateTimeRange?.From is not null, x => filter.DateTimeRange!.From!.Value <= x.DateTime)
+            .WhereIf(filter.DateTimeRange?.To is not null, x => x.DateTime <= filter.DateTimeRange!.To!.Value)
+            .OrderByDescending(x => x.DateTime)
             .ToArrayAsync();
 
         return mapper.Map<Transaction[]>(result);
