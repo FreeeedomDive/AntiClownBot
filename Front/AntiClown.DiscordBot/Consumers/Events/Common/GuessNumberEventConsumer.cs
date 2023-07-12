@@ -20,6 +20,16 @@ public class GuessNumberEventConsumer : ICommonEventConsumer<GuessNumberEventDto
     public async Task ConsumeAsync(ConsumeContext<CommonEventMessageDto> context)
     {
         var eventId = context.Message.EventId;
+        if (context.Message.Finished)
+        {
+            logger.LogInformation(
+                "{ConsumerName} received FINISHED event with id {eventId}",
+                ConsumerName,
+                eventId
+            );
+            return;
+        }
+
         var @event = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.ReadAsync(eventId);
         logger.LogInformation(
             "{ConsumerName} received event with id {eventId}\n{eventInfo}",
