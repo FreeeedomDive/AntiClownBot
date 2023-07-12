@@ -40,6 +40,13 @@ public class ShopClient : IShopClient
         response.ThrowIfNotSuccessful();
     }
 
+    public async Task ResetShopAsync(Guid shopId)
+    {
+        var request = new RestRequest($"{BuildApiUrl(shopId)}/reset");
+        var response = await restClient.ExecutePostAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
     private static string BuildApiUrl(Guid shopId) => $"shops/{shopId}";
 
     private readonly RestClient restClient;

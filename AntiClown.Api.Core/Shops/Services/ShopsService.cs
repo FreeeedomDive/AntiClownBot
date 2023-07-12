@@ -40,7 +40,7 @@ public class ShopsService : IShopsService
         await shopStatsRepository.CreateAsync(new ShopStats { Id = userId });
     }
 
-    public async Task ResetShop(Guid shopId)
+    public async Task ResetShopAsync(Guid shopId)
     {
         await ResetShop(shopId, false);
     }
@@ -138,7 +138,7 @@ public class ShopsService : IShopsService
         await shopStatsRepository.UpdateAsync(stats);
     }
 
-    public async Task<ShopStats> ReasStats(Guid shopId)
+    public async Task<ShopStats> ReadStatsAsync(Guid shopId)
     {
         return await shopStatsRepository.ReadAsync(shopId);
     }

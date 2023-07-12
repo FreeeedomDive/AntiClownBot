@@ -4,7 +4,7 @@ using RestSharp;
 
 namespace AntiClown.Api.Client.Economy;
 
-public class LohotronClient
+public class LohotronClient : ILohotronClient
 {
     public LohotronClient(RestClient restClient)
     {

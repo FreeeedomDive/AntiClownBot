@@ -44,13 +44,20 @@ public class ShopController : Controller
     public async Task<ActionResult> ReRoll([FromRoute] Guid shopId)
     {
         await shopsService.ReRollAsync(shopId);
-        return Ok();
+        return NoContent();
+    }
+
+    [HttpPost("reset")]
+    public async Task<ActionResult> Reset([FromRoute] Guid shopId)
+    {
+        await shopsService.ResetShopAsync(shopId);
+        return NoContent();
     }
 
     [HttpGet("stats")]
     public async Task<ActionResult<ShopStatsDto>> ReadStats([FromRoute] Guid shopId)
     {
-        var stats = await shopsService.ReasStats(shopId);
+        var stats = await shopsService.ReadStatsAsync(shopId);
         return mapper.Map<ShopStatsDto>(stats);
     }
 

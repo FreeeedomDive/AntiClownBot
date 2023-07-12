@@ -9,4 +9,5 @@ public interface IShopClient
     Task<ShopItemDto> RevealItemAsync(Guid shopId, Guid itemId);
     Task<BaseItemDto> BuyItemAsync(Guid shopId, Guid itemId);
     Task ReRollShopAsync(Guid shopId);
+    Task ResetShopAsync(Guid shopId);
 }
