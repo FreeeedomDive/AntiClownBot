@@ -12,5 +12,7 @@ public class EconomiesDtoMapperProfile : Profile
         CreateMap<Transaction, TransactionDto>().ReverseMap();
         CreateMap<Economy, EconomyDto>().ReverseMap();
         CreateMap<Tribute, TributeDto>();
+        CreateMap<LohotronRewardType, LohotronRewardTypeDto>();
+        CreateMap<LohotronReward, LohotronRewardDto>();
     }
 }

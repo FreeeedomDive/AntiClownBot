@@ -15,6 +15,7 @@ using AntiClown.Api.Core.Users.Repositories;
 using AntiClown.Api.Core.Users.Services;
 using AutoFixture;
 using AutoMapper;
+using Moq;
 using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api.Core.IntegrationTests;
@@ -56,6 +57,8 @@ public class IntegrationTestsBase
         UsersService = new UsersService(usersRepository);
         TransactionsService = new TransactionsService(transactionsRepository);
         EconomyService = new EconomyService(economiesRepository, TransactionsService);
+        LohotronRewardGeneratorMock = new Mock<ILohotronRewardGenerator>();
+        LohotronService = new LohotronService(EconomyService, LohotronRewardGeneratorMock.Object);
         ItemsService = new ItemsService(
             new ItemsValidator(EconomyService, itemsRepository),
             itemsRepository,
@@ -96,6 +99,8 @@ public class IntegrationTestsBase
     protected INewUserService NewUserService { get; private set; } = null!;
     protected ITransactionsService TransactionsService { get; private set; } = null!;
     protected IEconomyService EconomyService { get; private set; } = null!;
+    protected Mock<ILohotronRewardGenerator> LohotronRewardGeneratorMock { get; private set; } = null!;
+    protected ILohotronService LohotronService { get; private set; } = null!;
     protected IItemsService ItemsService { get; private set; } = null!;
     protected IShopsRepository ShopsRepository { get; private set; } = null!;
     protected IShopItemsRepository ShopItemsRepository { get; private set; } = null!;

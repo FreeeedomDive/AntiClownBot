@@ -9,6 +9,7 @@ public class Economy
     public int ScamCoins { get; set; }
     public DateTime NextTribute { get; set; }
     public int LootBoxes { get; set; }
+    public bool IsLohotronReady { get; set; }
 
     public bool IsTributeReady()
     {
@@ -20,5 +21,6 @@ public class Economy
         ScamCoins = Constants.DefaultScamCoins,
         NextTribute = DateTime.UtcNow,
         LootBoxes = 0,
+        IsLohotronReady = true,
     };
 }

@@ -38,6 +38,7 @@ public class EconomyRepository : IEconomyRepository
             x.ScamCoins = economy.ScamCoins;
             x.NextTribute = economy.NextTribute;
             x.LootBoxes = economy.LootBoxes;
+            x.IsLohotronReady = economy.IsLohotronReady;
             x.Version = current.Version;
         });
     }
@@ -54,14 +55,19 @@ public class EconomyRepository : IEconomyRepository
                     x.ScamCoins += massEconomyUpdate.ScamCoins.ScamCoinsDiff;
                 }
 
-                if (massEconomyUpdate.LootBoxesDiff is not null)
+                if (massEconomyUpdate.LootBoxesDiff.HasValue)
                 {
                     x.LootBoxes += massEconomyUpdate.LootBoxesDiff.Value;
                 }
 
-                if (massEconomyUpdate.NextTribute is not null)
+                if (massEconomyUpdate.NextTribute.HasValue)
                 {
                     x.NextTribute = massEconomyUpdate.NextTribute.Value;
+                }
+
+                if (massEconomyUpdate.IsLohotronReady.HasValue)
+                {
+                    x.IsLohotronReady = massEconomyUpdate.IsLohotronReady.Value;
                 }
             });
         });

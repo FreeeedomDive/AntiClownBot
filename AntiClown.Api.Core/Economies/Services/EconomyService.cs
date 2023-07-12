@@ -44,6 +44,13 @@ public class EconomyService : IEconomyService
         await economyRepository.UpdateAsync(economy);
     }
 
+    public async Task UpdateLohotronAsync(Guid userId, bool isReady)
+    {
+        var economy = await ReadEconomyAsync(userId);
+        economy.IsLohotronReady = isReady;
+        await economyRepository.UpdateAsync(economy);
+    }
+
     public async Task CreateEmptyAsync(Guid userId)
     {
         var newUserEconomy = Economy.Default;
@@ -63,6 +70,14 @@ public class EconomyService : IEconomyService
         await economyRepository.UpdateAllAsync(new MassEconomyUpdate
         {
             NextTribute = DateTime.UtcNow,
+        });
+    }
+
+    public async Task ResetLohotronForAllAsync()
+    {
+        await economyRepository.UpdateAllAsync(new MassEconomyUpdate
+        {
+            IsLohotronReady = true,
         });
     }
 

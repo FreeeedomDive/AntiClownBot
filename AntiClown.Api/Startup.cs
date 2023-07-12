@@ -90,6 +90,8 @@ public class Startup
         services.AddTransient<IItemsService, ItemsService>();
         services.AddTransient<IShopsService, ShopsService>();
         services.AddTransient<ITributeService, TributeService>();
+        services.AddTransient<ILohotronRewardGenerator, LohotronRewardGenerator>();
+        services.AddTransient<ILohotronService, LohotronService>();
 
         // configure HangFire
         services.AddHangfire(config =>
