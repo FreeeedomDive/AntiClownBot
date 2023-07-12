@@ -1,4 +1,5 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using System.Net;
+using AntiClown.Core.Dto.Exceptions;
 using Newtonsoft.Json;
 using RestSharp;
 

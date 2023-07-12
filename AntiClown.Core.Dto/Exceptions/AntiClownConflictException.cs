@@ -6,5 +6,5 @@ public class AntiClownConflictException : AntiClownBaseException
     {
     }
 
-    public override int StatusCode { get; set; } = 409;
+    public override int StatusCode => 409;
 }

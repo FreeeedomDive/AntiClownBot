@@ -13,4 +13,5 @@ public interface IAntiClownApiClient
     IShopClient Shops { get; }
     ITransactionsClient Transactions { get; }
     ITributeClient Tribute { get; }
+    ILohotronClient Lohotron { get; }
 }

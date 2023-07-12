@@ -6,5 +6,5 @@ public abstract class AntiClownNotFoundException : AntiClownBaseException
     {
     }
 
-    public override int StatusCode { get; set; } = 404;
+    public override int StatusCode => 404;
 }

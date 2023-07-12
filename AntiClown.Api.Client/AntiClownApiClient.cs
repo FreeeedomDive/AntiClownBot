@@ -25,5 +25,5 @@ public class AntiClownApiClient : IAntiClownApiClient
     public IShopClient Shops { get; }
     public ITransactionsClient Transactions { get; }
     public ITributeClient Tribute { get; }
-    public ILohotronClient Lohotron { get; set; }
+    public ILohotronClient Lohotron { get; }
 }

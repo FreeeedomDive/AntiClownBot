@@ -6,5 +6,5 @@ public abstract class AntiClownBadRequestException : AntiClownBaseException
     {
     }
 
-    public override int StatusCode { get; set; } = 400;
+    public override int StatusCode => 400;
 }
