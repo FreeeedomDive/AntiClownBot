@@ -48,6 +48,7 @@ public class Startup
 
         services.AddMassTransit(massTransitConfiguration =>
         {
+            massTransitConfiguration.SetKebabCaseEndpointNameFormatter();
             massTransitConfiguration.UsingRabbitMq((context, rabbitMqConfiguration) =>
             {
                 rabbitMqConfiguration.ConfigureEndpoints(context);

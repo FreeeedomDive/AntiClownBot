@@ -13,3 +13,4 @@ AntiClown.Api/appsettings.Production.json
 AntiClown.Entertainment.Api/appsettings.Production.json
 AntiClown.Tools/appsettings.Production.json
 AntiClown.EventsDaemon/appsettings.Production.json
+Front/AntiClown.DiscordBot/appsettings.Production.json

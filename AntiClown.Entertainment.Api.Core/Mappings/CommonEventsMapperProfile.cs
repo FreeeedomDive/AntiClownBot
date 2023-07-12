@@ -20,6 +20,14 @@ public class CommonEventsMapperProfile : Profile
                 cfg => cfg.MapFrom(commonEvent => JsonConvert.SerializeObject(commonEvent, Formatting.Indented))
             );
         CreateMap<CommonEventType, CommonEventTypeDto>();
-        CreateMap<CommonEventBase, CommonEventMessageDto>();
+        CreateMap<CommonEventBase, CommonEventMessageDto>()
+            .ForMember(
+                dto => dto.EventId,
+                cfg => cfg.MapFrom(eventModel => eventModel.Id)
+            )
+            .ForMember(
+                dto => dto.EventType,
+                cfg => cfg.MapFrom(eventModel => eventModel.Type)
+            );
     }
 }
