@@ -2,7 +2,6 @@
 
 public enum DailyEventTypeDto
 {
-    DailyStats,
-    ResetShops,
-    ResetParties
+    Announce,
+    PaymentsAndResets,
 }

@@ -13,10 +13,10 @@ public class DailyEventsMessageProducer : IDailyEventsMessageProducer
         this.mapper = mapper;
     }
 
-    public async Task ProduceAsync(DailyEventBase eventBase)
+    public async Task ProduceAsync(DailyEventBase dailyEvent)
     {
-        var @event = mapper.Map<DailyEventMessageDto>(eventBase);
-        await bus.Publish(@event);
+        var eventMessage = mapper.Map<DailyEventMessageDto>(dailyEvent);
+        await bus.Publish(eventMessage);
     }
 
     private readonly IBus bus;

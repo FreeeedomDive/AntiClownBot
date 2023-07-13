@@ -16,6 +16,7 @@ using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.ActiveEventsIndex;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Announce;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Messages;
+using AntiClown.Entertainment.Api.Core.DailyEvents.Services.PaymentsAndResets;
 using AntiClown.Entertainment.Api.Core.Database;
 using AntiClown.Entertainment.Api.Core.Options;
 using AntiClown.Entertainment.Api.Middlewares;
@@ -69,7 +70,6 @@ public class Startup
         services.AddTransient<IRaceTracksRepository, RaceTracksRepository>();
         services.AddTransient<IRaceDriversRepository, RaceDriversRepository>();
         services.AddTransient<ICommonActiveEventsIndexRepository, CommonActiveEventsIndexRepository>();
-
         services.AddTransient<IDailyEventsRepository, DailyEventsRepository>();
         services.AddTransient<IDailyActiveEventsIndexRepository, DailyActiveEventsIndexRepository>();
 
@@ -88,8 +88,8 @@ public class Startup
         services.AddTransient<IRaceService, RaceService>();
         services.AddTransient<IBedgeService, BedgeService>();
         services.AddTransient<IActiveEventsIndexService, ActiveEventsIndexService>();
-
         services.AddTransient<IAnnounceEventService, AnnounceEventService>();
+        services.AddTransient<IPaymentsAndResetsService, PaymentsAndResetsService>();
 
         // configure HangFire
         services.AddHangfire(config =>

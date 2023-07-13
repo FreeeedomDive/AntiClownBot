@@ -4,5 +4,5 @@ namespace AntiClown.Entertainment.Api.Core.DailyEvents.Services.Messages;
 
 public interface IDailyEventsMessageProducer
 {
-    Task ProduceAsync(DailyEventBase eventBase);
+    Task ProduceAsync(DailyEventBase dailyEvent);
 }

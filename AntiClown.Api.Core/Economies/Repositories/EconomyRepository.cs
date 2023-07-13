@@ -69,6 +69,8 @@ public class EconomyRepository : IEconomyRepository
                 {
                     x.IsLohotronReady = massEconomyUpdate.IsLohotronReady.Value;
                 }
+
+                x.Version++;
             });
         });
     }

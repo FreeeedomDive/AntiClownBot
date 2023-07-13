@@ -4,5 +4,4 @@ public enum DailyEventType
 {
     Announce,
     PaymentsAndResets,
-    CleanUpParties,
 }
