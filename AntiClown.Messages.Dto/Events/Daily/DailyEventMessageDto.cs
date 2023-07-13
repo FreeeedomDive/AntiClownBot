@@ -1,6 +1,6 @@
 ﻿namespace AntiClown.Messages.Dto.Events.Daily;
 
-public class DailyEventStartedMessageDto
+public class DailyEventMessageDto
 {
     public Guid EventId { get; set; }
     public DailyEventTypeDto EventType { get; set; }

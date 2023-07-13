@@ -2,7 +2,7 @@
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
 
-public interface IEventsMessageProducer
+public interface ICommonEventsMessageProducer
 {
     Task ProduceAsync(CommonEventBase eventBase);
 }

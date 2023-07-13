@@ -2,6 +2,6 @@
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.Transfusion;
 
-public interface ITransfusionEventService : IBaseEventService<TransfusionEvent>
+public interface ITransfusionEventService : ICommonEventServiceBase<TransfusionEvent>
 {
 }

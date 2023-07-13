@@ -7,14 +7,14 @@ namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.ActiveEventsInd
 
 public class ActiveEventsIndexService : IActiveEventsIndexService
 {
-    public ActiveEventsIndexService(IActiveEventsIndexRepository activeEventsIndexRepository)
+    public ActiveEventsIndexService(ICommonActiveEventsIndexRepository commonActiveEventsIndexRepository)
     {
-        this.activeEventsIndexRepository = activeEventsIndexRepository;
+        this.commonActiveEventsIndexRepository = commonActiveEventsIndexRepository;
     }
 
     public async Task<Dictionary<CommonEventType, bool>> ReadAllEventTypesAsync()
     {
-        return await activeEventsIndexRepository.ReadAllEventTypesAsync();
+        return await commonActiveEventsIndexRepository.ReadAllEventTypesAsync();
     }
 
     public async Task<CommonEventType[]> ReadActiveEventsAsync()
@@ -29,12 +29,12 @@ public class ActiveEventsIndexService : IActiveEventsIndexService
 
     public async Task CreateAsync(CommonEventType eventType, bool isActiveByDefault)
     {
-        await activeEventsIndexRepository.CreateAsync(eventType, isActiveByDefault);
+        await commonActiveEventsIndexRepository.CreateAsync(eventType, isActiveByDefault);
     }
 
     public async Task UpdateAsync(CommonEventType eventType, bool isActive)
     {
-        await activeEventsIndexRepository.UpdateAsync(eventType, isActive);
+        await commonActiveEventsIndexRepository.UpdateAsync(eventType, isActive);
     }
 
     public async Task ActualizeIndexAsync()
@@ -48,5 +48,5 @@ public class ActiveEventsIndexService : IActiveEventsIndexService
         }
     }
 
-    private readonly IActiveEventsIndexRepository activeEventsIndexRepository;
+    private readonly ICommonActiveEventsIndexRepository commonActiveEventsIndexRepository;
 }

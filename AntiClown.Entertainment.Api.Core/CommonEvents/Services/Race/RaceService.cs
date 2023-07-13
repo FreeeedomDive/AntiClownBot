@@ -20,7 +20,7 @@ public class RaceService : IRaceService
         ICommonEventsRepository commonEventsRepository,
         IRaceDriversRepository raceDriversRepository,
         IRaceGenerator raceGenerator,
-        IEventsMessageProducer eventsMessageProducer,
+        ICommonEventsMessageProducer commonEventsMessageProducer,
         IAntiClownApiClient antiClownApiClient,
         IScheduler scheduler
     )
@@ -28,7 +28,7 @@ public class RaceService : IRaceService
         this.commonEventsRepository = commonEventsRepository;
         this.raceDriversRepository = raceDriversRepository;
         this.raceGenerator = raceGenerator;
-        this.eventsMessageProducer = eventsMessageProducer;
+        this.commonEventsMessageProducer = commonEventsMessageProducer;
         this.antiClownApiClient = antiClownApiClient;
         this.scheduler = scheduler;
     }
@@ -48,7 +48,7 @@ public class RaceService : IRaceService
     {
         var race = await raceGenerator.GenerateAsync();
         await commonEventsRepository.CreateAsync(race);
-        await eventsMessageProducer.ProduceAsync(race);
+        await commonEventsMessageProducer.ProduceAsync(race);
         ScheduleEventFinish(race.Id);
 
         return race.Id;
@@ -104,7 +104,7 @@ public class RaceService : IRaceService
             }
         }
 
-        await eventsMessageProducer.ProduceAsync(@event);
+        await commonEventsMessageProducer.ProduceAsync(@event);
     }
 
     private static IEnumerable<RaceSnapshotForDriverOnSector> GetOrderedDriversFromSector(RaceSnapshotOnSector sector)
@@ -157,7 +157,7 @@ public class RaceService : IRaceService
     private readonly ICommonEventsRepository commonEventsRepository;
     private readonly IRaceDriversRepository raceDriversRepository;
     private readonly IRaceGenerator raceGenerator;
-    private readonly IEventsMessageProducer eventsMessageProducer;
+    private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IScheduler scheduler;
 }

@@ -2,7 +2,7 @@
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.Race;
 
-public interface IRaceService : IBaseEventService<RaceEvent>
+public interface IRaceService : ICommonEventServiceBase<RaceEvent>
 {
     Task AddParticipantAsync(Guid eventId, Guid userId);
     Task FinishAsync(Guid eventId);

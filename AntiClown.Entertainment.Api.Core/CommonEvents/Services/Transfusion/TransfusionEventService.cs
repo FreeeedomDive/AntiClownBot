@@ -15,12 +15,12 @@ public class TransfusionEventService : ITransfusionEventService
     public TransfusionEventService(
         ICommonEventsRepository commonEventsRepository,
         IAntiClownApiClient antiClownApiClient,
-        IEventsMessageProducer eventsMessageProducer
+        ICommonEventsMessageProducer commonEventsMessageProducer
     )
     {
         this.commonEventsRepository = commonEventsRepository;
         this.antiClownApiClient = antiClownApiClient;
-        this.eventsMessageProducer = eventsMessageProducer;
+        this.commonEventsMessageProducer = commonEventsMessageProducer;
     }
 
     public async Task<TransfusionEvent> ReadAsync(Guid eventId)
@@ -51,12 +51,12 @@ public class TransfusionEventService : ITransfusionEventService
         await antiClownApiClient.Economy.UpdateScamCoinsAsync(donor.Id, -exchange, $"Событие перекачки {newEvent.Id}");
         await antiClownApiClient.Economy.UpdateScamCoinsAsync(recipient.Id, exchange, $"Событие перекачки {newEvent.Id}");
 
-        await eventsMessageProducer.ProduceAsync(newEvent);
+        await commonEventsMessageProducer.ProduceAsync(newEvent);
 
         return newEvent.Id;
     }
 
     private readonly ICommonEventsRepository commonEventsRepository;
     private readonly IAntiClownApiClient antiClownApiClient;
-    private readonly IEventsMessageProducer eventsMessageProducer;
+    private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
 }

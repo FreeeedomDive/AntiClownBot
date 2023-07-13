@@ -15,13 +15,13 @@ public class GuessNumberEventService : IGuessNumberEventService
     public GuessNumberEventService(
         IAntiClownApiClient antiClownApiClient,
         ICommonEventsRepository commonEventsRepository,
-        IEventsMessageProducer eventsMessageProducer,
+        ICommonEventsMessageProducer commonEventsMessageProducer,
         IScheduler scheduler
     )
     {
         this.antiClownApiClient = antiClownApiClient;
         this.commonEventsRepository = commonEventsRepository;
-        this.eventsMessageProducer = eventsMessageProducer;
+        this.commonEventsMessageProducer = commonEventsMessageProducer;
         this.scheduler = scheduler;
     }
 
@@ -40,7 +40,7 @@ public class GuessNumberEventService : IGuessNumberEventService
     {
         var newEvent = GuessNumberEvent.Create();
         await commonEventsRepository.CreateAsync(newEvent);
-        await eventsMessageProducer.ProduceAsync(newEvent);
+        await commonEventsMessageProducer.ProduceAsync(newEvent);
         ScheduleEventFinish(newEvent.Id);
 
         return newEvent.Id;
@@ -75,7 +75,7 @@ public class GuessNumberEventService : IGuessNumberEventService
             await antiClownApiClient.Economy.UpdateLootBoxesAsync(winnerUserId, 1);
         }
 
-        await eventsMessageProducer.ProduceAsync(@event);
+        await commonEventsMessageProducer.ProduceAsync(@event);
     }
 
     private void ScheduleEventFinish(Guid eventId)
@@ -99,6 +99,6 @@ public class GuessNumberEventService : IGuessNumberEventService
 
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly ICommonEventsRepository commonEventsRepository;
-    private readonly IEventsMessageProducer eventsMessageProducer;
+    private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
     private readonly IScheduler scheduler;
 }

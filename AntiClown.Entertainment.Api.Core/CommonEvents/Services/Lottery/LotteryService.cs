@@ -15,13 +15,13 @@ public class LotteryService : ILotteryService
     public LotteryService(
         IAntiClownApiClient antiClownApiClient,
         ICommonEventsRepository commonEventsRepository,
-        IEventsMessageProducer eventsMessageProducer,
+        ICommonEventsMessageProducer commonEventsMessageProducer,
         IScheduler scheduler
     )
     {
         this.antiClownApiClient = antiClownApiClient;
         this.commonEventsRepository = commonEventsRepository;
-        this.eventsMessageProducer = eventsMessageProducer;
+        this.commonEventsMessageProducer = commonEventsMessageProducer;
         this.scheduler = scheduler;
     }
 
@@ -40,7 +40,7 @@ public class LotteryService : ILotteryService
     {
         var newEvent = LotteryEvent.Create();
         await commonEventsRepository.CreateAsync(newEvent);
-        await eventsMessageProducer.ProduceAsync(newEvent);
+        await commonEventsMessageProducer.ProduceAsync(newEvent);
         ScheduleEventFinish(newEvent.Id);
 
         return newEvent.Id;
@@ -74,7 +74,7 @@ public class LotteryService : ILotteryService
             .Select(x => antiClownApiClient.Economy.UpdateScamCoinsAsync(x.UserId, x.Prize, $"Лотерея {eventId}"));
         await Task.WhenAll(tasks);
 
-        await eventsMessageProducer.ProduceAsync(@event);
+        await commonEventsMessageProducer.ProduceAsync(@event);
     }
 
     private void ScheduleEventFinish(Guid eventId)
@@ -99,6 +99,6 @@ public class LotteryService : ILotteryService
 
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly ICommonEventsRepository commonEventsRepository;
-    private readonly IEventsMessageProducer eventsMessageProducer;
+    private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
     private readonly IScheduler scheduler;
 }

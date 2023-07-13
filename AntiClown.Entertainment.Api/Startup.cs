@@ -64,10 +64,10 @@ public class Startup
         services.AddTransient<ICommonEventsRepository, CommonEventsRepository>();
         services.AddTransient<IRaceTracksRepository, RaceTracksRepository>();
         services.AddTransient<IRaceDriversRepository, RaceDriversRepository>();
-        services.AddTransient<IActiveEventsIndexRepository, ActiveEventsIndexRepository>();
+        services.AddTransient<ICommonActiveEventsIndexRepository, CommonActiveEventsIndexRepository>();
 
         // configure other stuff
-        services.AddTransient<IEventsMessageProducer, EventsMessageProducer>();
+        services.AddTransient<ICommonEventsMessageProducer, CommonEventsMessageProducer>();
         services.AddTransient<IScheduler, HangfireScheduler>();
         services.AddTransient<IAntiClownApiClient>(_ => AntiClownApiClientProvider.Build());
         services.AddTransient<IRaceGenerator, RaceGenerator>();

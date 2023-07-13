@@ -12,12 +12,12 @@ public class RemoveCoolDownsEventService : IRemoveCoolDownsEventService
     public RemoveCoolDownsEventService(
         IAntiClownApiClient antiClownApiClient,
         ICommonEventsRepository commonEventsRepository,
-        IEventsMessageProducer eventsMessageProducer
+        ICommonEventsMessageProducer commonEventsMessageProducer
     )
     {
         this.antiClownApiClient = antiClownApiClient;
         this.commonEventsRepository = commonEventsRepository;
-        this.eventsMessageProducer = eventsMessageProducer;
+        this.commonEventsMessageProducer = commonEventsMessageProducer;
     }
 
     public async Task<RemoveCoolDownsEvent> ReadAsync(Guid eventId)
@@ -35,7 +35,7 @@ public class RemoveCoolDownsEventService : IRemoveCoolDownsEventService
     {
         var newEvent = RemoveCoolDownsEvent.Create();
         await commonEventsRepository.CreateAsync(newEvent);
-        await eventsMessageProducer.ProduceAsync(newEvent);
+        await commonEventsMessageProducer.ProduceAsync(newEvent);
         await antiClownApiClient.Economy.ResetAllCoolDownsAsync();
 
         return newEvent.Id;
@@ -43,5 +43,5 @@ public class RemoveCoolDownsEventService : IRemoveCoolDownsEventService
 
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly ICommonEventsRepository commonEventsRepository;
-    private readonly IEventsMessageProducer eventsMessageProducer;
+    private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
 }

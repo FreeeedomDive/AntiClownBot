@@ -5,9 +5,9 @@ namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.Bedge;
 
 public class BedgeService : IBedgeService
 {
-    public BedgeService(IEventsMessageProducer eventsMessageProducer)
+    public BedgeService(ICommonEventsMessageProducer commonEventsMessageProducer)
     {
-        this.eventsMessageProducer = eventsMessageProducer;
+        this.commonEventsMessageProducer = commonEventsMessageProducer;
     }
 
     public async Task<BedgeEvent> ReadAsync(Guid eventId)
@@ -18,10 +18,10 @@ public class BedgeService : IBedgeService
     public async Task<Guid> StartNewEventAsync()
     {
         var @event = BedgeEvent.Create();
-        await eventsMessageProducer.ProduceAsync(@event);
+        await commonEventsMessageProducer.ProduceAsync(@event);
 
         return @event.Id;
     }
 
-    private readonly IEventsMessageProducer eventsMessageProducer;
+    private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
 }

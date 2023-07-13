@@ -2,7 +2,7 @@
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.Lottery;
 
-public interface ILotteryService : IBaseEventService<LotteryEvent>
+public interface ILotteryService : ICommonEventServiceBase<LotteryEvent>
 {
     Task AddParticipantAsync(Guid eventId, Guid userId);
     Task FinishAsync(Guid eventId);

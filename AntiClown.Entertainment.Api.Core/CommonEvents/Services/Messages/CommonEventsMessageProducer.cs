@@ -5,9 +5,9 @@ using MassTransit;
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
 
-public class EventsMessageProducer : IEventsMessageProducer
+public class CommonEventsMessageProducer : ICommonEventsMessageProducer
 {
-    public EventsMessageProducer(IBus bus, IMapper mapper)
+    public CommonEventsMessageProducer(IBus bus, IMapper mapper)
     {
         this.bus = bus;
         this.mapper = mapper;
