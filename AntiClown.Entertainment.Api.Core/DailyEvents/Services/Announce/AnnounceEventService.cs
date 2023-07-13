@@ -52,6 +52,7 @@ public class AnnounceEventService : IAnnounceEventService
         var announceEvent = new AnnounceEvent
         {
             Id = Guid.NewGuid(),
+            EventDateTime = DateTime.UtcNow,
             Earnings = transactionsSumByUser,
         };
 

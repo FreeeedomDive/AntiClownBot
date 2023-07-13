@@ -2,7 +2,7 @@ namespace AntiClown.Core.Dto.Exceptions;
 
 public class AntiClownInternalServerException : AntiClownBaseException
 {
-    public AntiClownInternalServerException(string message, Exception baseException) : base(message, baseException)
+    public AntiClownInternalServerException(string message) : base(message)
     {
     }
 

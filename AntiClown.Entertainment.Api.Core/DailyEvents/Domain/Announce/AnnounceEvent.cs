@@ -3,6 +3,5 @@
 public class AnnounceEvent : DailyEventBase
 {
     public override DailyEventType Type => DailyEventType.Announce;
-    
     public Dictionary<Guid, int> Earnings { get; set; }
 }

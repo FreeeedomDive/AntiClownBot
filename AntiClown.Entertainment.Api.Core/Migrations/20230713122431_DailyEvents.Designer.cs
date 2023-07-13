@@ -3,6 +3,7 @@ using System;
 using AntiClown.Entertainment.Api.Core.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AntiClown.Entertainment.Api.Core.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230713122431_DailyEvents")]
+    partial class DailyEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,26 +126,6 @@ namespace AntiClown.Entertainment.Api.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CommonEvents");
-                });
-
-            modelBuilder.Entity("AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.ActiveEventsIndex.DailyActiveEventsIndexStorageElement", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("EventType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventType");
-
-                    b.ToTable("ActiveDailyEventsIndex");
                 });
 
             modelBuilder.Entity("AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.DailyEventStorageElement", b =>
