@@ -56,7 +56,7 @@ public class IntegrationTestsBase
 
         UsersService = new UsersService(usersRepository);
         TransactionsService = new TransactionsService(transactionsRepository);
-        EconomyService = new EconomyService(economiesRepository, TransactionsService);
+        EconomyService = new EconomyService(economiesRepository, UsersService, TransactionsService);
         LohotronRewardGeneratorMock = new Mock<ILohotronRewardGenerator>();
         LohotronService = new LohotronService(EconomyService, LohotronRewardGeneratorMock.Object);
         ItemsService = new ItemsService(

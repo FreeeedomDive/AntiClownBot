@@ -49,6 +49,12 @@ public class TransactionsRepository : ITransactionsRepository
         await sqlRepository.CreateAsync(storageElement);
     }
 
+    public async Task CreateAsync(Transaction[] transactions)
+    {
+        var storageElements = mapper.Map<TransactionStorageElement[]>(transactions);
+        await sqlRepository.CreateAsync(storageElements);
+    }
+
     private readonly ISqlRepository<TransactionStorageElement> sqlRepository;
     private readonly IMapper mapper;
 }

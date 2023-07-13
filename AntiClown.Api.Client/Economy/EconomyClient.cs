@@ -27,7 +27,16 @@ public class EconomyClient : IEconomyClient
             ScamCoinsDiff = scamCoinsDiff,
             Reason = reason,
         });
-        var response = await restClient.PatchAsync(request);
+        var response = await restClient.ExecutePostAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
+    public async Task UpdateScamCoinsForAllAsync(int scamCoinsDiff, string reason)
+    {
+        var request = new RestRequest($"economy/scamCoins/updateForAll")
+            .AddQueryParameter("scamCoinsDiff", scamCoinsDiff)
+            .AddQueryParameter("reason", reason);
+        var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }
 
@@ -39,14 +48,14 @@ public class EconomyClient : IEconomyClient
             UserId = userId,
             LootBoxesDiff = lootBoxesDiff,
         });
-        var response = await restClient.PatchAsync(request);
+        var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }
 
     public async Task ResetAllCoolDownsAsync()
     {
         var request = new RestRequest($"economy/resetAllCoolDowns");
-        var response = await restClient.PatchAsync(request);
+        var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }
 

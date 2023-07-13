@@ -3,6 +3,7 @@ using AntiClown.Api.Core.Economies.Domain.MassActions;
 using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Transactions.Domain;
 using AntiClown.Api.Core.Transactions.Services;
+using AntiClown.Api.Core.Users.Services;
 
 namespace AntiClown.Api.Core.Economies.Services;
 
@@ -10,10 +11,12 @@ public class EconomyService : IEconomyService
 {
     public EconomyService(
         IEconomyRepository economyRepository,
+        IUsersService usersService,
         ITransactionsService transactionsService
     )
     {
         this.economyRepository = economyRepository;
+        this.usersService = usersService;
         this.transactionsService = transactionsService;
     }
 
@@ -35,6 +38,28 @@ public class EconomyService : IEconomyService
             Reason = reason,
             DateTime = DateTime.UtcNow,
         });
+    }
+
+    public async Task UpdateScamCoinsForAllAsync(int diff, string reason)
+    {
+        await economyRepository.UpdateAllAsync(new MassEconomyUpdate
+        {
+            ScamCoins = new MassScamCoinsUpdate
+            {
+                ScamCoinsDiff = diff,
+                Reason = reason,
+            },
+        });
+        var users = await usersService.ReadAllAsync();
+        var transactions = users.Select(x => new Transaction
+        {
+            Id = Guid.NewGuid(),
+            UserId = x.Id,
+            ScamCoinDiff = diff,
+            Reason = reason,
+            DateTime = DateTime.UtcNow,
+        }).ToArray();
+        await transactionsService.CreateAsync(transactions);
     }
 
     public async Task UpdateLootBoxesAsync(Guid userId, int diff)
@@ -82,5 +107,6 @@ public class EconomyService : IEconomyService
     }
 
     private readonly IEconomyRepository economyRepository;
+    private readonly IUsersService usersService;
     private readonly ITransactionsService transactionsService;
 }

@@ -25,5 +25,10 @@ public class TransactionsService : ITransactionsService
         await transactionsRepository.CreateAsync(transaction);
     }
 
+    public async Task CreateAsync(Transaction[] transactions)
+    {
+        await transactionsRepository.CreateAsync(transactions);
+    }
+
     private readonly ITransactionsRepository transactionsRepository;
 }
