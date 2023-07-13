@@ -32,6 +32,7 @@ public class TransactionsController : Controller
         return mapper.Map<TransactionDto[]>(transactions);
     }
 
-    private readonly ITransactionsService transactionsService;
     private readonly IMapper mapper;
+
+    private readonly ITransactionsService transactionsService;
 }

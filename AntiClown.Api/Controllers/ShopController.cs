@@ -61,6 +61,7 @@ public class ShopController : Controller
         return mapper.Map<ShopStatsDto>(stats);
     }
 
-    private readonly IShopsService shopsService;
     private readonly IMapper mapper;
+
+    private readonly IShopsService shopsService;
 }

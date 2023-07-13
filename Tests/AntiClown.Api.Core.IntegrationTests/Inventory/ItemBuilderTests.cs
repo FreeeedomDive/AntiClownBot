@@ -41,7 +41,7 @@ public class ItemBuilderTests : IntegrationTestsBase
     [Test]
     public void InspectRarityDistributions()
     {
-        var counter = new Dictionary<Rarity, int>()
+        var counter = new Dictionary<Rarity, int>
         {
             { Rarity.Common, 0 },
             { Rarity.Rare, 0 },

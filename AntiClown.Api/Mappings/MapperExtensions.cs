@@ -18,7 +18,7 @@ public static class MapperExtensions
             ItemName.Internet => mapper.Map<InternetDto>(item as Internet),
             ItemName.JadeRod => mapper.Map<JadeRodDto>(item as JadeRod),
             ItemName.RiceBowl => mapper.Map<RiceBowlDto>(item as RiceBowl),
-            _ => throw new ArgumentOutOfRangeException(nameof(item.ItemName))
+            _ => throw new ArgumentOutOfRangeException(nameof(item.ItemName)),
         };
     }
 

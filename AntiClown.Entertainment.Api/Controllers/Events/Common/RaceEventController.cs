@@ -44,6 +44,7 @@ public class RaceEventController : Controller
         return NoContent();
     }
 
-    private readonly IRaceService raceService;
     private readonly IMapper mapper;
+
+    private readonly IRaceService raceService;
 }

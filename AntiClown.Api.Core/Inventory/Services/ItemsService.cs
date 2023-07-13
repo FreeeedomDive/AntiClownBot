@@ -29,27 +29,33 @@ public class ItemsService : IItemsService
 
     public async Task<BaseItem[]> ReadAllItemsForUserAsync(Guid userId)
     {
-        return await itemsRepository.FindAsync(new ItemsFilter
-        {
-            OwnerId = userId
-        });
+        return await itemsRepository.FindAsync(
+            new ItemsFilter
+            {
+                OwnerId = userId,
+            }
+        );
     }
 
     public async Task<BaseItem[]> ReadItemsWithNameAsync(ItemName name)
     {
-        return await itemsRepository.FindAsync(new ItemsFilter
-        {
-            Name = name.ToString()
-        });
+        return await itemsRepository.FindAsync(
+            new ItemsFilter
+            {
+                Name = name.ToString(),
+            }
+        );
     }
 
     public async Task<BaseItem[]> ReadAllActiveItemsForUserAsync(Guid userId)
     {
-        return await itemsRepository.FindAsync(new ItemsFilter
-        {
-            OwnerId = userId,
-            IsActive = true
-        });
+        return await itemsRepository.FindAsync(
+            new ItemsFilter
+            {
+                OwnerId = userId,
+                IsActive = true,
+            }
+        );
     }
 
     public async Task<LootBoxReward> OpenLootBoxAsync(Guid userId)
@@ -64,9 +70,9 @@ public class ItemsService : IItemsService
         {
             ScamCoinsReward = Randomizer.GetRandomNumberInclusive(100, 500),
             Items = itemsRewardRules
-                .Where(rule => rule())
-                .Select(_ => ItemBuilder.BuildRandomItem())
-                .ToArray()
+                    .Where(rule => rule())
+                    .Select(_ => ItemBuilder.BuildRandomItem())
+                    .ToArray(),
         };
         await economyService.UpdateLootBoxesAsync(userId, -1);
         await economyService.UpdateScamCoinsAsync(userId, lootBoxReward.ScamCoinsReward, "Открытие лутбокса");
@@ -102,7 +108,8 @@ public class ItemsService : IItemsService
         await itemsRepository.CreateAsync(item);
     }
 
-    private readonly IItemsValidator validator;
-    private readonly IItemsRepository itemsRepository;
     private readonly IEconomyService economyService;
+    private readonly IItemsRepository itemsRepository;
+
+    private readonly IItemsValidator validator;
 }

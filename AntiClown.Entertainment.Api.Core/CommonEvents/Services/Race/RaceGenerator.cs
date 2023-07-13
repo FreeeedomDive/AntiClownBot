@@ -24,11 +24,13 @@ public class RaceGenerator : IRaceGenerator
         var track = (await raceTracksRepository.ReadAllAsync()).SelectRandomItem();
         race.Track = track;
         var driversModels = await raceDriversRepository.ReadAllAsync();
-        var participantsShuffledForStartingGrid = driversModels.Select(x => new RaceParticipant
-        {
-            UserId = null,
-            Driver = x,
-        }).Shuffle().ToArray();
+        var participantsShuffledForStartingGrid = driversModels.Select(
+            x => new RaceParticipant
+            {
+                UserId = null,
+                Driver = x,
+            }
+        ).Shuffle().ToArray();
         race.Participants = participantsShuffledForStartingGrid;
         var startingGrid = GenerateStartingGrid(participantsShuffledForStartingGrid);
         var raceSectors = new List<RaceSnapshotOnSector> { startingGrid };
@@ -49,12 +51,14 @@ public class RaceGenerator : IRaceGenerator
         {
             FastestLap = null,
             SectorIndex = 0,
-            DriversOnSector = participants.Select(((participant, position) => new RaceSnapshotForDriverOnSector
-            {
-                DriverName = participant.Driver.DriverName,
-                SectorTime = position * Constants.RaceGridPositionPenalty,
-                TotalTime = position * Constants.RaceGridPositionPenalty,
-            })).ToArray()
+            DriversOnSector = participants.Select(
+                (participant, position) => new RaceSnapshotForDriverOnSector
+                {
+                    DriverName = participant.Driver.DriverName,
+                    SectorTime = position * Constants.RaceGridPositionPenalty,
+                    TotalTime = position * Constants.RaceGridPositionPenalty,
+                }
+            ).ToArray(),
         };
     }
 
@@ -66,12 +70,14 @@ public class RaceGenerator : IRaceGenerator
     )
     {
         var totalSectorsInOneLap = track.CorneringDifficulty + track.BreakingDifficulty + track.AccelerationDifficulty;
-        var result = Enumerable.Range(0, totalSectorsInOneLap).Select(_ => new RaceSnapshotOnSector
-        {
-            CurrentLap = lap,
-            SectorIndex = (lap - 1) * totalSectorsInOneLap + 1,
-            FastestLap = lastSector.FastestLap,
-        }).ToArray();
+        var result = Enumerable.Range(0, totalSectorsInOneLap).Select(
+            _ => new RaceSnapshotOnSector
+            {
+                CurrentLap = lap,
+                SectorIndex = (lap - 1) * totalSectorsInOneLap + 1,
+                FastestLap = lastSector.FastestLap,
+            }
+        ).ToArray();
         for (var i = 0; i < track.CorneringDifficulty; i++)
         {
             result[i].SectorType = RaceSectorType.Cornering;
@@ -93,19 +99,21 @@ public class RaceGenerator : IRaceGenerator
             var isFirstSector = i == 0;
             var previousSector = isFirstSector ? lastSector : result[i - 1];
             result[i].FastestLap = previousSector.FastestLap;
-            result[i].DriversOnSector = participants.Select(driver => GenerateDriverSector(
-                driver,
-                result[i].SectorType,
-                previousSector.DriversOnSector.First(d => d.DriverName == driver.Driver.DriverName),
-                perfectSectorTime,
-                isFirstSector
-            )).ToArray();
+            result[i].DriversOnSector = participants.Select(
+                driver => GenerateDriverSector(
+                    driver,
+                    result[i].SectorType,
+                    previousSector.DriversOnSector.First(d => d.DriverName == driver.Driver.DriverName),
+                    perfectSectorTime,
+                    isFirstSector
+                )
+            ).ToArray();
         }
 
         var currentLapLastSector = result.Last();
         var currentLapFastestLap = currentLapLastSector.DriversOnSector
-            .MinBy(driver => driver.CurrentLapTime)!
-            .CurrentLapTime;
+                                                       .MinBy(driver => driver.CurrentLapTime)!
+                                                       .CurrentLapTime;
 
         lastSector.FastestLap = lastSector.FastestLap.HasValue
             ? Math.Min(lastSector.FastestLap.Value, currentLapFastestLap)
@@ -128,10 +136,12 @@ public class RaceGenerator : IRaceGenerator
         var sectorTime = sectorType switch
         {
             RaceSectorType.Cornering => Randomizer.GetRandomNumberBetween(perfectSectorTime, maxCorneringSectorTime),
-            RaceSectorType.Acceleration => Randomizer.GetRandomNumberBetween(perfectSectorTime,
-                maxAccelerationSectorTime),
+            RaceSectorType.Acceleration => Randomizer.GetRandomNumberBetween(
+                perfectSectorTime,
+                maxAccelerationSectorTime
+            ),
             RaceSectorType.Breaking => Randomizer.GetRandomNumberBetween(perfectSectorTime, maxBreakingSectorTime),
-            _ => perfectSectorTime
+            _ => perfectSectorTime,
         };
         return new RaceSnapshotForDriverOnSector
         {

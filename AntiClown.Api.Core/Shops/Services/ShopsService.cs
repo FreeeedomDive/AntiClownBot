@@ -95,11 +95,13 @@ public class ShopsService : IShopsService
         var shop = await shopsRepository.ReadAsync(shopId);
         await shopsValidator.ValidateBuyAsync(shop, itemId);
         var shopItem = (await shopItemsRepository.TryReadAsync(itemId))!;
-        var newInventoryItem = ItemBuilder.BuildRandomItem(options =>
-        {
-            options.Name = shopItem.Name;
-            options.Rarity = shopItem.Rarity;
-        });
+        var newInventoryItem = ItemBuilder.BuildRandomItem(
+            options =>
+            {
+                options.Name = shopItem.Name;
+                options.Rarity = shopItem.Rarity;
+            }
+        );
 
         shopItem.IsOwned = true;
         await shopItemsRepository.UpdateAsync(shopItem);
@@ -148,10 +150,10 @@ public class ShopsService : IShopsService
         var currentItems = await shopItemsRepository.FindAsync(shopId);
         await shopItemsRepository.DeleteManyAsync(currentItems.Select(x => x.Id).ToArray());
         var newItems = Enumerable.Range(0, Constants.MaximumItemsInShop)
-            .Select(_ => ItemBuilder.BuildRandomItem())
-            .Select(x => mapper.Map<ShopItem>(x))
-            .Pipe(x => x.ShopId = shopId)
-            .ToArray();
+                                 .Select(_ => ItemBuilder.BuildRandomItem())
+                                 .Select(x => mapper.Map<ShopItem>(x))
+                                 .Pipe(x => x.ShopId = shopId)
+                                 .ToArray();
         await shopItemsRepository.CreateManyAsync(newItems);
     }
 
@@ -169,11 +171,12 @@ public class ShopsService : IShopsService
         }
     }
 
-    private readonly IShopsRepository shopsRepository;
-    private readonly IShopItemsRepository shopItemsRepository;
-    private readonly IShopStatsRepository shopStatsRepository;
-    private readonly IShopsValidator shopsValidator;
     private readonly IEconomyService economyService;
     private readonly IItemsService itemsService;
     private readonly IMapper mapper;
+    private readonly IShopItemsRepository shopItemsRepository;
+
+    private readonly IShopsRepository shopsRepository;
+    private readonly IShopStatsRepository shopStatsRepository;
+    private readonly IShopsValidator shopsValidator;
 }

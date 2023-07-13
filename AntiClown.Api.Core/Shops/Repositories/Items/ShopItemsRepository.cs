@@ -25,9 +25,9 @@ public class ShopItemsRepository : IShopItemsRepository
     public async Task<ShopItem[]> FindAsync(Guid shopId)
     {
         var result = await sqlRepository
-            .BuildCustomQuery()
-            .Where(x => x.ShopId == shopId)
-            .ToArrayAsync();
+                           .BuildCustomQuery()
+                           .Where(x => x.ShopId == shopId)
+                           .ToArrayAsync();
         return mapper.Map<ShopItem[]>(result);
     }
 
@@ -39,11 +39,13 @@ public class ShopItemsRepository : IShopItemsRepository
 
     public async Task UpdateAsync(ShopItem item)
     {
-        await sqlRepository.UpdateAsync(item.Id, x =>
-        {
-            x.IsRevealed = item.IsRevealed;
-            x.IsOwned = item.IsOwned;
-        });
+        await sqlRepository.UpdateAsync(
+            item.Id, x =>
+            {
+                x.IsRevealed = item.IsRevealed;
+                x.IsOwned = item.IsOwned;
+            }
+        );
     }
 
     public async Task DeleteManyAsync(Guid[] ids)
@@ -51,6 +53,7 @@ public class ShopItemsRepository : IShopItemsRepository
         await sqlRepository.DeleteAsync(ids);
     }
 
-    private readonly ISqlRepository<ShopItemStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly ISqlRepository<ShopItemStorageElement> sqlRepository;
 }

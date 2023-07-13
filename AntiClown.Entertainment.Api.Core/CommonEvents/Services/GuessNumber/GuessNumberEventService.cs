@@ -80,10 +80,12 @@ public class GuessNumberEventService : IGuessNumberEventService
 
     private void ScheduleEventFinish(Guid eventId)
     {
-        scheduler.Schedule(() => BackgroundJob.Schedule(
-            () => SafeFinishAsync(eventId),
-            TimeSpan.FromMilliseconds(Constants.GuessNumberEventWaitingTimeInMilliseconds)
-        ));
+        scheduler.Schedule(
+            () => BackgroundJob.Schedule(
+                () => SafeFinishAsync(eventId),
+                TimeSpan.FromMilliseconds(Constants.GuessNumberEventWaitingTimeInMilliseconds)
+            )
+        );
     }
 
     public async Task SafeFinishAsync(Guid eventId)
@@ -98,7 +100,7 @@ public class GuessNumberEventService : IGuessNumberEventService
     }
 
     private readonly IAntiClownApiClient antiClownApiClient;
-    private readonly ICommonEventsRepository commonEventsRepository;
     private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
+    private readonly ICommonEventsRepository commonEventsRepository;
     private readonly IScheduler scheduler;
 }

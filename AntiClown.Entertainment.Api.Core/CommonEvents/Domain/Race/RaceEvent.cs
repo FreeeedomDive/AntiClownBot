@@ -6,10 +6,6 @@ namespace AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Race;
 
 public class RaceEvent : CommonEventBase
 {
-    public RaceTrack Track { get; set; }
-    public RaceParticipant[] Participants { get; set; }
-    public RaceSnapshotOnSector[] Sectors { get; set; }
-
     public void AddParticipant(Guid userId)
     {
         if (Participants.FirstOrDefault(x => x.UserId == userId) is not null)
@@ -22,11 +18,9 @@ public class RaceEvent : CommonEventBase
         {
             throw new NoFreeDriversInRaceException(Id);
         }
-        
+
         freeDrivers.SelectRandomItem().UserId = userId;
     }
-
-    public override CommonEventType Type => CommonEventType.Race;
 
     public static RaceEvent Create()
     {
@@ -37,4 +31,10 @@ public class RaceEvent : CommonEventBase
             EventDateTime = DateTime.UtcNow,
         };
     }
+
+    public RaceTrack Track { get; set; }
+    public RaceParticipant[] Participants { get; set; }
+    public RaceSnapshotOnSector[] Sectors { get; set; }
+
+    public override CommonEventType Type => CommonEventType.Race;
 }

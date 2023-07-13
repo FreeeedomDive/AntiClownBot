@@ -9,15 +9,19 @@ public class UsersServiceTests : IntegrationTestsBase
     public async Task NewUserService_Should_CreateNewUser()
     {
         var discordId = CreateUniqueUlong();
-        var current = await UsersService.FindAsync(new UserFilter
-        {
-            DiscordId = discordId
-        });
+        var current = await UsersService.FindAsync(
+            new UserFilter
+            {
+                DiscordId = discordId,
+            }
+        );
         current.Should().BeEmpty();
-        var newUserId = await NewUserService.CreateNewUserAsync(new NewUser
-        {
-            DiscordId = discordId
-        });
+        var newUserId = await NewUserService.CreateNewUserAsync(
+            new NewUser
+            {
+                DiscordId = discordId,
+            }
+        );
         var readNewUserFunc = () => UsersService.ReadAsync(newUserId);
         await readNewUserFunc.Should().NotThrowAsync();
         var newUser = await readNewUserFunc();

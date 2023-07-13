@@ -17,9 +17,9 @@ builder.Services.AddTransient<IAntiClownApiClient>(_ => AntiClownApiClientProvid
 builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(_ => AntiClownEntertainmentApiClientProvider.Build(antiClownEntertainmentApiServiceUrl));
 
 var toolsTypes = AppDomain.CurrentDomain.GetAssemblies()
-    .SelectMany(x => x.GetTypes())
-    .Where(x => typeof(ToolBase).IsAssignableFrom(x) && !x.IsAbstract)
-    .ToArray();
+                          .SelectMany(x => x.GetTypes())
+                          .Where(x => typeof(ToolBase).IsAssignableFrom(x) && !x.IsAbstract)
+                          .ToArray();
 
 foreach (var toolType in toolsTypes)
 {

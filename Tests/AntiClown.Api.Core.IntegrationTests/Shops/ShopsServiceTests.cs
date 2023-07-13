@@ -40,8 +40,10 @@ public class ShopsServiceTests : IntegrationTestsBase
         var shop = await ShopsRepository.ReadAsync(User.Id);
         shop.FreeReveals = 0;
         await ShopsRepository.UpdateAsync(shop);
-        await EconomyService.UpdateScamCoinsAsync(User.Id, -economy.ScamCoins,
-            "Тест валидации распознавания предмета из магазина");
+        await EconomyService.UpdateScamCoinsAsync(
+            User.Id, -economy.ScamCoins,
+            "Тест валидации распознавания предмета из магазина"
+        );
         var itemToReveal = startShop.Items.SelectRandomItem();
         var action = () => ShopsService.RevealAsync(User.Id, itemToReveal.Id);
         await action.Should().ThrowAsync<NotEnoughBalanceException>();
@@ -121,8 +123,10 @@ public class ShopsServiceTests : IntegrationTestsBase
     public async Task ShopsService_Buy_Should_ThrowIfNotEnoughBalance()
     {
         var economy = await EconomyService.ReadEconomyAsync(User.Id);
-        await EconomyService.UpdateScamCoinsAsync(User.Id, -economy.ScamCoins,
-            "Тест валидации покупки предмета из магазина");
+        await EconomyService.UpdateScamCoinsAsync(
+            User.Id, -economy.ScamCoins,
+            "Тест валидации покупки предмета из магазина"
+        );
         var item = startShop.Items.SelectRandomItem();
         var action = () => ShopsService.BuyAsync(User.Id, item.Id);
         await action.Should().ThrowAsync<NotEnoughBalanceException>();
@@ -131,8 +135,10 @@ public class ShopsServiceTests : IntegrationTestsBase
     [Test]
     public async Task ShopsService_Buy_Should_ThrowIfItemAlreadyBought()
     {
-        await EconomyService.UpdateScamCoinsAsync(User.Id, 20000,
-            "Тест валидации на повторную покупку предмета из магазина");
+        await EconomyService.UpdateScamCoinsAsync(
+            User.Id, 20000,
+            "Тест валидации на повторную покупку предмета из магазина"
+        );
         var item = startShop.Items.SelectRandomItem();
         await ShopsService.BuyAsync(User.Id, item.Id);
         var action = () => ShopsService.BuyAsync(User.Id, item.Id);
@@ -142,8 +148,10 @@ public class ShopsServiceTests : IntegrationTestsBase
     [Test]
     public async Task ShopsService_Buy_Should_AddItemToUserInventory()
     {
-        await EconomyService.UpdateScamCoinsAsync(User.Id, 20000,
-            "Тест покупки предмета из магазина");
+        await EconomyService.UpdateScamCoinsAsync(
+            User.Id, 20000,
+            "Тест покупки предмета из магазина"
+        );
         var item = startShop.Items.SelectRandomItem();
         var boughtItem = await ShopsService.BuyAsync(User.Id, item.Id);
         var inventoryItem = await ItemsService.ReadItemAsync(User.Id, boughtItem.Id);
@@ -153,8 +161,10 @@ public class ShopsServiceTests : IntegrationTestsBase
     [Test]
     public async Task ShopsService_Buy_Should_GenerateInventoryItemWithSameCharacteristics()
     {
-        await EconomyService.UpdateScamCoinsAsync(User.Id, 20000,
-            "Тест покупки предмета из магазина");
+        await EconomyService.UpdateScamCoinsAsync(
+            User.Id, 20000,
+            "Тест покупки предмета из магазина"
+        );
         var item = startShop.Items.SelectRandomItem();
         var boughtItem = await ShopsService.BuyAsync(User.Id, item.Id);
         boughtItem.ItemName.Should().Be(item.Name);
@@ -166,8 +176,10 @@ public class ShopsServiceTests : IntegrationTestsBase
     [Test]
     public async Task ShopsService_Buy_Should_ThrowWhenRevealAlreadyBoughtItem()
     {
-        await EconomyService.UpdateScamCoinsAsync(User.Id, 20000,
-            "Тест покупки предмета из магазина");
+        await EconomyService.UpdateScamCoinsAsync(
+            User.Id, 20000,
+            "Тест покупки предмета из магазина"
+        );
         var item = startShop.Items.SelectRandomItem();
         await ShopsService.BuyAsync(User.Id, item.Id);
         var boughtShopItem = await ShopItemsRepository.TryReadAsync(item.Id);

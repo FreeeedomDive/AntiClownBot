@@ -20,7 +20,7 @@ public class EconomyServiceTests : IntegrationTestsBase
             Assert.Fail($"{nameof(NewUserService)} did not create economy for user {User.Id}");
         }
     }
-    
+
     [Test]
     public void NewUserService_Should_CreateNewEconomy()
     {

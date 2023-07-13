@@ -14,7 +14,7 @@ public static class CommonEventTypeExtensions
             CommonEventType.RemoveCoolDowns => false,
             CommonEventType.Transfusion => false,
             CommonEventType.Bedge => true,
-            _ => throw new ArgumentOutOfRangeException(nameof(commonEventType), commonEventType, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(commonEventType), commonEventType, null),
         };
     }
 }

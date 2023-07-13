@@ -31,8 +31,9 @@ public class NewUserService : INewUserService
         return user.Id;
     }
 
-    private readonly IUsersRepository usersRepository;
     private readonly IEconomyService economyService;
-    private readonly IShopsService shopsService;
     private readonly IMapper mapper;
+    private readonly IShopsService shopsService;
+
+    private readonly IUsersRepository usersRepository;
 }

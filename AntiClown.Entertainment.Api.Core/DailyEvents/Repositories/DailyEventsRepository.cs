@@ -39,10 +39,11 @@ public class DailyEventsRepository : IDailyEventsRepository
         {
             DailyEventType.Announce => JsonConvert.DeserializeObject<AnnounceEvent>(serialized)!,
             DailyEventType.PaymentsAndResets => throw new NotSupportedException($"Storing of {nameof(DailyEventType.PaymentsAndResets)} events is not supported"),
-            _ => throw new ArgumentOutOfRangeException(nameof(eventType))
+            _ => throw new ArgumentOutOfRangeException(nameof(eventType)),
         };
     }
 
-    private readonly ISqlRepository<DailyEventStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly ISqlRepository<DailyEventStorageElement> sqlRepository;
 }

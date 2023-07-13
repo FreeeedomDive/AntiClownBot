@@ -32,9 +32,9 @@ public class UsersRepository : IUsersRepository
     public async Task<User[]> FindAsync(UserFilter filter)
     {
         var result = await sqlRepository
-            .BuildCustomQuery()
-            .WhereIf(filter.DiscordId.HasValue, x => x.DiscordId == filter.DiscordId)
-            .ToArrayAsync();
+                           .BuildCustomQuery()
+                           .WhereIf(filter.DiscordId.HasValue, x => x.DiscordId == filter.DiscordId)
+                           .ToArrayAsync();
 
         return mapper.Map<User[]>(result);
     }
@@ -45,6 +45,7 @@ public class UsersRepository : IUsersRepository
         await sqlRepository.CreateAsync(storageElement);
     }
 
-    private readonly ISqlRepository<UserStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly ISqlRepository<UserStorageElement> sqlRepository;
 }

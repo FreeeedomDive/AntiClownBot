@@ -34,6 +34,7 @@ public class RaceTracksController : Controller
         return NoContent();
     }
 
-    private readonly IRaceTracksRepository raceTracksRepository;
     private readonly IMapper mapper;
+
+    private readonly IRaceTracksRepository raceTracksRepository;
 }

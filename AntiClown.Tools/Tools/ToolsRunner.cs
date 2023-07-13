@@ -23,8 +23,10 @@ public class ToolsRunner : IToolsRunner
         {
             var tools = toolsProvider.GetAll();
             var names = tools.Select(x => x.Name).ToArray();
-            logger.LogError("Can't find a tool with name \"{toolName}\"\nAvailable tools:\n{tools}", toolName,
-                string.Join("\n", names));
+            logger.LogError(
+                "Can't find a tool with name \"{toolName}\"\nAvailable tools:\n{tools}", toolName,
+                string.Join("\n", names)
+            );
             return;
         }
 
@@ -41,13 +43,16 @@ public class ToolsRunner : IToolsRunner
         {
             var tools = toolsProvider.GetAll();
             var names = tools.Select(x => x.Name).ToArray();
-            logger.LogError("Provide a name for tool to launch\nAvailable tools:\n{tools}",
-                string.Join("\n", names));
+            logger.LogError(
+                "Provide a name for tool to launch\nAvailable tools:\n{tools}",
+                string.Join("\n", names)
+            );
             throw;
         }
     }
 
-    private readonly IToolsProvider toolsProvider;
     private readonly IArgsProvider argsProvider;
     private readonly ILogger<ToolsRunner> logger;
+
+    private readonly IToolsProvider toolsProvider;
 }

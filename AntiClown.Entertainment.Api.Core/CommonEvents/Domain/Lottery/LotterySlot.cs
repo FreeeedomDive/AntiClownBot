@@ -11,5 +11,5 @@ public enum LotterySlot
     Tier7,
     Tier8,
     Tier9,
-    Tier10
+    Tier10,
 }

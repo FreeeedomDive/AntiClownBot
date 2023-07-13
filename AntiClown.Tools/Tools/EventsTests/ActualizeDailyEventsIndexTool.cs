@@ -4,8 +4,6 @@ namespace AntiClown.Tools.Tools.EventsTests;
 
 public class ActualizeDailyEventsIndexTool : ToolBase
 {
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-
     public ActualizeDailyEventsIndexTool(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         ILogger<ActualizeDailyEventsIndexTool> logger
@@ -26,9 +24,11 @@ public class ActualizeDailyEventsIndexTool : ToolBase
         {
             await antiClownEntertainmentApiClient.DailyEvents.ActiveDailyEventsIndex.UpdateAsync(@event.Key, true);
         }
+
         currentActive = await antiClownEntertainmentApiClient.DailyEvents.ActiveDailyEventsIndex.ReadActiveEventsAsync();
         Logger.LogInformation("Current active events count after enabling them all: {count}", currentActive.Length);
     }
 
     public override string Name => nameof(ActualizeDailyEventsIndexTool);
+    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

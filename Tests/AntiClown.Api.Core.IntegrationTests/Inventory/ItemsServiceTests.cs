@@ -37,9 +37,9 @@ public class ItemsServiceTests : IntegrationTestsBase
     public async Task ItemsService_SetActiveStatusForMoreThanMaximumActiveItems_Should_ThrowOnValidation()
     {
         var positiveItems = Enumerable
-            .Range(0, Constants.MaximumActiveItemsOfOneType + 1)
-            .Select(_ => ItemBuilder.BuildRandomItem(config => config.Name = ItemName.CatWife))
-            .ToArray();
+                            .Range(0, Constants.MaximumActiveItemsOfOneType + 1)
+                            .Select(_ => ItemBuilder.BuildRandomItem(config => config.Name = ItemName.CatWife))
+                            .ToArray();
         for (var i = 0; i < positiveItems.Length; i++)
         {
             var item = positiveItems[i];

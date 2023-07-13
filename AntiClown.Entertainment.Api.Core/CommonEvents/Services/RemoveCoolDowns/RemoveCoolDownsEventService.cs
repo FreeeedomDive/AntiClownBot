@@ -42,6 +42,6 @@ public class RemoveCoolDownsEventService : IRemoveCoolDownsEventService
     }
 
     private readonly IAntiClownApiClient antiClownApiClient;
-    private readonly ICommonEventsRepository commonEventsRepository;
     private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
+    private readonly ICommonEventsRepository commonEventsRepository;
 }

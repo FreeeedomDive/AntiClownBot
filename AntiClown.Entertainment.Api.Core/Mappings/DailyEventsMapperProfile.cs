@@ -17,11 +17,15 @@ public class DailyEventsMapperProfile : Profile
             )
             .ForMember(
                 se => se.Details,
-                cfg => cfg.MapFrom(dailyEvent => JsonConvert.SerializeObject(dailyEvent, Formatting.Indented,
-                    new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.All,
-                    }))
+                cfg => cfg.MapFrom(
+                    dailyEvent => JsonConvert.SerializeObject(
+                        dailyEvent, Formatting.Indented,
+                        new JsonSerializerSettings
+                        {
+                            TypeNameHandling = TypeNameHandling.All,
+                        }
+                    )
+                )
             );
         CreateMap<DailyEventType, DailyEventTypeDto>();
         CreateMap<DailyEventBase, DailyEventMessageDto>()

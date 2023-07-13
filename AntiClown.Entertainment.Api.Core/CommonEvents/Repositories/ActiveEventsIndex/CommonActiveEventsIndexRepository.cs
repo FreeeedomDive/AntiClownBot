@@ -35,12 +35,14 @@ public class CommonActiveEventsIndexRepository : ICommonActiveEventsIndexReposit
             throw new EntityAlreadyExistsException(eventType.ToString());
         }
 
-        await sqlRepository.CreateAsync(new ActiveEventsIndexStorageElement
-        {
-            Id = Guid.NewGuid(),
-            EventType = eventType.ToString(),
-            IsActive = isActiveByDefault,
-        });
+        await sqlRepository.CreateAsync(
+            new ActiveEventsIndexStorageElement
+            {
+                Id = Guid.NewGuid(),
+                EventType = eventType.ToString(),
+                IsActive = isActiveByDefault,
+            }
+        );
     }
 
     public async Task UpdateAsync(CommonEventType eventType, bool isActive)

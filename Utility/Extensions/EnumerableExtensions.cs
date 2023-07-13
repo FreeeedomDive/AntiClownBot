@@ -41,7 +41,9 @@ public static class EnumerableExtensions
         {
             bucket[count++] = item;
             if (count != size)
+            {
                 continue;
+            }
 
             yield return bucket;
 
@@ -50,6 +52,8 @@ public static class EnumerableExtensions
         }
 
         if (count > 0)
+        {
             yield return bucket.Take(count).ToArray();
+        }
     }
 }

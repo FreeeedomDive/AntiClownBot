@@ -27,6 +27,7 @@ public class RaceTracksRepository : IRaceTracksRepository
         await sqlRepository.CreateAsync(storageElement);
     }
 
-    private readonly ISqlRepository<RaceTrackStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly ISqlRepository<RaceTrackStorageElement> sqlRepository;
 }

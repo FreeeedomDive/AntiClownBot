@@ -23,7 +23,7 @@ public class TributesController : Controller
         var result = await tributeService.WhenNextTributeAsync(userId);
         return new NextTributeDto
         {
-            NextTributeDateTime = result
+            NextTributeDateTime = result,
         };
     }
 
@@ -34,6 +34,7 @@ public class TributesController : Controller
         return mapper.Map<TributeDto>(tribute);
     }
 
-    private readonly ITributeService tributeService;
     private readonly IMapper mapper;
+
+    private readonly ITributeService tributeService;
 }

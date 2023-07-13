@@ -1,5 +1,4 @@
 ﻿using AntiClown.Api.Core.Common;
-using AntiClown.Api.Core.Inventory.Domain;
 
 namespace AntiClown.Api.Core.Shops.Domain;
 
@@ -13,6 +12,6 @@ public class Shop
     public static readonly Shop Default = new()
     {
         ReRollPrice = 0,
-        FreeReveals = Constants.FreeItemRevealsPerDay
+        FreeReveals = Constants.FreeItemRevealsPerDay,
     };
 }

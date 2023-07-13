@@ -1,11 +1,10 @@
-﻿namespace AntiClown.Api.Core.Inventory.Domain.Items.Base
+﻿namespace AntiClown.Api.Core.Inventory.Domain.Items.Base;
+
+public enum Rarity
 {
-    public enum Rarity
-    {
-        Common,
-        Rare,
-        Epic,
-        Legendary,
-        BlackMarket
-    }
+    Common,
+    Rare,
+    Epic,
+    Legendary,
+    BlackMarket,
 }

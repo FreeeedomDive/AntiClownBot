@@ -35,12 +35,14 @@ public class ActiveDailyEventsIndexRepository : IActiveDailyEventsIndexRepositor
             throw new EntityAlreadyExistsException(eventType.ToString());
         }
 
-        await sqlRepository.CreateAsync(new DailyActiveEventsIndexStorageElement
-        {
-            Id = Guid.NewGuid(),
-            EventType = eventType.ToString(),
-            IsActive = isActiveByDefault,
-        });
+        await sqlRepository.CreateAsync(
+            new DailyActiveEventsIndexStorageElement
+            {
+                Id = Guid.NewGuid(),
+                EventType = eventType.ToString(),
+                IsActive = isActiveByDefault,
+            }
+        );
     }
 
     public async Task UpdateAsync(DailyEventType eventType, bool isActive)

@@ -45,19 +45,25 @@ public class Startup
         services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
         services.ConfigurePostgreSql();
 
-        services.AddMassTransit(massTransitConfiguration =>
-        {
-            massTransitConfiguration.SetKebabCaseEndpointNameFormatter();
-            massTransitConfiguration.UsingRabbitMq((context, rabbitMqConfiguration) =>
+        services.AddMassTransit(
+            massTransitConfiguration =>
             {
-                rabbitMqConfiguration.ConfigureEndpoints(context);
-                rabbitMqConfiguration.Host(rabbitMqSection["Host"], "/", hostConfiguration =>
-                {
-                    hostConfiguration.Username(rabbitMqSection["Login"]);
-                    hostConfiguration.Password(rabbitMqSection["Password"]);
-                });
-            });
-        });
+                massTransitConfiguration.SetKebabCaseEndpointNameFormatter();
+                massTransitConfiguration.UsingRabbitMq(
+                    (context, rabbitMqConfiguration) =>
+                    {
+                        rabbitMqConfiguration.ConfigureEndpoints(context);
+                        rabbitMqConfiguration.Host(
+                            rabbitMqSection["Host"], "/", hostConfiguration =>
+                            {
+                                hostConfiguration.Username(rabbitMqSection["Login"]);
+                                hostConfiguration.Password(rabbitMqSection["Password"]);
+                            }
+                        );
+                    }
+                );
+            }
+        );
 
         // temp manual build VersionedSqlRepository
         services.AddTransient<IVersionedSqlRepository<EconomyStorageElement>, VersionedSqlRepository<EconomyStorageElement>>();
@@ -72,7 +78,7 @@ public class Startup
         services.AddTransient<IShopsRepository, ShopsRepository>();
         services.AddTransient<IShopItemsRepository, ShopItemsRepository>();
         services.AddTransient<IShopStatsRepository, ShopStatsRepository>();
-        
+
         // configure validators
         services.AddTransient<IItemsValidator, ItemsValidator>();
         services.AddTransient<IShopsValidator, ShopsValidator>();
@@ -93,8 +99,9 @@ public class Startup
         services.AddTransient<ILohotronService, LohotronService>();
 
         // configure HangFire
-        services.AddHangfire(config =>
-            config.UsePostgreSqlStorage(postgresSection["ConnectionString"])
+        services.AddHangfire(
+            config =>
+                config.UsePostgreSqlStorage(postgresSection["ConnectionString"])
         );
         services.AddHangfireServer();
 

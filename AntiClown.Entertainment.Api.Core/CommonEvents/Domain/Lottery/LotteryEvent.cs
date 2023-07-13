@@ -4,10 +4,6 @@ namespace AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Lottery;
 
 public class LotteryEvent : CommonEventBase
 {
-    public override CommonEventType Type => CommonEventType.Lottery;
-
-    public Dictionary<Guid, LotteryParticipant> Participants { get; set; } = new();
-
     public void AddParticipant(Guid userId)
     {
         if (Participants.ContainsKey(userId))
@@ -17,9 +13,9 @@ public class LotteryEvent : CommonEventBase
 
         var possiblePrizes = Enum.GetValues<LotterySlot>();
         var userPrizes = Enumerable
-            .Range(0, SlotsForParticipant)
-            .Select(_ => possiblePrizes.SelectRandomItem())
-            .ToArray();
+                         .Range(0, SlotsForParticipant)
+                         .Select(_ => possiblePrizes.SelectRandomItem())
+                         .ToArray();
         Participants[userId] = new LotteryParticipant
         {
             UserId = userId,
@@ -38,6 +34,10 @@ public class LotteryEvent : CommonEventBase
             Participants = new Dictionary<Guid, LotteryParticipant>(),
         };
     }
+
+    public override CommonEventType Type => CommonEventType.Lottery;
+
+    public Dictionary<Guid, LotteryParticipant> Participants { get; set; } = new();
 
     private const int SlotsForParticipant = 7;
 }

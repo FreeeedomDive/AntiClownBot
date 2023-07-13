@@ -70,8 +70,8 @@ public class LotteryService : ILotteryService
         await commonEventsRepository.UpdateAsync(@event);
 
         var tasks = @event.Participants
-            .Select(x => x.Value)
-            .Select(x => antiClownApiClient.Economy.UpdateScamCoinsAsync(x.UserId, x.Prize, $"Лотерея {eventId}"));
+                          .Select(x => x.Value)
+                          .Select(x => antiClownApiClient.Economy.UpdateScamCoinsAsync(x.UserId, x.Prize, $"Лотерея {eventId}"));
         await Task.WhenAll(tasks);
 
         await commonEventsMessageProducer.ProduceAsync(@event);
@@ -82,7 +82,8 @@ public class LotteryService : ILotteryService
         scheduler.Schedule(
             () => BackgroundJob.Schedule(
                 () => SafeFinishAsync(eventId),
-                TimeSpan.FromMilliseconds(Constants.LotteryEventWaitingTimeInMilliseconds))
+                TimeSpan.FromMilliseconds(Constants.LotteryEventWaitingTimeInMilliseconds)
+            )
         );
     }
 
@@ -98,7 +99,7 @@ public class LotteryService : ILotteryService
     }
 
     private readonly IAntiClownApiClient antiClownApiClient;
-    private readonly ICommonEventsRepository commonEventsRepository;
     private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
+    private readonly ICommonEventsRepository commonEventsRepository;
     private readonly IScheduler scheduler;
 }

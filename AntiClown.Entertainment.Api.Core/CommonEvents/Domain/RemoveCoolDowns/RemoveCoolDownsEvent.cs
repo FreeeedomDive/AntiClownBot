@@ -2,8 +2,6 @@
 
 public class RemoveCoolDownsEvent : CommonEventBase
 {
-    public override CommonEventType Type => CommonEventType.RemoveCoolDowns;
-
     public static RemoveCoolDownsEvent Create()
     {
         return new RemoveCoolDownsEvent
@@ -13,4 +11,6 @@ public class RemoveCoolDownsEvent : CommonEventBase
             EventDateTime = DateTime.UtcNow,
         };
     }
+
+    public override CommonEventType Type => CommonEventType.RemoveCoolDowns;
 }

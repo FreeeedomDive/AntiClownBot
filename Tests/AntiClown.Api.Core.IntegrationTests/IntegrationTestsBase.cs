@@ -81,18 +81,20 @@ public class IntegrationTestsBase
     [SetUp]
     public async Task SetUp()
     {
-        var newUserId = await NewUserService.CreateNewUserAsync(new NewUser
-        {
-            DiscordId = CreateUniqueUlong()
-        });
+        var newUserId = await NewUserService.CreateNewUserAsync(
+            new NewUser
+            {
+                DiscordId = CreateUniqueUlong(),
+            }
+        );
         User = await UsersService.ReadAsync(newUserId);
     }
 
     protected ulong CreateUniqueUlong()
     {
         return Enumerable.Range(1, 8)
-            .Select(_ => Fixture.Create<ulong>())
-            .Aggregate((accumulate, x) => accumulate * x);
+                         .Select(_ => Fixture.Create<ulong>())
+                         .Aggregate((accumulate, x) => accumulate * x);
     }
 
     protected IUsersService UsersService { get; private set; } = null!;

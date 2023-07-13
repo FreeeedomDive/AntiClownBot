@@ -52,19 +52,25 @@ public class Startup
         services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
         services.ConfigurePostgreSql();
 
-        services.AddMassTransit(massTransitConfiguration =>
-        {
-            massTransitConfiguration.SetKebabCaseEndpointNameFormatter();
-            massTransitConfiguration.UsingRabbitMq((context, rabbitMqConfiguration) =>
+        services.AddMassTransit(
+            massTransitConfiguration =>
             {
-                rabbitMqConfiguration.ConfigureEndpoints(context);
-                rabbitMqConfiguration.Host(rabbitMqSection["Host"], "/", hostConfiguration =>
-                {
-                    hostConfiguration.Username(rabbitMqSection["Login"]);
-                    hostConfiguration.Password(rabbitMqSection["Password"]);
-                });
-            });
-        });
+                massTransitConfiguration.SetKebabCaseEndpointNameFormatter();
+                massTransitConfiguration.UsingRabbitMq(
+                    (context, rabbitMqConfiguration) =>
+                    {
+                        rabbitMqConfiguration.ConfigureEndpoints(context);
+                        rabbitMqConfiguration.Host(
+                            rabbitMqSection["Host"], "/", hostConfiguration =>
+                            {
+                                hostConfiguration.Username(rabbitMqSection["Login"]);
+                                hostConfiguration.Password(rabbitMqSection["Password"]);
+                            }
+                        );
+                    }
+                );
+            }
+        );
 
         // configure repositories
         services.AddTransient<ICommonEventsRepository, CommonEventsRepository>();
@@ -94,8 +100,9 @@ public class Startup
         services.AddTransient<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
 
         // configure HangFire
-        services.AddHangfire(config =>
-            config.UsePostgreSqlStorage(postgresSection["ConnectionString"])
+        services.AddHangfire(
+            config =>
+                config.UsePostgreSqlStorage(postgresSection["ConnectionString"])
         );
         services.AddHangfireServer();
 

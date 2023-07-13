@@ -35,11 +35,11 @@ public class ItemsRepository : IItemsRepository
     public async Task<BaseItem[]> FindAsync(ItemsFilter filter)
     {
         var result = await sqlRepository
-            .BuildCustomQuery()
-            .WhereIf(filter.OwnerId.HasValue, x => x.OwnerId == filter.OwnerId)
-            .WhereIf(filter.IsActive.HasValue, x => x.IsActive == filter.IsActive)
-            .WhereIf(filter.Name != null, x => x.Name == filter.Name)
-            .ToArrayAsync();
+                           .BuildCustomQuery()
+                           .WhereIf(filter.OwnerId.HasValue, x => x.OwnerId == filter.OwnerId)
+                           .WhereIf(filter.IsActive.HasValue, x => x.IsActive == filter.IsActive)
+                           .WhereIf(filter.Name != null, x => x.Name == filter.Name)
+                           .ToArrayAsync();
         return result.Select(Deserialize).ToArray();
     }
 
@@ -52,12 +52,14 @@ public class ItemsRepository : IItemsRepository
     public async Task UpdateAsync(BaseItem item)
     {
         var newStorageElement = mapper.Map<ItemStorageElement>(item);
-        await sqlRepository.UpdateAsync(item.Id, x =>
-        {
-            x.OwnerId = newStorageElement.OwnerId;
-            x.IsActive = newStorageElement.IsActive;
-            x.ItemSpecs = newStorageElement.ItemSpecs;
-        });
+        await sqlRepository.UpdateAsync(
+            item.Id, x =>
+            {
+                x.OwnerId = newStorageElement.OwnerId;
+                x.IsActive = newStorageElement.IsActive;
+                x.ItemSpecs = newStorageElement.ItemSpecs;
+            }
+        );
     }
 
     public async Task DeleteAsync(Guid id)
@@ -84,10 +86,11 @@ public class ItemsRepository : IItemsRepository
             ItemName.Internet => JsonConvert.DeserializeObject<Internet>(serialized)!,
             ItemName.JadeRod => JsonConvert.DeserializeObject<JadeRod>(serialized)!,
             ItemName.RiceBowl => JsonConvert.DeserializeObject<RiceBowl>(serialized)!,
-            _ => throw new ArgumentOutOfRangeException(nameof(itemName))
+            _ => throw new ArgumentOutOfRangeException(nameof(itemName)),
         };
     }
 
-    private readonly ISqlRepository<ItemStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly ISqlRepository<ItemStorageElement> sqlRepository;
 }

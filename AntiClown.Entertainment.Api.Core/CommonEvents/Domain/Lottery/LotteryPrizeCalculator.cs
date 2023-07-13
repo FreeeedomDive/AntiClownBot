@@ -5,9 +5,9 @@ public static class LotteryPrizeCalculator
     public static int Calculate(IEnumerable<LotterySlot> slots)
     {
         return slots
-            .GroupBy(x => x)
-            .Select(group => SlotToPrize(group.Key) * SameSlotsCountToMultiplier(group.Count()))
-            .Sum();
+               .GroupBy(x => x)
+               .Select(group => SlotToPrize(group.Key) * SameSlotsCountToMultiplier(group.Count()))
+               .Sum();
     }
 
     private static int SlotToPrize(LotterySlot slot)
@@ -24,7 +24,7 @@ public static class LotteryPrizeCalculator
             LotterySlot.Tier8 => 35,
             LotterySlot.Tier9 => 40,
             LotterySlot.Tier10 => 50,
-            _ => throw new ArgumentOutOfRangeException(nameof(slot), slot, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(slot), slot, null),
         };
     }
 
@@ -37,7 +37,7 @@ public static class LotteryPrizeCalculator
             3 => 10,
             4 => 50,
             >= 5 => 100,
-            _ => throw new ArgumentOutOfRangeException(nameof(count), count, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(count), count, null),
         };
     }
 }

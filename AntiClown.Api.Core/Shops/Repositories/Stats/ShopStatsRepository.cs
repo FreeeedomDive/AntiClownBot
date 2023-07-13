@@ -29,17 +29,20 @@ public class ShopStatsRepository : IShopStatsRepository
 
     public async Task UpdateAsync(ShopStats shopStats)
     {
-        await sqlRepository.ConcurrentUpdateAsync(shopStats.Id, storageElement =>
-        {
-            storageElement.TotalReRolls = shopStats.TotalReRolls;
-            storageElement.ItemsBought = shopStats.ItemsBought;
-            storageElement.TotalReveals = shopStats.TotalReveals;
-            storageElement.ScamCoinsLostOnReveals = shopStats.ScamCoinsLostOnReveals;
-            storageElement.ScamCoinsLostOnReRolls = shopStats.ScamCoinsLostOnReRolls;
-            storageElement.ScamCoinsLostOnPurchases = shopStats.ScamCoinsLostOnPurchases;
-        });
+        await sqlRepository.ConcurrentUpdateAsync(
+            shopStats.Id, storageElement =>
+            {
+                storageElement.TotalReRolls = shopStats.TotalReRolls;
+                storageElement.ItemsBought = shopStats.ItemsBought;
+                storageElement.TotalReveals = shopStats.TotalReveals;
+                storageElement.ScamCoinsLostOnReveals = shopStats.ScamCoinsLostOnReveals;
+                storageElement.ScamCoinsLostOnReRolls = shopStats.ScamCoinsLostOnReRolls;
+                storageElement.ScamCoinsLostOnPurchases = shopStats.ScamCoinsLostOnPurchases;
+            }
+        );
     }
 
-    private readonly IVersionedSqlRepository<ShopStatsStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly IVersionedSqlRepository<ShopStatsStorageElement> sqlRepository;
 }

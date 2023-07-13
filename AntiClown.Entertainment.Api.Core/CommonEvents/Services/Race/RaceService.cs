@@ -79,11 +79,11 @@ public class RaceService : IRaceService
 
         var driversByName = @event.Participants.ToDictionary(x => x.Driver.DriverName);
         var startSectorPositions = GetOrderedDriversFromSector(@event.Sectors.First())
-                .Select((x, i) => new { Name = x.DriverName, Position = i })
-                .ToDictionary(x => x.Name, x => x.Position);
+                                   .Select((x, i) => new { Name = x.DriverName, Position = i })
+                                   .ToDictionary(x => x.Name, x => x.Position);
         var finishSectorPositions = GetOrderedDriversFromSector(@event.Sectors.Last())
-            .Select((x, i) => new { Name = x.DriverName, Position = i })
-            .ToArray();
+                                    .Select((x, i) => new { Name = x.DriverName, Position = i })
+                                    .ToArray();
 
         foreach (var t in finishSectorPositions)
         {
@@ -92,7 +92,7 @@ public class RaceService : IRaceService
             if (driver.UserId is not null && points > 0)
             {
                 var scamCoins = points * RaceHelper.PointsToScamCoinsMultiplier;
-                await antiClownApiClient.Economy.UpdateScamCoinsAsync(driver.UserId.Value, scamCoins,$"Гонка {eventId}");
+                await antiClownApiClient.Economy.UpdateScamCoinsAsync(driver.UserId.Value, scamCoins, $"Гонка {eventId}");
             }
 
             var diff = t.Position - startSectorPositions[t.Name];
@@ -110,8 +110,8 @@ public class RaceService : IRaceService
     private static IEnumerable<RaceSnapshotForDriverOnSector> GetOrderedDriversFromSector(RaceSnapshotOnSector sector)
     {
         return sector
-            .DriversOnSector
-            .OrderBy(x => x.TotalTime);
+               .DriversOnSector
+               .OrderBy(x => x.TotalTime);
     }
 
     private static void ApplyResultsToDriver(RaceDriver raceDriver, int skillsToImprove, int points)
@@ -139,7 +139,8 @@ public class RaceService : IRaceService
         scheduler.Schedule(
             () => BackgroundJob.Schedule(
                 () => SafeFinishAsync(eventId),
-                TimeSpan.FromMilliseconds(Constants.RaceEventWaitingTimeInMilliseconds))
+                TimeSpan.FromMilliseconds(Constants.RaceEventWaitingTimeInMilliseconds)
+            )
         );
     }
 
@@ -154,10 +155,11 @@ public class RaceService : IRaceService
         }
     }
 
+    private readonly IAntiClownApiClient antiClownApiClient;
+    private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
+
     private readonly ICommonEventsRepository commonEventsRepository;
     private readonly IRaceDriversRepository raceDriversRepository;
     private readonly IRaceGenerator raceGenerator;
-    private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
-    private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IScheduler scheduler;
 }

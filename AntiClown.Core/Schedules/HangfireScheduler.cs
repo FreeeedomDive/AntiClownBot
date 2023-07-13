@@ -1,5 +1,3 @@
-using Hangfire;
-
 namespace AntiClown.Core.Schedules;
 
 public class HangfireScheduler : IScheduler

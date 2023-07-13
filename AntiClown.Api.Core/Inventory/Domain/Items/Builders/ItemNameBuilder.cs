@@ -9,8 +9,8 @@ public static class ItemNameBuilder
     {
         return type == null
             ? Enum.GetValues<ItemType>()
-                .SelectMany(x => EnumMappings.TypeToNames[x].SelectMany(y => Enumerable.Repeat(y, EnumMappings.TypeToRandomnessWeight[x])))
-                .SelectRandomItem()
+                  .SelectMany(x => EnumMappings.TypeToNames[x].SelectMany(y => Enumerable.Repeat(y, EnumMappings.TypeToRandomnessWeight[x])))
+                  .SelectRandomItem()
             : EnumMappings.TypeToNames[type.Value].SelectRandomItem();
     }
 }

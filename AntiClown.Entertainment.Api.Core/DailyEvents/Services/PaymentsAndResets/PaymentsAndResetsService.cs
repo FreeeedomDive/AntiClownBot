@@ -10,12 +10,13 @@ public class PaymentsAndResetsService : IPaymentsAndResetsService
 {
     public PaymentsAndResetsService(
         IAntiClownApiClient antiClownApiClient,
-        IDailyEventsMessageProducer dailyEventsMessageProducer)
+        IDailyEventsMessageProducer dailyEventsMessageProducer
+    )
     {
         this.antiClownApiClient = antiClownApiClient;
         this.dailyEventsMessageProducer = dailyEventsMessageProducer;
     }
-    
+
     public Task<PaymentsAndResetsEvent> ReadAsync(Guid eventId)
     {
         throw new NotSupportedException($"Events of type {DailyEventType.PaymentsAndResets} are not stored");

@@ -30,6 +30,7 @@ public class RemoveCoolDownsEventController : Controller
         return await removeCoolDownsEventService.StartNewEventAsync();
     }
 
-    private readonly IRemoveCoolDownsEventService removeCoolDownsEventService;
     private readonly IMapper mapper;
+
+    private readonly IRemoveCoolDownsEventService removeCoolDownsEventService;
 }

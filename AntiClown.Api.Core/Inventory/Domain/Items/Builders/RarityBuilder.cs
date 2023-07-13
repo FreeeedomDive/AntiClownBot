@@ -13,7 +13,7 @@ public static class RarityBuilder
             > 9500 and <= 12700 => Rarity.Rare,
             > 12700 and <= 13940 => Rarity.Epic,
             > 13940 and <= 13998 => Rarity.Legendary,
-            _ => Rarity.BlackMarket
+            _ => Rarity.BlackMarket,
         };
     }
 }

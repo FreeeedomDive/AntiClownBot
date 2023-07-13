@@ -56,7 +56,8 @@ public class TransfusionEventService : ITransfusionEventService
         return newEvent.Id;
     }
 
-    private readonly ICommonEventsRepository commonEventsRepository;
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
+
+    private readonly ICommonEventsRepository commonEventsRepository;
 }

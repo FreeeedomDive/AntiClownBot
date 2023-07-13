@@ -37,11 +37,12 @@ public abstract class PeriodicJobWorker
         }
     }
 
-    protected ILogger Logger { get; }
     protected abstract int CalculateTimeBeforeStart();
     protected abstract Task ExecuteIterationAsync();
+
+    protected ILogger Logger { get; }
     protected abstract string WorkerName { get; }
+    private readonly TimeSpan iterationTime;
 
     private PeriodicTimer timer;
-    private readonly TimeSpan iterationTime;
 }

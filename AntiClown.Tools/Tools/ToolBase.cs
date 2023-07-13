@@ -22,11 +22,12 @@ public abstract class ToolBase
         {
             Logger.LogError("Unexpected exception in tool {Name}:\n{Exception}", Name, e);
         }
+
         Logger.LogInformation("Tool {Name} was executed in {ms}ms", Name, stopwatch.ElapsedMilliseconds);
     }
 
-    protected ILogger Logger { get; }
-
     protected abstract Task RunAsync();
+
+    protected ILogger Logger { get; }
     public abstract string Name { get; }
 }

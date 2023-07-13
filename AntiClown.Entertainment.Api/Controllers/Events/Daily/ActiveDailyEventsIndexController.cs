@@ -1,10 +1,5 @@
-﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
-using AntiClown.Entertainment.Api.Core.CommonEvents.Services.ActiveEventsIndex;
-using AntiClown.Entertainment.Api.Core.DailyEvents.Domain;
-using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.ActiveEventsIndex;
+﻿using AntiClown.Entertainment.Api.Core.DailyEvents.Domain;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.ActiveEventsIndex;
-using AntiClown.EntertainmentApi.Dto.CommonEvents;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.ActiveEventsIndex;
 using AntiClown.EntertainmentApi.Dto.DailyEvents;
 using AntiClown.EntertainmentApi.Dto.DailyEvents.ActiveEventsIndex;
 using AutoMapper;

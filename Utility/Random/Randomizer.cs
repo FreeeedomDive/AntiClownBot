@@ -8,7 +8,10 @@ public static class Randomizer
         return Random.Next(a, b);
     }
 
-    public static int GetRandomNumberInclusive(int a, int b) => GetRandomNumberBetween(a, b + 1);
+    public static int GetRandomNumberInclusive(int a, int b)
+    {
+        return GetRandomNumberBetween(a, b + 1);
+    }
 
     public static bool CoinFlip()
     {

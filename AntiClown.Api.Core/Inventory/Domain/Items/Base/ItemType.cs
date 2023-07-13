@@ -1,8 +1,7 @@
-﻿namespace AntiClown.Api.Core.Inventory.Domain.Items.Base
+﻿namespace AntiClown.Api.Core.Inventory.Domain.Items.Base;
+
+public enum ItemType
 {
-    public enum ItemType
-    {
-        Positive,
-        Negative
-    }
+    Positive,
+    Negative,
 }

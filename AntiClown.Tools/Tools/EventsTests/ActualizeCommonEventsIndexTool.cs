@@ -24,6 +24,7 @@ public class ActualizeCommonEventsIndexTool : ToolBase
         {
             await antiClownEntertainmentApiClient.CommonEvents.ActiveCommonEventsIndex.UpdateAsync(@event.Key, true);
         }
+
         currentActive = await antiClownEntertainmentApiClient.CommonEvents.ActiveCommonEventsIndex.ReadActiveEventsAsync();
         Logger.LogInformation("Current active events count after enabling them all: {count}", currentActive.Length);
     }

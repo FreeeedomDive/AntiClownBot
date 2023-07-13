@@ -26,7 +26,7 @@ public class DatabaseContext : DbContext
                                ?? throw new InvalidOperationException("No ConnectionString was provided");
         Options = new DatabaseOptions
         {
-            ConnectionString = connectionString
+            ConnectionString = connectionString,
         };
     }
 

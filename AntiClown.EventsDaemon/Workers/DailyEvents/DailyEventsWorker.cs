@@ -7,7 +7,6 @@ namespace AntiClown.EventsDaemon.Workers.DailyEvents;
 
 public class DailyEventsWorker : PeriodicJobWorker
 {
-
     public DailyEventsWorker(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IOptions<DailyEventsWorkerOptions> dailyEventsWorkerOptions,
@@ -65,7 +64,7 @@ public class DailyEventsWorker : PeriodicJobWorker
     }
 
     protected override string WorkerName => nameof(DailyEventsWorker);
+    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 
     private readonly DailyEventsWorkerOptions options;
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

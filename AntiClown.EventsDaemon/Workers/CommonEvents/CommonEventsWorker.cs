@@ -25,11 +25,13 @@ public class CommonEventsWorker : PeriodicJobWorker
         var now = DateTime.Now;
         var secondsToSleep = 60 - now.Second;
         var minutesToSleep = now.Minute < eventStartMinute
-            ? (eventStartMinute - now.Minute - 1)
-            : (60 - now.Minute + eventStartMinute - 1);
+            ? eventStartMinute - now.Minute - 1
+            : 60 - now.Minute + eventStartMinute - 1;
         var hoursToSleep = now.Hour % 2 == eventStartHour
-            ? (now.Minute < eventStartMinute ? 0 : 1)
-            : (now.Minute < eventStartMinute ? 1 : 0);
+            ? now.Minute < eventStartMinute ? 0 : 1
+            : now.Minute < eventStartMinute
+                ? 1
+                : 0;
 
         return (hoursToSleep * 60 * 60 + minutesToSleep * 60 + secondsToSleep) * 1000;
     }
@@ -47,25 +49,27 @@ public class CommonEventsWorker : PeriodicJobWorker
         var eventId = eventToExecute switch
         {
             CommonEventTypeDto.GuessNumber => await antiClownEntertainmentApiClient.CommonEvents.GuessNumber
-                .StartNewAsync(),
+                                                                                   .StartNewAsync(),
             CommonEventTypeDto.Lottery => await antiClownEntertainmentApiClient.CommonEvents.Lottery.StartNewAsync(),
             CommonEventTypeDto.Race => await antiClownEntertainmentApiClient.CommonEvents.Race.StartNewAsync(),
             CommonEventTypeDto.RemoveCoolDowns => await antiClownEntertainmentApiClient.CommonEvents.RemoveCoolDowns
-                .StartNewAsync(),
+                                                                                       .StartNewAsync(),
             CommonEventTypeDto.Transfusion => await antiClownEntertainmentApiClient.CommonEvents.Transfusion
-                .StartNewAsync(),
+                                                                                   .StartNewAsync(),
             CommonEventTypeDto.Bedge => await antiClownEntertainmentApiClient.CommonEvents.Bedge.StartNewAsync(),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(eventToExecute),
                 $"Found unknown for {WorkerName} type of event. Consider adding an execution path for this type of event."
-            )
+            ),
         };
-        Logger.LogInformation("{WorkerName} started {eventType} event with id {eventId}", WorkerName, eventToExecute,
-            eventId);
+        Logger.LogInformation(
+            "{WorkerName} started {eventType} event with id {eventId}", WorkerName, eventToExecute,
+            eventId
+        );
     }
 
     protected override string WorkerName => nameof(CommonEventsWorker);
+    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 
     private readonly CommonEventsWorkerOptions options;
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

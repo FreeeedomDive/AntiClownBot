@@ -47,7 +47,8 @@ public class UsersController : Controller
         return await newUserService.CreateNewUserAsync(mapper.Map<NewUser>(newUser));
     }
 
-    private readonly IUsersService usersService;
-    private readonly INewUserService newUserService;
     private readonly IMapper mapper;
+    private readonly INewUserService newUserService;
+
+    private readonly IUsersService usersService;
 }

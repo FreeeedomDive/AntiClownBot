@@ -23,7 +23,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 91447,
                 CorneringDifficulty = 9,
                 AccelerationDifficulty = 26,
-                BreakingDifficulty = 15
+                BreakingDifficulty = 15,
             },
             new RaceTrackDto
             {
@@ -31,7 +31,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 90734,
                 CorneringDifficulty = 23,
                 AccelerationDifficulty = 17,
-                BreakingDifficulty = 10
+                BreakingDifficulty = 10,
             },
             new RaceTrackDto
             {
@@ -39,7 +39,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 80260,
                 CorneringDifficulty = 12,
                 AccelerationDifficulty = 19,
-                BreakingDifficulty = 19
+                BreakingDifficulty = 19,
             },
             new RaceTrackDto
             {
@@ -47,7 +47,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 103009,
                 CorneringDifficulty = 14,
                 AccelerationDifficulty = 17,
-                BreakingDifficulty = 19
+                BreakingDifficulty = 19,
             },
             new RaceTrackDto
             {
@@ -55,7 +55,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 91361,
                 CorneringDifficulty = 11,
                 AccelerationDifficulty = 19,
-                BreakingDifficulty = 20
+                BreakingDifficulty = 20,
             },
             new RaceTrackDto
             {
@@ -63,7 +63,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 75484,
                 CorneringDifficulty = 21,
                 AccelerationDifficulty = 12,
-                BreakingDifficulty = 17
+                BreakingDifficulty = 17,
             },
             new RaceTrackDto
             {
@@ -71,7 +71,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 72909,
                 CorneringDifficulty = 30,
                 AccelerationDifficulty = 8,
-                BreakingDifficulty = 12
+                BreakingDifficulty = 12,
             },
             new RaceTrackDto
             {
@@ -79,7 +79,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 78149,
                 CorneringDifficulty = 23,
                 AccelerationDifficulty = 17,
-                BreakingDifficulty = 10
+                BreakingDifficulty = 10,
             },
             new RaceTrackDto
             {
@@ -87,7 +87,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 73078,
                 CorneringDifficulty = 11,
                 AccelerationDifficulty = 24,
-                BreakingDifficulty = 15
+                BreakingDifficulty = 15,
             },
             new RaceTrackDto
             {
@@ -95,7 +95,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 65619,
                 CorneringDifficulty = 10,
                 AccelerationDifficulty = 24,
-                BreakingDifficulty = 16
+                BreakingDifficulty = 16,
             },
             new RaceTrackDto
             {
@@ -103,7 +103,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 87097,
                 CorneringDifficulty = 25,
                 AccelerationDifficulty = 10,
-                BreakingDifficulty = 15
+                BreakingDifficulty = 15,
             },
             new RaceTrackDto
             {
@@ -111,7 +111,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 76627,
                 CorneringDifficulty = 22,
                 AccelerationDifficulty = 12,
-                BreakingDifficulty = 16
+                BreakingDifficulty = 16,
             },
             new RaceTrackDto
             {
@@ -119,7 +119,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 106286,
                 CorneringDifficulty = 14,
                 AccelerationDifficulty = 25,
-                BreakingDifficulty = 11
+                BreakingDifficulty = 11,
             },
             new RaceTrackDto
             {
@@ -127,7 +127,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 71097,
                 CorneringDifficulty = 23,
                 AccelerationDifficulty = 12,
-                BreakingDifficulty = 15
+                BreakingDifficulty = 15,
             },
             new RaceTrackDto
             {
@@ -135,7 +135,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 81046,
                 CorneringDifficulty = 9,
                 AccelerationDifficulty = 29,
-                BreakingDifficulty = 12
+                BreakingDifficulty = 12,
             },
             new RaceTrackDto
             {
@@ -143,7 +143,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 101905,
                 CorneringDifficulty = 25,
                 AccelerationDifficulty = 11,
-                BreakingDifficulty = 14
+                BreakingDifficulty = 14,
             },
             new RaceTrackDto
             {
@@ -151,7 +151,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 90983,
                 CorneringDifficulty = 21,
                 AccelerationDifficulty = 12,
-                BreakingDifficulty = 17
+                BreakingDifficulty = 17,
             },
             new RaceTrackDto
             {
@@ -159,7 +159,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 83196,
                 CorneringDifficulty = 15,
                 AccelerationDifficulty = 19,
-                BreakingDifficulty = 16
+                BreakingDifficulty = 16,
             },
             new RaceTrackDto
             {
@@ -167,7 +167,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 96169,
                 CorneringDifficulty = 21,
                 AccelerationDifficulty = 14,
-                BreakingDifficulty = 15
+                BreakingDifficulty = 15,
             },
             new RaceTrackDto
             {
@@ -175,7 +175,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 77774,
                 CorneringDifficulty = 17,
                 AccelerationDifficulty = 20,
-                BreakingDifficulty = 13
+                BreakingDifficulty = 13,
             },
             new RaceTrackDto
             {
@@ -183,7 +183,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 70540,
                 CorneringDifficulty = 19,
                 AccelerationDifficulty = 15,
-                BreakingDifficulty = 16
+                BreakingDifficulty = 16,
             },
             new RaceTrackDto
             {
@@ -191,7 +191,7 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 82000,
                 CorneringDifficulty = 16,
                 AccelerationDifficulty = 20,
-                BreakingDifficulty = 14
+                BreakingDifficulty = 14,
             },
             new RaceTrackDto
             {
@@ -199,8 +199,8 @@ public class CreateTracksTool : ToolBase
                 IdealTime = 86103,
                 CorneringDifficulty = 18,
                 AccelerationDifficulty = 18,
-                BreakingDifficulty = 14
-            }
+                BreakingDifficulty = 14,
+            },
         };
 
         await Task.WhenAll(tracks.Select(x => antiClownEntertainmentApiClient.CommonEvents.Race.Tracks.CreateAsync(x)));

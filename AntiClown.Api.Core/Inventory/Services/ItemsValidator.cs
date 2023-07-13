@@ -30,12 +30,14 @@ public class ItemsValidator : IItemsValidator
         }
 
         var itemName = item.ItemName.ToString();
-        var currentUserItemsOfThisType = await itemsRepository.FindAsync(new ItemsFilter
-        {
-            OwnerId = userId,
-            IsActive = true,
-            Name = itemName,
-        });
+        var currentUserItemsOfThisType = await itemsRepository.FindAsync(
+            new ItemsFilter
+            {
+                OwnerId = userId,
+                IsActive = true,
+                Name = itemName,
+            }
+        );
         if (currentUserItemsOfThisType.Length >= Constants.MaximumActiveItemsOfOneType)
         {
             throw new TooManyActiveItemsCountException(userId, itemName);

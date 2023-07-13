@@ -63,11 +63,12 @@ public class CommonEventsDistributor : IConsumer<CommonEventMessageDto>
         }
     }
 
+    private readonly ICommonEventConsumer<BedgeEventDto> bedgeEventConsumer;
+
     private readonly ICommonEventConsumer<GuessNumberEventDto> guessNumberEventConsumer;
+    private readonly ILogger<CommonEventsDistributor> logger;
     private readonly ICommonEventConsumer<LotteryEventDto> lotteryEventConsumer;
     private readonly ICommonEventConsumer<RaceEventDto> raceEventConsumer;
     private readonly ICommonEventConsumer<RemoveCoolDownsEventDto> removeCoolDownsEventConsumer;
     private readonly ICommonEventConsumer<TransfusionEventDto> transfusionEventConsumer;
-    private readonly ICommonEventConsumer<BedgeEventDto> bedgeEventConsumer;
-    private readonly ILogger<CommonEventsDistributor> logger;
 }

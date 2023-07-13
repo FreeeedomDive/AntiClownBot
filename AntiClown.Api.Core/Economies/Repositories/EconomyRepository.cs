@@ -33,48 +33,55 @@ public class EconomyRepository : IEconomyRepository
     public async Task UpdateAsync(Economy economy)
     {
         var current = await sqlRepository.ReadAsync(economy.Id);
-        await sqlRepository.ConcurrentUpdateAsync(economy.Id, x =>
-        {
-            x.ScamCoins = economy.ScamCoins;
-            x.NextTribute = economy.NextTribute;
-            x.LootBoxes = economy.LootBoxes;
-            x.IsLohotronReady = economy.IsLohotronReady;
-            x.Version = current.Version;
-        });
+        await sqlRepository.ConcurrentUpdateAsync(
+            economy.Id, x =>
+            {
+                x.ScamCoins = economy.ScamCoins;
+                x.NextTribute = economy.NextTribute;
+                x.LootBoxes = economy.LootBoxes;
+                x.IsLohotronReady = economy.IsLohotronReady;
+                x.Version = current.Version;
+            }
+        );
     }
 
     public async Task UpdateAllAsync(MassEconomyUpdate massEconomyUpdate)
     {
-        await sqlRepository.ModifyDbSetAsync(async set =>
-        {
-            var economies = await set.ToArrayAsync();
-            economies.ForEach(x =>
+        await sqlRepository.ModifyDbSetAsync(
+            async set =>
             {
-                if (massEconomyUpdate.ScamCoins is not null)
-                {
-                    x.ScamCoins += massEconomyUpdate.ScamCoins.ScamCoinsDiff;
-                }
+                var economies = await set.ToArrayAsync();
+                economies.ForEach(
+                    x =>
+                    {
+                        if (massEconomyUpdate.ScamCoins is not null)
+                        {
+                            x.ScamCoins += massEconomyUpdate.ScamCoins.ScamCoinsDiff;
+                        }
 
-                if (massEconomyUpdate.LootBoxesDiff.HasValue)
-                {
-                    x.LootBoxes += massEconomyUpdate.LootBoxesDiff.Value;
-                }
+                        if (massEconomyUpdate.LootBoxesDiff.HasValue)
+                        {
+                            x.LootBoxes += massEconomyUpdate.LootBoxesDiff.Value;
+                        }
 
-                if (massEconomyUpdate.NextTribute.HasValue)
-                {
-                    x.NextTribute = massEconomyUpdate.NextTribute.Value;
-                }
+                        if (massEconomyUpdate.NextTribute.HasValue)
+                        {
+                            x.NextTribute = massEconomyUpdate.NextTribute.Value;
+                        }
 
-                if (massEconomyUpdate.IsLohotronReady.HasValue)
-                {
-                    x.IsLohotronReady = massEconomyUpdate.IsLohotronReady.Value;
-                }
+                        if (massEconomyUpdate.IsLohotronReady.HasValue)
+                        {
+                            x.IsLohotronReady = massEconomyUpdate.IsLohotronReady.Value;
+                        }
 
-                x.Version++;
-            });
-        });
+                        x.Version++;
+                    }
+                );
+            }
+        );
     }
 
-    private readonly IVersionedSqlRepository<EconomyStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly IVersionedSqlRepository<EconomyStorageElement> sqlRepository;
 }

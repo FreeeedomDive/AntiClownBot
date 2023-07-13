@@ -29,20 +29,26 @@ builder.Services.AddTransient<ICommonEventConsumer<TransfusionEventDto>, Transfu
 builder.Services.AddTransient<ICommonEventConsumer<BedgeEventDto>, BedgeEventConsumer>();
 
 var rabbitMqSection = builder.Configuration.GetSection("RabbitMQ");
-builder.Services.AddMassTransit(massTransitConfiguration =>
-{
-    massTransitConfiguration.AddConsumers(AppDomain.CurrentDomain.GetAssemblies());
-    massTransitConfiguration.SetKebabCaseEndpointNameFormatter();
-    massTransitConfiguration.UsingRabbitMq((context, rabbitMqConfiguration) =>
+builder.Services.AddMassTransit(
+    massTransitConfiguration =>
     {
-        rabbitMqConfiguration.ConfigureEndpoints(context);
-        rabbitMqConfiguration.Host(rabbitMqSection["Host"], "/", hostConfiguration =>
-        {
-            hostConfiguration.Username(rabbitMqSection["Login"]);
-            hostConfiguration.Password(rabbitMqSection["Password"]);
-        });
-    });
-});
+        massTransitConfiguration.AddConsumers(AppDomain.CurrentDomain.GetAssemblies());
+        massTransitConfiguration.SetKebabCaseEndpointNameFormatter();
+        massTransitConfiguration.UsingRabbitMq(
+            (context, rabbitMqConfiguration) =>
+            {
+                rabbitMqConfiguration.ConfigureEndpoints(context);
+                rabbitMqConfiguration.Host(
+                    rabbitMqSection["Host"], "/", hostConfiguration =>
+                    {
+                        hostConfiguration.Username(rabbitMqSection["Login"]);
+                        hostConfiguration.Password(rabbitMqSection["Password"]);
+                    }
+                );
+            }
+        );
+    }
+);
 
 var app = builder.Build();
 await app.RunAsync();

@@ -2,8 +2,6 @@ namespace AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Bedge;
 
 public class BedgeEvent : CommonEventBase
 {
-    public override CommonEventType Type => CommonEventType.Bedge;
-
     public static BedgeEvent Create()
     {
         return new BedgeEvent
@@ -13,4 +11,6 @@ public class BedgeEvent : CommonEventBase
             EventDateTime = DateTime.UtcNow,
         };
     }
+
+    public override CommonEventType Type => CommonEventType.Bedge;
 }

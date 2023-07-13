@@ -62,7 +62,7 @@ public class TributeService : ITributeService
         var communismChance = userItems.CommunismBanners().Sum(x => x.DivideChance);
         var isCommunism = Randomizer.GetRandomNumberBetween(0, 100) < communismChance;
         var sharedUser = isCommunism ? await GetRandomCommunistAsync(userId) : null;
-        tributeQuality = (isCommunism && sharedUser is not null) ? tributeQuality / 2 : tributeQuality;
+        tributeQuality = isCommunism && sharedUser is not null ? tributeQuality / 2 : tributeQuality;
 
         var automaticNextTributeChance = userItems.CatWives().Sum(x => x.AutoTributeChance);
         var isNextTributeAutomatic = Randomizer.GetRandomNumberBetween(0, 100) < automaticNextTributeChance;
@@ -91,46 +91,50 @@ public class TributeService : ITributeService
         var modifiers = new Dictionary<Guid, int>();
 
         var cooldown = items.Internets()
-            .SelectMany(item => Enumerable.Repeat(item, item.Gigabytes))
-            .Aggregate(Constants.DefaultCooldown, (currentCooldown, item) =>
-            {
-                if (Randomizer.GetRandomNumberBetween(0, 100) >= item.Ping)
-                {
-                    return currentCooldown;
-                }
+                            .SelectMany(item => Enumerable.Repeat(item, item.Gigabytes))
+                            .Aggregate(
+                                Constants.DefaultCooldown, (currentCooldown, item) =>
+                                {
+                                    if (Randomizer.GetRandomNumberBetween(0, 100) >= item.Ping)
+                                    {
+                                        return currentCooldown;
+                                    }
 
-                if (modifiers.ContainsKey(item.Id))
-                {
-                    modifiers[item.Id]++;
-                }
-                else
-                {
-                    modifiers.Add(item.Id, 1);
-                }
+                                    if (modifiers.ContainsKey(item.Id))
+                                    {
+                                        modifiers[item.Id]++;
+                                    }
+                                    else
+                                    {
+                                        modifiers.Add(item.Id, 1);
+                                    }
 
-                return currentCooldown * (100d - item.Speed) / 100;
-            });
+                                    return currentCooldown * (100d - item.Speed) / 100;
+                                }
+                            );
 
         cooldown = items.JadeRods()
-            .SelectMany(item => Enumerable.Repeat(item, item.Length))
-            .Aggregate(cooldown, (currentCooldown, item) =>
-            {
-                if (Randomizer.GetRandomNumberBetween(0, 100) >= Constants.CooldownIncreaseChanceByOneJade)
-                {
-                    return currentCooldown;
-                }
+                        .SelectMany(item => Enumerable.Repeat(item, item.Length))
+                        .Aggregate(
+                            cooldown, (currentCooldown, item) =>
+                            {
+                                if (Randomizer.GetRandomNumberBetween(0, 100) >= Constants.CooldownIncreaseChanceByOneJade)
+                                {
+                                    return currentCooldown;
+                                }
 
-                if (modifiers.ContainsKey(item.Id))
-                {
-                    modifiers[item.Id]++;
-                }
-                else
-                {
-                    modifiers.Add(item.Id, 1);
-                }
+                                if (modifiers.ContainsKey(item.Id))
+                                {
+                                    modifiers[item.Id]++;
+                                }
+                                else
+                                {
+                                    modifiers.Add(item.Id, 1);
+                                }
 
-                return currentCooldown * (100d + item.Thickness) / 100;
-            });
+                                return currentCooldown * (100d + item.Thickness) / 100;
+                            }
+                        );
 
         return ((int)cooldown, modifiers);
     }
@@ -138,8 +142,8 @@ public class TributeService : ITributeService
     private async Task<Guid?> GetRandomCommunistAsync(Guid userId)
     {
         var communists = (await ReadDistributedCommunistsAsync())
-            .Where(x => x != userId)
-            .ToArray();
+                         .Where(x => x != userId)
+                         .ToArray();
         return communists.Length == 0 ? null : communists.SelectRandomItem();
     }
 
@@ -147,16 +151,18 @@ public class TributeService : ITributeService
     {
         var allCommunismBanners = await itemsService.ReadItemsWithNameAsync(ItemName.CommunismBanner);
         return allCommunismBanners
-            .CommunismBanners()
-            .SelectMany(x => Enumerable.Repeat(x.OwnerId, x.StealChance))
-            .ToArray();
+               .CommunismBanners()
+               .SelectMany(x => Enumerable.Repeat(x.OwnerId, x.StealChance))
+               .ToArray();
     }
 
     private async Task MakeTributeAsync(Tribute tribute)
     {
         await economyService.UpdateScamCoinsAsync(tribute.UserId, tribute.ScamCoins, "Подношение");
-        await economyService.UpdateNextTributeCoolDownAsync(tribute.UserId,
-            tribute.TributeDateTime.AddMilliseconds(tribute.CooldownInMilliseconds));
+        await economyService.UpdateNextTributeCoolDownAsync(
+            tribute.UserId,
+            tribute.TributeDateTime.AddMilliseconds(tribute.CooldownInMilliseconds)
+        );
 
         if (tribute.HasGiftedLootBox)
         {
@@ -165,8 +171,10 @@ public class TributeService : ITributeService
 
         if (tribute.SharedUserId != null)
         {
-            await economyService.UpdateScamCoinsAsync(tribute.SharedUserId.Value, tribute.ScamCoins,
-                "Полученное коммунистическое подношение");
+            await economyService.UpdateScamCoinsAsync(
+                tribute.SharedUserId.Value, tribute.ScamCoins,
+                "Полученное коммунистическое подношение"
+            );
         }
     }
 
@@ -177,9 +185,11 @@ public class TributeService : ITributeService
             return;
         }
 
-        scheduler.Schedule(() => BackgroundJob.Schedule(
-            () => ExecuteAutoTributeAsync(tribute),
-            TimeSpan.FromMilliseconds(tribute.CooldownInMilliseconds + 1000))
+        scheduler.Schedule(
+            () => BackgroundJob.Schedule(
+                () => ExecuteAutoTributeAsync(tribute),
+                TimeSpan.FromMilliseconds(tribute.CooldownInMilliseconds + 1000)
+            )
         );
     }
 
@@ -200,6 +210,6 @@ public class TributeService : ITributeService
 
     private readonly IEconomyService economyService;
     private readonly IItemsService itemsService;
-    private readonly ITributeMessageProducer tributeMessageProducer;
     private readonly IScheduler scheduler;
+    private readonly ITributeMessageProducer tributeMessageProducer;
 }

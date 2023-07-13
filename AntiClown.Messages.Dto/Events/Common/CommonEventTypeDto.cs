@@ -7,5 +7,5 @@ public enum CommonEventTypeDto
     Race,
     RemoveCooldowns,
     Transfusion,
-    Bedge
+    Bedge,
 }

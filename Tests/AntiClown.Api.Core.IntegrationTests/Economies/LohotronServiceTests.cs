@@ -12,13 +12,13 @@ public class LohotronServiceTests : IntegrationTestsBase
     {
         var economy1 = await EconomyService.ReadEconomyAsync(User.Id);
         economy1.IsLohotronReady.Should().BeTrue();
-        
+
         var nothingReward = new LohotronReward
         {
             RewardType = LohotronRewardType.Nothing,
         };
         LohotronRewardGeneratorMock.Setup(x => x.Generate()).Returns(nothingReward);
-        
+
         await LohotronService.UseLohotronAsync(User.Id);
         var economy2 = await EconomyService.ReadEconomyAsync(User.Id);
         economy2.IsLohotronReady.Should().BeFalse();
@@ -29,7 +29,7 @@ public class LohotronServiceTests : IntegrationTestsBase
         var economy3 = await EconomyService.ReadEconomyAsync(User.Id);
         economy3.IsLohotronReady.Should().BeFalse();
     }
-    
+
     [Test]
     public async Task LohotronService_Should_DoNothing_WithEmptyReward()
     {
@@ -42,14 +42,13 @@ public class LohotronServiceTests : IntegrationTestsBase
 
         var actualReward = await LohotronService.UseLohotronAsync(User.Id);
         actualReward.Should().BeEquivalentTo(nothingReward);
-        
+
         var economyAfter = await EconomyService.ReadEconomyAsync(User.Id);
         economyAfter.ScamCoins.Should().Be(economyBefore.ScamCoins);
         economyAfter.LootBoxes.Should().Be(economyBefore.LootBoxes);
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
+    [TestCase(true), TestCase(false)]
     public async Task LohotronService_Should_GiveScamCoins_WithScamCoinsReward(bool isPositiveReward)
     {
         var scamCoinsReward = new LohotronReward
@@ -62,7 +61,7 @@ public class LohotronServiceTests : IntegrationTestsBase
 
         var actualReward = await LohotronService.UseLohotronAsync(User.Id);
         actualReward.Should().BeEquivalentTo(scamCoinsReward);
-        
+
         var economyAfter = await EconomyService.ReadEconomyAsync(User.Id);
         economyAfter.ScamCoins.Should().Be(economyBefore.ScamCoins + scamCoinsReward.ScamCoinsReward);
     }
@@ -79,7 +78,7 @@ public class LohotronServiceTests : IntegrationTestsBase
 
         var actualReward = await LohotronService.UseLohotronAsync(User.Id);
         actualReward.Should().BeEquivalentTo(lootBoxReward);
-        
+
         var economyAfter = await EconomyService.ReadEconomyAsync(User.Id);
         economyAfter.LootBoxes.Should().Be(economyBefore.LootBoxes + 1);
     }

@@ -36,18 +36,20 @@ public class AnnounceEventService : IAnnounceEventService
     {
         // на момент 00:01 по UTC будет еще 19:01 предыдущего дня, поэтому вычитываем транзакции за этот период
         var now = DateTime.UtcNow;
-        var transactionsOfTheDay = await antiClownApiClient.Transactions.FindAsync(new TransactionsFilterDto
-        {
-            DateTimeRange = new DateTimeRangeDto
+        var transactionsOfTheDay = await antiClownApiClient.Transactions.FindAsync(
+            new TransactionsFilterDto
             {
-                From = DateTime.UtcNow.AddDays(-1),
-                To = now,
+                DateTimeRange = new DateTimeRangeDto
+                {
+                    From = DateTime.UtcNow.AddDays(-1),
+                    To = now,
+                },
             }
-        });
+        );
 
         var transactionsSumByUser = transactionsOfTheDay
-            .GroupBy(x => x.UserId)
-            .ToDictionary(x => x.Key, x => x.Sum(t => t.ScamCoinDiff));
+                                    .GroupBy(x => x.UserId)
+                                    .ToDictionary(x => x.Key, x => x.Sum(t => t.ScamCoinDiff));
 
         var announceEvent = new AnnounceEvent
         {
@@ -62,7 +64,8 @@ public class AnnounceEventService : IAnnounceEventService
         return announceEvent.Id;
     }
 
-    private readonly IDailyEventsRepository dailyEventsRepository;
-    private readonly IDailyEventsMessageProducer dailyEventsMessageProducer;
     private readonly IAntiClownApiClient antiClownApiClient;
+    private readonly IDailyEventsMessageProducer dailyEventsMessageProducer;
+
+    private readonly IDailyEventsRepository dailyEventsRepository;
 }

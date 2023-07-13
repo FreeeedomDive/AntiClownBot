@@ -29,13 +29,16 @@ public class ShopsRepository : IShopsRepository
 
     public async Task UpdateAsync(Shop shop)
     {
-        await sqlRepository.ConcurrentUpdateAsync(shop.Id, x =>
-        {
-            x.ReRollPrice = shop.ReRollPrice;
-            x.FreeReveals = shop.FreeReveals;
-        });
+        await sqlRepository.ConcurrentUpdateAsync(
+            shop.Id, x =>
+            {
+                x.ReRollPrice = shop.ReRollPrice;
+                x.FreeReveals = shop.FreeReveals;
+            }
+        );
     }
 
-    private readonly IVersionedSqlRepository<ShopStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly IVersionedSqlRepository<ShopStorageElement> sqlRepository;
 }

@@ -50,6 +50,7 @@ public class RaceDriversController : Controller
         return NoContent();
     }
 
-    private readonly IRaceDriversRepository raceDriversRepository;
     private readonly IMapper mapper;
+
+    private readonly IRaceDriversRepository raceDriversRepository;
 }

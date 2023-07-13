@@ -36,17 +36,19 @@ public class CreateDriversTool : ToolBase
             "DeVries",
             "Tsunoda",
             "Albon",
-            "Sargeant"
+            "Sargeant",
         };
 
-        var drivers = names.Select(x => new RaceDriverDto
-        {
-            DriverName = x,
-            Points = 0,
-            AccelerationSkill = 0.8,
-            BreakingSkill = 0.8,
-            CorneringSkill = 0.8,
-        });
+        var drivers = names.Select(
+            x => new RaceDriverDto
+            {
+                DriverName = x,
+                Points = 0,
+                AccelerationSkill = 0.8,
+                BreakingSkill = 0.8,
+                CorneringSkill = 0.8,
+            }
+        );
 
         await Task.WhenAll(drivers.Select(x => antiClownEntertainmentApiClient.CommonEvents.Race.Drivers.CreateAsync(x)));
     }

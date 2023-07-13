@@ -23,7 +23,10 @@ public static class DictionaryExtensions
                 sb.Append($"{i}: {key} - {value}\n");
             }
 
-            if (i == 25) break;
+            if (i == 25)
+            {
+                break;
+            }
 
             i++;
         }
@@ -45,7 +48,10 @@ public static class DictionaryExtensions
 
     public static void RemoveRecord<T>(this Dictionary<T, int> dict, T emoji) where T : notnull
     {
-        if (!dict.ContainsKey(emoji)) return;
+        if (!dict.ContainsKey(emoji))
+        {
+            return;
+        }
 
         var value = dict[emoji];
         if (value == 1)

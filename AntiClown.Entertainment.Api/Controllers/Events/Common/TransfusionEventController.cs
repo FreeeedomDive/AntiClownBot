@@ -10,7 +10,8 @@ public class TransfusionEventController : Controller
 {
     public TransfusionEventController(
         ITransfusionEventService transfusionEventService,
-        IMapper mapper)
+        IMapper mapper
+    )
     {
         this.transfusionEventService = transfusionEventService;
         this.mapper = mapper;
@@ -29,6 +30,7 @@ public class TransfusionEventController : Controller
         return await transfusionEventService.StartNewEventAsync();
     }
 
-    private readonly ITransfusionEventService transfusionEventService;
     private readonly IMapper mapper;
+
+    private readonly ITransfusionEventService transfusionEventService;
 }

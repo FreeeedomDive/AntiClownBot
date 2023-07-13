@@ -36,13 +36,15 @@ public class RaceDriversRepository : IRaceDriversRepository
     public async Task UpdateAsync(RaceDriver raceDriver)
     {
         var current = await FindFirstAsync(raceDriver.DriverName);
-        await sqlRepository.UpdateAsync(current.Id, x =>
-        {
-            x.Points = raceDriver.Points;
-            x.AccelerationSkill = raceDriver.AccelerationSkill;
-            x.BreakingSkill = raceDriver.BreakingSkill;
-            x.CorneringSkill = raceDriver.CorneringSkill;
-        });
+        await sqlRepository.UpdateAsync(
+            current.Id, x =>
+            {
+                x.Points = raceDriver.Points;
+                x.AccelerationSkill = raceDriver.AccelerationSkill;
+                x.BreakingSkill = raceDriver.BreakingSkill;
+                x.CorneringSkill = raceDriver.CorneringSkill;
+            }
+        );
     }
 
     private async Task<RaceDriverStorageElement> FindFirstAsync(string name)
@@ -50,6 +52,7 @@ public class RaceDriversRepository : IRaceDriversRepository
         return (await sqlRepository.FindAsync(x => x.DriverName == name)).FirstOrDefault() ?? throw new DriverNotFoundException(name);
     }
 
-    private readonly ISqlRepository<RaceDriverStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly ISqlRepository<RaceDriverStorageElement> sqlRepository;
 }

@@ -20,12 +20,12 @@ public class TransactionsRepository : ITransactionsRepository
     public async Task<Transaction[]> ReadManyAsync(Guid userId, int skip = 0, int take = 50)
     {
         var result = await sqlRepository
-            .BuildCustomQuery()
-            .Where(x => x.UserId == userId)
-            .OrderByDescending(x => x.DateTime)
-            .Skip(skip)
-            .Take(take)
-            .ToArrayAsync();
+                           .BuildCustomQuery()
+                           .Where(x => x.UserId == userId)
+                           .OrderByDescending(x => x.DateTime)
+                           .Skip(skip)
+                           .Take(take)
+                           .ToArrayAsync();
 
         return mapper.Map<Transaction[]>(result);
     }
@@ -33,12 +33,12 @@ public class TransactionsRepository : ITransactionsRepository
     public async Task<Transaction[]> FindAsync(TransactionsFilter filter)
     {
         var result = await sqlRepository
-            .BuildCustomQuery()
-            .WhereIf(filter.UserId.HasValue, x => x.UserId == filter.UserId!.Value)
-            .WhereIf(filter.DateTimeRange?.From is not null, x => filter.DateTimeRange!.From!.Value <= x.DateTime)
-            .WhereIf(filter.DateTimeRange?.To is not null, x => x.DateTime <= filter.DateTimeRange!.To!.Value)
-            .OrderByDescending(x => x.DateTime)
-            .ToArrayAsync();
+                           .BuildCustomQuery()
+                           .WhereIf(filter.UserId.HasValue, x => x.UserId == filter.UserId!.Value)
+                           .WhereIf(filter.DateTimeRange?.From is not null, x => filter.DateTimeRange!.From!.Value <= x.DateTime)
+                           .WhereIf(filter.DateTimeRange?.To is not null, x => x.DateTime <= filter.DateTimeRange!.To!.Value)
+                           .OrderByDescending(x => x.DateTime)
+                           .ToArrayAsync();
 
         return mapper.Map<Transaction[]>(result);
     }
@@ -55,6 +55,7 @@ public class TransactionsRepository : ITransactionsRepository
         await sqlRepository.CreateAsync(storageElements);
     }
 
-    private readonly ISqlRepository<TransactionStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly ISqlRepository<TransactionStorageElement> sqlRepository;
 }

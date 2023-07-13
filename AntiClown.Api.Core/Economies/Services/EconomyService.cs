@@ -30,35 +30,41 @@ public class EconomyService : IEconomyService
         var economy = await ReadEconomyAsync(userId);
         economy.ScamCoins += diff;
         await economyRepository.UpdateAsync(economy);
-        await transactionsService.CreateAsync(new Transaction
-        {
-            Id = Guid.NewGuid(),
-            UserId = userId,
-            ScamCoinDiff = diff,
-            Reason = reason,
-            DateTime = DateTime.UtcNow,
-        });
+        await transactionsService.CreateAsync(
+            new Transaction
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                ScamCoinDiff = diff,
+                Reason = reason,
+                DateTime = DateTime.UtcNow,
+            }
+        );
     }
 
     public async Task UpdateScamCoinsForAllAsync(int diff, string reason)
     {
-        await economyRepository.UpdateAllAsync(new MassEconomyUpdate
-        {
-            ScamCoins = new MassScamCoinsUpdate
+        await economyRepository.UpdateAllAsync(
+            new MassEconomyUpdate
             {
-                ScamCoinsDiff = diff,
-                Reason = reason,
-            },
-        });
+                ScamCoins = new MassScamCoinsUpdate
+                {
+                    ScamCoinsDiff = diff,
+                    Reason = reason,
+                },
+            }
+        );
         var users = await usersService.ReadAllAsync();
-        var transactions = users.Select(x => new Transaction
-        {
-            Id = Guid.NewGuid(),
-            UserId = x.Id,
-            ScamCoinDiff = diff,
-            Reason = reason,
-            DateTime = DateTime.UtcNow,
-        }).ToArray();
+        var transactions = users.Select(
+            x => new Transaction
+            {
+                Id = Guid.NewGuid(),
+                UserId = x.Id,
+                ScamCoinDiff = diff,
+                Reason = reason,
+                DateTime = DateTime.UtcNow,
+            }
+        ).ToArray();
         await transactionsService.CreateAsync(transactions);
     }
 
@@ -92,21 +98,25 @@ public class EconomyService : IEconomyService
 
     public async Task ResetAllCoolDownsAsync()
     {
-        await economyRepository.UpdateAllAsync(new MassEconomyUpdate
-        {
-            NextTribute = DateTime.UtcNow,
-        });
+        await economyRepository.UpdateAllAsync(
+            new MassEconomyUpdate
+            {
+                NextTribute = DateTime.UtcNow,
+            }
+        );
     }
 
     public async Task ResetLohotronForAllAsync()
     {
-        await economyRepository.UpdateAllAsync(new MassEconomyUpdate
-        {
-            IsLohotronReady = true,
-        });
+        await economyRepository.UpdateAllAsync(
+            new MassEconomyUpdate
+            {
+                IsLohotronReady = true,
+            }
+        );
     }
 
     private readonly IEconomyRepository economyRepository;
-    private readonly IUsersService usersService;
     private readonly ITransactionsService transactionsService;
+    private readonly IUsersService usersService;
 }

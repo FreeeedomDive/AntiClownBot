@@ -17,13 +17,14 @@ var antiClownEntertainmentApiServiceUrl =
     builder.Configuration.GetSection("AntiClown").GetSection("EntertainmentApiUrl").Value!;
 
 builder.Services.AddTransient<IAntiClownApiClient>(_ => AntiClownApiClientProvider.Build(antiClownApiServiceUrl));
-builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(_ =>
-    AntiClownEntertainmentApiClientProvider.Build(antiClownEntertainmentApiServiceUrl));
+builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(
+    _ => AntiClownEntertainmentApiClientProvider.Build(antiClownEntertainmentApiServiceUrl)
+);
 
 var toolsTypes = AppDomain.CurrentDomain.GetAssemblies()
-    .SelectMany(x => x.GetTypes())
-    .Where(x => typeof(PeriodicJobWorker).IsAssignableFrom(x) && !x.IsAbstract)
-    .ToArray();
+                          .SelectMany(x => x.GetTypes())
+                          .Where(x => typeof(PeriodicJobWorker).IsAssignableFrom(x) && !x.IsAbstract)
+                          .ToArray();
 
 foreach (var toolType in toolsTypes)
 {

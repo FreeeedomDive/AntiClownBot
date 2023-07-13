@@ -2,12 +2,6 @@
 
 public class TransfusionEvent : CommonEventBase
 {
-    public override CommonEventType Type => CommonEventType.Transfusion;
-
-    public Guid DonorUserId { get; set; }
-    public Guid RecipientUserId { get; set; }
-    public int Exchange { get; set; }
-
     public static TransfusionEvent Create()
     {
         return new TransfusionEvent
@@ -17,4 +11,10 @@ public class TransfusionEvent : CommonEventBase
             EventDateTime = DateTime.UtcNow,
         };
     }
+
+    public override CommonEventType Type => CommonEventType.Transfusion;
+
+    public Guid DonorUserId { get; set; }
+    public Guid RecipientUserId { get; set; }
+    public int Exchange { get; set; }
 }

@@ -36,11 +36,13 @@ public class CommonEventsRepository : ICommonEventsRepository
     public async Task UpdateAsync(CommonEventBase commonEvent)
     {
         var storageElement = mapper.Map<CommonEventStorageElement>(commonEvent);
-        await sqlRepository.UpdateAsync(commonEvent.Id, x =>
-        {
-            x.Finished = storageElement.Finished;
-            x.Details = storageElement.Details;
-        });
+        await sqlRepository.UpdateAsync(
+            commonEvent.Id, x =>
+            {
+                x.Finished = storageElement.Finished;
+                x.Details = storageElement.Details;
+            }
+        );
     }
 
     private static CommonEventBase Deserialize(CommonEventStorageElement storageElement)
@@ -56,10 +58,11 @@ public class CommonEventsRepository : ICommonEventsRepository
             CommonEventType.Race => JsonConvert.DeserializeObject<RaceEvent>(serialized)!,
             CommonEventType.RemoveCoolDowns => JsonConvert.DeserializeObject<RemoveCoolDownsEvent>(serialized)!,
             CommonEventType.Transfusion => JsonConvert.DeserializeObject<TransfusionEvent>(serialized)!,
-            _ => throw new ArgumentOutOfRangeException(nameof(eventType))
+            _ => throw new ArgumentOutOfRangeException(nameof(eventType)),
         };
     }
 
-    private readonly ISqlRepository<CommonEventStorageElement> sqlRepository;
     private readonly IMapper mapper;
+
+    private readonly ISqlRepository<CommonEventStorageElement> sqlRepository;
 }
