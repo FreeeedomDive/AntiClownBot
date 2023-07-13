@@ -19,8 +19,8 @@ public class CommonEventsWorker : PeriodicJobWorker
         // calculate time for scheduler start
         // events will start at the half of odd hours
         // example: 9:30, 11:30, 13:30 etc.
-        const int eventStartHour = 0;   // 1 == odd, 0 = even
-        const int eventStartMinute = 1; // xx:30 minutes
+        const int eventStartHour = 1;    // 1 == odd, 0 = even
+        const int eventStartMinute = 30; // xx:30 minutes
         var now = DateTime.Now;
         var secondsToSleep = 60 - now.Second;
         var minutesToSleep = now.Minute < eventStartMinute
@@ -35,7 +35,7 @@ public class CommonEventsWorker : PeriodicJobWorker
 
     protected override async Task ExecuteIterationAsync()
     {
-        var activeEvents = await antiClownEntertainmentApiClient.CommonEvents.ActiveEventsIndex.ReadActiveEventsAsync();
+        var activeEvents = await antiClownEntertainmentApiClient.CommonEvents.ActiveCommonEventsIndex.ReadActiveEventsAsync();
         if (activeEvents.Length == 0)
         {
             return;

@@ -19,7 +19,7 @@ public class CommonEventsClient : ICommonEventsClient
         Race = new RaceEventClient(restClient);
         Transfusion = new TransfusionEventClient(restClient);
         Bedge = new BedgeEventClient(restClient);
-        ActiveEventsIndex = new ActiveEventsIndexClient(restClient);
+        ActiveCommonEventsIndex = new ActiveCommonEventsIndexClient(restClient);
     }
 
     public IGuessNumberEventClient GuessNumber { get; }
@@ -28,5 +28,5 @@ public class CommonEventsClient : ICommonEventsClient
     public IRaceEventClient Race { get; }
     public ITransfusionEventClient Transfusion { get; }
     public IBedgeEventClient Bedge { get; set; }
-    public IActiveEventsIndexClient ActiveEventsIndex { get; }
+    public IActiveCommonEventsIndexClient ActiveCommonEventsIndex { get; }
 }

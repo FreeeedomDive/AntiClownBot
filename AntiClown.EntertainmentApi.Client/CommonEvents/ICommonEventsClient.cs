@@ -16,5 +16,5 @@ public interface ICommonEventsClient
     IRaceEventClient Race { get; }
     ITransfusionEventClient Transfusion { get;  }
     IBedgeEventClient Bedge { get; set; }
-    IActiveEventsIndexClient ActiveEventsIndex { get; }
+    IActiveCommonEventsIndexClient ActiveCommonEventsIndex { get; }
 }

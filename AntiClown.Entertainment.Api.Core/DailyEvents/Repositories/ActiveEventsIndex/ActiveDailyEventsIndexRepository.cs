@@ -4,9 +4,9 @@ using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.ActiveEventsIndex;
 
-public class DailyActiveEventsIndexRepository : IDailyActiveEventsIndexRepository
+public class ActiveDailyEventsIndexRepository : IActiveDailyEventsIndexRepository
 {
-    public DailyActiveEventsIndexRepository(ISqlRepository<DailyActiveEventsIndexStorageElement> sqlRepository)
+    public ActiveDailyEventsIndexRepository(ISqlRepository<DailyActiveEventsIndexStorageElement> sqlRepository)
     {
         this.sqlRepository = sqlRepository;
     }

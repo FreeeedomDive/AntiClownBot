@@ -6,7 +6,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
       },
-      "commandLineArgs": "-tool ActualizeEventsIndexTool"
+      "commandLineArgs": "-tool ActualizeDailyEventsIndexTool"
     }
   }
 }

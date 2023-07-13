@@ -14,6 +14,7 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Services.RemoveCoolDowns;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Transfusion;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.ActiveEventsIndex;
+using AntiClown.Entertainment.Api.Core.DailyEvents.Services.ActiveEventsIndex;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Announce;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Messages;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.PaymentsAndResets;
@@ -71,7 +72,7 @@ public class Startup
         services.AddTransient<IRaceDriversRepository, RaceDriversRepository>();
         services.AddTransient<ICommonActiveEventsIndexRepository, CommonActiveEventsIndexRepository>();
         services.AddTransient<IDailyEventsRepository, DailyEventsRepository>();
-        services.AddTransient<IDailyActiveEventsIndexRepository, DailyActiveEventsIndexRepository>();
+        services.AddTransient<IActiveDailyEventsIndexRepository, ActiveDailyEventsIndexRepository>();
 
         // configure other stuff
         services.AddTransient<ICommonEventsMessageProducer, CommonEventsMessageProducer>();
@@ -90,6 +91,7 @@ public class Startup
         services.AddTransient<IActiveEventsIndexService, ActiveEventsIndexService>();
         services.AddTransient<IAnnounceEventService, AnnounceEventService>();
         services.AddTransient<IPaymentsAndResetsService, PaymentsAndResetsService>();
+        services.AddTransient<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
 
         // configure HangFire
         services.AddHangfire(config =>

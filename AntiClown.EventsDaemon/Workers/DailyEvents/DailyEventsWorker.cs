@@ -1,37 +1,64 @@
-﻿namespace AntiClown.EventsDaemon.Workers.DailyEvents;
+﻿using AntiClown.EntertainmentApi.Client;
+using AntiClown.EntertainmentApi.Dto.DailyEvents;
+
+namespace AntiClown.EventsDaemon.Workers.DailyEvents;
 
 public class DailyEventsWorker : PeriodicJobWorker
 {
+    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
+
     public DailyEventsWorker(
+        IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         ILogger<DailyEventsWorker> logger
     ) : base(logger, ShortIterationTime)
     {
+        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
     }
 
     protected override int CalculateTimeBeforeStart()
     {
         // edit this
-        const int dailyEventStartHour = 24;
+        // TODO to settings
+        const int dailyEventStartHour = 00;
         const int dailyEventStartMinute = 00;
 
-        const int dailyEventStartHourUtc = dailyEventStartHour - 5;
-        var now = DateTime.UtcNow;
-        var diff = new TimeSpan(
-            hours: now.Hour >= dailyEventStartHourUtc
-                ? 24 - (now.Hour - dailyEventStartHourUtc) - 1
-                : dailyEventStartHourUtc - now.Hour - 1,
-            minutes: now.Minute >= dailyEventStartMinute
-                ? 60 - (now.Minute - dailyEventStartMinute)
-                : dailyEventStartMinute - now.Minute,
-            seconds: 0
-        );
+        const int utcDiff = 5;
 
-        return (int)diff.TotalMilliseconds;
+        var nowUtc = DateTime.UtcNow;
+        var scheduledTime = new DateTime(nowUtc.Year, nowUtc.Month, nowUtc.Day, 24 + dailyEventStartHour - utcDiff, dailyEventStartMinute, 0);
+        if (nowUtc > scheduledTime)
+        {
+            scheduledTime = scheduledTime.AddDays(1);
+        }
+
+        return (int)(scheduledTime - nowUtc).TotalMilliseconds;
     }
 
-    protected override Task ExecuteIterationAsync()
+    protected override async Task ExecuteIterationAsync()
     {
-        throw new NotImplementedException();
+        var activeEvents = await antiClownEntertainmentApiClient.DailyEvents.ActiveDailyEventsIndex.ReadActiveEventsAsync();
+        if (activeEvents.Length == 0)
+        {
+            return;
+        }
+
+        foreach (var activeEventType in activeEvents)
+        {
+            switch (activeEventType)
+            {
+                case DailyEventTypeDto.Announce:
+                    await antiClownEntertainmentApiClient.DailyEvents.Announce.StartNewAsync();
+                    break;
+                case DailyEventTypeDto.PaymentsAndResets:
+                    await antiClownEntertainmentApiClient.DailyEvents.PaymentsAndResets.StartNewAsync();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        nameof(activeEventType),
+                        $"Found unknown for {WorkerName} type of event. Consider adding an execution path for this type of event."
+                    );
+            }
+        }
     }
 
     protected override string WorkerName => nameof(DailyEventsWorker);

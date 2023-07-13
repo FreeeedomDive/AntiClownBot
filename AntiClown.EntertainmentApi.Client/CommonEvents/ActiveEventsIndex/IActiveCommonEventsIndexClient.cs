@@ -2,7 +2,7 @@
 
 namespace AntiClown.EntertainmentApi.Client.CommonEvents.ActiveEventsIndex;
 
-public interface IActiveEventsIndexClient
+public interface IActiveCommonEventsIndexClient
 {
     Task<Dictionary<CommonEventTypeDto, bool>> ReadAllEventTypesAsync();
     Task<CommonEventTypeDto[]> ReadActiveEventsAsync();

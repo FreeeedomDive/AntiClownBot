@@ -5,9 +5,9 @@ using RestSharp;
 
 namespace AntiClown.EntertainmentApi.Client.CommonEvents.ActiveEventsIndex;
 
-public class ActiveEventsIndexClient : IActiveEventsIndexClient
+public class ActiveCommonEventsIndexClient : IActiveCommonEventsIndexClient
 {
-    public ActiveEventsIndexClient(RestClient restClient)
+    public ActiveCommonEventsIndexClient(RestClient restClient)
     {
         this.restClient = restClient;
     }
@@ -29,7 +29,7 @@ public class ActiveEventsIndexClient : IActiveEventsIndexClient
     public async Task CreateAsync(CommonEventTypeDto eventType, bool isActiveByDefault)
     {
         var request = new RestRequest(ControllerUrl);
-        request.AddJsonBody(new ActiveEventIndexDto
+        request.AddJsonBody(new ActiveCommonEventIndexDto
         {
             EventType = eventType,
             IsActive = isActiveByDefault
@@ -41,7 +41,7 @@ public class ActiveEventsIndexClient : IActiveEventsIndexClient
     public async Task UpdateAsync(CommonEventTypeDto eventType, bool isActive)
     {
         var request = new RestRequest(ControllerUrl);
-        request.AddJsonBody(new ActiveEventIndexDto
+        request.AddJsonBody(new ActiveCommonEventIndexDto
         {
             EventType = eventType,
             IsActive = isActive

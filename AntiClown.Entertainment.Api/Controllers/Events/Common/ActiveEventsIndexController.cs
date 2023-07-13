@@ -34,16 +34,16 @@ public class ActiveEventsIndexController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] ActiveEventIndexDto activeEventIndexDto)
+    public async Task<ActionResult> Create([FromBody] ActiveCommonEventIndexDto activeCommonEventIndexDto)
     {
-        await activeEventsIndexService.CreateAsync(mapper.Map<CommonEventType>(activeEventIndexDto.EventType), activeEventIndexDto.IsActive);
+        await activeEventsIndexService.CreateAsync(mapper.Map<CommonEventType>(activeCommonEventIndexDto.EventType), activeCommonEventIndexDto.IsActive);
         return NoContent();
     }
 
     [HttpPut]
-    public async Task<ActionResult> Update([FromBody] ActiveEventIndexDto activeEventIndexDto)
+    public async Task<ActionResult> Update([FromBody] ActiveCommonEventIndexDto activeCommonEventIndexDto)
     {
-        await activeEventsIndexService.UpdateAsync(mapper.Map<CommonEventType>(activeEventIndexDto.EventType), activeEventIndexDto.IsActive);
+        await activeEventsIndexService.UpdateAsync(mapper.Map<CommonEventType>(activeCommonEventIndexDto.EventType), activeCommonEventIndexDto.IsActive);
         return NoContent();
     }
 
