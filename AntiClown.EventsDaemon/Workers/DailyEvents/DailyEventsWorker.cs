@@ -1,26 +1,29 @@
 ﻿using AntiClown.EntertainmentApi.Client;
 using AntiClown.EntertainmentApi.Dto.DailyEvents;
+using AntiClown.EventsDaemon.Options;
+using Microsoft.Extensions.Options;
 
 namespace AntiClown.EventsDaemon.Workers.DailyEvents;
 
 public class DailyEventsWorker : PeriodicJobWorker
 {
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 
     public DailyEventsWorker(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+        IOptions<DailyEventsWorkerOptions> dailyEventsWorkerOptions,
         ILogger<DailyEventsWorker> logger
-    ) : base(logger, ShortIterationTime)
+    ) : base(logger, dailyEventsWorkerOptions.Value.IterationTime)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
+        options = dailyEventsWorkerOptions.Value;
     }
 
     protected override int CalculateTimeBeforeStart()
     {
         // edit this
         // TODO to settings
-        const int dailyEventStartHour = 00;
-        const int dailyEventStartMinute = 00;
+        var dailyEventStartHour = options.StartHour;
+        var dailyEventStartMinute = options.StartMinute;
 
         const int utcDiff = 5;
 
@@ -63,15 +66,6 @@ public class DailyEventsWorker : PeriodicJobWorker
 
     protected override string WorkerName => nameof(DailyEventsWorker);
 
-    /// <summary>
-    ///     Real worker timespan
-    /// </summary>
-    private static readonly TimeSpan RealWorkerIterationTime =
-        new(days: 0, hours: 2, minutes: 0, seconds: 0, milliseconds: 500);
-
-    /// <summary>
-    ///     Worker timespan for tests
-    /// </summary>
-    private static readonly TimeSpan ShortIterationTime =
-        new(days: 0, hours: 0, minutes: 5, seconds: 00, milliseconds: 0);
+    private readonly DailyEventsWorkerOptions options;
+    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

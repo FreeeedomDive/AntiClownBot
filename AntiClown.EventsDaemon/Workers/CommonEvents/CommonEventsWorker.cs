@@ -1,6 +1,8 @@
 ﻿using AntiClown.EntertainmentApi.Client;
 using AntiClown.EntertainmentApi.Dto.CommonEvents;
+using AntiClown.EventsDaemon.Options;
 using AntiClown.Tools.Utility.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace AntiClown.EventsDaemon.Workers.CommonEvents;
 
@@ -8,19 +10,18 @@ public class CommonEventsWorker : PeriodicJobWorker
 {
     public CommonEventsWorker(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+        IOptions<CommonEventsWorkerOptions> commonEventsWorkerOptions,
         ILogger<CommonEventsWorker> logger
-    ) : base(logger, ShortIterationTime)
+    ) : base(logger, commonEventsWorkerOptions.Value.IterationTime)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
+        options = commonEventsWorkerOptions.Value;
     }
 
     protected override int CalculateTimeBeforeStart()
     {
-        // calculate time for scheduler start
-        // events will start at the half of odd hours
-        // example: 9:30, 11:30, 13:30 etc.
-        const int eventStartHour = 1;    // 1 == odd, 0 = even
-        const int eventStartMinute = 30; // xx:30 minutes
+        var eventStartHour = options.StartHour;
+        var eventStartMinute = options.StartMinute;
         var now = DateTime.Now;
         var secondsToSleep = 60 - now.Second;
         var minutesToSleep = now.Minute < eventStartMinute
@@ -35,7 +36,8 @@ public class CommonEventsWorker : PeriodicJobWorker
 
     protected override async Task ExecuteIterationAsync()
     {
-        var activeEvents = await antiClownEntertainmentApiClient.CommonEvents.ActiveCommonEventsIndex.ReadActiveEventsAsync();
+        var activeEvents =
+            await antiClownEntertainmentApiClient.CommonEvents.ActiveCommonEventsIndex.ReadActiveEventsAsync();
         if (activeEvents.Length == 0)
         {
             return;
@@ -64,17 +66,6 @@ public class CommonEventsWorker : PeriodicJobWorker
 
     protected override string WorkerName => nameof(CommonEventsWorker);
 
+    private readonly CommonEventsWorkerOptions options;
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-
-    /// <summary>
-    ///     Real worker timespan
-    /// </summary>
-    private static readonly TimeSpan RealWorkerIterationTime =
-        new(days: 0, hours: 2, minutes: 0, seconds: 0, milliseconds: 500);
-
-    /// <summary>
-    ///     Worker timespan for tests
-    /// </summary>
-    private static readonly TimeSpan ShortIterationTime =
-        new(days: 0, hours: 0, minutes: 1, seconds: 30, milliseconds: 0);
 }

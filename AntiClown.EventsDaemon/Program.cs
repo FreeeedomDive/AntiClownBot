@@ -2,17 +2,23 @@ using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
 using AntiClown.EntertainmentApi.Client;
 using AntiClown.EntertainmentApi.Client.Configuration;
+using AntiClown.EventsDaemon.Options;
 using AntiClown.EventsDaemon.Workers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLogging();
 
+builder.Services.Configure<CommonEventsWorkerOptions>(builder.Configuration.GetSection("CommonEventsWorker"));
+builder.Services.Configure<DailyEventsWorkerOptions>(builder.Configuration.GetSection("DailyEventsWorker"));
+
 var antiClownApiServiceUrl = builder.Configuration.GetSection("AntiClown").GetSection("ApiUrl").Value!;
-var antiClownEntertainmentApiServiceUrl = builder.Configuration.GetSection("AntiClown").GetSection("EntertainmentApiUrl").Value!;
+var antiClownEntertainmentApiServiceUrl =
+    builder.Configuration.GetSection("AntiClown").GetSection("EntertainmentApiUrl").Value!;
 
 builder.Services.AddTransient<IAntiClownApiClient>(_ => AntiClownApiClientProvider.Build(antiClownApiServiceUrl));
-builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(_ => AntiClownEntertainmentApiClientProvider.Build(antiClownEntertainmentApiServiceUrl));
+builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(_ =>
+    AntiClownEntertainmentApiClientProvider.Build(antiClownEntertainmentApiServiceUrl));
 
 var toolsTypes = AppDomain.CurrentDomain.GetAssemblies()
     .SelectMany(x => x.GetTypes())
