@@ -48,6 +48,7 @@ public class ItemsValidator : IItemsValidator
         {
             return;
         }
+
         var userEconomy = await economyService.ReadEconomyAsync(userId);
         var cost = item.Price * Constants.SellItemPercent / 100;
         if (userEconomy.ScamCoins < cost)

@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -7,13 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-      <PackageReference Include="RestSharp" Version="108.0.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2"/>
+        <PackageReference Include="RestSharp" Version="108.0.3"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AntiClown.Api.Dto\AntiClown.Api.Dto.csproj" />
-      <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj" />
+        <ProjectReference Include="..\AntiClown.Api.Dto\AntiClown.Api.Dto.csproj"/>
+        <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj"/>
     </ItemGroup>
-
 </Project>

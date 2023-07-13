@@ -5,7 +5,7 @@ using AutoMapper;
 
 namespace AntiClown.Api.Core.Mappings;
 
-public class EconomiesMapperProfile: Profile
+public class EconomiesMapperProfile : Profile
 {
     public EconomiesMapperProfile()
     {

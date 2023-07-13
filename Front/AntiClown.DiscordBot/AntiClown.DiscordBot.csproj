@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
@@ -7,15 +6,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MassTransit" Version="8.0.15" />
-      <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.15" />
+        <PackageReference Include="MassTransit" Version="8.0.15"/>
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.15"/>
     </ItemGroup>
-
 
     <ItemGroup>
-      <ProjectReference Include="..\..\AntiClown.Api.Client\AntiClown.Api.Client.csproj" />
-      <ProjectReference Include="..\..\AntiClown.EntertainmentApi.Client\AntiClown.EntertainmentApi.Client.csproj" />
-      <ProjectReference Include="..\..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj" />
+        <ProjectReference Include="..\..\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
+        <ProjectReference Include="..\..\AntiClown.EntertainmentApi.Client\AntiClown.EntertainmentApi.Client.csproj"/>
+        <ProjectReference Include="..\..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj"/>
     </ItemGroup>
-
 </Project>

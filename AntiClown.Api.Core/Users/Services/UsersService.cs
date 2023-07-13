@@ -9,6 +9,7 @@ public class UsersService : IUsersService
     {
         this.usersRepository = usersRepository;
     }
+
     public async Task<User[]> ReadAllAsync()
     {
         return await usersRepository.ReadAllAsync();
@@ -23,6 +24,6 @@ public class UsersService : IUsersService
     {
         return await usersRepository.FindAsync(filter);
     }
-    
+
     private readonly IUsersRepository usersRepository;
 }

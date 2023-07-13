@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -7,19 +6,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="12.0.1" />
-        <PackageReference Include="Hangfire" Version="1.8.3" />
-        <PackageReference Include="MassTransit" Version="8.0.15" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-        <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.14" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+        <PackageReference Include="AutoMapper" Version="12.0.1"/>
+        <PackageReference Include="Hangfire" Version="1.8.3"/>
+        <PackageReference Include="MassTransit" Version="8.0.15"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2"/>
+        <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.14"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AntiClown.Api.Dto\AntiClown.Api.Dto.csproj" />
-      <ProjectReference Include="..\AntiClown.Core\AntiClown.Core.csproj" />
-      <ProjectReference Include="..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj" />
-      <ProjectReference Include="..\Utility\Utility.csproj" />
+        <ProjectReference Include="..\AntiClown.Api.Dto\AntiClown.Api.Dto.csproj"/>
+        <ProjectReference Include="..\AntiClown.Core\AntiClown.Core.csproj"/>
+        <ProjectReference Include="..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj"/>
+        <ProjectReference Include="..\Utility\Utility.csproj"/>
     </ItemGroup>
-
 </Project>

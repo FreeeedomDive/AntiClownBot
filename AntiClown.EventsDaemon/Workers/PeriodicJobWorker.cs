@@ -10,7 +10,10 @@ public abstract class PeriodicJobWorker
 
     public async Task StartAsync()
     {
-        await WaitForDelayBeforeStart();
+        var delay = CalculateTimeBeforeStart();
+        Logger.LogInformation("{WorkerName} will start in {delay}", WorkerName, TimeSpan.FromMilliseconds(delay));
+        await Task.Delay(delay);
+
         var currentIteration = 1;
         timer = new PeriodicTimer(iterationTime);
         await ExecuteIterationWithLogAsync(currentIteration);
@@ -35,7 +38,7 @@ public abstract class PeriodicJobWorker
     }
 
     protected ILogger Logger { get; }
-    protected abstract Task WaitForDelayBeforeStart();
+    protected abstract int CalculateTimeBeforeStart();
     protected abstract Task ExecuteIterationAsync();
     protected abstract string WorkerName { get; }
 
