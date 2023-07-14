@@ -19,15 +19,13 @@ public class DailyEventsWorker : PeriodicJobWorker
 
     protected override int CalculateTimeBeforeStart()
     {
-        // edit this
-        // TODO to settings
         var dailyEventStartHour = options.StartHour;
         var dailyEventStartMinute = options.StartMinute;
 
         const int utcDiff = 5;
 
         var nowUtc = DateTime.UtcNow;
-        var scheduledTime = new DateTime(nowUtc.Year, nowUtc.Month, nowUtc.Day, 24 + dailyEventStartHour - utcDiff, dailyEventStartMinute, 0);
+        var scheduledTime = new DateTime(nowUtc.Year, nowUtc.Month, nowUtc.Day, (24 + dailyEventStartHour - utcDiff) % 24, dailyEventStartMinute, 0);
         if (nowUtc > scheduledTime)
         {
             scheduledTime = scheduledTime.AddDays(1);

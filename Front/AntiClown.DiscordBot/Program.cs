@@ -1,6 +1,7 @@
 using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
 using AntiClown.DiscordBot.Consumers.Events.Common;
+using AntiClown.DiscordBot.Consumers.Events.Daily;
 using AntiClown.EntertainmentApi.Client;
 using AntiClown.EntertainmentApi.Client.Configuration;
 using AntiClown.EntertainmentApi.Dto.CommonEvents.Bedge;
@@ -9,6 +10,8 @@ using AntiClown.EntertainmentApi.Dto.CommonEvents.Lottery;
 using AntiClown.EntertainmentApi.Dto.CommonEvents.Race;
 using AntiClown.EntertainmentApi.Dto.CommonEvents.RemoveCoolDowns;
 using AntiClown.EntertainmentApi.Dto.CommonEvents.Transfusion;
+using AntiClown.EntertainmentApi.Dto.DailyEvents.Announce;
+using AntiClown.EntertainmentApi.Dto.DailyEvents.ResetsAndPayments;
 using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +30,9 @@ builder.Services.AddTransient<ICommonEventConsumer<RaceEventDto>, RaceEventConsu
 builder.Services.AddTransient<ICommonEventConsumer<RemoveCoolDownsEventDto>, RemoveCoolDownsEventConsumer>();
 builder.Services.AddTransient<ICommonEventConsumer<TransfusionEventDto>, TransfusionEventConsumer>();
 builder.Services.AddTransient<ICommonEventConsumer<BedgeEventDto>, BedgeEventConsumer>();
+
+builder.Services.AddTransient<IDailyEventConsumer<AnnounceEventDto>, AnnounceEventConsumer>();
+builder.Services.AddTransient<IDailyEventConsumer<ResetsAndPaymentsEventDto>, ResetsAndPaymentsConsumer>();
 
 var rabbitMqSection = builder.Configuration.GetSection("RabbitMQ");
 builder.Services.AddMassTransit(

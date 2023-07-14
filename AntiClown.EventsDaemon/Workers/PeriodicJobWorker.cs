@@ -14,26 +14,44 @@ public abstract class PeriodicJobWorker
         Logger.LogInformation("{WorkerName} will start in {delay}", WorkerName, TimeSpan.FromMilliseconds(delay));
         await Task.Delay(delay);
 
-        var currentIteration = 1;
+        currentIteration = 1;
         timer = new PeriodicTimer(iterationTime);
-        await ExecuteIterationWithLogAsync(currentIteration);
+        await ExecuteIterationWithLogAsync();
         while (await timer.WaitForNextTickAsync())
         {
-            await ExecuteIterationWithLogAsync(++currentIteration);
+            currentIteration++;
+            await ExecuteIterationWithLogAsync();
         }
     }
 
-    private async Task ExecuteIterationWithLogAsync(int currentIteration)
+    private async Task ExecuteIterationWithLogAsync()
     {
-        Logger.LogInformation("{WorkerName} starts iteration {i} at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
+        Logger.LogInformation("{WorkerName} Iteration {i} START at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
         try
         {
             await ExecuteIterationAsync();
-            Logger.LogInformation("{WorkerName} succeeded iteration {i} at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
+            successfulIterations++;
+            Logger.LogInformation(
+                "{WorkerName} Iteration {i} SUCCESS at {startTime} ({success} succeeded, {failed} failed)",
+                WorkerName,
+                currentIteration,
+                DateTime.UtcNow,
+                successfulIterations,
+                failedIterations
+            );
         }
         catch (Exception e)
         {
-            Logger.LogError("{WorkerName} FAILED iteration {i} at {startTime}\n{exception}", WorkerName, currentIteration, DateTime.UtcNow, e);
+            failedIterations++;
+            Logger.LogError(
+                "{WorkerName} Iteration {i} FAIL at {startTime} ({success} succeeded, {failed} failed)\n{exception}",
+                WorkerName,
+                currentIteration,
+                DateTime.UtcNow,
+                successfulIterations,
+                failedIterations,
+                e
+            );
         }
     }
 
@@ -43,6 +61,9 @@ public abstract class PeriodicJobWorker
     protected ILogger Logger { get; }
     protected abstract string WorkerName { get; }
     private readonly TimeSpan iterationTime;
+    private int currentIteration;
+    private int failedIterations;
+    private int successfulIterations;
 
     private PeriodicTimer timer;
 }

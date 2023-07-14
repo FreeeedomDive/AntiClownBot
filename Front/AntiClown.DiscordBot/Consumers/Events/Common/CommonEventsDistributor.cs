@@ -54,7 +54,7 @@ public class CommonEventsDistributor : IConsumer<CommonEventMessageDto>
                 break;
             default:
                 logger.LogWarning(
-                    "Found an unknown event {context.Message.EventType} with id {eventId} in {ConsumerName}",
+                    "Found an unknown event {eventType} with id {eventId} in {ConsumerName}",
                     context.Message.EventType,
                     context.Message.EventId,
                     nameof(CommonEventsDistributor)
@@ -64,7 +64,6 @@ public class CommonEventsDistributor : IConsumer<CommonEventMessageDto>
     }
 
     private readonly ICommonEventConsumer<BedgeEventDto> bedgeEventConsumer;
-
     private readonly ICommonEventConsumer<GuessNumberEventDto> guessNumberEventConsumer;
     private readonly ILogger<CommonEventsDistributor> logger;
     private readonly ICommonEventConsumer<LotteryEventDto> lotteryEventConsumer;
