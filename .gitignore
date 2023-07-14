@@ -15,3 +15,8 @@ AntiClown.Tools/appsettings.Production.json
 AntiClown.EventsDaemon/appsettings.Production.json
 Front/AntiClown.DiscordBot/appsettings.Production.json
 AntiClown.DiscordBot/appsettings.Production.json
+AntiClown.Api/appsettings.Local.json
+AntiClown.DiscordBot/appsettings.Local.json
+AntiClown.Entertainment.Api/appsettings.Local.json
+AntiClown.EventsDaemon/appsettings.Local.json
+AntiClown.Tools/appsettings.Local.json
