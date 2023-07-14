@@ -2,6 +2,7 @@
 cd ../k8s
 kubectl apply -f new-anticlown-api-deployment.yaml
 kubectl apply -f new-anticlown-entertainment-api-deployment.yaml
-kubectl apply -f new-anticlown-api-deployment.yaml
+kubectl apply -f new-anticlown-events-daemon-deployment.yaml
 kubectl apply -f new-anticlown-discord-bot-deployment.yaml
+kubectl apply -f new-anticlown-nginx-deployment.yaml
 pause
