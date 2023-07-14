@@ -77,6 +77,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.EventsDaemon", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.DiscordBot", "AntiClown.DiscordBot\AntiClown.DiscordBot.csproj", "{43016CDF-CC0B-42E6-9059-382DB69E3554}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Api.PostgreSqlMigrationsApplier", "AntiClown.Api.PostgreSqlMigrationsApplier\AntiClown.Api.PostgreSqlMigrationsApplier.csproj", "{680B283F-12C0-41C0-8C25-6C27CFB13842}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier", "AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier\AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier.csproj", "{1A766712-3D9A-4B6C-B9E6-B566F21FA004}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -187,6 +191,14 @@ Global
 		{43016CDF-CC0B-42E6-9059-382DB69E3554}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43016CDF-CC0B-42E6-9059-382DB69E3554}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43016CDF-CC0B-42E6-9059-382DB69E3554}.Release|Any CPU.Build.0 = Release|Any CPU
+		{680B283F-12C0-41C0-8C25-6C27CFB13842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{680B283F-12C0-41C0-8C25-6C27CFB13842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{680B283F-12C0-41C0-8C25-6C27CFB13842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{680B283F-12C0-41C0-8C25-6C27CFB13842}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A766712-3D9A-4B6C-B9E6-B566F21FA004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A766712-3D9A-4B6C-B9E6-B566F21FA004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A766712-3D9A-4B6C-B9E6-B566F21FA004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A766712-3D9A-4B6C-B9E6-B566F21FA004}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -223,5 +235,7 @@ Global
 		{50085F60-694C-42BB-A33C-D90E547E14A2} = {090A7686-8D18-42F2-BC5E-6D8EC65A3685}
 		{05EA1462-CC07-45DD-9782-13CC32321783} = {4453D483-C837-49E7-A447-D9CF95F7CA9E}
 		{43016CDF-CC0B-42E6-9059-382DB69E3554} = {4453D483-C837-49E7-A447-D9CF95F7CA9E}
+		{680B283F-12C0-41C0-8C25-6C27CFB13842} = {090A7686-8D18-42F2-BC5E-6D8EC65A3685}
+		{1A766712-3D9A-4B6C-B9E6-B566F21FA004} = {090A7686-8D18-42F2-BC5E-6D8EC65A3685}
 	EndGlobalSection
 EndGlobal

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: new-anticlown-entertainment-api-deployment
+  name: anticlown-entertainment-api-deployment
 spec:
   replicas: 1
   selector:

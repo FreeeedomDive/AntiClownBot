@@ -1,0 +1,11 @@
+﻿apiVersion: batch/v1
+kind: Job
+metadata:
+  name: anticlown-api-postgresql-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: anticlownapipostgresql
+          image: localhost:5000/anticlownapipostgresql
+      restartPolicy: Never

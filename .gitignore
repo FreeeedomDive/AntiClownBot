@@ -20,3 +20,7 @@ AntiClown.DiscordBot/appsettings.Local.json
 AntiClown.Entertainment.Api/appsettings.Local.json
 AntiClown.EventsDaemon/appsettings.Local.json
 AntiClown.Tools/appsettings.Local.json
+AntiClown.Api.PostgreSqlMigrationsApplier/appsettings.Local.json
+AntiClown.Api.PostgreSqlMigrationsApplier/appsettings.Production.json
+AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier/appsettings.Local.json
+AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier/appsettings.Production.json

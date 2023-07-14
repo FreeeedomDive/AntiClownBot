@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: anticlownapi
-          image: localhost:5000/anticlownapi:{{TAG_NUMBER}}
+          image: localhost:5000/anticlownapi
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production
@@ -23,7 +23,7 @@ spec:
             - name: ASPNETCORE_KESTREL__Certificates__Default__Password
               value: aspnet
             - name: ASPNETCORE_URLS
-              value: https://+:6240
+              value: https://+:7221
             - name: TZ
               value: Asia/Yekaterinburg
 ---
@@ -38,5 +38,5 @@ spec:
   ports:
     - name: anticlownapi
       protocol: TCP
-      port: 6240
-      targetPort: 6240
+      port: 7221
+      targetPort: 7221

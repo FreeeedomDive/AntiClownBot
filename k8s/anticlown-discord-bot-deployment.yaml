@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: new-anticlown-events-daemon-deployment
+  name: anticlown-discord-bot-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: anticlowneventsdaemon
+      app: anticlowndiscordbot
   template:
     metadata:
       labels:
-        app: anticlowneventsdaemon
+        app: anticlowndiscordbot
     spec:
       containers:
-        - name: anticlowneventsdaemon
-          image: localhost:5000/anticlowneventsdaemon
+        - name: anticlowndiscordbot
+          image: localhost:5000/anticlowndiscordbot
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production
