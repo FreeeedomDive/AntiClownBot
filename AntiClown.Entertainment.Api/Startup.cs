@@ -25,6 +25,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SqlRepositoryBase.Configuration.Extensions;
 
 namespace AntiClown.Entertainment.Api;
@@ -43,9 +44,9 @@ public class Startup
         // configure AutoMapper
         services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
-        var postgresSection = Configuration.GetSection("PostgreSql");
-        services.Configure<DatabaseOptions>(postgresSection);
-        var rabbitMqSection = Configuration.GetSection("RabbitMQ");
+        services.Configure<DatabaseOptions>(Configuration.GetSection("PostgreSql"));
+        services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMQ"));
+        services.Configure<AntiClownApiConnectionOptions>(Configuration.GetSection("AntiClownApi"));
 
         // configure database
         services.AddTransient<DbContext, DatabaseContext>();
@@ -59,12 +60,13 @@ public class Startup
                 massTransitConfiguration.UsingRabbitMq(
                     (context, rabbitMqConfiguration) =>
                     {
+                        var rabbitMqOptions = context.GetService<IOptions<RabbitMqOptions>>()!.Value;
                         rabbitMqConfiguration.ConfigureEndpoints(context);
                         rabbitMqConfiguration.Host(
-                            rabbitMqSection["Host"], "/", hostConfiguration =>
+                            rabbitMqOptions.Host, "/", hostConfiguration =>
                             {
-                                hostConfiguration.Username(rabbitMqSection["Login"]);
-                                hostConfiguration.Password(rabbitMqSection["Password"]);
+                                hostConfiguration.Username(rabbitMqOptions.Login);
+                                hostConfiguration.Password(rabbitMqOptions.Password);
                             }
                         );
                     }
@@ -81,10 +83,12 @@ public class Startup
         services.AddTransient<IActiveDailyEventsIndexRepository, ActiveDailyEventsIndexRepository>();
 
         // configure other stuff
+        services.AddTransient<IAntiClownApiClient>(
+            serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetService<IOptions<AntiClownApiConnectionOptions>>()?.Value.ServiceUrl)
+        );
         services.AddTransient<ICommonEventsMessageProducer, CommonEventsMessageProducer>();
         services.AddTransient<IDailyEventsMessageProducer, DailyEventsMessageProducer>();
         services.AddTransient<IScheduler, HangfireScheduler>();
-        services.AddTransient<IAntiClownApiClient>(_ => AntiClownApiClientProvider.Build());
         services.AddTransient<IRaceGenerator, RaceGenerator>();
 
         // configure services
@@ -101,8 +105,8 @@ public class Startup
 
         // configure HangFire
         services.AddHangfire(
-            config =>
-                config.UsePostgreSqlStorage(postgresSection["ConnectionString"])
+            (serviceProvider, config) =>
+                config.UsePostgreSqlStorage(serviceProvider.GetService<IOptions<DatabaseOptions>>()!.Value.ConnectionString)
         );
         services.AddHangfireServer();
 

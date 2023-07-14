@@ -1,5 +1,5 @@
 ﻿using AntiClown.Api.Client;
-using AntiClown.EntertainmentApi.Client;
+using AntiClown.Entertainment.Api.Client;
 using AntiClown.Tools.Utility.Extensions;
 using Newtonsoft.Json;
 

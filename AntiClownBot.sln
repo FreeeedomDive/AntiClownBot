@@ -59,7 +59,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{5E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Messages.Dto", "AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj", "{4C2778B5-1F1F-4A76-A50F-36B4E7A0E108}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.EntertainmentApi.Dto", "AntiClown.EntertainmentApi.Dto\AntiClown.EntertainmentApi.Dto.csproj", "{1A95E74B-2C86-43F3-B14E-9CB288F04C73}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Entertainment.Api.Dto", "AntiClown.Entertainment.Api.Dto\AntiClown.Entertainment.Api.Dto.csproj", "{1A95E74B-2C86-43F3-B14E-9CB288F04C73}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Core.Dto", "AntiClown.Core.Dto\AntiClown.Core.Dto.csproj", "{49475833-7219-4A6D-B5BD-3573A5D4C11F}"
 EndProject
@@ -67,7 +67,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Core", "AntiClown
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Api.Client", "AntiClown.Api.Client\AntiClown.Api.Client.csproj", "{458FB053-3F88-4D53-911E-CD8C79B4A4CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.EntertainmentApi.Client", "AntiClown.EntertainmentApi.Client\AntiClown.EntertainmentApi.Client.csproj", "{AF15C166-36C9-48E4-B1E0-B152A6CFAADB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Entertainment.Api.Client", "AntiClown.Entertainment.Api.Client\AntiClown.Entertainment.Api.Client.csproj", "{AF15C166-36C9-48E4-B1E0-B152A6CFAADB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Entertainment.Api.Core.IntegrationTests", "Tests\AntiClown.Entertainment.Api.Core.IntegrationTests\AntiClown.Entertainment.Api.Core.IntegrationTests.csproj", "{36A9BA7A-E331-44F9-8907-C690A95B4F66}"
 EndProject
@@ -75,7 +75,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Tools", "AntiClow
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.EventsDaemon", "AntiClown.EventsDaemon\AntiClown.EventsDaemon.csproj", "{05EA1462-CC07-45DD-9782-13CC32321783}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.DiscordBot", "Front\AntiClown.DiscordBot\AntiClown.DiscordBot.csproj", "{43016CDF-CC0B-42E6-9059-382DB69E3554}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.DiscordBot", "AntiClown.DiscordBot\AntiClown.DiscordBot.csproj", "{43016CDF-CC0B-42E6-9059-382DB69E3554}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

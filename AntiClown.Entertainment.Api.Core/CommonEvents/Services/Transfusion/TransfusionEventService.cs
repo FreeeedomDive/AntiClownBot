@@ -4,7 +4,7 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Transfusion;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
-using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
+using AntiClown.Entertainment.Api.Dto.Exceptions.CommonEvents;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
 

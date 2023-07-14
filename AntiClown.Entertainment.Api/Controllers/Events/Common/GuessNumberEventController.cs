@@ -1,6 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.GuessNumber;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

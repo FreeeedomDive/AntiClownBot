@@ -4,7 +4,7 @@ using AntiClown.Entertainment.Api.Core.DailyEvents.Domain;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Domain.Announce;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Messages;
-using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
+using AntiClown.Entertainment.Api.Dto.Exceptions.CommonEvents;
 
 namespace AntiClown.Entertainment.Api.Core.DailyEvents.Services.Announce;
 

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-anticlown-entertainment-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anticlownentertainmentapi
+  template:
+    metadata:
+      labels:
+        app: anticlownentertainmentapi
+    spec:
+      containers:
+        - name: anticlownentertainmentapi
+          image: localhost:5000/anticlownentertainmentapi
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+              value: /certificate/https/certificate.pfx
+            - name: ASPNETCORE_KESTREL__Certificates__Default__Password
+              value: aspnet
+            - name: ASPNETCORE_URLS
+              value: https://+:7088
+            - name: TZ
+              value: Asia/Yekaterinburg
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: anticlown-entertainment-api-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: anticlownentertainmentapi
+  ports:
+    - name: anticlownentertainmentapi
+      protocol: TCP
+      port: 7088
+      targetPort: 7088

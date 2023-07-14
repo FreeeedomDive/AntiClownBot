@@ -5,7 +5,7 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Messages;
-using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
+using AntiClown.Entertainment.Api.Dto.Exceptions.CommonEvents;
 using Hangfire;
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.GuessNumber;

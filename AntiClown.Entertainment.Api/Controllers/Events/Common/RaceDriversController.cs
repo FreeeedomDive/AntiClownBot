@@ -1,6 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Domain;
 using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Repositories;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.Race;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.Race;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

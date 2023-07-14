@@ -1,5 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Domain;
-using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
+using AntiClown.Entertainment.Api.Dto.Exceptions.CommonEvents;
 using AutoMapper;
 using SqlRepositoryBase.Core.Repository;
 

@@ -1,4 +1,4 @@
-﻿using AntiClown.EntertainmentApi.Client;
+﻿using AntiClown.Entertainment.Api.Client;
 using Newtonsoft.Json;
 
 namespace AntiClown.Tools.Tools.EventsTests;

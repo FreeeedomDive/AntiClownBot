@@ -1,7 +1,7 @@
 ﻿using AntiClown.Entertainment.Api.Core.DailyEvents.Domain;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.ActiveEventsIndex;
-using AntiClown.EntertainmentApi.Dto.DailyEvents;
-using AntiClown.EntertainmentApi.Dto.DailyEvents.ActiveEventsIndex;
+using AntiClown.Entertainment.Api.Dto.DailyEvents;
+using AntiClown.Entertainment.Api.Dto.DailyEvents.ActiveEventsIndex;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

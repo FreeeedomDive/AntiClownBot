@@ -1,5 +1,5 @@
-﻿using AntiClown.EntertainmentApi.Client;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.Race;
+﻿using AntiClown.Entertainment.Api.Client;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.Race;
 
 namespace AntiClown.Tools.Tools.Race;
 

@@ -1,5 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Lottery;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.Lottery;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.Lottery;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

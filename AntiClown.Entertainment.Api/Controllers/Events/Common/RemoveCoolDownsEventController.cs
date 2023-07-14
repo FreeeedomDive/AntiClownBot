@@ -1,5 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Services.RemoveCoolDowns;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.RemoveCoolDowns;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.RemoveCoolDowns;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

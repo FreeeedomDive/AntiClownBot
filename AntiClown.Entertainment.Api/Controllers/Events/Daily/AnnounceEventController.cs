@@ -1,5 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Announce;
-using AntiClown.EntertainmentApi.Dto.DailyEvents.Announce;
+using AntiClown.Entertainment.Api.Dto.DailyEvents.Announce;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

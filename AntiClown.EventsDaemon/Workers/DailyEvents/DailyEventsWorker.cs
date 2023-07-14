@@ -1,5 +1,5 @@
-﻿using AntiClown.EntertainmentApi.Client;
-using AntiClown.EntertainmentApi.Dto.DailyEvents;
+﻿using AntiClown.Entertainment.Api.Client;
+using AntiClown.Entertainment.Api.Dto.DailyEvents;
 using AntiClown.EventsDaemon.Options;
 using Microsoft.Extensions.Options;
 

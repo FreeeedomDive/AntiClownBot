@@ -1,7 +1,7 @@
 using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
-using AntiClown.EntertainmentApi.Client;
-using AntiClown.EntertainmentApi.Client.Configuration;
+using AntiClown.Entertainment.Api.Client;
+using AntiClown.Entertainment.Api.Client.Configuration;
 using AntiClown.Tools.Args;
 using AntiClown.Tools.Tools;
 

@@ -1,6 +1,6 @@
 ﻿using AntiClown.Api.Client;
-using AntiClown.EntertainmentApi.Client;
-using AntiClown.EntertainmentApi.Dto.Exceptions.CommonEvents;
+using AntiClown.Entertainment.Api.Client;
+using AntiClown.Entertainment.Api.Dto.Exceptions.CommonEvents;
 using AntiClown.Tools.Utility.Extensions;
 
 namespace AntiClown.Tools.Tools.EventsTests;

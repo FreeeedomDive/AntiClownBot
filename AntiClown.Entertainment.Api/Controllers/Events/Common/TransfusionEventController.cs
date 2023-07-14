@@ -1,5 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Transfusion;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.Transfusion;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

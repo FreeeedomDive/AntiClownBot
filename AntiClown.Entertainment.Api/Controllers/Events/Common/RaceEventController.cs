@@ -1,5 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Services.Race;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.Race;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.Race;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 

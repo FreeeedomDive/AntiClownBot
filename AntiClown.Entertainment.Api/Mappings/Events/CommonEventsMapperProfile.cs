@@ -5,12 +5,12 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Lottery;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Race;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.RemoveCoolDowns;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Transfusion;
-using AntiClown.EntertainmentApi.Dto.CommonEvents;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.GuessNumber;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.Lottery;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.Race;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.RemoveCoolDowns;
-using AntiClown.EntertainmentApi.Dto.CommonEvents.Transfusion;
+using AntiClown.Entertainment.Api.Dto.CommonEvents;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.Lottery;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.Race;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.RemoveCoolDowns;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion;
 using AutoMapper;
 
 namespace AntiClown.Entertainment.Api.Mappings.Events;

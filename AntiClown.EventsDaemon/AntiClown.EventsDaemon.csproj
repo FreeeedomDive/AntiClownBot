@@ -6,8 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
-        <ProjectReference Include="..\AntiClown.EntertainmentApi.Client\AntiClown.EntertainmentApi.Client.csproj"/>
+        <ProjectReference Include="..\AntiClown.Entertainment.Api.Client\AntiClown.Entertainment.Api.Client.csproj"/>
         <ProjectReference Include="..\Utility\Utility.csproj"/>
     </ItemGroup>
 </Project>
