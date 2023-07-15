@@ -17,7 +17,15 @@ public class CommonEventsMapperProfile : Profile
             )
             .ForMember(
                 se => se.Details,
-                cfg => cfg.MapFrom(commonEvent => JsonConvert.SerializeObject(commonEvent, Formatting.Indented))
+                cfg => cfg.MapFrom(
+                    commonEvent => JsonConvert.SerializeObject(
+                        commonEvent, Formatting.Indented,
+                        new JsonSerializerSettings
+                        {
+                            TypeNameHandling = TypeNameHandling.All,
+                        }
+                    )
+                )
             );
         CreateMap<CommonEventType, CommonEventTypeDto>();
         CreateMap<CommonEventBase, CommonEventMessageDto>()

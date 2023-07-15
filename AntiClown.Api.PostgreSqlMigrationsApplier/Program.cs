@@ -11,4 +11,4 @@ builder.Services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, Servic
 var app = builder.Build();
 
 var databaseContext = app.Services.GetService<DatabaseContext>()!;
-databaseContext.Database.Migrate();
+await databaseContext.Database.MigrateAsync();

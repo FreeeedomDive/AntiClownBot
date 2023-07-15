@@ -1,9 +1,4 @@
 ﻿using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
-using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
-using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Lottery;
-using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Race;
-using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.RemoveCoolDowns;
-using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Transfusion;
 using AutoMapper;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Core.Repository;
@@ -48,18 +43,12 @@ public class CommonEventsRepository : ICommonEventsRepository
     private static CommonEventBase Deserialize(CommonEventStorageElement storageElement)
     {
         var serialized = storageElement.Details;
-        var eventType = Enum.TryParse<CommonEventType>(storageElement.Type, out var type)
-            ? type
-            : throw new InvalidOperationException($"Unexpected event type {storageElement.Type} in {nameof(CommonEventStorageElement)} {storageElement.Id}");
-        return eventType switch
-        {
-            CommonEventType.GuessNumber => JsonConvert.DeserializeObject<GuessNumberEvent>(serialized)!,
-            CommonEventType.Lottery => JsonConvert.DeserializeObject<LotteryEvent>(serialized)!,
-            CommonEventType.Race => JsonConvert.DeserializeObject<RaceEvent>(serialized)!,
-            CommonEventType.RemoveCoolDowns => JsonConvert.DeserializeObject<RemoveCoolDownsEvent>(serialized)!,
-            CommonEventType.Transfusion => JsonConvert.DeserializeObject<TransfusionEvent>(serialized)!,
-            _ => throw new ArgumentOutOfRangeException(nameof(eventType)),
-        };
+        return JsonConvert.DeserializeObject<CommonEventBase>(
+            serialized, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+            }
+        )!;
     }
 
     private readonly IMapper mapper;

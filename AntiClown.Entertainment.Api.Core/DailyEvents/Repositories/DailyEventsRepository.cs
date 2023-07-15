@@ -1,5 +1,4 @@
 ﻿using AntiClown.Entertainment.Api.Core.DailyEvents.Domain;
-using AntiClown.Entertainment.Api.Core.DailyEvents.Domain.Announce;
 using AutoMapper;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Core.Repository;
@@ -32,15 +31,12 @@ public class DailyEventsRepository : IDailyEventsRepository
     private static DailyEventBase Deserialize(DailyEventStorageElement storageElement)
     {
         var serialized = storageElement.Details;
-        var eventType = Enum.TryParse<DailyEventType>(storageElement.Type, out var type)
-            ? type
-            : throw new InvalidOperationException($"Unexpected event type {storageElement.Type} in {nameof(DailyEventStorageElement)} {storageElement.Id}");
-        return eventType switch
-        {
-            DailyEventType.Announce => JsonConvert.DeserializeObject<AnnounceEvent>(serialized)!,
-            DailyEventType.PaymentsAndResets => throw new NotSupportedException($"Storing of {nameof(DailyEventType.PaymentsAndResets)} events is not supported"),
-            _ => throw new ArgumentOutOfRangeException(nameof(eventType)),
-        };
+        return JsonConvert.DeserializeObject<DailyEventBase>(
+            serialized, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+            }
+        )!;
     }
 
     private readonly IMapper mapper;

@@ -16,7 +16,14 @@ public class ItemsMapperProfile : Profile
             )
             .ForMember(
                 se => se.ItemSpecs,
-                cfg => cfg.MapFrom(item => JsonConvert.SerializeObject(item, Formatting.Indented))
+                cfg => cfg.MapFrom(
+                    item => JsonConvert.SerializeObject(
+                        item, Formatting.Indented, new JsonSerializerSettings
+                        {
+                            TypeNameHandling = TypeNameHandling.All,
+                        }
+                    )
+                )
             );
     }
 }
