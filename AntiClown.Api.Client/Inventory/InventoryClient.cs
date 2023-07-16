@@ -11,14 +11,14 @@ public class InventoryClient : IInventoryClient
         this.restClient = restClient;
     }
 
-    public async Task<InventoryDto> ReadAllAsync(Guid userId)
+    public async Task<InventoryDto> ReadAllItemsAsync(Guid userId)
     {
         var request = new RestRequest($"{BuildApiUrl(userId)}/items");
         var response = await restClient.ExecuteGetAsync(request);
         return response.TryDeserialize<InventoryDto>();
     }
 
-    public async Task<BaseItemDto> ReadAsync(Guid userId, Guid itemId)
+    public async Task<BaseItemDto> ReadItemAsync(Guid userId, Guid itemId)
     {
         var request = new RestRequest($"{BuildApiUrl(userId)}/items/{itemId}");
         var response = await restClient.ExecuteGetAsync(request);
@@ -46,7 +46,10 @@ public class InventoryClient : IInventoryClient
         response.ThrowIfNotSuccessful();
     }
 
-    private static string BuildApiUrl(Guid userId) => $"inventories/{userId}";
+    private static string BuildApiUrl(Guid userId)
+    {
+        return $"inventories/{userId}";
+    }
 
     private readonly RestClient restClient;
 }

@@ -3,6 +3,7 @@ using AntiClown.Api.Core.Economies.Domain;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base.Extensions;
 using AntiClown.Api.Core.Inventory.Services;
+using AntiClown.Api.Dto.Economies;
 using AntiClown.Api.Dto.Exceptions.Tribute;
 using AntiClown.Core.Schedules;
 using AntiClown.Tools.Utility.Extensions;
@@ -52,8 +53,8 @@ public class TributeService : ITributeService
         var userItems = await itemsService.ReadAllActiveItemsForUserAsync(userId);
         var (cooldown, modifiers) = CalculateCooldown(userItems);
 
-        var minTribute = Constants.MinTributeValue - userItems.RiceBowls().Sum(x => x.NegativeRangeExtend);
-        var maxTribute = Constants.MaxTributeValue + userItems.RiceBowls().Sum(x => x.PositiveRangeExtend);
+        var minTribute = TributeHelpers.MinTributeValue - userItems.RiceBowls().Sum(x => x.NegativeRangeExtend);
+        var maxTribute = TributeHelpers.MaxTributeValue + userItems.RiceBowls().Sum(x => x.PositiveRangeExtend);
         var tributeQuality = Randomizer.GetRandomNumberInclusive(minTribute, maxTribute);
 
         var lootboxChance = userItems.DogWives().Sum(x => x.LootBoxFindChance);
@@ -118,7 +119,7 @@ public class TributeService : ITributeService
                         .Aggregate(
                             cooldown, (currentCooldown, item) =>
                             {
-                                if (Randomizer.GetRandomNumberBetween(0, 100) >= Constants.CooldownIncreaseChanceByOneJade)
+                                if (Randomizer.GetRandomNumberBetween(0, 100) >= TributeHelpers.CooldownIncreaseChanceByOneJade)
                                 {
                                     return currentCooldown;
                                 }

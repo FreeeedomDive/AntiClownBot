@@ -21,15 +21,6 @@ public static class Constants
     // стандартный начальный социальный рейтинг
     public const int DefaultScamCoins = 1500;
 
-    // 2% шанс срабатывания нефритового стержня для увеличения кулдауна
-    public const int CooldownIncreaseChanceByOneJade = 2;
-
-    // стартовое значение возможного получения рейтинга с подношения
-    public const int MinTributeValue = -40;
-
-    // конечное значение возможного получения рейтинга с подношения
-    public const int MaxTributeValue = 100;
-
     // количество бесплатных ежедневно выдающихся распознавателей предметов
     public const int FreeItemRevealsPerDay = 2;
 

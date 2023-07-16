@@ -13,7 +13,6 @@ public class EconomiesDtoMapperProfile : Profile
         CreateMap<DateTimeRangeDto, DateTimeRange>();
         CreateMap<TransactionsFilterDto, TransactionsFilter>();
         CreateMap<Economy, EconomyDto>().ReverseMap();
-        CreateMap<Tribute, TributeDto>();
         CreateMap<LohotronRewardType, LohotronRewardTypeDto>();
         CreateMap<LohotronReward, LohotronRewardDto>();
     }

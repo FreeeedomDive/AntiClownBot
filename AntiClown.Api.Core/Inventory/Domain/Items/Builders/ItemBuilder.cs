@@ -4,11 +4,6 @@ namespace AntiClown.Api.Core.Inventory.Domain.Items.Builders;
 
 public class ItemBuilder
 {
-    public ItemBuilder()
-    {
-        Id = Guid.NewGuid();
-    }
-
     public static BaseItem BuildRandomItem(Action<ItemBuilderOptions>? configureBuilderOptions = null)
     {
         var builderOptions = new ItemBuilderOptions();
@@ -88,9 +83,9 @@ public class ItemBuilder
         return Enum.IsDefined(Rarity);
     }
 
-    protected Guid Id { get; set; }
+    protected Guid Id { get; init; } = Guid.NewGuid();
     protected int Price { get; set; }
-    protected Rarity Rarity { get; set; }
-    protected bool IsActive { get; set; }
-    protected ItemName Name { get; set; }
+    protected Rarity Rarity { get; init; }
+    protected bool IsActive { get; init; }
+    private ItemName Name { get; init; }
 }

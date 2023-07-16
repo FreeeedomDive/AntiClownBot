@@ -1,4 +1,5 @@
 using AntiClown.Api.Core.Economies.Domain;
+using AntiClown.Api.Dto.Economies;
 using AntiClown.Messages.Dto.Tributes;
 using AutoMapper;
 using MassTransit;
@@ -15,8 +16,12 @@ public class TributeMessageProducer : ITributeMessageProducer
 
     public async Task ProduceAsync(Tribute tribute)
     {
-        var message = mapper.Map<TributeMessageDto>(tribute);
-        await bus.Publish(message);
+        var dto = mapper.Map<TributeDto>(tribute);
+        await bus.Publish(new TributeMessageDto
+        {
+            UserId = tribute.UserId,
+            Tribute = dto,
+        });
     }
 
     private readonly IBus bus;

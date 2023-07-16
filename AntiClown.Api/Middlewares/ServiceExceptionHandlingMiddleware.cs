@@ -24,6 +24,7 @@ public class ServiceExceptionHandlingMiddleware
         {
             var wrappedException = new AntiClownInternalServerException(exception.Message);
             await WriteExceptionAsync(context, wrappedException, wrappedException.StatusCode);
+            throw;
         }
     }
 

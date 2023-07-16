@@ -1,5 +1,6 @@
 ﻿using AntiClown.Api.Core.Economies.Domain;
 using AntiClown.Api.Core.Economies.Repositories;
+using AntiClown.Api.Dto.Economies;
 using AntiClown.Messages.Dto.Tributes;
 using AutoMapper;
 
@@ -10,6 +11,6 @@ public class EconomiesMapperProfile : Profile
     public EconomiesMapperProfile()
     {
         CreateMap<Economy, EconomyStorageElement>().ReverseMap();
-        CreateMap<Tribute, TributeMessageDto>();
+        CreateMap<Tribute, TributeDto>();
     }
 }
