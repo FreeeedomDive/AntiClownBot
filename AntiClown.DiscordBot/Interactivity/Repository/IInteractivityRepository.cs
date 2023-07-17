@@ -2,6 +2,7 @@
 
 public interface IInteractivityRepository
 {
-    Task CreateAsync(Domain.Interactivity interactivity);
-    Task<Domain.Interactivity> ReadAsync(Guid id);
+    Task CreateAsync<T>(Domain.Interactivity<T> interactivity);
+    Task UpdateAsync<T>(Domain.Interactivity<T> interactivity);
+    Task<Domain.Interactivity<T>?> TryReadAsync<T>(Guid id);
 }

@@ -4,10 +4,14 @@ using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Consumers.Events.Common;
 using AntiClown.DiscordBot.Consumers.Events.Daily;
+using AntiClown.DiscordBot.Database;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
+using AntiClown.DiscordBot.EmbedBuilders.Inventories;
 using AntiClown.DiscordBot.EmbedBuilders.Transactions;
 using AntiClown.DiscordBot.EmbedBuilders.Tributes;
+using AntiClown.DiscordBot.Interactivity.Repository;
+using AntiClown.DiscordBot.Interactivity.Services.Inventory;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.DiscordBot.SlashCommands.Base.Middlewares;
@@ -23,7 +27,9 @@ using AntiClown.Entertainment.Api.Dto.DailyEvents.Announce;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.ResetsAndPayments;
 using DSharpPlus;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using SqlRepositoryBase.Configuration.Extensions;
 
 namespace AntiClown.DiscordBot;
 
@@ -36,14 +42,16 @@ internal class Program
         builder.Services.AddLogging();
 
         ConfigureOptions(builder);
+        ConfigurePostgreSql(builder);
         BuildApiClients(builder);
         BuildDiscordServices(builder);
         BuildDiscordCaches(builder);
-        BuildSlashCommands(builder);
         BuildEmbedBuilders(builder);
+        BuildInteractivityServices(builder);
         BuildCommonEventsConsumers(builder);
         BuildDailyEventsConsumers(builder);
         BuildMassTransit(builder);
+        BuildSlashCommands(builder);
 
         var app = builder.Build();
 
@@ -62,11 +70,21 @@ internal class Program
 
     private static void ConfigureOptions(WebApplicationBuilder builder)
     {
+        builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection("PostgreSql"));
         builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMQ"));
         builder.Services.Configure<DiscordOptions>(builder.Configuration.GetSection("Discord"));
         builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
         builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));
         builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
+    }
+
+    private static void ConfigurePostgreSql(WebApplicationBuilder builder)
+    {
+        builder.Services.AddTransient<DbContext, DatabaseContext>();
+        builder.Services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
+        builder.Services.ConfigurePostgreSql();
+
+        builder.Services.AddTransient<IInteractivityRepository, InteractivityRepository>();
     }
 
     private static void BuildApiClients(WebApplicationBuilder builder)
@@ -125,6 +143,12 @@ internal class Program
     {
         builder.Services.AddTransient<ITributeEmbedBuilder, TributeEmbedBuilder>();
         builder.Services.AddTransient<ITransactionsEmbedBuilder, TransactionsEmbedBuilder>();
+        builder.Services.AddTransient<IInventoryEmbedBuilder, InventoryEmbedBuilder>();
+    }
+
+    private static void BuildInteractivityServices(WebApplicationBuilder builder)
+    {
+        builder.Services.AddTransient<IInventoryService, InventoryService>();
     }
 
     private static void BuildCommonEventsConsumers(WebApplicationBuilder builder)

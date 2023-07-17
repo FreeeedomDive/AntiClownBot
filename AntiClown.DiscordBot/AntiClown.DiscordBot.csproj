@@ -24,7 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Interactivity\Services\Inventory\" />
       <Folder Include="Interactivity\Services\Shop\" />
     </ItemGroup>
 </Project>

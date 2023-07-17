@@ -43,7 +43,7 @@ public class InventoryController : Controller
         };
     }
 
-    [HttpPatch("items/{itemId:guid}/active/{isActive:bool}")]
+    [HttpPost("items/{itemId:guid}/active/{isActive:bool}")]
     public async Task<ActionResult> ChangeItemActiveStatus([FromRoute] Guid userId, [FromRoute] Guid itemId, [FromRoute] bool isActive)
     {
         await itemsService.ChangeItemActiveStatusAsync(userId, itemId, isActive);

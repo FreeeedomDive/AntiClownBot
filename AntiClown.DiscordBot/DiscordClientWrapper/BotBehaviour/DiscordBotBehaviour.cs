@@ -1,8 +1,12 @@
 ﻿using System.Text;
 using AntiClown.DiscordBot.Cache.Emotes;
+using AntiClown.DiscordBot.Interactivity.Domain.Inventory;
+using AntiClown.DiscordBot.Interactivity.Services.Inventory;
+using AntiClown.DiscordBot.Interactivity.Services.Parsers;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Dev;
+using AntiClown.DiscordBot.SlashCommands.Inventory;
 using AntiClown.DiscordBot.SlashCommands.Other;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
 using AntiClown.Tools.Utility.Extensions;
@@ -23,7 +27,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IDiscordClientWrapper discordClientWrapper,
         IEmotesCache emotesCache,
         IOptions<DiscordOptions> discordOptions,
-        IOptions<Settings> settings
+        IOptions<Settings> settings,
+        IInventoryService inventoryService
         /*
         IShopService shopService,
         IUserInventoryService userInventoryService,
@@ -42,6 +47,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.emotesCache = emotesCache;
         this.discordOptions = discordOptions;
         this.settings = settings;
+        this.inventoryService = inventoryService;
     }
 
     public async Task ConfigureAsync()
@@ -353,6 +359,32 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task ComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
     {
+        if (e.Id.StartsWith(InteractionsIds.InventoryButtons.Prefix))
+        {
+            await HandleInventoryInteraction(e);
+            return;
+        }
+
+        if (e.Id.StartsWith(InteractionsIds.ShopButtons.Prefix))
+        {
+            await HandleShopInteraction(e);
+            return;
+        }
+
+        if (e.Id.StartsWith(InteractionsIds.F1PredictionsButtons.StartRaceResultInputButton))
+        {
+            await HandleRaceResultInput(e, true);
+            return;
+        }
+
+        if (e.Id.StartsWith(InteractionsIds.F1PredictionsButtons.DriversSelectDropdown))
+        {
+            await HandleRaceResultInput(e);
+        }
+    }
+
+    private async Task ValidateInteractionUserAsync(ComponentInteractionCreateEventArgs e)
+    {
         var interactionAuthor = e.Message.Interaction?.User;
         var responseBuilder = new DiscordInteractionResponseBuilder();
         if (interactionAuthor == null || e.User.Id != interactionAuthor.Id)
@@ -367,33 +399,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                     $"{await emotesCache.GetEmoteAsTextAsync("Madge")}"
                 )
             );
-        }
-
-        await discordClientWrapper.Messages.RespondAsync(
-            e.Interaction, InteractionResponseType.DeferredMessageUpdate,
-            null
-        );
-        if (e.Id.StartsWith(InteractionsIds.ShopButtons.Prefix))
-        {
-            await HandleShopInteraction(e);
-            return;
-        }
-
-        if (e.Id.StartsWith(InteractionsIds.InventoryButtons.Prefix))
-        {
-            await HandleInventoryInteraction(e);
-            return;
-        }
-
-        if (e.Id.StartsWith(InteractionsIds.F1PredictionsButtons.StartRaceResultInputButton))
-        {
-            await HandleRaceResultInput(e, true);
-            return;
-        }
-
-        if (e.Id.StartsWith(InteractionsIds.F1PredictionsButtons.DriversSelectDropdown))
-        {
-            await HandleRaceResultInput(e);
         }
     }
 
@@ -439,47 +444,50 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task HandleInventoryInteraction(ComponentInteractionCreateEventArgs e)
     {
-        /*if (!userInventoryService.TryRead(e.User.Id, out var inventory))
+        await ValidateInteractionUserAsync(e);
+        await discordClientWrapper.Messages.RespondAsync(
+            e.Interaction, InteractionResponseType.DeferredMessageUpdate,
+            null
+        );
+        
+        var (id, action) = InventoryButtonsParser.Parse(e.Id);
+        switch (action)
         {
-            return;
+            case InteractionsIds.InventoryButtons.InventoryButton1:
+                await inventoryService.HandleItemInSlotAsync(id, 0, UpdateMessageAsync);
+                break;
+            case InteractionsIds.InventoryButtons.InventoryButton2:
+                await inventoryService.HandleItemInSlotAsync(id, 1, UpdateMessageAsync);
+                break;
+            case InteractionsIds.InventoryButtons.InventoryButton3:
+                await inventoryService.HandleItemInSlotAsync(id, 2, UpdateMessageAsync);
+                break;
+            case InteractionsIds.InventoryButtons.InventoryButton4:
+                await inventoryService.HandleItemInSlotAsync(id, 3, UpdateMessageAsync);
+                break;
+            case InteractionsIds.InventoryButtons.InventoryButton5:
+                await inventoryService.HandleItemInSlotAsync(id, 4, UpdateMessageAsync);
+                break;
+            case InteractionsIds.InventoryButtons.InventoryButtonLeft:
+                await inventoryService.ChangePageAsync(id, -1, UpdateMessageAsync);
+                break;
+            case InteractionsIds.InventoryButtons.InventoryButtonRight:
+                await inventoryService.ChangePageAsync(id, 1, UpdateMessageAsync);
+                break;
+            case InteractionsIds.InventoryButtons.InventoryButtonChangeActiveStatus:
+                await inventoryService.SetActiveToolAsync(id, InventoryTool.ChangeActiveStatus, UpdateMessageAsync);
+                break;
+            case InteractionsIds.InventoryButtons.InventoryButtonSell:
+                await inventoryService.SetActiveToolAsync(id, InventoryTool.Sell, UpdateMessageAsync);
+                break;
         }
 
-        var builder = new DiscordWebhookBuilder();
-        switch (e.Id)
-        {
-            case Interactions.Buttons.InventoryButton1:
-                builder.Content = await inventory.HandleItemInSlot(1);
-                break;
-            case Interactions.Buttons.InventoryButton2:
-                builder.Content = await inventory.HandleItemInSlot(2);
-                break;
-            case Interactions.Buttons.InventoryButton3:
-                builder.Content = await inventory.HandleItemInSlot(3);
-                break;
-            case Interactions.Buttons.InventoryButton4:
-                builder.Content = await inventory.HandleItemInSlot(4);
-                break;
-            case Interactions.Buttons.InventoryButton5:
-                builder.Content = await inventory.HandleItemInSlot(5);
-                break;
-            case Interactions.Buttons.InventoryButtonLeft:
-                await inventory.SwitchLeftPage();
-                break;
-            case Interactions.Buttons.InventoryButtonRight:
-                await inventory.SwitchRightPage();
-                break;
-            case Interactions.Buttons.InventoryButtonChangeActiveStatus:
-                await inventory.EnableChangingStatus();
-                break;
-            case Interactions.Buttons.InventoryButtonSell:
-                await inventory.EnableSelling();
-                break;
-        }
+        return;
 
-        await discordClientWrapper.Messages.EditOriginalResponseAsync(
-            e.Interaction,
-            await builder.AddEmbed(inventory.UpdateEmbedForCurrentPage()).SetInventoryButtons(emotesProvider)
-        );*/
+        Task UpdateMessageAsync(DiscordWebhookBuilder webhookBuilder)
+        {
+            return discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, webhookBuilder);
+        }
     }
 
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
@@ -547,7 +555,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             }
         );
         // slash.RegisterCommands<PartyCommandModule>(guildId);
-        // slash.RegisterCommands<InventoryCommandModule>(guildId);
+        slash.RegisterCommands<InventoryCommandModule>(guildId);
         slash.RegisterCommands<LohotronCommandModule>(guildId);
         slash.RegisterCommands<RatingCommandModule>(guildId);
         // slash.RegisterCommands<RolesCommandModule>(guildId);
@@ -666,6 +674,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
+    private readonly IInventoryService inventoryService;
     private readonly IServiceProvider serviceProvider;
     private readonly IOptions<Settings> settings;
 }

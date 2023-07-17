@@ -12,27 +12,32 @@ public static class InteractionsIds
     public static class ShopButtons
     {
         public const string Prefix = "Shop_";
-        public const string ShopButtonItem1 = Prefix + "1";
-        public const string ShopButtonItem2 = Prefix + "2";
-        public const string ShopButtonItem3 = Prefix + "3";
-        public const string ShopButtonItem4 = Prefix + "4";
-        public const string ShopButtonItem5 = Prefix + "5";
-        public const string ShopButtonReroll = Prefix + "Reroll";
-        public const string ShopButtonChangeTool = Prefix + "ChangeTool";
+        public const string ShopButtonItem1 = "1";
+        public const string ShopButtonItem2 = "2";
+        public const string ShopButtonItem3 = "3";
+        public const string ShopButtonItem4 = "4";
+        public const string ShopButtonItem5 = "5";
+        public const string ShopButtonReroll = "Reroll";
+        public const string ShopButtonChangeTool = "ChangeTool";
     }
 
     public static class InventoryButtons
     {
-        public const string Prefix = "Inventory_";
-        public const string InventoryButton1 = Prefix + "1";
-        public const string InventoryButton2 = Prefix + "2";
-        public const string InventoryButton3 = Prefix + "3";
-        public const string InventoryButton4 = Prefix + "4";
-        public const string InventoryButton5 = Prefix + "5";
-        public const string InventoryButtonLeft = Prefix + "Left";
-        public const string InventoryButtonRight = Prefix + "Right";
-        public const string InventoryButtonChangeActiveStatus = Prefix + "Active";
-        public const string InventoryButtonSell = Prefix + "Sell";
+        public static string BuildId(Guid id, string action)
+        {
+            return $"{Prefix}_{id}_{action}";
+        }
+        
+        public const string Prefix = "InventoryButtons_";
+        public const string InventoryButton1 = "1";
+        public const string InventoryButton2 = "2";
+        public const string InventoryButton3 = "3";
+        public const string InventoryButton4 = "4";
+        public const string InventoryButton5 = "5";
+        public const string InventoryButtonLeft = "Left";
+        public const string InventoryButtonRight = "Right";
+        public const string InventoryButtonChangeActiveStatus = "Active";
+        public const string InventoryButtonSell = "Sell";
     }
 
     public static class EventsButtons
