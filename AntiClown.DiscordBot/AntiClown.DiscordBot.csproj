@@ -10,6 +10,10 @@
         <PackageReference Include="DSharpPlus.SlashCommands" Version="4.4.2"/>
         <PackageReference Include="MassTransit" Version="8.0.15"/>
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.15"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+        <PackageReference Include="Xdd.SqlRepositoryBase.Configuration" Version="1.0.14" />
+        <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.14" />
     </ItemGroup>
 
     <ItemGroup>
@@ -20,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Interactivities\Inventory\" />
-      <Folder Include="Interactivities\Shop\" />
+      <Folder Include="Interactivity\Services\Inventory\" />
+      <Folder Include="Interactivity\Services\Shop\" />
     </ItemGroup>
 </Project>
