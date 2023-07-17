@@ -6,6 +6,7 @@ using AntiClown.DiscordBot.Consumers.Events.Common;
 using AntiClown.DiscordBot.Consumers.Events.Daily;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
+using AntiClown.DiscordBot.EmbedBuilders.Transactions;
 using AntiClown.DiscordBot.EmbedBuilders.Tributes;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Base;
@@ -123,6 +124,7 @@ internal class Program
     private static void BuildEmbedBuilders(WebApplicationBuilder builder)
     {
         builder.Services.AddTransient<ITributeEmbedBuilder, TributeEmbedBuilder>();
+        builder.Services.AddTransient<ITransactionsEmbedBuilder, TransactionsEmbedBuilder>();
     }
 
     private static void BuildCommonEventsConsumers(WebApplicationBuilder builder)

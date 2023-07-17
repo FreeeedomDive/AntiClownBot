@@ -2,6 +2,8 @@
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.Options;
+using AntiClown.DiscordBot.SlashCommands.Dev;
+using AntiClown.DiscordBot.SlashCommands.Other;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
@@ -544,25 +546,26 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 Services = serviceProvider,
             }
         );
-        // slash.RegisterCommands<PartyCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<InventoryCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<LohotronCommandModule>(guildSettings.GuildId);
+        // slash.RegisterCommands<PartyCommandModule>(guildId);
+        // slash.RegisterCommands<InventoryCommandModule>(guildId);
+        slash.RegisterCommands<LohotronCommandModule>(guildId);
         slash.RegisterCommands<RatingCommandModule>(guildId);
-        // slash.RegisterCommands<RolesCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<LotteryCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<ChangeNicknameCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<DailyResetCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<RaceCommandModule>(guildSettings.GuildId);
+        // slash.RegisterCommands<RolesCommandModule>(guildId);
+        // slash.RegisterCommands<LotteryCommandModule>(guildId);
+        slash.RegisterCommands<ChangeNicknameCommandModule>(guildId);
+        // slash.RegisterCommands<RaceCommandModule>(guildId);
         slash.RegisterCommands<TributeCommandModule>(guildId);
         slash.RegisterCommands<WhenCommandModule>(guildId);
-        // slash.RegisterCommands<RollCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<IpCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<SelectCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<EmojiStatsCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<F1CommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<TransactionsCommandModule>(guildId);
+        // slash.RegisterCommands<RollCommandModule>(guildId);
+        // slash.RegisterCommands<IpCommandModule>(guildId);
+        // slash.RegisterCommands<SelectCommandModule>(guildId);
+        // slash.RegisterCommands<EmojiStatsCommandModule>(guildId);
+        // slash.RegisterCommands<F1CommandModule>(guildId);
         // // admin commands
-        // slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildSettings.GuildId);
-        // slash.RegisterCommands<CreateMessageCommandModule>(guildSettings.GuildId);
+        slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildId);
+        slash.RegisterCommands<DailyResetCommandModule>(guildId);
+        slash.RegisterCommands<CreateMessageCommandModule>(guildId);
         // slash.RegisterCommands<F1AdminCommandModule>(guildSettings.GuildId);
     }
 

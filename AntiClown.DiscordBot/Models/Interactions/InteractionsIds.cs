@@ -128,6 +128,8 @@ public static class InteractionsIds
 
         public const string Tribute = "tribute";
 
+        public const string Transactions = "transactions";
+
         public const string When = "when";
     }
 }

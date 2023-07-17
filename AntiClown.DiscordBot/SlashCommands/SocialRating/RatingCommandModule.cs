@@ -47,8 +47,8 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(context, async () =>
         {
             var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-            var response = await antiClownApiClient.Economy.ReadAsync(userId);
-            var inventory = await antiClownApiClient.Inventories.ReadAllItemsAsync(userId);
+            var economy = await antiClownApiClient.Economy.ReadAsync(userId);
+            var inventory = await antiClownApiClient.Inventories.ReadInventoryAsync(userId);
 
             var embedBuilder = new DiscordEmbedBuilder
             {
@@ -60,7 +60,7 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
             var aRolf = await emotesCache.GetEmoteAsTextAsync("aRolf");
             embedBuilder.WithTitle($"ЧЕЛА РЕАЛЬНО ЗОВУТ {name.ToUpper()} {aRolf} {aRolf} {aRolf}");
 
-            embedBuilder.AddField("SCAM COINS", $"{response.ScamCoins}");
+            embedBuilder.AddField("SCAM COINS", $"{economy.ScamCoins}");
             // TODO: embedBuilder.AddField("Общая ценность", $"{response.NetWorth}");
 
             AddFieldForItems(embedBuilder, inventory.CatWives, ItemNameDto.CatWife);
@@ -70,7 +70,7 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
             AddFieldForItems(embedBuilder, inventory.CommunismBanners, ItemNameDto.CommunismBanner);
             AddFieldForItems(embedBuilder, inventory.JadeRods, ItemNameDto.JadeRod);
 
-            embedBuilder.AddField($"Добыча-коробка - {response.LootBoxes}", "Получение приза из лутбокса");
+            embedBuilder.AddField($"Добыча-коробка - {economy.LootBoxes}", "Получение приза из лутбокса");
 
             await RespondToInteractionAsync(context, embedBuilder.Build());
         });

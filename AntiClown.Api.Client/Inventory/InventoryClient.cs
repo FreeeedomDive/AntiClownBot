@@ -11,7 +11,7 @@ public class InventoryClient : IInventoryClient
         this.restClient = restClient;
     }
 
-    public async Task<InventoryDto> ReadAllItemsAsync(Guid userId)
+    public async Task<InventoryDto> ReadInventoryAsync(Guid userId)
     {
         var request = new RestRequest($"{BuildApiUrl(userId)}/items");
         var response = await restClient.ExecuteGetAsync(request);

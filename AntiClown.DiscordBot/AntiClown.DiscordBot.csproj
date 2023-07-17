@@ -18,4 +18,9 @@
         <ProjectReference Include="..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj"/>
         <ProjectReference Include="..\Utility\Utility.csproj"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Interactivities\Inventory\" />
+      <Folder Include="Interactivities\Shop\" />
+    </ItemGroup>
 </Project>
