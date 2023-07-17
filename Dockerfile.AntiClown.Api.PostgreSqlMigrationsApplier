@@ -2,6 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
 WORKDIR /src
 COPY ["AntiClown.Api.PostgreSqlMigrationsApplier/AntiClown.Api.PostgreSqlMigrationsApplier.csproj", "AntiClown.Api.PostgreSqlMigrationsApplier/"]
+COPY ["AntiClown.DiscordBot/AntiClown.DiscordBot.csproj", "AntiClown.DiscordBot/"]
 COPY ["AntiClown.Api.Core/AntiClown.Api.Core.csproj", "AntiClown.Api.Core/"]
 COPY ["AntiClown.Api.Dto/AntiClown.Api.Dto.csproj", "AntiClown.Api.Dto/"]
 COPY ["AntiClown.Core/AntiClown.Core.csproj", "AntiClown.Core/"]

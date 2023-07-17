@@ -8,4 +8,7 @@ spec:
       containers:
         - name: anticlownentertainmentapipostgresql
           image: localhost:5000/anticlownentertainmentapipostgresql
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
       restartPolicy: Never
