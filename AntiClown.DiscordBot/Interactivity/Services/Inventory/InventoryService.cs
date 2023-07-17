@@ -49,7 +49,7 @@ public class InventoryService : IInventoryService
         };
         var embed = await inventoryEmbedBuilder.BuildAsync(inventoryDetails, items);
 
-        var message = await createMessage(context, await BuildWebhookBuilderAsync(id, embed, addButtons: inventoryDetails.Pages.Length > 0));
+        var message = await createMessage(context, await BuildWebhookBuilderAsync(id, embed, inventoryDetails.Tool, addButtons: inventoryDetails.Pages.Length > 0));
 
         var inventoryInteractivity = new Interactivity<InventoryDetails>
         {
@@ -95,7 +95,7 @@ public class InventoryService : IInventoryService
         inventoryDetails.CurrentPage = Math.Min(inventoryDetails.CurrentPage, inventoryDetails.Pages.Length - 1);
         await interactivityRepository.UpdateAsync(interactivity);
         var embed = await inventoryEmbedBuilder.BuildAsync(inventoryDetails, items);
-        await updateMessage(await BuildWebhookBuilderAsync(inventoryId, embed, errorMessage, inventoryDetails.Pages.Length > 0));
+        await updateMessage(await BuildWebhookBuilderAsync(inventoryId, embed, inventoryDetails.Tool, errorMessage, inventoryDetails.Pages.Length > 0));
     }
 
     public async Task SetActiveToolAsync(Guid inventoryId, InventoryTool tool, Func<DiscordWebhookBuilder, Task> updateMessage)
@@ -111,7 +111,7 @@ public class InventoryService : IInventoryService
         var inventory = await antiClownApiClient.Inventories.ReadInventoryAsync(interactivity.Details.UserId);
         var items = CollectItems(inventory);
         var embed = await inventoryEmbedBuilder.BuildAsync(interactivity.Details, items);
-        await updateMessage(await BuildWebhookBuilderAsync(inventoryId, embed, addButtons: interactivity.Details.Pages.Length > 0));
+        await updateMessage(await BuildWebhookBuilderAsync(inventoryId, embed, interactivity.Details.Tool, addButtons: interactivity.Details.Pages.Length > 0));
     }
 
     public async Task ChangePageAsync(Guid inventoryId, int pageDiff, Func<DiscordWebhookBuilder, Task> updateMessage)
@@ -127,10 +127,10 @@ public class InventoryService : IInventoryService
         var inventory = await antiClownApiClient.Inventories.ReadInventoryAsync(interactivity.Details.UserId);
         var items = CollectItems(inventory);
         var embed = await inventoryEmbedBuilder.BuildAsync(interactivity.Details, items);
-        await updateMessage(await BuildWebhookBuilderAsync(inventoryId, embed, addButtons: interactivity.Details.Pages.Length > 0));
+        await updateMessage(await BuildWebhookBuilderAsync(inventoryId, embed, interactivity.Details.Tool, addButtons: interactivity.Details.Pages.Length > 0));
     }
 
-    private async Task<DiscordWebhookBuilder> BuildWebhookBuilderAsync(Guid id, DiscordEmbed embed, string? message = "", bool addButtons = false)
+    private async Task<DiscordWebhookBuilder> BuildWebhookBuilderAsync(Guid id, DiscordEmbed embed, InventoryTool tool, string? message = "", bool addButtons = false)
     {
         var webhookBuilder = new DiscordWebhookBuilder().AddEmbed(embed);
         if (message is not null)
@@ -142,24 +142,39 @@ public class InventoryService : IInventoryService
         {
             webhookBuilder = webhookBuilder.AddComponents(
                                                new DiscordButtonComponent(
-                                                   ButtonStyle.Primary, InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton1), null,
-                                                   false, new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("one"))
+                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
+                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton1),
+                                                   null,
+                                                   false,
+                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("one"))
                                                ),
                                                new DiscordButtonComponent(
-                                                   ButtonStyle.Primary, InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton2), null,
-                                                   false, new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("two"))
+                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
+                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton2),
+                                                   null,
+                                                   false,
+                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("two"))
                                                ),
                                                new DiscordButtonComponent(
-                                                   ButtonStyle.Primary, InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton3), null,
-                                                   false, new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("three"))
+                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
+                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton3),
+                                                   null,
+                                                   false,
+                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("three"))
                                                ),
                                                new DiscordButtonComponent(
-                                                   ButtonStyle.Primary, InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton4), null,
-                                                   false, new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("four"))
+                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
+                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton4),
+                                                   null,
+                                                   false,
+                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("four"))
                                                ),
                                                new DiscordButtonComponent(
-                                                   ButtonStyle.Primary, InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton5), null,
-                                                   false, new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("five"))
+                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
+                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton5),
+                                                   null,
+                                                   false,
+                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("five"))
                                                )
                                            )
                                            .AddComponents(
@@ -178,18 +193,18 @@ public class InventoryService : IInventoryService
                                                    new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("arrow_right"))
                                                ),
                                                new DiscordButtonComponent(
-                                                   ButtonStyle.Secondary,
+                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Secondary,
                                                    InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButtonChangeActiveStatus),
                                                    null,
                                                    false,
                                                    new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("repeat"))
                                                ),
                                                new DiscordButtonComponent(
-                                                   ButtonStyle.Secondary,
+                                                   tool == InventoryTool.Sell ? ButtonStyle.Danger : ButtonStyle.Secondary,
                                                    InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButtonSell),
                                                    null,
                                                    false,
-                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("x"))
+                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("regional_indicator_x"))
                                                )
                                            );
         }
