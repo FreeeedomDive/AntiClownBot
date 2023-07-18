@@ -140,85 +140,88 @@ public class InventoryService : IInventoryService
 
         if (addButtons)
         {
-            webhookBuilder = webhookBuilder.AddComponents(
-                                               new DiscordButtonComponent(
-                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
-                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton1),
-                                                   null,
-                                                   false,
-                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("one"))
-                                               ),
-                                               new DiscordButtonComponent(
-                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
-                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton2),
-                                                   null,
-                                                   false,
-                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("two"))
-                                               ),
-                                               new DiscordButtonComponent(
-                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
-                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton3),
-                                                   null,
-                                                   false,
-                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("three"))
-                                               ),
-                                               new DiscordButtonComponent(
-                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
-                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton4),
-                                                   null,
-                                                   false,
-                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("four"))
-                                               ),
-                                               new DiscordButtonComponent(
-                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
-                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton5),
-                                                   null,
-                                                   false,
-                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("five"))
-                                               )
-                                           )
-                                           .AddComponents(
-                                               new DiscordButtonComponent(
-                                                   ButtonStyle.Success,
-                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButtonLeft),
-                                                   null,
-                                                   false,
-                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("arrow_left"))
-                                               ),
-                                               new DiscordButtonComponent(
-                                                   ButtonStyle.Success,
-                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButtonRight),
-                                                   null,
-                                                   false,
-                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("arrow_right"))
-                                               ),
-                                               new DiscordButtonComponent(
-                                                   tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Secondary,
-                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButtonChangeActiveStatus),
-                                                   null,
-                                                   false,
-                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("repeat"))
-                                               ),
-                                               new DiscordButtonComponent(
-                                                   tool == InventoryTool.Sell ? ButtonStyle.Danger : ButtonStyle.Secondary,
-                                                   InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButtonSell),
-                                                   null,
-                                                   false,
-                                                   new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("regional_indicator_x"))
-                                               )
-                                           );
+            webhookBuilder = webhookBuilder
+                             .AddComponents(
+                                 new DiscordButtonComponent(
+                                     ButtonStyle.Success,
+                                     InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButtonLeft),
+                                     "Предыдущая страница",
+                                     false,
+                                     new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("arrow_left"))
+                                 ),
+                                 new DiscordButtonComponent(
+                                     ButtonStyle.Success,
+                                     InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButtonRight),
+                                     "Следующая страница",
+                                     false,
+                                     new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("arrow_right"))
+                                 )
+                             )
+                             .AddComponents(
+                                 new DiscordButtonComponent(
+                                     tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
+                                     InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton1),
+                                     null,
+                                     false,
+                                     new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("one"))
+                                 ),
+                                 new DiscordButtonComponent(
+                                     tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
+                                     InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton2),
+                                     null,
+                                     false,
+                                     new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("two"))
+                                 ),
+                                 new DiscordButtonComponent(
+                                     tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
+                                     InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton3),
+                                     null,
+                                     false,
+                                     new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("three"))
+                                 ),
+                                 new DiscordButtonComponent(
+                                     tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
+                                     InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton4),
+                                     null,
+                                     false,
+                                     new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("four"))
+                                 ),
+                                 new DiscordButtonComponent(
+                                     tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Danger,
+                                     InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButton5),
+                                     null,
+                                     false,
+                                     new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("five"))
+                                 )
+                             )
+                             .AddComponents(
+                                 new DiscordButtonComponent(
+                                     tool == InventoryTool.ChangeActiveStatus ? ButtonStyle.Primary : ButtonStyle.Secondary,
+                                     InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButtonChangeActiveStatus),
+                                     "Изменить активность",
+                                     false,
+                                     new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("repeat"))
+                                 ),
+                                 new DiscordButtonComponent(
+                                     tool == InventoryTool.Sell ? ButtonStyle.Danger : ButtonStyle.Secondary,
+                                     InteractionsIds.InventoryButtons.BuildId(id, InteractionsIds.InventoryButtons.InventoryButtonSell),
+                                     "Продать",
+                                     false,
+                                     new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("regional_indicator_x"))
+                                 )
+                             );
         }
 
         return webhookBuilder;
     }
 
-    private async Task<string> ChangeActiveStatusOfItemAsync(Guid ownerId, Guid itemId)
+    private async Task<string?> ChangeActiveStatusOfItemAsync(Guid ownerId, Guid itemId)
     {
         try
         {
             var item = await antiClownApiClient.Inventories.ReadItemAsync(ownerId, itemId);
             await antiClownApiClient.Inventories.ChangeItemActiveStatusAsync(ownerId, itemId, !item.IsActive);
-            return "";
+            return null;
         }
         catch (ForbiddenInactiveStatusForNegativeItemException)
         {
@@ -230,12 +233,12 @@ public class InventoryService : IInventoryService
         }
     }
 
-    private async Task<string> SellItemAsync(Guid ownerId, Guid itemId)
+    private async Task<string?> SellItemAsync(Guid ownerId, Guid itemId)
     {
         try
         {
             await antiClownApiClient.Inventories.SellAsync(ownerId, itemId);
-            return "";
+            return null;
         }
         catch (NotEnoughBalanceException)
         {

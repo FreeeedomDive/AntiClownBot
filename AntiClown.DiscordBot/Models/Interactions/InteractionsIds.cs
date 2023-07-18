@@ -11,6 +11,11 @@ public static class InteractionsIds
 
     public static class ShopButtons
     {
+        public static string BuildId(Guid id, string action)
+        {
+            return $"{Prefix}_{id}_{action}";
+        }
+
         public const string Prefix = "Shop_";
         public const string ShopButtonItem1 = "1";
         public const string ShopButtonItem2 = "2";
@@ -18,7 +23,8 @@ public static class InteractionsIds
         public const string ShopButtonItem4 = "4";
         public const string ShopButtonItem5 = "5";
         public const string ShopButtonReroll = "Reroll";
-        public const string ShopButtonChangeTool = "ChangeTool";
+        public const string ShopButtonReveal = "Reveal";
+        public const string ShopButtonBuy = "Buy";
     }
 
     public static class InventoryButtons

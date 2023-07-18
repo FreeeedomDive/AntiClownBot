@@ -38,6 +38,7 @@ public class ItemsRepository : IItemsRepository
                            .WhereIf(filter.OwnerId.HasValue, x => x.OwnerId == filter.OwnerId)
                            .WhereIf(filter.IsActive.HasValue, x => x.IsActive == filter.IsActive)
                            .WhereIf(filter.Name != null, x => x.Name == filter.Name)
+                           .OrderBy(x => x.Id)
                            .ToArrayAsync();
         return result.Select(Deserialize).ToArray();
     }

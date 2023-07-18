@@ -1,7 +1,6 @@
 ﻿using AntiClown.Api.Dto.Inventories;
-using AntiClown.DiscordBot.Extensions.Items;
 
-namespace AntiClown.DiscordBot.Extensions;
+namespace AntiClown.DiscordBot.Extensions.Items;
 
 public static class BaseItemDtoExtensions
 {

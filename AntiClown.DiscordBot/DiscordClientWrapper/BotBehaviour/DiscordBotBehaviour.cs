@@ -1,8 +1,10 @@
 ﻿using System.Text;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Interactivity.Domain.Inventory;
+using AntiClown.DiscordBot.Interactivity.Domain.Shop;
 using AntiClown.DiscordBot.Interactivity.Services.Inventory;
 using AntiClown.DiscordBot.Interactivity.Services.Parsers;
+using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Dev;
@@ -28,7 +30,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IEmotesCache emotesCache,
         IOptions<DiscordOptions> discordOptions,
         IOptions<Settings> settings,
-        IInventoryService inventoryService
+        IInventoryService inventoryService,
+        IShopService shopService
         /*
         IShopService shopService,
         IUserInventoryService userInventoryService,
@@ -48,6 +51,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.discordOptions = discordOptions;
         this.settings = settings;
         this.inventoryService = inventoryService;
+        this.shopService = shopService;
     }
 
     public async Task ConfigureAsync()
@@ -404,42 +408,48 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task HandleShopInteraction(ComponentInteractionCreateEventArgs e)
     {
-        /*if (!shopService.TryRead(e.User.Id, out var shop))
+        await ValidateInteractionUserAsync(e);
+        await discordClientWrapper.Messages.RespondAsync(
+            e.Interaction, InteractionResponseType.DeferredMessageUpdate,
+            null
+        );
+        
+        var (id, action) = ShopButtonsParser.Parse(e.Id);
+        
+        switch (action)
         {
-            return;
+            case InteractionsIds.ShopButtons.ShopButtonItem1:
+                await shopService.HandleItemInSlotAsync(id, 0, UpdateMessageAsync);
+                break;
+            case InteractionsIds.ShopButtons.ShopButtonItem2:
+                await shopService.HandleItemInSlotAsync(id, 1, UpdateMessageAsync);
+                break;
+            case InteractionsIds.ShopButtons.ShopButtonItem3:
+                await shopService.HandleItemInSlotAsync(id, 2, UpdateMessageAsync);
+                break;
+            case InteractionsIds.ShopButtons.ShopButtonItem4:
+                await shopService.HandleItemInSlotAsync(id, 3, UpdateMessageAsync);
+                break;
+            case InteractionsIds.ShopButtons.ShopButtonItem5:
+                await shopService.HandleItemInSlotAsync(id, 4, UpdateMessageAsync);
+                break;
+            case InteractionsIds.ShopButtons.ShopButtonReroll:
+                await shopService.ReRollAsync(id, UpdateMessageAsync);
+                break;
+            case InteractionsIds.ShopButtons.ShopButtonBuy:
+                await shopService.SetActiveToolAsync(id, ShopTool.Buying, UpdateMessageAsync);
+                break;
+            case InteractionsIds.ShopButtons.ShopButtonReveal:
+                await shopService.SetActiveToolAsync(id, ShopTool.Revealing, UpdateMessageAsync);
+                break;
         }
 
-        var builder = new DiscordWebhookBuilder();
-        switch (e.Id)
-        {
-            case Interactions.Buttons.ShopButtonItem1:
-                await shop.HandleItemInSlot(1, e.Interaction);
-                break;
-            case Interactions.Buttons.ShopButtonItem2:
-                await shop.HandleItemInSlot(2, e.Interaction);
-                break;
-            case Interactions.Buttons.ShopButtonItem3:
-                await shop.HandleItemInSlot(3, e.Interaction);
-                break;
-            case Interactions.Buttons.ShopButtonItem4:
-                await shop.HandleItemInSlot(4, e.Interaction);
-                break;
-            case Interactions.Buttons.ShopButtonItem5:
-                await shop.HandleItemInSlot(5, e.Interaction);
-                break;
-            case Interactions.Buttons.ShopButtonReroll:
-                await shop.ReRoll(e.Interaction);
-                break;
-            case Interactions.Buttons.ShopButtonChangeTool:
-                shop.CurrentShopTool =
-                    shop.CurrentShopTool == ShopTool.Revealing ? ShopTool.Buying : ShopTool.Revealing;
-                break;
-        }
+        return;
 
-        await discordClientWrapper.Messages.EditOriginalResponseAsync(
-            e.Interaction,
-            await builder.AddEmbed(await shop.GetNewShopEmbed()).SetShopButtons(emotesProvider)
-        );*/
+        Task UpdateMessageAsync(DiscordWebhookBuilder webhookBuilder)
+        {
+            return discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, webhookBuilder);
+        }
     }
 
     private async Task HandleInventoryInteraction(ComponentInteractionCreateEventArgs e)
@@ -556,6 +566,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         );
         // slash.RegisterCommands<PartyCommandModule>(guildId);
         slash.RegisterCommands<InventoryCommandModule>(guildId);
+        slash.RegisterCommands<ShopCommandModule>(guildId);
         slash.RegisterCommands<LohotronCommandModule>(guildId);
         slash.RegisterCommands<RatingCommandModule>(guildId);
         // slash.RegisterCommands<RolesCommandModule>(guildId);
@@ -675,6 +686,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
     private readonly IInventoryService inventoryService;
+    private readonly IShopService shopService;
     private readonly IServiceProvider serviceProvider;
     private readonly IOptions<Settings> settings;
 }

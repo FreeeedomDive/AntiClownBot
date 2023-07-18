@@ -18,6 +18,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SqlRepositoryBase.Configuration.Extensions;
 using SqlRepositoryBase.Core.Repository;
 
@@ -106,7 +107,8 @@ public class Startup
         );
         services.AddHangfireServer();
 
-        services.AddControllers();
+        
+        services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.TypeNameHandling = TypeNameHandling.All);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

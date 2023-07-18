@@ -26,6 +26,7 @@ using Hangfire.PostgreSql;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using SqlRepositoryBase.Configuration.Extensions;
 
 namespace AntiClown.Entertainment.Api;
@@ -110,7 +111,7 @@ public class Startup
         );
         services.AddHangfireServer();
 
-        services.AddControllers();
+        services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.TypeNameHandling = TypeNameHandling.All);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

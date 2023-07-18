@@ -8,10 +8,12 @@ using AntiClown.DiscordBot.Database;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 using AntiClown.DiscordBot.EmbedBuilders.Inventories;
+using AntiClown.DiscordBot.EmbedBuilders.Shops;
 using AntiClown.DiscordBot.EmbedBuilders.Transactions;
 using AntiClown.DiscordBot.EmbedBuilders.Tributes;
 using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Interactivity.Services.Inventory;
+using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.DiscordBot.SlashCommands.Base.Middlewares;
@@ -144,11 +146,13 @@ internal class Program
         builder.Services.AddTransient<ITributeEmbedBuilder, TributeEmbedBuilder>();
         builder.Services.AddTransient<ITransactionsEmbedBuilder, TransactionsEmbedBuilder>();
         builder.Services.AddTransient<IInventoryEmbedBuilder, InventoryEmbedBuilder>();
+        builder.Services.AddTransient<IShopEmbedBuilder, ShopEmbedBuilder>();
     }
 
     private static void BuildInteractivityServices(WebApplicationBuilder builder)
     {
         builder.Services.AddTransient<IInventoryService, InventoryService>();
+        builder.Services.AddTransient<IShopService, ShopService>();
     }
 
     private static void BuildCommonEventsConsumers(WebApplicationBuilder builder)

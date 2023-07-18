@@ -27,6 +27,7 @@ public class ShopItemsRepository : IShopItemsRepository
         var result = await sqlRepository
                            .BuildCustomQuery()
                            .Where(x => x.ShopId == shopId)
+                           .OrderBy(x => x.Id)
                            .ToArrayAsync();
         return mapper.Map<ShopItem[]>(result);
     }

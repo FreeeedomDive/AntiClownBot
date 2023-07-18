@@ -22,8 +22,4 @@
         <ProjectReference Include="..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj"/>
         <ProjectReference Include="..\Utility\Utility.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Interactivity\Services\Shop\" />
-    </ItemGroup>
 </Project>

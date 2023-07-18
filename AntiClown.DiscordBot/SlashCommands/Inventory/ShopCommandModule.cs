@@ -1,8 +1,6 @@
-﻿using AntiClown.Api.Client;
-using AntiClown.DiscordBot.Cache.Users;
+﻿using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
-using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClown.DiscordBot.SlashCommands.Inventory;
@@ -11,23 +9,17 @@ public class ShopCommandModule : SlashCommandModuleWithMiddlewares
 {
     public ShopCommandModule(
         ICommandExecutor commandExecutor,
-        IAntiClownApiClient antiClownApiClient,
-        IUsersCache usersCache
+        IShopService shopService
     ) : base(commandExecutor)
     {
-        this.antiClownApiClient = antiClownApiClient;
-        this.usersCache = usersCache;
+        this.shopService = shopService;
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.Shop, "Открыть магазин")]
     public async Task GetShop(InteractionContext context)
     {
-        await ExecuteAsync(context, async () =>
-        {
-            
-        });
+        await ExecuteAsync(context, async () => await shopService.CreateAsync(context, RespondToInteractionAsync));
     }
 
-    private readonly IAntiClownApiClient antiClownApiClient;
-    private readonly IUsersCache usersCache;
+    private readonly IShopService shopService;
 }

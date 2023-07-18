@@ -19,10 +19,7 @@ public class InventoryCommandModule : SlashCommandModuleWithMiddlewares
     public async Task GetInventory(InteractionContext context)
     {
         await ExecuteAsync(
-            context, async () =>
-            {
-                await inventoryService.CreateAsync(context, RespondToInteractionAsync);
-            }
+            context, async () => await inventoryService.CreateAsync(context, RespondToInteractionAsync)
         );
     }
 

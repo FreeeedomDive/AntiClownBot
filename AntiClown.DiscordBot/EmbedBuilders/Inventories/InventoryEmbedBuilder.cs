@@ -2,6 +2,7 @@
 using AntiClown.Api.Dto.Inventories;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Extensions;
+using AntiClown.DiscordBot.Extensions.Items;
 using AntiClown.DiscordBot.Interactivity.Domain.Inventory;
 using DSharpPlus.Entities;
 
@@ -43,7 +44,7 @@ public class InventoryEmbedBuilder : IInventoryEmbedBuilder
             var fieldDescriptionBuilder = new StringBuilder();
             fieldDescriptionBuilder.Append(item.IsActive ? "Активен" : "Не активен").Append('\n');
             fieldDescriptionBuilder.Append($"Цена: {item.Price}").Append('\n');
-            fieldDescriptionBuilder.Append(string.Join("\n", item.Description().Select(kv => $"{kv.Key}: {kv.Value}")));
+            fieldDescriptionBuilder.Append(item.Description().ToStatsString());
             embedBuilder.AddField(fieldHeader, fieldDescriptionBuilder.ToString());
         }
 

@@ -32,7 +32,10 @@ internal static class RestResponseExtensions
 
         try
         {
-            var response = JsonConvert.DeserializeObject<T>(restResponse.Content);
+            var response = JsonConvert.DeserializeObject<T>(restResponse.Content, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+            });
             if (response == null)
             {
                 throw new Exception($"Can not deserialize response as {typeof(T).Name}");
