@@ -1,19 +1,19 @@
-﻿using AntiClown.Entertainment.Api.Client;
+﻿using AntiClown.DiscordBot.Interactivity.Services.GuessNumber;
+using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
-using Newtonsoft.Json;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
 public class GuessNumberEventConsumer : ICommonEventConsumer<GuessNumberEventDto>
 {
     public GuessNumberEventConsumer(
-        IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+        IGuessNumberEventService guessNumberEventService,
         ILogger<GuessNumberEventConsumer> logger
     )
     {
-        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
+        this.guessNumberEventService = guessNumberEventService;
         this.logger = logger;
     }
 
@@ -22,6 +22,7 @@ public class GuessNumberEventConsumer : ICommonEventConsumer<GuessNumberEventDto
         var eventId = context.Message.EventId;
         if (context.Message.Finished)
         {
+            await guessNumberEventService.FinishAsync(eventId);
             logger.LogInformation(
                 "{ConsumerName} received FINISHED event with id {eventId}",
                 ConsumerName,
@@ -30,17 +31,16 @@ public class GuessNumberEventConsumer : ICommonEventConsumer<GuessNumberEventDto
             return;
         }
 
-        var @event = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.ReadAsync(eventId);
+        await guessNumberEventService.CreateAsync(eventId);
         logger.LogInformation(
-            "{ConsumerName} received event with id {eventId}\n{eventInfo}",
+            "{ConsumerName} received event with id {eventId}",
             ConsumerName,
-            eventId,
-            JsonConvert.SerializeObject(@event, Formatting.Indented)
+            eventId
         );
     }
 
-    public string ConsumerName => nameof(GuessNumberEventConsumer);
+    private string ConsumerName => nameof(GuessNumberEventConsumer);
 
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
+    private readonly IGuessNumberEventService guessNumberEventService;
     private readonly ILogger<GuessNumberEventConsumer> logger;
 }

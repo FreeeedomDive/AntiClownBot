@@ -2,6 +2,7 @@
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Interactivity.Domain.Inventory;
 using AntiClown.DiscordBot.Interactivity.Domain.Shop;
+using AntiClown.DiscordBot.Interactivity.Services.GuessNumber;
 using AntiClown.DiscordBot.Interactivity.Services.Inventory;
 using AntiClown.DiscordBot.Interactivity.Services.Parsers;
 using AntiClown.DiscordBot.Interactivity.Services.Shop;
@@ -11,6 +12,7 @@ using AntiClown.DiscordBot.SlashCommands.Dev;
 using AntiClown.DiscordBot.SlashCommands.Inventory;
 using AntiClown.DiscordBot.SlashCommands.Other;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
 using DSharpPlus;
@@ -31,7 +33,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IOptions<DiscordOptions> discordOptions,
         IOptions<Settings> settings,
         IInventoryService inventoryService,
-        IShopService shopService
+        IShopService shopService,
+        IGuessNumberEventService guessNumberEventService
         /*
         IShopService shopService,
         IUserInventoryService userInventoryService,
@@ -52,6 +55,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.settings = settings;
         this.inventoryService = inventoryService;
         this.shopService = shopService;
+        this.guessNumberEventService = guessNumberEventService;
     }
 
     public async Task ConfigureAsync()
@@ -365,13 +369,13 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     {
         if (e.Id.StartsWith(InteractionsIds.InventoryButtons.Prefix))
         {
-            await HandleInventoryInteraction(e);
+            await HandleInventoryInteractionAsync(e);
             return;
         }
 
         if (e.Id.StartsWith(InteractionsIds.ShopButtons.Prefix))
         {
-            await HandleShopInteraction(e);
+            await HandleShopInteractionAsync(e);
             return;
         }
 
@@ -384,6 +388,12 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         if (e.Id.StartsWith(InteractionsIds.F1PredictionsButtons.DriversSelectDropdown))
         {
             await HandleRaceResultInput(e);
+            return;
+        }
+
+        if (e.Id.StartsWith(InteractionsIds.EventsButtons.GuessNumber.Prefix))
+        {
+            await HandleGuessNumberInputAsync(e);
         }
     }
 
@@ -406,16 +416,16 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
     }
 
-    private async Task HandleShopInteraction(ComponentInteractionCreateEventArgs e)
+    private async Task HandleShopInteractionAsync(ComponentInteractionCreateEventArgs e)
     {
         await ValidateInteractionUserAsync(e);
         await discordClientWrapper.Messages.RespondAsync(
             e.Interaction, InteractionResponseType.DeferredMessageUpdate,
             null
         );
-        
+
         var (id, action) = ShopButtonsParser.Parse(e.Id);
-        
+
         switch (action)
         {
             case InteractionsIds.ShopButtons.ShopButtonItem1:
@@ -452,14 +462,14 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
     }
 
-    private async Task HandleInventoryInteraction(ComponentInteractionCreateEventArgs e)
+    private async Task HandleInventoryInteractionAsync(ComponentInteractionCreateEventArgs e)
     {
         await ValidateInteractionUserAsync(e);
         await discordClientWrapper.Messages.RespondAsync(
             e.Interaction, InteractionResponseType.DeferredMessageUpdate,
             null
         );
-        
+
         var (id, action) = InventoryButtonsParser.Parse(e.Id);
         switch (action)
         {
@@ -498,6 +508,16 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         {
             return discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, webhookBuilder);
         }
+    }
+
+    private async Task HandleGuessNumberInputAsync(ComponentInteractionCreateEventArgs e)
+    {
+        await discordClientWrapper.Messages.RespondAsync(
+            e.Interaction, InteractionResponseType.DeferredMessageUpdate,
+            null
+        );
+        var (eventId, pick) = GuessNumberInputParser.Parse(e.Id);
+        await guessNumberEventService.AddUserPickAsync(eventId, e.User.Id, (GuessNumberPickDto)pick);
     }
 
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
@@ -685,8 +705,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
+    private readonly IGuessNumberEventService guessNumberEventService;
     private readonly IInventoryService inventoryService;
-    private readonly IShopService shopService;
     private readonly IServiceProvider serviceProvider;
     private readonly IOptions<Settings> settings;
+    private readonly IShopService shopService;
 }

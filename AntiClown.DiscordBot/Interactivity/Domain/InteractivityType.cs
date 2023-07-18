@@ -7,4 +7,6 @@ public enum InteractivityType
     F1Predictions,
     Race,
     Party,
+    GuessNumber,
+    Lottery,
 }

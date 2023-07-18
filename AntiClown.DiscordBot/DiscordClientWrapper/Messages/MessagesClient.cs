@@ -63,6 +63,13 @@ public class MessagesClient : IMessagesClient
         return modified;
     }
 
+    public async Task<DiscordMessage> ModifyAsync(DiscordMessage message, DiscordMessageBuilder builder)
+    {
+        var modified = await message.ModifyAsync(builder);
+
+        return modified;
+    }
+
     public async Task<DiscordMessage> ModifyAsync(InteractionContext context, DiscordWebhookBuilder builder)
     {
         return await context.EditResponseAsync(builder);
