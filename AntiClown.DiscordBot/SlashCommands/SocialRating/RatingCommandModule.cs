@@ -29,77 +29,82 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
     [SlashCommand(InteractionsIds.CommandsNames.ScamCoins, "Узнать свой баланс скамкойнов (остальные его не увидят)")]
     public async Task FetchScamCoins(InteractionContext context)
     {
-        await ExecuteEphemeralAsync(context, async () =>
-        {
-            var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-            var userRating = await antiClownApiClient.Economy.ReadAsync(userId);
+        await ExecuteEphemeralAsync(
+            context, async () =>
+            {
+                var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
+                var userRating = await antiClownApiClient.Economy.ReadAsync(userId);
 
-            await RespondToInteractionAsync(
-                context,
-                $"{userRating.ScamCoins} скам-койнов"
-            );
-        });
+                await RespondToInteractionAsync(
+                    context,
+                    $"{userRating.ScamCoins} скам-койнов"
+                );
+            }
+        );
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.Rating, "Полный паспорт пользователя с информацией о балансе и активных предметах")]
     public async Task Rating(InteractionContext context)
     {
-        await ExecuteAsync(context, async () =>
-        {
-            var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-            var economy = await antiClownApiClient.Economy.ReadAsync(userId);
-            var inventory = await antiClownApiClient.Inventories.ReadInventoryAsync(userId);
-
-            var embedBuilder = new DiscordEmbedBuilder
+        await ExecuteAsync(
+            context, async () =>
             {
-                Color = context.Member.Color,
-            };
+                var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
+                var economy = await antiClownApiClient.Economy.ReadAsync(userId);
+                var inventory = await antiClownApiClient.Inventories.ReadInventoryAsync(userId);
 
-            var name = context.Member.ServerOrUserName();
-            embedBuilder.WithThumbnail(context.Member.AvatarUrl);
-            var aRolf = await emotesCache.GetEmoteAsTextAsync("aRolf");
-            embedBuilder.WithTitle($"ЧЕЛА РЕАЛЬНО ЗОВУТ {name.ToUpper()} {aRolf} {aRolf} {aRolf}");
+                var embedBuilder = new DiscordEmbedBuilder
+                {
+                    Color = context.Member.Color,
+                };
 
-            embedBuilder.AddField("SCAM COINS", $"{economy.ScamCoins}");
-            // TODO: embedBuilder.AddField("Общая ценность", $"{response.NetWorth}");
+                var name = context.Member.ServerOrUserName();
+                embedBuilder.WithThumbnail(context.Member.AvatarUrl);
+                var aRolf = await emotesCache.GetEmoteAsTextAsync("aRolf");
+                embedBuilder.WithTitle($"ЧЕЛА РЕАЛЬНО ЗОВУТ {name.ToUpper()} {aRolf} {aRolf} {aRolf}");
 
-            AddFieldForItems(embedBuilder, inventory.CatWives, ItemNameDto.CatWife);
-            AddFieldForItems(embedBuilder, inventory.DogWives, ItemNameDto.DogWife);
-            AddFieldForItems(embedBuilder, inventory.Internets, ItemNameDto.Internet);
-            AddFieldForItems(embedBuilder, inventory.RiceBowls, ItemNameDto.RiceBowl);
-            AddFieldForItems(embedBuilder, inventory.CommunismBanners, ItemNameDto.CommunismBanner);
-            AddFieldForItems(embedBuilder, inventory.JadeRods, ItemNameDto.JadeRod);
+                embedBuilder.AddField("SCAM COINS", $"{economy.ScamCoins}");
+                // TODO: embedBuilder.AddField("Общая ценность", $"{response.NetWorth}");
 
-            embedBuilder.AddField($"Добыча-коробка - {economy.LootBoxes}", "Получение приза из лутбокса");
+                AddFieldForItems(embedBuilder, inventory.CatWives, ItemNameDto.CatWife);
+                AddFieldForItems(embedBuilder, inventory.DogWives, ItemNameDto.DogWife);
+                AddFieldForItems(embedBuilder, inventory.Internets, ItemNameDto.Internet);
+                AddFieldForItems(embedBuilder, inventory.RiceBowls, ItemNameDto.RiceBowl);
+                AddFieldForItems(embedBuilder, inventory.CommunismBanners, ItemNameDto.CommunismBanner);
+                AddFieldForItems(embedBuilder, inventory.JadeRods, ItemNameDto.JadeRod);
 
-            await RespondToInteractionAsync(context, embedBuilder.Build());
-        });
+                embedBuilder.AddField($"Добыча-коробка - {economy.LootBoxes}", "Получение приза из лутбокса");
+
+                await RespondToInteractionAsync(context, embedBuilder.Build());
+            }
+        );
     }
 
-    private void AddFieldForItems<T>(DiscordEmbedBuilder embedBuilder, T[] items, ItemNameDto itemName) where T : BaseItemDto
+    private static void AddFieldForItems<T>(DiscordEmbedBuilder embedBuilder, T[] items, ItemNameDto itemName) where T : BaseItemDto
     {
-        var descriptions = items.Length == 0
+        var onlyActiveItems = items.Where(x => x.IsActive).ToArray();
+        var descriptions = onlyActiveItems.Length == 0
             ? "Нет предметов"
-            : $"{string.Join(" ", items.Select(item => $"{item.Rarity}"))}\n" +
-              $"{string.Join("\n", CalculateItemStats(items, itemName).Select(kv => $"{kv.Key}: {kv.Value}"))}";
-        var active = items.Count(x => x.IsActive);
+            : $"{string.Join(" ", onlyActiveItems.Select(item => $"{item.Rarity}"))}\n" +
+              $"{string.Join("\n", CalculateItemStats(onlyActiveItems, itemName).Select(kv => $"{kv.Key}: {kv.Value}"))}";
         embedBuilder.AddField(
-            $"{itemName.Localize()} - {active} (всего {items.Length})",
-            descriptions);
+            $"{itemName.Localize()} - {onlyActiveItems.Length} (всего {items.Length})",
+            descriptions
+        );
     }
 
     private static Dictionary<string, string> CalculateItemStats<T>(T[] items, ItemNameDto itemName) where T : BaseItemDto
     {
         return itemName switch
         {
-            ItemNameDto.CatWife => new Dictionary<string, string>()
+            ItemNameDto.CatWife => new Dictionary<string, string>
             {
                 {
                     "Шанс на автоматическое подношение",
                     $"{items.CatWives().Select(i => i.AutoTributeChance).Sum()}%"
                 },
             },
-            ItemNameDto.CommunismBanner => new Dictionary<string, string>()
+            ItemNameDto.CommunismBanner => new Dictionary<string, string>
             {
                 {
                     "Шанс разделить награду за подношение с другим владельцем плаката",
@@ -110,14 +115,14 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
                     $"{items.CommunismBanners().Select(i => i.StealChance).Sum()}"
                 },
             },
-            ItemNameDto.DogWife => new Dictionary<string, string>()
+            ItemNameDto.DogWife => new Dictionary<string, string>
             {
                 {
                     "Шанс получить лутбокс во время подношения",
                     $"{(double)items.DogWives().Select(i => i.LootBoxFindChance).Sum() / 10}%"
                 },
             },
-            ItemNameDto.Internet => new Dictionary<string, string>()
+            ItemNameDto.Internet => new Dictionary<string, string>
             {
                 {
                     "Уменьшение кулдауна в процентах",
@@ -132,7 +137,7 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
                     $"{string.Join("    ", items.Internets().Select(i => $"{i.Ping}%"))}"
                 },
             },
-            ItemNameDto.JadeRod => new Dictionary<string, string>()
+            ItemNameDto.JadeRod => new Dictionary<string, string>
             {
                 {
                     "Шанс увеличения кулдауна во время одной попытки",
@@ -147,7 +152,7 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
                     $"{string.Join("\t", items.JadeRods().Select(i => $"{i.Thickness}%"))}"
                 },
             },
-            ItemNameDto.RiceBowl => new Dictionary<string, string>()
+            ItemNameDto.RiceBowl => new Dictionary<string, string>
             {
                 {
                     "Границы получения подношения",
@@ -159,7 +164,8 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
         };
     }
 
+    private readonly IAntiClownApiClient antiClownApiClient;
+
     private readonly IEmotesCache emotesCache;
     private readonly IUsersCache usersCache;
-    private readonly IAntiClownApiClient antiClownApiClient;
 }

@@ -51,6 +51,12 @@ public class UsersCache : IUsersCache
         }
     }
 
+    public async Task AddOrUpdate(DiscordMember member)
+    {
+        var apiId = await GetApiIdByMemberIdAsync(member.Id);
+        apiIdToDiscordMember[apiId] = member;
+    }
+
     public async Task<DiscordMember?> GetMemberByApiIdAsync(Guid userId)
     {
         if (!isInitialized)
@@ -76,6 +82,7 @@ public class UsersCache : IUsersCache
             return apiId;
         }
 
+        var member = await discordClientWrapper.Members.GetAsync(memberId);
         var users = await antiClownApiClient.Users.FindAsync(
             new UserFilterDto
             {
@@ -87,10 +94,10 @@ public class UsersCache : IUsersCache
         if (user is not null)
         {
             logger.LogInformation("Add new MemberId-ApiUserId binding [{memberId}]-[{apiId}] (get user from API)", memberId, user.Id);
+            AddUser(member, user.Id);
             return user.Id;
         }
 
-        var member = await discordClientWrapper.Members.GetAsync(memberId);
         var newUserId = await antiClownApiClient.Users.CreateAsync(
             new NewUserDto
             {

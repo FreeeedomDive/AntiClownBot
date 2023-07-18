@@ -62,6 +62,7 @@ internal class Program
 
         var slashCommandsExecutor = app.Services.GetRequiredService<ICommandExecutor>();
         slashCommandsExecutor.AddMiddleware<LoggingMiddleware>();
+        slashCommandsExecutor.AddMiddleware<ActualizeUsersCacheMiddleware>();
         slashCommandsExecutor.AddMiddleware<DeferredMessageMiddleware>();
         slashCommandsExecutor.AddMiddleware<CorrectChatCommandUsageMiddleware>();
 
