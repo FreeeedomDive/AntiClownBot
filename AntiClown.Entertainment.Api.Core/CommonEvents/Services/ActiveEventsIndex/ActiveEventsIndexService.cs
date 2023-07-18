@@ -21,7 +21,7 @@ public class ActiveEventsIndexService : IActiveEventsIndexService
     {
         var events = await ReadAllEventTypesAsync();
         var activeEvents = events.Where(kv => kv.Value).Select(kv => kv.Key).ToArray();
-        var isNightTime = DateTime.Now.IsNightTime();
+        var isNightTime = DateTime.UtcNow.IsNightTime();
         return isNightTime
             ? activeEvents.Where(x => x.IsNightTimeEvent()).ToArray()
             : activeEvents.Where(x => !x.IsNightTimeEvent()).ToArray();
