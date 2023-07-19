@@ -7,9 +7,11 @@ using AntiClown.DiscordBot.Consumers.Events.Daily;
 using AntiClown.DiscordBot.Database;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
+using AntiClown.DiscordBot.EmbedBuilders.GuessNumber;
 using AntiClown.DiscordBot.EmbedBuilders.Inventories;
 using AntiClown.DiscordBot.EmbedBuilders.Shops;
 using AntiClown.DiscordBot.EmbedBuilders.Transactions;
+using AntiClown.DiscordBot.EmbedBuilders.Transfusion;
 using AntiClown.DiscordBot.EmbedBuilders.Tributes;
 using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Interactivity.Services.GuessNumber;
@@ -149,6 +151,8 @@ internal class Program
         builder.Services.AddTransient<ITransactionsEmbedBuilder, TransactionsEmbedBuilder>();
         builder.Services.AddTransient<IInventoryEmbedBuilder, InventoryEmbedBuilder>();
         builder.Services.AddTransient<IShopEmbedBuilder, ShopEmbedBuilder>();
+        builder.Services.AddTransient<IGuessNumberEmbedBuilder, GuessNumberEmbedBuilder>();
+        builder.Services.AddTransient<ITransfusionEmbedBuilder, TransfusionEmbedBuilder>();
     }
 
     private static void BuildInteractivityServices(WebApplicationBuilder builder)
