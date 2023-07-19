@@ -9,6 +9,7 @@ using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 using AntiClown.DiscordBot.EmbedBuilders.GuessNumber;
 using AntiClown.DiscordBot.EmbedBuilders.Inventories;
+using AntiClown.DiscordBot.EmbedBuilders.Lottery;
 using AntiClown.DiscordBot.EmbedBuilders.Shops;
 using AntiClown.DiscordBot.EmbedBuilders.Transactions;
 using AntiClown.DiscordBot.EmbedBuilders.Transfusion;
@@ -16,6 +17,7 @@ using AntiClown.DiscordBot.EmbedBuilders.Tributes;
 using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Interactivity.Services.GuessNumber;
 using AntiClown.DiscordBot.Interactivity.Services.Inventory;
+using AntiClown.DiscordBot.Interactivity.Services.Lottery;
 using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Base;
@@ -153,6 +155,7 @@ internal class Program
         builder.Services.AddTransient<IShopEmbedBuilder, ShopEmbedBuilder>();
         builder.Services.AddTransient<IGuessNumberEmbedBuilder, GuessNumberEmbedBuilder>();
         builder.Services.AddTransient<ITransfusionEmbedBuilder, TransfusionEmbedBuilder>();
+        builder.Services.AddTransient<ILotteryEmbedBuilder, LotteryEmbedBuilder>();
     }
 
     private static void BuildInteractivityServices(WebApplicationBuilder builder)
@@ -160,6 +163,7 @@ internal class Program
         builder.Services.AddTransient<IInventoryService, InventoryService>();
         builder.Services.AddTransient<IShopService, ShopService>();
         builder.Services.AddTransient<IGuessNumberEventService, GuessNumberEventService>();
+        builder.Services.AddTransient<ILotteryService, LotteryService>();
     }
 
     private static void BuildCommonEventsConsumers(WebApplicationBuilder builder)

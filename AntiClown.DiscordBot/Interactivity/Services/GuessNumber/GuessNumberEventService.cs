@@ -3,7 +3,6 @@ using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.EmbedBuilders.GuessNumber;
 using AntiClown.DiscordBot.Interactivity.Domain;
-using AntiClown.DiscordBot.Interactivity.Domain.GuessNumber;
 using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.Options;
@@ -24,7 +23,8 @@ public class GuessNumberEventService : IGuessNumberEventService
         IGuessNumberEmbedBuilder guessNumberEmbedBuilder,
         IUsersCache usersCache,
         IEmotesCache emotesCache,
-        IOptions<DiscordOptions> discordOptions
+        IOptions<DiscordOptions> discordOptions,
+        IOptions<Settings> settings
     )
     {
         this.discordClientWrapper = discordClientWrapper;
@@ -34,6 +34,7 @@ public class GuessNumberEventService : IGuessNumberEventService
         this.usersCache = usersCache;
         this.emotesCache = emotesCache;
         this.discordOptions = discordOptions;
+        this.settings = settings;
     }
 
     public async Task CreateAsync(Guid eventId)
@@ -41,7 +42,7 @@ public class GuessNumberEventService : IGuessNumberEventService
         var guessNumberEvent = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(guessNumberEvent);
         var message = await discordClientWrapper.Messages.SendAsync(discordOptions.Value.BotChannelId, messageBuilder);
-        var interactivity = new Interactivity<GuessNumberEventDetails>
+        var interactivity = new Interactivity<object>
         {
             Id = eventId,
             Type = InteractivityType.GuessNumber,
@@ -57,14 +58,14 @@ public class GuessNumberEventService : IGuessNumberEventService
         await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.AddPickAsync(eventId, userId, pick);
         var guessNumberEvent = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(guessNumberEvent);
-        var interactivity = await interactivityRepository.TryReadAsync<GuessNumberEventDetails>(eventId);
+        var interactivity = await interactivityRepository.TryReadAsync<object>(eventId);
         var oldMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity!.MessageId);
         await discordClientWrapper.Messages.ModifyAsync(oldMessage, messageBuilder);
     }
 
     public async Task FinishAsync(Guid eventId)
     {
-        var interactivity = await interactivityRepository.TryReadAsync<GuessNumberEventDetails>(eventId);
+        var interactivity = await interactivityRepository.TryReadAsync<object>(eventId);
         var guessNumberEvent = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(guessNumberEvent);
         var oldMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity!.MessageId);
@@ -73,7 +74,9 @@ public class GuessNumberEventService : IGuessNumberEventService
 
     private async Task<DiscordMessageBuilder> BuildEventMessageAsync(GuessNumberEventDto guessNumberEvent)
     {
+        var ping = settings.Value.PingOnEvents ? "@everyone" : "";
         return new DiscordMessageBuilder()
+               .WithContent(ping)
                .WithEmbed(await guessNumberEmbedBuilder.BuildAsync(guessNumberEvent))
                .AddComponents(
                    new DiscordButtonComponent(
@@ -126,6 +129,7 @@ public class GuessNumberEventService : IGuessNumberEventService
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IOptions<DiscordOptions> discordOptions;
+    private readonly IOptions<Settings> settings;
     private readonly IEmotesCache emotesCache;
     private readonly IInteractivityRepository interactivityRepository;
     private readonly IGuessNumberEmbedBuilder guessNumberEmbedBuilder;

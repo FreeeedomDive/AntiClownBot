@@ -21,7 +21,6 @@ public class GuessNumberEmbedBuilder : IGuessNumberEmbedBuilder
 
     public async Task<DiscordEmbed> BuildAsync(GuessNumberEventDto guessNumberEvent)
     {
-        var ping = DateTime.UtcNow.IsNightTime() || !settings.Value.PingOnEvents ? "" : "@everyone ";
         var embedBuilder = new DiscordEmbedBuilder()
                            .WithTitle("Угадай число")
                            .WithColor(guessNumberEvent.Finished ? DiscordColor.Black : DiscordColor.Azure)
@@ -37,7 +36,7 @@ public class GuessNumberEmbedBuilder : IGuessNumberEmbedBuilder
         }
         else
         {
-            embedBuilder.AddField($"{ping}Я загадал число, угадайте его!", "У вас 10 минут");
+            embedBuilder.AddField("Я загадал число, угадайте его!", "У вас 10 минут");
         }
 
         return embedBuilder.Build();

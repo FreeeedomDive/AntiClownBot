@@ -60,12 +60,13 @@ public static class InteractionsIds
 
         public static class Lottery
         {
-            public static string BuildId(Guid lotteryId)
+            public static string BuildId(Guid lotteryId, string action)
             {
-                return $"{Prefix}_{lotteryId}";
+                return $"{Prefix}_{lotteryId}_{action}";
             }
 
-            public const string Prefix = "Lottery_Join";
+            public const string Prefix = "Lottery";
+            public const string Join = "Join";
         }
 
         public static class GuessNumber
