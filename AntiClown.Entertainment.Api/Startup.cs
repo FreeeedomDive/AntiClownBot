@@ -20,6 +20,9 @@ using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Messages;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.PaymentsAndResets;
 using AntiClown.Entertainment.Api.Core.Database;
 using AntiClown.Entertainment.Api.Core.Options;
+using AntiClown.Entertainment.Api.Core.Parties.Repositories;
+using AntiClown.Entertainment.Api.Core.Parties.Services;
+using AntiClown.Entertainment.Api.Core.Parties.Services.Messages;
 using AntiClown.Entertainment.Api.Middlewares;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -82,6 +85,7 @@ public class Startup
         services.AddTransient<ICommonActiveEventsIndexRepository, CommonActiveEventsIndexRepository>();
         services.AddTransient<IDailyEventsRepository, DailyEventsRepository>();
         services.AddTransient<IActiveDailyEventsIndexRepository, ActiveDailyEventsIndexRepository>();
+        services.AddTransient<IPartiesRepository, PartiesRepository>();
 
         // configure other stuff
         services.AddTransient<IAntiClownApiClient>(
@@ -89,6 +93,7 @@ public class Startup
         );
         services.AddTransient<ICommonEventsMessageProducer, CommonEventsMessageProducer>();
         services.AddTransient<IDailyEventsMessageProducer, DailyEventsMessageProducer>();
+        services.AddTransient<IPartiesMessageProducer, PartiesMessageProducer>();
         services.AddTransient<IScheduler, HangfireScheduler>();
         services.AddTransient<IRaceGenerator, RaceGenerator>();
 
@@ -103,11 +108,12 @@ public class Startup
         services.AddTransient<IAnnounceEventService, AnnounceEventService>();
         services.AddTransient<IPaymentsAndResetsService, PaymentsAndResetsService>();
         services.AddTransient<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
+        services.AddTransient<IPartiesService, PartiesService>();
 
         // configure HangFire
         services.AddHangfire(
             (serviceProvider, config) =>
-                config.UsePostgreSqlStorage(serviceProvider.GetService<IOptions<DatabaseOptions>>()!.Value.ConnectionString)
+                config.UsePostgreSqlStorage(serviceProvider.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString)
         );
         services.AddHangfireServer();
 

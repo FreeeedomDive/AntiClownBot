@@ -4,6 +4,7 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories.ActiveEventsInd
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.ActiveEventsIndex;
 using AntiClown.Entertainment.Api.Core.Options;
+using AntiClown.Entertainment.Api.Core.Parties.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -30,6 +31,7 @@ public class DatabaseContext : DbContext
     public DbSet<ActiveEventsIndexStorageElement> ActiveEventsIndex { get; set; }
     public DbSet<DailyEventStorageElement> DailyEvents { get; set; }
     public DbSet<DailyActiveEventsIndexStorageElement> ActiveDailyEventsIndex { get; set; }
+    public DbSet<PartyStorageElement> Parties { get; set; }
 
     private DatabaseOptions Options { get; }
 }
