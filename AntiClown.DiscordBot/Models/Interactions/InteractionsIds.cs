@@ -91,6 +91,11 @@ public static class InteractionsIds
         public const string Dev_UserEditor_Coins = "coins";
         public const string Dev_UserEditor_LootBox = "lootbox";
 
+        public const string Dev_EventsEditor_Group = "eventsEditor";
+        public const string Dev_EventsEditor_Read = "read";
+        public const string Dev_EventsEditor_Edit = "edit";
+        public const string Dev_EventsEditor_Start = "start";
+
         public const string Party_Group = "party";
         public const string Party_CreateWithOldPrefix = "-g";
         public const string Party_Create = "-c";

@@ -23,7 +23,7 @@ public class GuessNumberEmbedBuilder : IGuessNumberEmbedBuilder
     {
         var embedBuilder = new DiscordEmbedBuilder()
                            .WithTitle("Угадай число")
-                           .WithColor(guessNumberEvent.Finished ? DiscordColor.Black : DiscordColor.Azure)
+                           .WithColor(DiscordColor.Azure)
                            .WithFooter($"EventId: {guessNumberEvent.Id}");
         if (guessNumberEvent.Finished)
         {

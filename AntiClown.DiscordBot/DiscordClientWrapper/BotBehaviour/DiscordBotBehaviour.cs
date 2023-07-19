@@ -12,6 +12,7 @@ using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Dev;
 using AntiClown.DiscordBot.SlashCommands.Inventory;
 using AntiClown.DiscordBot.SlashCommands.Other;
+using AntiClown.DiscordBot.SlashCommands.Other.Events;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Tools.Utility.Extensions;
@@ -628,6 +629,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildId);
         slash.RegisterCommands<DailyResetCommandModule>(guildId);
         slash.RegisterCommands<CreateMessageCommandModule>(guildId);
+        slash.RegisterCommands<EventsCommandModule>(guildId);
         // slash.RegisterCommands<F1AdminCommandModule>(guildSettings.GuildId);
     }
 

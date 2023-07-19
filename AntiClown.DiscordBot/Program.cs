@@ -10,6 +10,7 @@ using AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 using AntiClown.DiscordBot.EmbedBuilders.GuessNumber;
 using AntiClown.DiscordBot.EmbedBuilders.Inventories;
 using AntiClown.DiscordBot.EmbedBuilders.Lottery;
+using AntiClown.DiscordBot.EmbedBuilders.RemoveCoolDowns;
 using AntiClown.DiscordBot.EmbedBuilders.Shops;
 using AntiClown.DiscordBot.EmbedBuilders.Transactions;
 using AntiClown.DiscordBot.EmbedBuilders.Transfusion;
@@ -164,6 +165,7 @@ internal class Program
         builder.Services.AddTransient<IShopService, ShopService>();
         builder.Services.AddTransient<IGuessNumberEventService, GuessNumberEventService>();
         builder.Services.AddTransient<ILotteryService, LotteryService>();
+        builder.Services.AddTransient<IRemoveCoolDownsEmbedBuilder, RemoveCoolDownsEmbedBuilder>();
     }
 
     private static void BuildCommonEventsConsumers(WebApplicationBuilder builder)

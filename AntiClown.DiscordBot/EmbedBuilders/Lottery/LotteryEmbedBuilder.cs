@@ -21,7 +21,7 @@ public class LotteryEmbedBuilder : ILotteryEmbedBuilder
     {
         var embedBuilder = new DiscordEmbedBuilder()
                            .WithTitle("Лотерея")
-                           .WithColor(lottery.Finished ? DiscordColor.Black : DiscordColor.Magenta)
+                           .WithColor(DiscordColor.Magenta)
                            .WithFooter($"EventId: {lottery.Id}");
         if (lottery.Finished)
         {
