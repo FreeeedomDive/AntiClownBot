@@ -13,7 +13,7 @@ public class PartiesClient : IPartiesClient
 
     public async Task<PartyDto> ReadAsync(Guid id)
     {
-        var request = new RestRequest(ControllerUrl);
+        var request = new RestRequest($"{ControllerUrl}/{id}");
         var response = await restClient.ExecuteGetAsync(request);
         return response.TryDeserialize<PartyDto>();
     }
@@ -35,8 +35,15 @@ public class PartiesClient : IPartiesClient
 
     public async Task UpdateAsync(PartyDto party)
     {
-        var request = new RestRequest(ControllerUrl);
+        var request = new RestRequest($"{ControllerUrl}/{party.Id}");
         request.AddJsonBody(party);
+        var response = await restClient.ExecutePutAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
+    public async Task CloseAsync(Guid id)
+    {
+        var request = new RestRequest($"{ControllerUrl}/{id}/close");
         var response = await restClient.ExecutePutAsync(request);
         response.ThrowIfNotSuccessful();
     }

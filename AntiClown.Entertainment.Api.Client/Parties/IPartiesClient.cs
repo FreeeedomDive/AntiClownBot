@@ -8,4 +8,5 @@ public interface IPartiesClient
     Task<PartyDto[]> ReadOpenedAsync();
     Task<Guid> CreateAsync(CreatePartyDto newParty);
     Task UpdateAsync(PartyDto party);
+    Task CloseAsync(Guid id);
 }

@@ -19,29 +19,36 @@ public class PartiesController : Controller
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<PartyDto>> ReadAsync([FromRoute] Guid id)
+    public async Task<ActionResult<PartyDto>> Read([FromRoute] Guid id)
     {
         var result = await partiesService.ReadAsync(id);
         return mapper.Map<PartyDto>(result);
     }
 
     [HttpGet("opened")]
-    public async Task<ActionResult<PartyDto[]>> ReadOpenedAsync()
+    public async Task<ActionResult<PartyDto[]>> ReadOpened()
     {
         var result = await partiesService.ReadOpenedAsync();
         return mapper.Map<PartyDto[]>(result);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreatePartyDto newParty)
+    public async Task<ActionResult<Guid>> Create([FromBody] CreatePartyDto newParty)
     {
         return await partiesService.CreateAsync(mapper.Map<CreateParty>(newParty));
     }
 
-    [HttpPut]
-    public async Task<ActionResult> UpdateAsync([FromBody] PartyDto party)
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] PartyDto party)
     {
         await partiesService.UpdateAsync(mapper.Map<Party>(party));
+        return NoContent();
+    }
+
+    [HttpPut("{id:guid}/close")]
+    public async Task<ActionResult> Close([FromRoute] Guid id)
+    {
+        await partiesService.CloseAsync(id);
         return NoContent();
     }
 

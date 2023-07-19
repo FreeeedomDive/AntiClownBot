@@ -1,6 +1,8 @@
-﻿using AntiClown.Entertainment.Api.Core.Parties.Domain;
+﻿using AntiClown.Core.Schedules;
+using AntiClown.Entertainment.Api.Core.Parties.Domain;
 using AntiClown.Entertainment.Api.Core.Parties.Repositories;
 using AntiClown.Entertainment.Api.Core.Parties.Services.Messages;
+using Hangfire;
 
 namespace AntiClown.Entertainment.Api.Core.Parties.Services;
 
@@ -8,11 +10,13 @@ public class PartiesService : IPartiesService
 {
     public PartiesService(
         IPartiesRepository partiesRepository,
-        IPartiesMessageProducer partiesMessageProducer
+        IPartiesMessageProducer partiesMessageProducer,
+        IScheduler scheduler
     )
     {
         this.partiesRepository = partiesRepository;
         this.partiesMessageProducer = partiesMessageProducer;
+        this.scheduler = scheduler;
     }
 
     public async Task<Party> ReadAsync(Guid id)
@@ -40,6 +44,7 @@ public class PartiesService : IPartiesService
         };
         var id = await partiesRepository.CreateAsync(party);
         await partiesMessageProducer.ProduceAsync(party);
+        ScheduleEventFinish(id);
 
         return id;
     }
@@ -50,6 +55,29 @@ public class PartiesService : IPartiesService
         await partiesMessageProducer.ProduceAsync(party);
     }
 
+    public async Task CloseAsync(Guid id)
+    {
+        var party = await ReadAsync(id);
+        if (!party.IsOpened)
+        {
+            return;
+        }
+
+        party.IsOpened = false;
+        await UpdateAsync(party);
+    }
+
+    private void ScheduleEventFinish(Guid id)
+    {
+        scheduler.Schedule(
+            () => BackgroundJob.Schedule(
+                () => CloseAsync(id),
+                TimeSpan.FromDays(2)
+            )
+        );
+    }
+
     private readonly IPartiesMessageProducer partiesMessageProducer;
     private readonly IPartiesRepository partiesRepository;
+    private readonly IScheduler scheduler;
 }
