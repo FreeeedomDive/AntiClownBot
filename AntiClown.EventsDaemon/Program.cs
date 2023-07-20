@@ -8,7 +8,7 @@ using TelemetryApp.Utilities.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLogging();
-var telemetryApiUrl = builder.Configuration.GetSection("TelemetryOptions")["ApiUrl"];
+var telemetryApiUrl = builder.Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
 builder.Services.ConfigureTelemetryClientWithLogger("AntiClownBot", "EventsDaemon", telemetryApiUrl);
 
 builder.Services.Configure<CommonEventsWorkerOptions>(builder.Configuration.GetSection("CommonEventsWorker"));

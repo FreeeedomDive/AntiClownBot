@@ -51,7 +51,7 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddLogging();
-        var telemetryApiUrl = builder.Configuration.GetSection("TelemetryOptions")["ApiUrl"];
+        var telemetryApiUrl = builder.Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
         builder.Services.ConfigureTelemetryClientWithLogger("AntiClownBot", "DiscordBot", telemetryApiUrl);
 
         ConfigureOptions(builder);

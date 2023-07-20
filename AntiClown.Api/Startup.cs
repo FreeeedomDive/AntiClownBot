@@ -43,7 +43,7 @@ public class Startup
 
         services.Configure<DatabaseOptions>(Configuration.GetSection("PostgreSql"));
         services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMQ"));
-        var telemetryApiUrl = Configuration.GetSection("TelemetryOptions")["ApiUrl"];
+        var telemetryApiUrl = Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
         services.ConfigureTelemetryClientWithLogger("AntiClownBot", "Api", telemetryApiUrl);
 
         // configure database
