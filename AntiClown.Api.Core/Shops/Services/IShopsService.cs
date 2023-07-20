@@ -12,4 +12,5 @@ public interface IShopsService
     Task<BaseItem> BuyAsync(Guid shopId, Guid itemId);
     Task ReRollAsync(Guid shopId);
     Task<ShopStats> ReadStatsAsync(Guid shopId);
+    Task ResetAllAsync();
 }

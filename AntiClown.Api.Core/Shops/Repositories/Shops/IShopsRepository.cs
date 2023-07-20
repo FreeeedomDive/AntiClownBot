@@ -7,4 +7,5 @@ public interface IShopsRepository
     Task<Shop> ReadAsync(Guid id);
     Task CreateAsync(Shop shop);
     Task UpdateAsync(Shop shop);
+    Task ResetAllAsync();
 }

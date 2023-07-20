@@ -10,4 +10,6 @@ public interface IShopClient
     Task<BaseItemDto> BuyItemAsync(Guid shopId, Guid itemId);
     Task ReRollShopAsync(Guid shopId);
     Task ResetShopAsync(Guid shopId);
+    Task<ShopStatsDto> ReadStatsAsync(Guid shopId);
+    Task ResetAllAsync();
 }

@@ -6,7 +6,7 @@ public static class IntExtensions
 {
     public static string ToPluralizedString(this int count, string singleForm, string severalForm, string manyForm)
     {
-        var correctCount = count % 100;
+        var correctCount = Math.Abs(count % 100);
         if (correctCount is >= 10 and <= 20
             || (correctCount % 10 >= 5
                 && correctCount % 10 <= 9)

@@ -47,6 +47,20 @@ public class ShopClient : IShopClient
         response.ThrowIfNotSuccessful();
     }
 
+    public async Task<ShopStatsDto> ReadStatsAsync(Guid shopId)
+    {
+        var request = new RestRequest($"{BuildApiUrl(shopId)}/stats)");
+        var response = await restClient.ExecutePostAsync(request);
+        return response.TryDeserialize<ShopStatsDto>();
+    }
+
+    public async Task ResetAllAsync()
+    {
+        var request = new RestRequest("shops/reset");
+        var response = await restClient.ExecutePostAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
     private static string BuildApiUrl(Guid shopId) => $"shops/{shopId}";
 
     private readonly RestClient restClient;

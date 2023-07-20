@@ -1,5 +1,6 @@
 ﻿using AntiClown.Api.Core.Shops.Domain;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api.Core.Shops.Repositories.Shops;
@@ -34,6 +35,21 @@ public class ShopsRepository : IShopsRepository
             {
                 x.ReRollPrice = shop.ReRollPrice;
                 x.FreeReveals = shop.FreeReveals;
+            }
+        );
+    }
+
+    public async Task ResetAllAsync()
+    {
+        await sqlRepository.ModifyDbSetAsync(
+            async set =>
+            {
+                var shops = await set.ToArrayAsync();
+                foreach (var shop in shops)
+                {
+                    shop.ReRollPrice = Shop.Default.ReRollPrice;
+                    shop.FreeReveals = Shop.Default.FreeReveals;
+                }
             }
         );
     }

@@ -145,6 +145,11 @@ public class ShopsService : IShopsService
         return await shopStatsRepository.ReadAsync(shopId);
     }
 
+    public async Task ResetAllAsync()
+    {
+        await shopsRepository.ResetAllAsync();
+    }
+
     private async Task ResetShopItemsAsync(Guid shopId)
     {
         var currentItems = await shopItemsRepository.FindAsync(shopId);

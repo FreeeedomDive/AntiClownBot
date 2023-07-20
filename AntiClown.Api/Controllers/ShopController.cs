@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Api.Controllers;
 
-[Route("api/shops/{shopId:guid}")]
+[Route("api/shops")]
 public class ShopController : Controller
 {
     public ShopController(
@@ -19,49 +19,55 @@ public class ShopController : Controller
         this.mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet("{shopId:guid}")]
     public async Task<ActionResult<CurrentShopInfoDto>> Read([FromRoute] Guid shopId)
     {
         var shop = await shopsService.ReadCurrentShopAsync(shopId);
         return mapper.Map<CurrentShopInfoDto>(shop);
     }
 
-    [HttpPost("items/{itemId:guid}/reveal")]
+    [HttpPost("{shopId:guid}/items/{itemId:guid}/reveal")]
     public async Task<ActionResult<ShopItemDto>> Reveal([FromRoute] Guid shopId, [FromRoute] Guid itemId)
     {
         var item = await shopsService.RevealAsync(shopId, itemId);
         return mapper.Map<ShopItemDto>(item);
     }
 
-    [HttpPost("items/{itemId:guid}/buy")]
+    [HttpPost("{shopId:guid}/items/{itemId:guid}/buy")]
     public async Task<ActionResult<BaseItemDto>> Buy([FromRoute] Guid shopId, [FromRoute] Guid itemId)
     {
         var newItem = await shopsService.BuyAsync(shopId, itemId);
         return mapper.Map(newItem);
     }
 
-    [HttpPost("reroll")]
+    [HttpPost("{shopId:guid}/reroll")]
     public async Task<ActionResult> ReRoll([FromRoute] Guid shopId)
     {
         await shopsService.ReRollAsync(shopId);
         return NoContent();
     }
 
-    [HttpPost("reset")]
+    [HttpPost("{shopId:guid}/reset")]
     public async Task<ActionResult> Reset([FromRoute] Guid shopId)
     {
         await shopsService.ResetShopAsync(shopId);
         return NoContent();
     }
 
-    [HttpGet("stats")]
+    [HttpGet("{shopId:guid}/stats")]
     public async Task<ActionResult<ShopStatsDto>> ReadStats([FromRoute] Guid shopId)
     {
         var stats = await shopsService.ReadStatsAsync(shopId);
         return mapper.Map<ShopStatsDto>(stats);
     }
 
-    private readonly IMapper mapper;
+    [HttpPost("resetAll")]
+    public async Task<ActionResult> ResetAll()
+    {
+        await shopsService.ResetAllAsync();
+        return NoContent();
+    }
 
+    private readonly IMapper mapper;
     private readonly IShopsService shopsService;
 }
