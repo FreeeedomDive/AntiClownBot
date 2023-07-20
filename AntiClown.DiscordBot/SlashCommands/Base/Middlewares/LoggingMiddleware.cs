@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using AntiClown.DiscordBot.Extensions;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.SlashCommands.Base.Middlewares;
 
@@ -8,7 +9,7 @@ namespace AntiClown.DiscordBot.SlashCommands.Base.Middlewares;
 /// </summary>
 public class LoggingMiddleware : ICommandMiddleware
 {
-    public LoggingMiddleware(ILogger<LoggingMiddleware> logger)
+    public LoggingMiddleware(ILoggerClient logger)
     {
         this.logger = logger;
     }
@@ -24,10 +25,10 @@ public class LoggingMiddleware : ICommandMiddleware
         }
         catch (Exception e)
         {
-            logger.LogError(e, "COMMAND {commandName}: Unhandled exception", commandName);
+            await logger.ErrorAsync(e, "COMMAND {commandName}: Unhandled exception", commandName);
         }
 
-        logger.LogInformation(
+        await logger.InfoAsync(
             "COMMAND {commandName} executed by {userName} in {time}ms",
             commandName,
             context.Context.Member.ServerOrUserName(),
@@ -35,5 +36,5 @@ public class LoggingMiddleware : ICommandMiddleware
         );
     }
 
-    private readonly ILogger<LoggingMiddleware> logger;
+    private readonly ILoggerClient logger;
 }
