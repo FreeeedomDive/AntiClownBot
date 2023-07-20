@@ -83,6 +83,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Entertainment.Api
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.DiscordBot.PostgreSqlMigrationsApplier", "AntiClown.DiscordBot.PostgreSqlMigrationsApplier\AntiClown.DiscordBot.PostgreSqlMigrationsApplier.csproj", "{0444B9F9-2505-4D55-911F-3381BE66CABB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Migration", "AntiClown.Migration\AntiClown.Migration.csproj", "{34099C15-A310-4FA3-A85E-4003A8923196}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -205,6 +207,10 @@ Global
 		{0444B9F9-2505-4D55-911F-3381BE66CABB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0444B9F9-2505-4D55-911F-3381BE66CABB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0444B9F9-2505-4D55-911F-3381BE66CABB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34099C15-A310-4FA3-A85E-4003A8923196}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34099C15-A310-4FA3-A85E-4003A8923196}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34099C15-A310-4FA3-A85E-4003A8923196}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34099C15-A310-4FA3-A85E-4003A8923196}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -244,5 +250,6 @@ Global
 		{680B283F-12C0-41C0-8C25-6C27CFB13842} = {090A7686-8D18-42F2-BC5E-6D8EC65A3685}
 		{1A766712-3D9A-4B6C-B9E6-B566F21FA004} = {090A7686-8D18-42F2-BC5E-6D8EC65A3685}
 		{0444B9F9-2505-4D55-911F-3381BE66CABB} = {090A7686-8D18-42F2-BC5E-6D8EC65A3685}
+		{34099C15-A310-4FA3-A85E-4003A8923196} = {090A7686-8D18-42F2-BC5E-6D8EC65A3685}
 	EndGlobalSection
 EndGlobal

@@ -38,7 +38,7 @@ public class TributeService : ITributeService
         return await InnerMakeTributeAsync(userId, false);
     }
 
-    private async Task<Tribute> InnerMakeTributeAsync(Guid userId, bool isAutomatic)
+    public async Task<Tribute> InnerMakeTributeAsync(Guid userId, bool isAutomatic)
     {
         var userEconomy = await economyService.ReadEconomyAsync(userId);
         var isTributeReady = userEconomy.IsTributeReady();
@@ -87,7 +87,7 @@ public class TributeService : ITributeService
         return tribute;
     }
 
-    private static (int Cooldown, Dictionary<Guid, int> CooldownModifiers) CalculateCooldown(BaseItem[] items)
+    public static (int Cooldown, Dictionary<Guid, int> CooldownModifiers) CalculateCooldown(BaseItem[] items)
     {
         var modifiers = new Dictionary<Guid, int>();
 
@@ -140,7 +140,7 @@ public class TributeService : ITributeService
         return ((int)cooldown, modifiers);
     }
 
-    private async Task<Guid?> GetRandomCommunistAsync(Guid userId)
+    public async Task<Guid?> GetRandomCommunistAsync(Guid userId)
     {
         var communists = (await ReadDistributedCommunistsAsync())
                          .Where(x => x != userId)
@@ -148,7 +148,7 @@ public class TributeService : ITributeService
         return communists.Length == 0 ? null : communists.SelectRandomItem();
     }
 
-    private async Task<Guid[]> ReadDistributedCommunistsAsync()
+    public async Task<Guid[]> ReadDistributedCommunistsAsync()
     {
         var allCommunismBanners = await itemsService.ReadItemsWithNameAsync(ItemName.CommunismBanner);
         return allCommunismBanners
@@ -157,7 +157,7 @@ public class TributeService : ITributeService
                .ToArray();
     }
 
-    private async Task MakeTributeAsync(Tribute tribute)
+    public async Task MakeTributeAsync(Tribute tribute)
     {
         await economyService.UpdateScamCoinsAsync(tribute.UserId, tribute.ScamCoins, "Подношение");
         await economyService.UpdateNextTributeCoolDownAsync(
@@ -179,7 +179,7 @@ public class TributeService : ITributeService
         }
     }
 
-    private void ScheduleNextTribute(Tribute tribute)
+    public void ScheduleNextTribute(Tribute tribute)
     {
         if (!tribute.IsNextAutomatic)
         {
@@ -194,7 +194,7 @@ public class TributeService : ITributeService
         );
     }
 
-    private async Task ExecuteAutoTributeAsync(Tribute tribute)
+    public async Task ExecuteAutoTributeAsync(Tribute tribute)
     {
         try
         {
