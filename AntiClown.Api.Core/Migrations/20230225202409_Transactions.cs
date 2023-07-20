@@ -27,9 +27,14 @@ namespace AntiClown.Api.Core.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_UserId_DateTime",
+                name: "IX_Transactions_UserId",
                 table: "Transactions",
-                columns: new[] { "UserId", "DateTime" });
+                columns: new[] { "UserId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_DateTime",
+                table: "Transactions",
+                columns: new[] { "DateTime" });
         }
 
         /// <inheritdoc />

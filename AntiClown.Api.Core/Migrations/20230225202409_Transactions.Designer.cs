@@ -69,7 +69,8 @@ namespace AntiClown.Api.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId", "DateTime");
+                    b.HasIndex("UserId");
+                    b.HasIndex("DateTime");
 
                     b.ToTable("Transactions");
                 });

@@ -70,7 +70,9 @@ namespace AntiClown.Api.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId", "IsActive", "Name");
+                    b.HasIndex("OwnerId");
+                    b.HasIndex("IsActive");
+                    b.HasIndex("Name");
 
                     b.ToTable("Items");
                 });
@@ -96,7 +98,8 @@ namespace AntiClown.Api.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId", "DateTime");
+                    b.HasIndex("UserId");
+                    b.HasIndex("DateTime");
 
                     b.ToTable("Transactions");
                 });

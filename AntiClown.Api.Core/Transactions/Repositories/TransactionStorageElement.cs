@@ -3,7 +3,8 @@ using SqlRepositoryBase.Core.Models;
 
 namespace AntiClown.Api.Core.Transactions.Repositories;
 
-[Index("UserId", "DateTime")]
+[Index(nameof(UserId))]
+[Index(nameof(DateTime))]
 public class TransactionStorageElement : SqlStorageElement
 {
     public Guid UserId { get; set; }

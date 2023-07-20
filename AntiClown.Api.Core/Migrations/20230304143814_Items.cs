@@ -27,9 +27,19 @@ namespace AntiClown.Api.Core.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Items_OwnerId_IsActive_Name",
+                name: "IX_Items_OwnerId",
                 table: "Items",
-                columns: new[] { "OwnerId", "IsActive", "Name" });
+                columns: new[] { "OwnerId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_IsActive",
+                table: "Items",
+                columns: new[] { "IsActive" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_Name",
+                table: "Items",
+                columns: new[] { "Name" });
         }
 
         /// <inheritdoc />

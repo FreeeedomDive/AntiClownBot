@@ -3,7 +3,9 @@ using SqlRepositoryBase.Core.Models;
 
 namespace AntiClown.Api.Core.Inventory.Repositories;
 
-[Index(nameof(OwnerId), nameof(IsActive), nameof(Name))]
+[Index(nameof(OwnerId))]
+[Index(nameof(IsActive))]
+[Index(nameof(Name))]
 public class ItemStorageElement : SqlStorageElement
 {
     public Guid OwnerId { get; set; }
