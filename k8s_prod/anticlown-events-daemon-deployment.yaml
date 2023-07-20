@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anticlown-events-daemon-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anticlowneventsdaemon
+  template:
+    metadata:
+      labels:
+        app: anticlowneventsdaemon
+    spec:
+      containers:
+        - name: anticlowneventsdaemon
+          image: localhost:5000/anticlowneventsdaemon:{{TAG_NUMBER}}
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: TZ
+              value: Asia/Yekaterinburg
