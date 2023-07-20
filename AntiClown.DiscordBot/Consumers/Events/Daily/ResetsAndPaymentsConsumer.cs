@@ -5,6 +5,7 @@ using AntiClown.Messages.Dto.Events.Daily;
 using DSharpPlus.Entities;
 using MassTransit;
 using Microsoft.Extensions.Options;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Daily;
 
@@ -13,7 +14,7 @@ public class ResetsAndPaymentsConsumer : IDailyEventConsumer<ResetsAndPaymentsEv
     public ResetsAndPaymentsConsumer(
         IDiscordClientWrapper discordClientWrapper,
         IOptions<DiscordOptions> discordOptions,
-        ILogger<ResetsAndPaymentsConsumer> logger
+        ILoggerClient logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
@@ -24,7 +25,7 @@ public class ResetsAndPaymentsConsumer : IDailyEventConsumer<ResetsAndPaymentsEv
     public async Task ConsumeAsync(ConsumeContext<DailyEventMessageDto> context)
     {
         var eventId = context.Message.EventId;
-        logger.LogInformation(
+        await logger.InfoAsync(
             "{ConsumerName} received resets and payments event with id {eventId}",
             ConsumerName,
             eventId
@@ -42,5 +43,5 @@ public class ResetsAndPaymentsConsumer : IDailyEventConsumer<ResetsAndPaymentsEv
 
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IOptions<DiscordOptions> discordOptions;
-    private readonly ILogger<ResetsAndPaymentsConsumer> logger;
+    private readonly ILoggerClient logger;
 }

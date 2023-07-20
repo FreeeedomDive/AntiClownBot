@@ -1,20 +1,18 @@
 ﻿using AntiClown.DiscordBot.Interactivity.Services.Lottery;
-using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Lottery;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
 public class LotteryEventConsumer : ICommonEventConsumer<LotteryEventDto>
 {
     public LotteryEventConsumer(
-        IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         ILotteryService lotteryService,
-        ILogger<LotteryEventConsumer> logger
+        ILoggerClient logger
     )
     {
-        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.lotteryService = lotteryService;
         this.logger = logger;
     }
@@ -24,7 +22,7 @@ public class LotteryEventConsumer : ICommonEventConsumer<LotteryEventDto>
         var eventId = context.Message.EventId;
         if (context.Message.Finished)
         {
-            logger.LogInformation(
+            await logger.InfoAsync(
                 "{ConsumerName} received FINISHED event with id {eventId}",
                 ConsumerName,
                 eventId
@@ -34,12 +32,11 @@ public class LotteryEventConsumer : ICommonEventConsumer<LotteryEventDto>
         }
 
         await lotteryService.StartAsync(eventId);
-        logger.LogInformation("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
+        await logger.InfoAsync("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
     }
 
     private static string ConsumerName => nameof(LotteryEventConsumer);
 
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-    private readonly ILogger<LotteryEventConsumer> logger;
     private readonly ILotteryService lotteryService;
+    private readonly ILoggerClient logger;
 }

@@ -4,7 +4,7 @@ using AntiClown.DiscordBot.Options;
 using AntiClown.Messages.Dto.Tributes;
 using MassTransit;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Tributes;
 
@@ -14,7 +14,7 @@ public class TributesConsumer : IConsumer<TributeMessageDto>
         IDiscordClientWrapper discordClientWrapper,
         ITributeEmbedBuilder tributeEmbedBuilder,
         IOptions<DiscordOptions> discordOptions,
-        ILogger<TributesConsumer> logger
+        ILoggerClient logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
@@ -26,13 +26,13 @@ public class TributesConsumer : IConsumer<TributeMessageDto>
     public async Task Consume(ConsumeContext<TributeMessageDto> context)
     {
         var tribute = context.Message;
-        logger.LogInformation("Received auto tribute for user {userId}", tribute.UserId);
+        await logger.InfoAsync("Received auto tribute for user {userId}", tribute.UserId);
         var tributeEmbed = await tributeEmbedBuilder.BuildForSuccessfulTributeAsync(tribute.Tribute);
         await discordClientWrapper.Messages.SendAsync(discordOptions.Value.TributeChannelId, tributeEmbed);
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly ITributeEmbedBuilder tributeEmbedBuilder;
     private readonly IOptions<DiscordOptions> discordOptions;
-    private readonly ILogger<TributesConsumer> logger;
+    private readonly ILoggerClient logger;
+    private readonly ITributeEmbedBuilder tributeEmbedBuilder;
 }

@@ -40,6 +40,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SqlRepositoryBase.Configuration.Extensions;
+using TelemetryApp.Utilities.Extensions;
 
 namespace AntiClown.DiscordBot;
 
@@ -50,6 +51,8 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddLogging();
+        var telemetryApiUrl = builder.Configuration.GetSection("TelemetryOptions")["ApiUrl"];
+        builder.Services.ConfigureTelemetryClientWithLogger("AntiClownBot", "DiscordBot", telemetryApiUrl);
 
         ConfigureOptions(builder);
         ConfigurePostgreSql(builder);

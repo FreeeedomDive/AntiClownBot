@@ -2,6 +2,7 @@
 using AntiClown.Entertainment.Api.Dto.DailyEvents;
 using AntiClown.EventsDaemon.Options;
 using Microsoft.Extensions.Options;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.EventsDaemon.Workers.DailyEvents;
 
@@ -10,8 +11,8 @@ public class DailyEventsWorker : PeriodicJobWorker
     public DailyEventsWorker(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IOptions<DailyEventsWorkerOptions> dailyEventsWorkerOptions,
-        ILogger<DailyEventsWorker> logger
-    ) : base(logger, dailyEventsWorkerOptions.Value.IterationTime)
+        ILoggerClient loggerClient
+    ) : base(loggerClient, dailyEventsWorkerOptions.Value.IterationTime)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         options = dailyEventsWorkerOptions.Value;

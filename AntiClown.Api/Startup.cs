@@ -18,9 +18,12 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Configuration.Extensions;
 using SqlRepositoryBase.Core.Repository;
+using TelemetryApp.Utilities.Extensions;
+using TelemetryApp.Utilities.Middlewares;
 
 namespace AntiClown.Api;
 
@@ -38,9 +41,10 @@ public class Startup
         // configure AutoMapper
         services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
-        var postgresSection = Configuration.GetSection("PostgreSql");
-        services.Configure<DatabaseOptions>(postgresSection);
-        var rabbitMqSection = Configuration.GetSection("RabbitMQ");
+        services.Configure<DatabaseOptions>(Configuration.GetSection("PostgreSql"));
+        services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMQ"));
+        var telemetryApiUrl = Configuration.GetSection("TelemetryOptions")["ApiUrl"];
+        services.ConfigureTelemetryClientWithLogger("AntiClownBot", "Api", telemetryApiUrl);
 
         // configure database
         services.AddTransient<DbContext, DatabaseContext>();
@@ -54,12 +58,13 @@ public class Startup
                 massTransitConfiguration.UsingRabbitMq(
                     (context, rabbitMqConfiguration) =>
                     {
+                        var rabbitMqOptions = context.GetService<IOptions<RabbitMqOptions>>()!.Value;
                         rabbitMqConfiguration.ConfigureEndpoints(context);
                         rabbitMqConfiguration.Host(
-                            rabbitMqSection["Host"], "/", hostConfiguration =>
+                            rabbitMqOptions.Host, "/", hostConfiguration =>
                             {
-                                hostConfiguration.Username(rabbitMqSection["Login"]);
-                                hostConfiguration.Password(rabbitMqSection["Password"]);
+                                hostConfiguration.Username(rabbitMqOptions.Login);
+                                hostConfiguration.Password(rabbitMqOptions.Password);
                             }
                         );
                     }
@@ -102,8 +107,8 @@ public class Startup
 
         // configure HangFire
         services.AddHangfire(
-            config =>
-                config.UsePostgreSqlStorage(postgresSection["ConnectionString"])
+            (serviceProvider, config) =>
+                config.UsePostgreSqlStorage(serviceProvider.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString)
         );
         services.AddHangfireServer();
 
@@ -118,6 +123,7 @@ public class Startup
         app.UseRouting();
         app.UseWebSockets();
 
+        app.UseMiddleware<RequestLoggingMiddleware>();
         app.UseMiddleware<ServiceExceptionHandlingMiddleware>();
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 

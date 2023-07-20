@@ -3,6 +3,7 @@ using AntiClown.Entertainment.Api.Dto.CommonEvents.Race;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
 using Newtonsoft.Json;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
@@ -10,7 +11,7 @@ public class RaceEventConsumer : ICommonEventConsumer<RaceEventDto>
 {
     public RaceEventConsumer(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-        ILogger<RaceEventConsumer> logger
+        ILoggerClient logger
     )
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
@@ -22,7 +23,7 @@ public class RaceEventConsumer : ICommonEventConsumer<RaceEventDto>
         var eventId = context.Message.EventId;
         if (context.Message.Finished)
         {
-            logger.LogInformation(
+            await logger.InfoAsync(
                 "{ConsumerName} received FINISHED event with id {eventId}",
                 ConsumerName,
                 eventId
@@ -31,7 +32,7 @@ public class RaceEventConsumer : ICommonEventConsumer<RaceEventDto>
         }
 
         var @event = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(eventId);
-        logger.LogInformation(
+        await logger.InfoAsync(
             "{ConsumerName} received event with id {eventId}\n{eventInfo}",
             ConsumerName,
             eventId,
@@ -42,5 +43,5 @@ public class RaceEventConsumer : ICommonEventConsumer<RaceEventDto>
     private static string ConsumerName => nameof(RaceEventConsumer);
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-    private readonly ILogger<RaceEventConsumer> logger;
+    private readonly ILoggerClient logger;
 }

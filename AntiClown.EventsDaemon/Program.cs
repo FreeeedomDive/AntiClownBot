@@ -3,10 +3,13 @@ using AntiClown.Entertainment.Api.Client.Configuration;
 using AntiClown.EventsDaemon.Options;
 using AntiClown.EventsDaemon.Workers;
 using Microsoft.Extensions.Options;
+using TelemetryApp.Utilities.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLogging();
+var telemetryApiUrl = builder.Configuration.GetSection("TelemetryOptions")["ApiUrl"];
+builder.Services.ConfigureTelemetryClientWithLogger("AntiClownBot", "EventsDaemon", telemetryApiUrl);
 
 builder.Services.Configure<CommonEventsWorkerOptions>(builder.Configuration.GetSection("CommonEventsWorker"));
 builder.Services.Configure<DailyEventsWorkerOptions>(builder.Configuration.GetSection("DailyEventsWorker"));

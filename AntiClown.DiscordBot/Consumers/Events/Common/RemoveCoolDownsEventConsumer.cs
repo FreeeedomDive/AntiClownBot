@@ -6,6 +6,7 @@ using AntiClown.Entertainment.Api.Dto.CommonEvents.RemoveCoolDowns;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
 using Microsoft.Extensions.Options;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
@@ -16,7 +17,7 @@ public class RemoveCoolDownsEventConsumer : ICommonEventConsumer<RemoveCoolDowns
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IRemoveCoolDownsEmbedBuilder removeCoolDownsEmbedBuilder,
         IOptions<DiscordOptions> discordOptions,
-        ILogger<RemoveCoolDownsEventConsumer> logger
+        ILoggerClient logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
@@ -31,14 +32,14 @@ public class RemoveCoolDownsEventConsumer : ICommonEventConsumer<RemoveCoolDowns
         var eventId = context.Message.EventId;
         var @event = await antiClownEntertainmentApiClient.CommonEvents.RemoveCoolDowns.ReadAsync(eventId);
         await discordClientWrapper.Messages.SendAsync(discordOptions.Value.BotChannelId, await removeCoolDownsEmbedBuilder.BuildAsync(@event));
-        logger.LogInformation("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
+        await logger.InfoAsync("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
     }
 
     private static string ConsumerName => nameof(RemoveCoolDownsEventConsumer);
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 
+    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IOptions<DiscordOptions> discordOptions;
-    private readonly ILogger<RemoveCoolDownsEventConsumer> logger;
+    private readonly ILoggerClient logger;
     private readonly IRemoveCoolDownsEmbedBuilder removeCoolDownsEmbedBuilder;
 }

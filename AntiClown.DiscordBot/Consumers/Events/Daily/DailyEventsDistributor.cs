@@ -2,6 +2,7 @@
 using AntiClown.Entertainment.Api.Dto.DailyEvents.ResetsAndPayments;
 using AntiClown.Messages.Dto.Events.Daily;
 using MassTransit;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Daily;
 
@@ -10,7 +11,7 @@ public class DailyEventsDistributor : IConsumer<DailyEventMessageDto>
     public DailyEventsDistributor(
         IDailyEventConsumer<AnnounceEventDto> announceEventsConsumer,
         IDailyEventConsumer<ResetsAndPaymentsEventDto> resetsAndPaymentsEventDto,
-        ILogger<DailyEventsDistributor> logger
+        ILoggerClient logger
     )
     {
         this.announceEventsConsumer = announceEventsConsumer;
@@ -29,7 +30,7 @@ public class DailyEventsDistributor : IConsumer<DailyEventMessageDto>
                 await resetsAndPaymentsEventDto.ConsumeAsync(context);
                 break;
             default:
-                logger.LogWarning(
+                await logger.WarnAsync(
                     "Found an unknown event {eventType} with id {eventId} in {ConsumerName}",
                     context.Message.EventType,
                     context.Message.EventId,
@@ -40,6 +41,6 @@ public class DailyEventsDistributor : IConsumer<DailyEventMessageDto>
     }
 
     private readonly IDailyEventConsumer<AnnounceEventDto> announceEventsConsumer;
-    private readonly ILogger<DailyEventsDistributor> logger;
+    private readonly ILoggerClient logger;
     private readonly IDailyEventConsumer<ResetsAndPaymentsEventDto> resetsAndPaymentsEventDto;
 }

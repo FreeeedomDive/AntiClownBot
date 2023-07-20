@@ -1,8 +1,13 @@
+using TelemetryApp.Api.Client.Log;
+
 namespace AntiClown.EventsDaemon.Workers;
 
 public abstract class PeriodicJobWorker
 {
-    protected PeriodicJobWorker(ILogger logger, TimeSpan iterationTime)
+    protected PeriodicJobWorker(
+        ILoggerClient logger,
+        TimeSpan iterationTime
+    )
     {
         this.iterationTime = iterationTime;
         Logger = logger;
@@ -11,7 +16,7 @@ public abstract class PeriodicJobWorker
     public async Task StartAsync()
     {
         var delay = CalculateTimeBeforeStart();
-        Logger.LogInformation("{WorkerName} will start in {delay}", WorkerName, TimeSpan.FromMilliseconds(delay));
+        await Logger.InfoAsync("{WorkerName} will start in {delay}", WorkerName, TimeSpan.FromMilliseconds(delay));
         await Task.Delay(delay);
 
         currentIteration = 1;
@@ -26,12 +31,12 @@ public abstract class PeriodicJobWorker
 
     private async Task ExecuteIterationWithLogAsync()
     {
-        Logger.LogInformation("{WorkerName} Iteration {i} START at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
+        await Logger.InfoAsync("{WorkerName} Iteration {i} START at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
         try
         {
             await ExecuteIterationAsync();
             successfulIterations++;
-            Logger.LogInformation(
+            await Logger.InfoAsync(
                 "{WorkerName} Iteration {i} SUCCESS at {startTime} ({success} succeeded, {failed} failed)",
                 WorkerName,
                 currentIteration,
@@ -43,7 +48,7 @@ public abstract class PeriodicJobWorker
         catch (Exception e)
         {
             failedIterations++;
-            Logger.LogError(
+            await Logger.ErrorAsync(
                 "{WorkerName} Iteration {i} FAIL at {startTime} ({success} succeeded, {failed} failed)\n{exception}",
                 WorkerName,
                 currentIteration,
@@ -58,7 +63,7 @@ public abstract class PeriodicJobWorker
     protected abstract int CalculateTimeBeforeStart();
     protected abstract Task ExecuteIterationAsync();
 
-    protected ILogger Logger { get; }
+    protected ILoggerClient Logger { get; }
     protected abstract string WorkerName { get; }
     private readonly TimeSpan iterationTime;
     private int currentIteration;

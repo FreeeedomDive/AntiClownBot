@@ -31,6 +31,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Configuration.Extensions;
+using TelemetryApp.Utilities.Extensions;
+using TelemetryApp.Utilities.Middlewares;
 
 namespace AntiClown.Entertainment.Api;
 
@@ -51,6 +53,8 @@ public class Startup
         services.Configure<DatabaseOptions>(Configuration.GetSection("PostgreSql"));
         services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMQ"));
         services.Configure<AntiClownApiConnectionOptions>(Configuration.GetSection("AntiClownApi"));
+        var telemetryApiUrl = Configuration.GetSection("TelemetryOptions")["ApiUrl"];
+        services.ConfigureTelemetryClientWithLogger("AntiClownBot", "EntertainmentApi", telemetryApiUrl);
 
         // configure database
         services.AddTransient<DbContext, DatabaseContext>();
@@ -127,6 +131,7 @@ public class Startup
         app.UseRouting();
         app.UseWebSockets();
 
+        app.UseMiddleware<RequestLoggingMiddleware>();
         app.UseMiddleware<ServiceExceptionHandlingMiddleware>();
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 

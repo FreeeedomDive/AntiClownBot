@@ -6,6 +6,7 @@ using AntiClown.Entertainment.Api.Dto.CommonEvents.RemoveCoolDowns;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
@@ -18,7 +19,7 @@ public class CommonEventsDistributor : IConsumer<CommonEventMessageDto>
         ICommonEventConsumer<RemoveCoolDownsEventDto> removeCoolDownsEventConsumer,
         ICommonEventConsumer<TransfusionEventDto> transfusionEventConsumer,
         ICommonEventConsumer<BedgeEventDto> bedgeEventConsumer,
-        ILogger<CommonEventsDistributor> logger
+        ILoggerClient logger
     )
     {
         this.guessNumberEventConsumer = guessNumberEventConsumer;
@@ -53,7 +54,7 @@ public class CommonEventsDistributor : IConsumer<CommonEventMessageDto>
                 await bedgeEventConsumer.ConsumeAsync(context);
                 break;
             default:
-                logger.LogWarning(
+                await logger.WarnAsync(
                     "Found an unknown event {eventType} with id {eventId} in {ConsumerName}",
                     context.Message.EventType,
                     context.Message.EventId,
@@ -65,7 +66,7 @@ public class CommonEventsDistributor : IConsumer<CommonEventMessageDto>
 
     private readonly ICommonEventConsumer<BedgeEventDto> bedgeEventConsumer;
     private readonly ICommonEventConsumer<GuessNumberEventDto> guessNumberEventConsumer;
-    private readonly ILogger<CommonEventsDistributor> logger;
+    private readonly ILoggerClient logger;
     private readonly ICommonEventConsumer<LotteryEventDto> lotteryEventConsumer;
     private readonly ICommonEventConsumer<RaceEventDto> raceEventConsumer;
     private readonly ICommonEventConsumer<RemoveCoolDownsEventDto> removeCoolDownsEventConsumer;

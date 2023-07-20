@@ -1,8 +1,8 @@
 ﻿using AntiClown.DiscordBot.Interactivity.Services.GuessNumber;
-using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
@@ -10,7 +10,7 @@ public class GuessNumberEventConsumer : ICommonEventConsumer<GuessNumberEventDto
 {
     public GuessNumberEventConsumer(
         IGuessNumberEventService guessNumberEventService,
-        ILogger<GuessNumberEventConsumer> logger
+        ILoggerClient logger
     )
     {
         this.guessNumberEventService = guessNumberEventService;
@@ -23,7 +23,7 @@ public class GuessNumberEventConsumer : ICommonEventConsumer<GuessNumberEventDto
         if (context.Message.Finished)
         {
             await guessNumberEventService.FinishAsync(eventId);
-            logger.LogInformation(
+            await logger.InfoAsync(
                 "{ConsumerName} received FINISHED event with id {eventId}",
                 ConsumerName,
                 eventId
@@ -32,7 +32,7 @@ public class GuessNumberEventConsumer : ICommonEventConsumer<GuessNumberEventDto
         }
 
         await guessNumberEventService.CreateAsync(eventId);
-        logger.LogInformation(
+        await logger.InfoAsync(
             "{ConsumerName} received event with id {eventId}",
             ConsumerName,
             eventId
@@ -42,5 +42,5 @@ public class GuessNumberEventConsumer : ICommonEventConsumer<GuessNumberEventDto
     private string ConsumerName => nameof(GuessNumberEventConsumer);
 
     private readonly IGuessNumberEventService guessNumberEventService;
-    private readonly ILogger<GuessNumberEventConsumer> logger;
+    private readonly ILoggerClient logger;
 }
