@@ -80,6 +80,19 @@ public static class InteractionsIds
         }
     }
 
+    public static class PartyButtons
+    {
+        public static string BuildId(Guid partyId, string action)
+        {
+            return $"{Prefix}_{partyId}_{action}";
+        }
+        
+        public const string Prefix = "Party";
+        public const string Join = "Join";
+        public const string Leave = "Leave";
+        public const string Close = "Close";
+    }
+
     public static class CommandsNames
     {
         // ReSharper disable InconsistentNaming
@@ -91,7 +104,7 @@ public static class InteractionsIds
         public const string Dev_UserEditor_Coins = "coins";
         public const string Dev_UserEditor_LootBox = "lootbox";
 
-        public const string Dev_EventsEditor_Group = "eventsEditor";
+        public const string Dev_EventsEditor_Group = "events";
         public const string Dev_EventsEditor_Read = "read";
         public const string Dev_EventsEditor_Edit = "edit";
         public const string Dev_EventsEditor_Start = "start";

@@ -25,12 +25,33 @@ public class PartiesClient : IPartiesClient
         return response.TryDeserialize<PartyDto[]>();
     }
 
+    public async Task<PartyDto[]> ReadFullAsync()
+    {
+        var request = new RestRequest($"{ControllerUrl}/full");
+        var response = await restClient.ExecuteGetAsync(request);
+        return response.TryDeserialize<PartyDto[]>();
+    }
+
     public async Task<Guid> CreateAsync(CreatePartyDto newParty)
     {
         var request = new RestRequest(ControllerUrl);
         request.AddJsonBody(newParty);
         var response = await restClient.ExecutePostAsync(request);
         return response.TryDeserialize<Guid>();
+    }
+
+    public async Task JoinAsync(Guid id, Guid userId)
+    {
+        var request = new RestRequest($"{ControllerUrl}/{id}/players/{userId}/join");
+        var response = await restClient.ExecutePutAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
+    public async Task LeaveAsync(Guid id, Guid userId)
+    {
+        var request = new RestRequest($"{ControllerUrl}/{id}/players/{userId}/leave");
+        var response = await restClient.ExecutePutAsync(request);
+        response.ThrowIfNotSuccessful();
     }
 
     public async Task UpdateAsync(PartyDto party)

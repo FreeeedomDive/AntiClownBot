@@ -10,6 +10,7 @@ using AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 using AntiClown.DiscordBot.EmbedBuilders.GuessNumber;
 using AntiClown.DiscordBot.EmbedBuilders.Inventories;
 using AntiClown.DiscordBot.EmbedBuilders.Lottery;
+using AntiClown.DiscordBot.EmbedBuilders.Parties;
 using AntiClown.DiscordBot.EmbedBuilders.RemoveCoolDowns;
 using AntiClown.DiscordBot.EmbedBuilders.Shops;
 using AntiClown.DiscordBot.EmbedBuilders.Transactions;
@@ -19,6 +20,7 @@ using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Interactivity.Services.GuessNumber;
 using AntiClown.DiscordBot.Interactivity.Services.Inventory;
 using AntiClown.DiscordBot.Interactivity.Services.Lottery;
+using AntiClown.DiscordBot.Interactivity.Services.Parties;
 using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Base;
@@ -74,7 +76,10 @@ internal class Program
 
         var discordClientWrapper = app.Services.GetRequiredService<IDiscordClientWrapper>();
 
-        await Task.WhenAll(app.RunAsync(), discordClientWrapper.StartDiscordAsync(), InitializeCachesAsync(app.Services));
+        await discordClientWrapper.StartDiscordAsync();
+        await Task.Delay(5 * 1000);
+        await InitializeCachesAsync(app.Services);
+        await app.RunAsync();
     }
 
     private static void ConfigureOptions(WebApplicationBuilder builder)
@@ -157,6 +162,7 @@ internal class Program
         builder.Services.AddTransient<IGuessNumberEmbedBuilder, GuessNumberEmbedBuilder>();
         builder.Services.AddTransient<ITransfusionEmbedBuilder, TransfusionEmbedBuilder>();
         builder.Services.AddTransient<ILotteryEmbedBuilder, LotteryEmbedBuilder>();
+        builder.Services.AddTransient<IPartyEmbedBuilder, PartyEmbedBuilder>();
     }
 
     private static void BuildInteractivityServices(WebApplicationBuilder builder)
@@ -166,6 +172,7 @@ internal class Program
         builder.Services.AddTransient<IGuessNumberEventService, GuessNumberEventService>();
         builder.Services.AddTransient<ILotteryService, LotteryService>();
         builder.Services.AddTransient<IRemoveCoolDownsEmbedBuilder, RemoveCoolDownsEmbedBuilder>();
+        builder.Services.AddTransient<IPartiesService, PartiesService>();
     }
 
     private static void BuildCommonEventsConsumers(WebApplicationBuilder builder)
@@ -211,8 +218,6 @@ internal class Program
 
     private static async Task InitializeCachesAsync(IServiceProvider serviceProvider)
     {
-        await Task.Delay(5 * 1000);
-
         var usersCache = serviceProvider.GetRequiredService<IUsersCache>();
         var emotesCache = serviceProvider.GetRequiredService<IEmotesCache>();
 

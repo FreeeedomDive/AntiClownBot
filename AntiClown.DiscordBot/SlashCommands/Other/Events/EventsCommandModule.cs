@@ -11,7 +11,7 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClown.DiscordBot.SlashCommands.Other.Events;
 
-[SlashCommandGroup(InteractionsIds.CommandsNames.Dev_EventsEditor_Group, "Управление эвентами")]
+[SlashCommandGroup(InteractionsIds.CommandsNames.Dev_EventsEditor_Group, "Управление эвентами", false), SlashCommandPermissions(Permissions.ViewAuditLog)]
 public class EventsCommandModule : SlashCommandModuleWithMiddlewares
 {
     public EventsCommandModule(
@@ -85,7 +85,7 @@ public class EventsCommandModule : SlashCommandModuleWithMiddlewares
         );
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.Dev_EventsEditor_Edit, "Включить или выключить эвент", false), SlashCommandPermissions(Permissions.ViewAuditLog)]
+    [SlashCommand(InteractionsIds.CommandsNames.Dev_EventsEditor_Edit, "Включить или выключить эвент")]
     public async Task EditEventType(
         InteractionContext context,
         [Option("type", "Тип эвента")] CommonEventTypeDto commonEventTypeDto,
@@ -105,7 +105,7 @@ public class EventsCommandModule : SlashCommandModuleWithMiddlewares
         );
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.Dev_EventsEditor_Start, "Начать новый эвент", false), SlashCommandPermissions(Permissions.ViewAuditLog)]
+    [SlashCommand(InteractionsIds.CommandsNames.Dev_EventsEditor_Start, "Начать новый эвент")]
     public async Task StartEvent(
         InteractionContext context,
         [Option("type", "Тип эвента")] CommonEventTypeDto commonEventTypeDto

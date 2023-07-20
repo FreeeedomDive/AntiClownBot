@@ -6,13 +6,17 @@ using AntiClown.DiscordBot.Interactivity.Services.GuessNumber;
 using AntiClown.DiscordBot.Interactivity.Services.Inventory;
 using AntiClown.DiscordBot.Interactivity.Services.Lottery;
 using AntiClown.DiscordBot.Interactivity.Services.Parsers;
+using AntiClown.DiscordBot.Interactivity.Services.Parties;
 using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Dev;
+using AntiClown.DiscordBot.SlashCommands.Gaming;
 using AntiClown.DiscordBot.SlashCommands.Inventory;
 using AntiClown.DiscordBot.SlashCommands.Other;
 using AntiClown.DiscordBot.SlashCommands.Other.Events;
+using AntiClown.DiscordBot.SlashCommands.Other.Ip;
+using AntiClown.DiscordBot.SlashCommands.Random;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Tools.Utility.Extensions;
@@ -37,14 +41,10 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IInventoryService inventoryService,
         IShopService shopService,
         IGuessNumberEventService guessNumberEventService,
-        ILotteryService lotteryService
-        /*
-        IShopService shopService,
-        IUserInventoryService userInventoryService,
-        IPartyService partyService,
         ILotteryService lotteryService,
+        IPartiesService partiesService
+        /*
         IRaceService raceService,
-        IGuessNumberService guessNumberService,
         IF1PredictionsService f1PredictionsService,
         ILoggerClient logger
         */
@@ -60,6 +60,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.shopService = shopService;
         this.guessNumberEventService = guessNumberEventService;
         this.lotteryService = lotteryService;
+        this.partiesService = partiesService;
     }
 
     public async Task ConfigureAsync()
@@ -285,89 +286,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             // await logger.InfoAsync("Removed clown");
             await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
         }
-
-        /*
-        TODO: handlers for events, based on interaction ID
-        switch (emojiName)
-        {
-            case "YEP":
-            {
-                var isPartyExists = partyService.PartiesInfo.OpenParties.TryGetValue(e.Message.Id, out var party);
-                if (isPartyExists && party != null)
-                {
-                    await party.JoinParty(e.User.Id);
-                }
-
-                break;
-            }
-            case "MEGALUL":
-            {
-                var isPartyExists = partyService.PartiesInfo.OpenParties.TryGetValue(e.Message.Id, out var party);
-                if (isPartyExists && party != null)
-                {
-                    await party.Destroy(e.User.Id);
-                }
-
-                break;
-            }
-            case "NOTED" when lotteryService.Lottery is not null &&
-                              lotteryService.Lottery.MessageId == e.Message.Id &&
-                              lotteryService.Lottery.IsJoinable &&
-                              !lotteryService.Lottery.Participants.Contains(e.User.Id):
-                await lotteryService.Lottery.Join(e.User.Id);
-                break;
-            case "monkaSTEER" when raceService.Race is not null &&
-                                   raceService.Race.JoinableMessageId == e.Message.Id:
-                raceService.Race.JoinRace(e.User.Id);
-                break;
-        }
-
-        if (guessNumberService.CurrentGame is not null &&
-            guessNumberService.CurrentGame.GuessNumberGameMessageMessageId == e.Message.Id)
-        {
-            switch (emojiName)
-            {
-                case "1️⃣":
-                    guessNumberService.CurrentGame.Join(e.User.Id, 1);
-                    break;
-                case "2️⃣":
-                    guessNumberService.CurrentGame.Join(e.User.Id, 2);
-                    break;
-                case "3️⃣":
-                    guessNumberService.CurrentGame.Join(e.User.Id, 3);
-                    break;
-                case "4️⃣":
-                    guessNumberService.CurrentGame.Join(e.User.Id, 4);
-                    break;
-                default:
-                    return;
-            }
-        }
-        */
     }
-
-    /*
-    TODO: same with method above
-    private async Task MessageReactionRemoved(DiscordClient sender, MessageReactionRemoveEventArgs e)
-    {
-        var emoji = e.Emoji;
-        var emojiName = emoji.Name;
-
-        switch (emojiName)
-        {
-            case "YEP":
-            {
-                var isPartyExists = partyService.PartiesInfo.OpenParties.TryGetValue(e.Message.Id, out var party);
-                if (isPartyExists && party != null)
-                {
-                    await party.LeaveParty(e.User.Id);
-                }
-
-                break;
-            }
-        }
-    }
-    */
 
     private async Task ComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
     {
@@ -403,6 +322,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         if (e.Id.StartsWith(InteractionsIds.EventsButtons.Lottery.Prefix))
         {
             await HandleLotteryInteractionAsync(e);
+        }
+
+        if (e.Id.StartsWith(InteractionsIds.PartyButtons.Prefix))
+        {
+            await HandlePartyInteractionAsync(e);
         }
     }
 
@@ -544,6 +468,27 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
     }
 
+    private async Task HandlePartyInteractionAsync(ComponentInteractionCreateEventArgs e)
+    {
+        await discordClientWrapper.Messages.RespondAsync(
+            e.Interaction, InteractionResponseType.DeferredMessageUpdate,
+            null
+        );
+        var (eventId, action) = PartyButtonsParser.Parse(e.Id);
+        switch (action)
+        {
+            case InteractionsIds.PartyButtons.Join:
+                await partiesService.AddPlayerAsync(eventId, e.User.Id);
+                break;
+            case InteractionsIds.PartyButtons.Leave:
+                await partiesService.RemovePlayerAsync(eventId, e.User.Id);
+                break;
+            case InteractionsIds.PartyButtons.Close:
+                await partiesService.ClosePartyAsync(eventId, e.User.Id);
+                break;
+        }
+    }
+
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
     {
         /*
@@ -608,24 +553,22 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 Services = serviceProvider,
             }
         );
-        // slash.RegisterCommands<PartyCommandModule>(guildId);
+        slash.RegisterCommands<PartyCommandModule>(guildId);
         slash.RegisterCommands<InventoryCommandModule>(guildId);
         slash.RegisterCommands<ShopCommandModule>(guildId);
         slash.RegisterCommands<LohotronCommandModule>(guildId);
         slash.RegisterCommands<RatingCommandModule>(guildId);
         // slash.RegisterCommands<RolesCommandModule>(guildId);
-        // slash.RegisterCommands<LotteryCommandModule>(guildId);
         slash.RegisterCommands<ChangeNicknameCommandModule>(guildId);
         // slash.RegisterCommands<RaceCommandModule>(guildId);
         slash.RegisterCommands<TributeCommandModule>(guildId);
         slash.RegisterCommands<WhenCommandModule>(guildId);
         slash.RegisterCommands<TransactionsCommandModule>(guildId);
-        // slash.RegisterCommands<RollCommandModule>(guildId);
-        // slash.RegisterCommands<IpCommandModule>(guildId);
-        // slash.RegisterCommands<SelectCommandModule>(guildId);
-        // slash.RegisterCommands<EmojiStatsCommandModule>(guildId);
+        slash.RegisterCommands<RollCommandModule>(guildId);
+        slash.RegisterCommands<IpCommandModule>(guildId);
+        slash.RegisterCommands<SelectCommandModule>(guildId);
         // slash.RegisterCommands<F1CommandModule>(guildId);
-        // // admin commands
+        // admin commands
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildId);
         slash.RegisterCommands<DailyResetCommandModule>(guildId);
         slash.RegisterCommands<CreateMessageCommandModule>(guildId);
@@ -732,6 +675,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IEmotesCache emotesCache;
     private readonly IGuessNumberEventService guessNumberEventService;
     private readonly ILotteryService lotteryService;
+    private readonly IPartiesService partiesService;
     private readonly IInventoryService inventoryService;
     private readonly IServiceProvider serviceProvider;
     private readonly IOptions<Settings> settings;

@@ -9,5 +9,7 @@ public class PartyDto
     public int MaxPlayers { get; set; }
     public ulong RoleId { get; set; }
     public DateTime CreatedAt { get; set; }
+    public Guid CreatorId { get; set; }
+    public DateTime? FirstFullPartyAt { get; set; }
     public List<Guid> Participants { get; set; }
 }

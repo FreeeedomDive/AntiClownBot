@@ -29,6 +29,11 @@ public class PartiesService : IPartiesService
         return await partiesRepository.ReadOpenedAsync();
     }
 
+    public async Task<Party[]> ReadFullPartiesAsync()
+    {
+        return await partiesRepository.ReadFullPartiesAsync();
+    }
+
     public async Task<Guid> CreateAsync(CreateParty newParty)
     {
         var party = new Party
@@ -40,6 +45,8 @@ public class PartiesService : IPartiesService
             Description = newParty.Description,
             RoleId = newParty.RoleId,
             MaxPlayers = newParty.MaxPlayers,
+            CreatorId = newParty.CreatorId,
+            FirstFullPartyAt = null,
             Participants = new List<Guid>(),
         };
         var id = await partiesRepository.CreateAsync(party);
@@ -49,10 +56,43 @@ public class PartiesService : IPartiesService
         return id;
     }
 
-    public async Task UpdateAsync(Party party)
+    public async Task AddPlayerAsync(Guid id, Guid userId)
     {
-        await partiesRepository.UpdateAsync(party);
-        await partiesMessageProducer.ProduceAsync(party);
+        var party = await ReadAsync(id);
+        if (!party.IsOpened)
+        {
+            return;
+        }
+
+        if (party.Participants.Contains(userId))
+        {
+            return;
+        }
+
+        party.Participants.Add(userId);
+        if (party.Participants.Count == party.MaxPlayers && party.FirstFullPartyAt is null)
+        {
+            party.FirstFullPartyAt = DateTime.UtcNow;
+        }
+
+        await UpdateAsync(party);
+    }
+
+    public async Task RemovePlayerAsync(Guid id, Guid userId)
+    {
+        var party = await ReadAsync(id);
+        if (!party.IsOpened)
+        {
+            return;
+        }
+
+        if (!party.Participants.Contains(userId))
+        {
+            return;
+        }
+
+        party.Participants.Remove(userId);
+        await UpdateAsync(party);
     }
 
     public async Task CloseAsync(Guid id)
@@ -65,6 +105,12 @@ public class PartiesService : IPartiesService
 
         party.IsOpened = false;
         await UpdateAsync(party);
+    }
+
+    private async Task UpdateAsync(Party party)
+    {
+        await partiesRepository.UpdateAsync(party);
+        await partiesMessageProducer.ProduceAsync(party);
     }
 
     private void ScheduleEventFinish(Guid id)

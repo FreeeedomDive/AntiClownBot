@@ -38,7 +38,8 @@ public class MessagesClient : IMessagesClient
         return response;
     }
 
-    public async Task<DiscordMessage> RespondAsync(InteractionContext context,
+    public async Task<DiscordMessage> RespondAsync(
+        InteractionContext context,
         string? content = null,
         InteractionResponseType interactionType = InteractionResponseType.ChannelMessageWithSource,
         bool isEphemeral = false
@@ -70,11 +71,6 @@ public class MessagesClient : IMessagesClient
         return modified;
     }
 
-    public async Task<DiscordMessage> ModifyAsync(InteractionContext context, DiscordWebhookBuilder builder)
-    {
-        return await context.EditResponseAsync(builder);
-    }
-
     public async Task RespondAsync(DiscordInteraction interaction, InteractionResponseType interactionResponseType, DiscordInteractionResponseBuilder? builder)
     {
         await interaction.CreateResponseAsync(interactionResponseType, builder);
@@ -85,51 +81,63 @@ public class MessagesClient : IMessagesClient
         await interaction.EditOriginalResponseAsync(builder);
     }
 
-    public async Task<DiscordMessage> SendAsync(ulong channelId, string content)
+    public async Task<DiscordMessage> SendAsync(ulong channelId, string content, bool isThread = false)
     {
         var guild = discordOptions.Value.GuildId;
-        var message = await discordClient.Guilds[guild]
-            .GetChannel(channelId)
-            .SendMessageAsync(content);
-
-        return message;
+        return isThread switch
+        {
+            true => await discordClient
+                          .Guilds[guild]
+                          .Threads[channelId]
+                          .SendMessageAsync(content),
+            false => await discordClient
+                           .Guilds[guild]
+                           .Channels[channelId]
+                           .SendMessageAsync(content),
+        };
     }
 
-    public async Task<DiscordMessage> SendAsync(ulong channelId, DiscordEmbed embed)
+    public async Task<DiscordMessage> SendAsync(ulong channelId, DiscordEmbed embed, bool isThread = false)
     {
         var guild = discordOptions.Value.GuildId;
-        var message = await discordClient.Guilds[guild]
-            .GetChannel(channelId)
-            .SendMessageAsync(embed);
-
-        return message;
+        return isThread switch
+        {
+            true => await discordClient
+                          .Guilds[guild]
+                          .Threads[channelId]
+                          .SendMessageAsync(embed),
+            false => await discordClient
+                           .Guilds[guild]
+                           .Channels[channelId]
+                           .SendMessageAsync(embed),
+        };
     }
 
-    public async Task<DiscordMessage> SendAsync(ulong channelId, DiscordMessageBuilder builder)
+    public async Task<DiscordMessage> SendAsync(ulong channelId, DiscordMessageBuilder builder, bool isThread = false)
     {
         var guild = discordOptions.Value.GuildId;
-        var message = await discordClient
-            .Guilds[guild]
-            .GetChannel(channelId)
-            .SendMessageAsync(builder);
-
-        return message;
+        return isThread switch
+        {
+            true => await discordClient
+                          .Guilds[guild]
+                          .Threads[channelId]
+                          .SendMessageAsync(builder),
+            false => await discordClient
+                           .Guilds[guild]
+                           .Channels[channelId]
+                           .SendMessageAsync(builder),
+        };
     }
 
     public async Task<DiscordMessage> FindMessageAsync(ulong channelId, ulong messageId)
     {
         var guild = discordOptions.Value.GuildId;
         var message = await discordClient
-            .Guilds[guild]
-            .GetChannel(channelId)
-            .GetMessageAsync(messageId);
+                            .Guilds[guild]
+                            .GetChannel(channelId)
+                            .GetMessageAsync(messageId);
 
         return message;
-    }
-
-    public async Task DeleteAsync(InteractionContext context)
-    {
-        await context.DeleteResponseAsync();
     }
 
     public async Task DeleteAsync(DiscordMessage message)
@@ -143,7 +151,18 @@ public class MessagesClient : IMessagesClient
         {
             content = $"{content[..30]}...";
         }
+
         return await message.CreateThreadAsync(content, AutoArchiveDuration.Day);
+    }
+
+    public async Task<DiscordMessage> ModifyAsync(InteractionContext context, DiscordWebhookBuilder builder)
+    {
+        return await context.EditResponseAsync(builder);
+    }
+
+    public async Task DeleteAsync(InteractionContext context)
+    {
+        await context.DeleteResponseAsync();
     }
 
     private readonly DiscordClient discordClient;

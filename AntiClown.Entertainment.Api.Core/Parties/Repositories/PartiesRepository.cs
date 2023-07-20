@@ -1,5 +1,4 @@
 ﻿using AntiClown.Entertainment.Api.Core.Parties.Domain;
-using AntiClown.Entertainment.Api.Core.Parties.Services.Messages;
 using AutoMapper;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Core.Repository;
@@ -10,12 +9,10 @@ public class PartiesRepository : IPartiesRepository
 {
     public PartiesRepository(
         IVersionedSqlRepository<PartyStorageElement> sqlRepository,
-        IPartiesMessageProducer partiesMessageProducer,
         IMapper mapper
     )
     {
         this.sqlRepository = sqlRepository;
-        this.partiesMessageProducer = partiesMessageProducer;
         this.mapper = mapper;
     }
 
@@ -28,14 +25,19 @@ public class PartiesRepository : IPartiesRepository
     public async Task<Party[]> ReadOpenedAsync()
     {
         var result = await sqlRepository.FindAsync(x => x.IsOpened);
-        return mapper.Map<Party[]>(result);
+        return result.Select(x => JsonConvert.DeserializeObject<Party>(x.SerializedParty)!).ToArray();
+    }
+
+    public async Task<Party[]> ReadFullPartiesAsync()
+    {
+        var result = await sqlRepository.FindAsync(x => x.FirstFullPartyAt != null);
+        return result.Select(x => JsonConvert.DeserializeObject<Party>(x.SerializedParty)!).ToArray();
     }
 
     public async Task<Guid> CreateAsync(Party party)
     {
         var storageElement = mapper.Map<PartyStorageElement>(party);
         await sqlRepository.CreateAsync(storageElement);
-        await partiesMessageProducer.ProduceAsync(party);
 
         return storageElement.Id;
     }
@@ -49,13 +51,12 @@ public class PartiesRepository : IPartiesRepository
             {
                 x.IsOpened = newStorageElement.IsOpened;
                 x.SerializedParty = newStorageElement.SerializedParty;
+                x.FirstFullPartyAt = newStorageElement.FirstFullPartyAt;
                 x.Version = current.Version;
             }
         );
-        await partiesMessageProducer.ProduceAsync(party);
     }
 
     private readonly IMapper mapper;
     private readonly IVersionedSqlRepository<PartyStorageElement> sqlRepository;
-    private readonly IPartiesMessageProducer partiesMessageProducer;
 }

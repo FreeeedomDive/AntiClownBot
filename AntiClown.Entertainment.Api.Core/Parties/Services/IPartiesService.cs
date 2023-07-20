@@ -6,7 +6,9 @@ public interface IPartiesService
 {
     Task<Party> ReadAsync(Guid id);
     Task<Party[]> ReadOpenedAsync();
+    Task<Party[]> ReadFullPartiesAsync();
     Task<Guid> CreateAsync(CreateParty newParty);
-    Task UpdateAsync(Party party);
+    Task AddPlayerAsync(Guid id, Guid userId);
+    Task RemovePlayerAsync(Guid id, Guid userId);
     Task CloseAsync(Guid id);
 }

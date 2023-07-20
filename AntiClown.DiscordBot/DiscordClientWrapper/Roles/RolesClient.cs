@@ -1,18 +1,25 @@
 ﻿using AntiClown.DiscordBot.DiscordClientWrapper.Guilds;
 using AntiClown.DiscordBot.DiscordClientWrapper.Members;
+using AntiClown.DiscordBot.Options;
+using DSharpPlus;
 using DSharpPlus.Entities;
+using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.Roles;
 
 public class RolesClient : IRolesClient
 {
     public RolesClient(
+        DiscordClient discordClient,
         IGuildsClient guildsClient,
-        IMembersClient membersClient
+        IMembersClient membersClient,
+        IOptions<DiscordOptions> discordOptions
     )
     {
+        this.discordClient = discordClient;
         this.guildsClient = guildsClient;
         this.membersClient = membersClient;
+        this.discordOptions = discordOptions;
     }
 
     public async Task<DiscordRole> CreateNewRoleAsync(string roleName)
@@ -23,15 +30,15 @@ public class RolesClient : IRolesClient
         return newRole;
     }
 
-    public async Task<DiscordRole> FindRoleAsync(ulong roleId)
+    public Task<DiscordRole> FindRoleAsync(ulong roleId)
     {
-        var guild = await guildsClient.GetGuildAsync();
+        var guild = discordClient.Guilds[discordOptions.Value.GuildId];
         if (!guild.Roles.ContainsKey(roleId))
         {
             throw new ArgumentException($"Role {roleId} doesn't exist");
         }
 
-        return guild.Roles[roleId];
+        return Task.FromResult(guild.Roles[roleId]);
     }
 
     public async Task GrantRoleAsync(ulong userId, DiscordRole role)
@@ -46,6 +53,8 @@ public class RolesClient : IRolesClient
         await member.RevokeRoleAsync(role);
     }
 
+    private readonly DiscordClient discordClient;
     private readonly IGuildsClient guildsClient;
     private readonly IMembersClient membersClient;
+    private readonly IOptions<DiscordOptions> discordOptions;
 }

@@ -32,16 +32,30 @@ public class PartiesController : Controller
         return mapper.Map<PartyDto[]>(result);
     }
 
+    [HttpGet("full")]
+    public async Task<ActionResult<PartyDto[]>> ReadFull()
+    {
+        var result = await partiesService.ReadFullPartiesAsync();
+        return mapper.Map<PartyDto[]>(result);
+    }
+
     [HttpPost]
     public async Task<ActionResult<Guid>> Create([FromBody] CreatePartyDto newParty)
     {
         return await partiesService.CreateAsync(mapper.Map<CreateParty>(newParty));
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody] PartyDto party)
+    [HttpPut("{id:guid}/players/{userId:guid}/join")]
+    public async Task<ActionResult> Join([FromRoute] Guid id, [FromRoute] Guid userId)
     {
-        await partiesService.UpdateAsync(mapper.Map<Party>(party));
+        await partiesService.AddPlayerAsync(id, userId);
+        return NoContent();
+    }
+
+    [HttpPut("{id:guid}/players/{userId:guid}/leave")]
+    public async Task<ActionResult> Leave([FromRoute] Guid id, [FromRoute] Guid userId)
+    {
+        await partiesService.RemovePlayerAsync(id, userId);
         return NoContent();
     }
 

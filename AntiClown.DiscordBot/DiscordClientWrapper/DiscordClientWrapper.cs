@@ -22,7 +22,7 @@ public class DiscordClientWrapper : IDiscordClientWrapper
         Guilds = new GuildsClient(discordClient, discordOptions);
         Members = new MembersClient(discordClient, discordOptions);
         Messages = new MessagesClient(discordClient, discordOptions);
-        Roles = new RolesClient(Guilds, Members);
+        Roles = new RolesClient(discordClient, Guilds, Members, discordOptions);
         Channels = new ChannelsClient(Guilds);
     }
 
