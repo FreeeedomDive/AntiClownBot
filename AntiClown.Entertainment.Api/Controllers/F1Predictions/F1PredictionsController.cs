@@ -41,28 +41,28 @@ public class F1PredictionsController : Controller
     }
 
     [HttpPost("{raceId:guid}/close")]
-    public async Task<ActionResult> ClosePredictionsAsync(Guid raceId)
+    public async Task<ActionResult> ClosePredictionsAsync([FromRoute] Guid raceId)
     {
         await f1PredictionsService.ClosePredictionsAsync(raceId);
         return NoContent();
     }
 
     [HttpPost("{raceId:guid}/addFirstDnf")]
-    public async Task<ActionResult> AddFirstDnfResultAsync(Guid raceId, F1DriverDto firstDnfDriver)
+    public async Task<ActionResult> AddFirstDnfResultAsync([FromRoute] Guid raceId, [FromQuery] F1DriverDto firstDnfDriver)
     {
         await f1PredictionsService.AddFirstDnfResultAsync(raceId, mapper.Map<F1Driver>(firstDnfDriver));
         return NoContent();
     }
 
     [HttpPost("{raceId:guid}/addClassification")]
-    public async Task<ActionResult> AddClassificationsResultAsync(Guid raceId, F1DriverDto[] f1Drivers)
+    public async Task<ActionResult> AddClassificationsResultAsync([FromRoute] Guid raceId, [FromBody] F1DriverDto[] f1Drivers)
     {
         await f1PredictionsService.AddClassificationsResultAsync(raceId, mapper.Map<F1Driver[]>(f1Drivers));
         return NoContent();
     }
 
     [HttpPost("{raceId:guid}/finish")]
-    public async Task<ActionResult<F1PredictionResultDto[]>> FinishRaceAsync(Guid raceId)
+    public async Task<ActionResult<F1PredictionResultDto[]>> FinishRaceAsync([FromRoute] Guid raceId)
     {
         var result = await f1PredictionsService.FinishRaceAsync(raceId);
         return mapper.Map<F1PredictionResultDto[]>(result);

@@ -18,6 +18,14 @@ public static class EnumerableExtensions
         }
     }
 
+    public static async Task ForEachAsync<T>(this IEnumerable<T> enumerable, Func<T, Task> action)
+    {
+        foreach (var element in enumerable)
+        {
+            await action(element);
+        }
+    }
+
     public static IEnumerable<T> Pipe<T>(this IEnumerable<T> enumerable, Action<T> func)
     {
         foreach (var element in enumerable)

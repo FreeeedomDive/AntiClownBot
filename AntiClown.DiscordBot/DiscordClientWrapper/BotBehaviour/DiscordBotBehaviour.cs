@@ -1,7 +1,10 @@
 ﻿using System.Text;
 using AntiClown.DiscordBot.Cache.Emotes;
+using AntiClown.DiscordBot.Interactivity.Domain;
+using AntiClown.DiscordBot.Interactivity.Domain.F1Predictions;
 using AntiClown.DiscordBot.Interactivity.Domain.Inventory;
 using AntiClown.DiscordBot.Interactivity.Domain.Shop;
+using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Interactivity.Services.GuessNumber;
 using AntiClown.DiscordBot.Interactivity.Services.Inventory;
 using AntiClown.DiscordBot.Interactivity.Services.Lottery;
@@ -19,6 +22,7 @@ using AntiClown.DiscordBot.SlashCommands.Other.Ip;
 using AntiClown.DiscordBot.SlashCommands.Random;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
+using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
 using DSharpPlus;
@@ -26,7 +30,6 @@ using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
 using Microsoft.Extensions.Options;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 
@@ -44,10 +47,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IGuessNumberEventService guessNumberEventService,
         ILotteryService lotteryService,
         IPartiesService partiesService,
-        ILoggerClient logger
+        IInteractivityRepository interactivityRepository
         /*
-        IRaceService raceService,
-        IF1PredictionsService f1PredictionsService
+        IRaceService raceService
         */
     )
     {
@@ -62,16 +64,18 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.guessNumberEventService = guessNumberEventService;
         this.lotteryService = lotteryService;
         this.partiesService = partiesService;
-        this.logger = logger;
+        this.interactivityRepository = interactivityRepository;
     }
 
-    public async Task ConfigureAsync()
+    public Task ConfigureAsync()
     {
         discordClient.GuildEmojisUpdated += GuildEmojisUpdated;
         discordClient.MessageCreated += MessageCreated;
         discordClient.MessageReactionAdded += MessageReactionAdded;
         discordClient.ComponentInteractionCreated += ComponentInteractionCreated;
-        await RegisterSlashCommands(discordClient);
+        RegisterSlashCommands(discordClient);
+
+        return Task.CompletedTask;
     }
 
     private async Task GuildEmojisUpdated(DiscordClient _, GuildEmojisUpdateEventArgs e)
@@ -282,10 +286,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         var emoji = e.Emoji;
         var emojiName = emoji.Name;
 
-        if (emojiName is "peepoClown" or "clown" or "clown_face" &&
-            e.User.Id is 423498706336088085 or 369476500820459522)
+        if (emojiName is "peepoClown" or "clown" or "clown_face"
+            && e.User.Id is 423498706336088085 or 369476500820459522)
         {
-            // await logger.InfoAsync("Removed clown");
             await discordClientWrapper.Emotes.RemoveReactionFromMessageAsync(e.Message, emoji, e.User);
         }
     }
@@ -493,59 +496,55 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
     {
-        /*
-        TODO: move to EntertainmentApi
+        var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
+        if (currentRace is null)
+        {
+            await discordClientWrapper.Messages.EditOriginalResponseAsync(
+                e.Interaction,
+                new DiscordWebhookBuilder().WithContent("На данный момент нет активных предсказаний на гонку")
+            );
+            return;
+        }
         if (!start)
         {
             var driverName = e.Values.First()[InteractionsIds.F1PredictionsButtons.DriversSelectDropdownItemPrefix.Length..];
-            var driver = Enum.TryParse(typeof(F1Driver), driverName, out var result)
-                ? (F1Driver)result
+            var driver = Enum.TryParse(typeof(F1DriverDto), driverName, out var result)
+                ? (F1DriverDto)result
                 : throw new ArgumentException($"Unexpected driver {driverName}");
-            f1PredictionsService.AddDriverToResult(driver);
-            var drivers = f1PredictionsService.DriversToAddToResult();
-            if (drivers.Length == 0)
+            currentRace.Details!.Classification.Add(driver);
+            var allPossibleDrivers = Enum.GetValues<F1DriverDto>();
+            if (currentRace.Details!.Classification.Count == allPossibleDrivers.Length)
             {
-                var results = f1PredictionsService.MakeTenthPlaceResults();
-                if (results.Length == 0)
-                {
-                    await discordClientWrapper.Messages.EditOriginalResponseAsync(
-                        e.Interaction,
-                        new DiscordWebhookBuilder().WithContent("Никто не вносил предсказаний")
-                    );
-                    return;
-                }
-
-                var members = (await discordClientWrapper.Guilds.GetGuildAsync()).Members;
-                var resultsStrings =
-                    results.Select(tuple => $"{members[tuple.userId].ServerOrUserName()}: {tuple.tenthPlacePoints}");
                 await discordClientWrapper.Messages.EditOriginalResponseAsync(
                     e.Interaction,
-                    new DiscordWebhookBuilder().WithContent(string.Join("\n", resultsStrings))
+                    new DiscordWebhookBuilder().WithContent($"Итоговая таблица:\n{string.Join("\n", currentRace.Details!.Classification)}")
                 );
                 return;
             }
+
+            await interactivityRepository.UpdateAsync(currentRace);
         }
 
-        var updatedDrivers = f1PredictionsService.DriversToAddToResult();
+        var updatedDrivers = Enum.GetValues<F1DriverDto>().Except(currentRace.Details!.Classification).ToArray();
         var options = updatedDrivers.Select(
             x => new DiscordSelectComponentOption(
                 x.ToString(),
-                $"{Interactions.Dropdowns.DriversSelectDropdownItemPrefix}{x.ToString()}"
+                $"{InteractionsIds.F1PredictionsButtons.DriversSelectDropdownItemPrefix}{x.ToString()}"
             )
         );
         var currentPlaceToEnter = 20 - updatedDrivers.Length + 1;
         var dropdown = new DiscordSelectComponent(
-            Interactions.Dropdowns.DriversSelectDropdown,
+            InteractionsIds.F1PredictionsButtons.DriversSelectDropdown,
             $"Гонщик на {currentPlaceToEnter} месте", options
         );
         var builder = new DiscordWebhookBuilder()
                       .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
                       .AddComponents(dropdown);
 
-        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder);*/
+        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder);
     }
 
-    private async Task RegisterSlashCommands(DiscordClient client)
+    private void RegisterSlashCommands(DiscordClient client)
     {
         var guildId = discordOptions.Value.GuildId;
         var slash = client.UseSlashCommands(
@@ -676,10 +675,10 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
     private readonly IGuessNumberEventService guessNumberEventService;
+    private readonly IInteractivityRepository interactivityRepository;
+    private readonly IInventoryService inventoryService;
     private readonly ILotteryService lotteryService;
     private readonly IPartiesService partiesService;
-    private readonly ILoggerClient logger;
-    private readonly IInventoryService inventoryService;
     private readonly IServiceProvider serviceProvider;
     private readonly IOptions<Settings> settings;
     private readonly IShopService shopService;

@@ -122,9 +122,12 @@ public static class InteractionsIds
         public const string Lohotron = "lohotron";
 
         public const string F1Admin_Group = "f1admin";
+        public const string F1Admin_Start = "start";
         public const string F1Admin_Predict = "predict";
         public const string F1Admin_Results = "results";
+        public const string F1Admin_Close = "close";
         public const string F1Admin_Dnf = "dnf";
+        public const string F1Admin_Finish = "finish";
 
         public const string F1_Group = "f1";
         public const string F1_Predict = "predict";

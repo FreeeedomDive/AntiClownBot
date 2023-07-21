@@ -1,5 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Client.CommonEvents;
 using AntiClown.Entertainment.Api.Client.DailyEvents;
+using AntiClown.Entertainment.Api.Client.F1Predictions;
 using AntiClown.Entertainment.Api.Client.Parties;
 using RestSharp;
 
@@ -12,9 +13,11 @@ public class AntiClownEntertainmentApiClient : IAntiClownEntertainmentApiClient
         CommonEvents = new CommonEventsClient(restClient);
         DailyEvents = new DailyEventsClient(restClient);
         Parties = new PartiesClient(restClient);
+        F1Predictions = new F1PredictionsClient(restClient);
     }
 
     public ICommonEventsClient CommonEvents { get; }
     public IDailyEventsClient DailyEvents { get; }
     public IPartiesClient Parties { get; }
+    public IF1PredictionsClient F1Predictions { get; }
 }

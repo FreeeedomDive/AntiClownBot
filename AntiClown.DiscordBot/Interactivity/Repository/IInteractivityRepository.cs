@@ -1,8 +1,11 @@
-﻿namespace AntiClown.DiscordBot.Interactivity.Repository;
+﻿using AntiClown.DiscordBot.Interactivity.Domain;
+
+namespace AntiClown.DiscordBot.Interactivity.Repository;
 
 public interface IInteractivityRepository
 {
-    Task CreateAsync<T>(Domain.Interactivity<T> interactivity);
-    Task UpdateAsync<T>(Domain.Interactivity<T> interactivity);
-    Task<Domain.Interactivity<T>?> TryReadAsync<T>(Guid id);
+    Task CreateAsync<T>(Interactivity<T> interactivity);
+    Task UpdateAsync<T>(Interactivity<T> interactivity);
+    Task<Interactivity<T>?> TryReadAsync<T>(Guid id);
+    Task<Interactivity<T>[]> FindByTypeAsync<T>(InteractivityType interactivityType);
 }
