@@ -576,7 +576,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<CreateMessageCommandModule>(guildId);
         slash.RegisterCommands<EventsCommandModule>(guildId);
         // slash.RegisterCommands<F1AdminCommandModule>(guildSettings.GuildId);
-        await logger.InfoAsync($"Registered {slash.RegisteredCommands.Count} slash commands");
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
