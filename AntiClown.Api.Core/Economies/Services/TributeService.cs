@@ -198,7 +198,7 @@ public class TributeService : ITributeService
     {
         try
         {
-            var newTribute = await MakeTributeAsync(tribute.UserId);
+            var newTribute = await InnerMakeTributeAsync(tribute.UserId, true);
             await tributeMessageProducer.ProduceAsync(newTribute);
         }
         catch (AutoTributeWasCancelledByEarlierTributeException)

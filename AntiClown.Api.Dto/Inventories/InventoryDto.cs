@@ -8,4 +8,5 @@ public class InventoryDto
     public InternetDto[] Internets { get; set; }
     public JadeRodDto[] JadeRods { get; set; }
     public RiceBowlDto[] RiceBowls { get; set; }
+    public int NetWorth { get; set; }
 }

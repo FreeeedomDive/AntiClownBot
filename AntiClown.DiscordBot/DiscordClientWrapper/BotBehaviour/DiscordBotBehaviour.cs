@@ -26,6 +26,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
 using Microsoft.Extensions.Options;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 
@@ -42,11 +43,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IShopService shopService,
         IGuessNumberEventService guessNumberEventService,
         ILotteryService lotteryService,
-        IPartiesService partiesService
+        IPartiesService partiesService,
+        ILoggerClient logger
         /*
         IRaceService raceService,
-        IF1PredictionsService f1PredictionsService,
-        ILoggerClient logger
+        IF1PredictionsService f1PredictionsService
         */
     )
     {
@@ -61,6 +62,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.guessNumberEventService = guessNumberEventService;
         this.lotteryService = lotteryService;
         this.partiesService = partiesService;
+        this.logger = logger;
     }
 
     public async Task ConfigureAsync()
@@ -545,7 +547,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task RegisterSlashCommands(DiscordClient client)
     {
-        // await logger.InfoAsync("Register slash commands");
         var guildId = discordOptions.Value.GuildId;
         var slash = client.UseSlashCommands(
             new SlashCommandsConfiguration
@@ -555,6 +556,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         );
         slash.RegisterCommands<PartyCommandModule>(guildId);
         slash.RegisterCommands<InventoryCommandModule>(guildId);
+        slash.RegisterCommands<LootBoxCommandModule>(guildId);
         slash.RegisterCommands<ShopCommandModule>(guildId);
         slash.RegisterCommands<LohotronCommandModule>(guildId);
         slash.RegisterCommands<RatingCommandModule>(guildId);
@@ -574,6 +576,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<CreateMessageCommandModule>(guildId);
         slash.RegisterCommands<EventsCommandModule>(guildId);
         // slash.RegisterCommands<F1AdminCommandModule>(guildSettings.GuildId);
+        await logger.InfoAsync($"Registered {slash.RegisteredCommands.Count} slash commands");
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
@@ -676,6 +679,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IGuessNumberEventService guessNumberEventService;
     private readonly ILotteryService lotteryService;
     private readonly IPartiesService partiesService;
+    private readonly ILoggerClient logger;
     private readonly IInventoryService inventoryService;
     private readonly IServiceProvider serviceProvider;
     private readonly IOptions<Settings> settings;

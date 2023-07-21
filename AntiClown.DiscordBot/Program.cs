@@ -11,6 +11,7 @@ using AntiClown.DiscordBot.EmbedBuilders.GuessNumber;
 using AntiClown.DiscordBot.EmbedBuilders.Inventories;
 using AntiClown.DiscordBot.EmbedBuilders.Lottery;
 using AntiClown.DiscordBot.EmbedBuilders.Parties;
+using AntiClown.DiscordBot.EmbedBuilders.Rating;
 using AntiClown.DiscordBot.EmbedBuilders.RemoveCoolDowns;
 using AntiClown.DiscordBot.EmbedBuilders.Shops;
 using AntiClown.DiscordBot.EmbedBuilders.Transactions;
@@ -166,6 +167,8 @@ internal class Program
         builder.Services.AddTransient<ITransfusionEmbedBuilder, TransfusionEmbedBuilder>();
         builder.Services.AddTransient<ILotteryEmbedBuilder, LotteryEmbedBuilder>();
         builder.Services.AddTransient<IPartyEmbedBuilder, PartyEmbedBuilder>();
+        builder.Services.AddTransient<IRatingEmbedBuilder, RatingEmbedBuilder>();
+        builder.Services.AddTransient<ILootBoxEmbedBuilder, LootBoxEmbedBuilder>();
     }
 
     private static void BuildInteractivityServices(WebApplicationBuilder builder)

@@ -32,6 +32,7 @@ public static class MapperExtensions
             Internets = items.Internets().Select(x => (mapper.Map(x) as InternetDto)!).ToArray(),
             JadeRods = items.JadeRods().Select(x => (mapper.Map(x) as JadeRodDto)!).ToArray(),
             RiceBowls = items.RiceBowls().Select(x => (mapper.Map(x) as RiceBowlDto)!).ToArray(),
+            NetWorth = items.Where(x => x.ItemType != ItemType.Negative).Sum(x => x.Price),
         };
     }
 }
