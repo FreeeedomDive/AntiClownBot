@@ -19,6 +19,8 @@ using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Announce;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Messages;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.PaymentsAndResets;
 using AntiClown.Entertainment.Api.Core.Database;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 using AntiClown.Entertainment.Api.Core.Options;
 using AntiClown.Entertainment.Api.Core.Parties.Repositories;
 using AntiClown.Entertainment.Api.Core.Parties.Services;
@@ -90,6 +92,8 @@ public class Startup
         services.AddTransient<IDailyEventsRepository, DailyEventsRepository>();
         services.AddTransient<IActiveDailyEventsIndexRepository, ActiveDailyEventsIndexRepository>();
         services.AddTransient<IPartiesRepository, PartiesRepository>();
+        services.AddTransient<IF1RacesRepository, F1RacesRepository>();
+        services.AddTransient<IF1PredictionResultsRepository, F1PredictionResultsRepository>();
 
         // configure other stuff
         services.AddTransient<IAntiClownApiClient>(
@@ -113,6 +117,7 @@ public class Startup
         services.AddTransient<IPaymentsAndResetsService, PaymentsAndResetsService>();
         services.AddTransient<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
         services.AddTransient<IPartiesService, PartiesService>();
+        services.AddTransient<IF1PredictionsService, F1PredictionsService>();
 
         // configure HangFire
         services.AddHangfire(
