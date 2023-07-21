@@ -22,6 +22,6 @@ public static class DateTimeExtensions
 
     public static string ToYekaterinburgFormat(this DateTime dateTime)
     {
-        return dateTime.ToYekaterinburgTimeZone().ToString("dd-MM-yyyy HH:mm:ss");
+        return dateTime.ToYekaterinburgTimeZone().ToString("dd.MM.yyyy HH:mm:ss");
     }
 }

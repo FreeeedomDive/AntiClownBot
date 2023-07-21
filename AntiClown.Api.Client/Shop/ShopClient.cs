@@ -56,7 +56,7 @@ public class ShopClient : IShopClient
 
     public async Task ResetAllAsync()
     {
-        var request = new RestRequest("shops/reset");
+        var request = new RestRequest("shops/resetAll");
         var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }

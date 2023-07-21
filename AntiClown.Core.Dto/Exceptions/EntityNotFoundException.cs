@@ -4,8 +4,9 @@ public class EntityNotFoundException : AntiClownNotFoundException
 {
     public EntityNotFoundException(string entityName) : base($"Entity with name {entityName} does not exist")
     {
-        EntityName = entityName;
     }
 
-    public string EntityName { get; }
+    public EntityNotFoundException(Guid id) : base($"Entity with id {id} does not exist")
+    {
+    }
 }
