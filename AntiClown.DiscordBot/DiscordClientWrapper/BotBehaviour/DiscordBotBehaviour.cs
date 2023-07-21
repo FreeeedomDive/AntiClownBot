@@ -497,16 +497,19 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
     {
+        await discordClientWrapper.Messages.RespondAsync(
+            e.Interaction, InteractionResponseType.DeferredMessageUpdate,
+            null
+        );
         var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
         if (currentRace is null)
         {
-            await discordClientWrapper.Messages.ModifyAsync(
-                e.Message,
-                "На данный момент нет активных предсказаний на гонку"
+            await discordClientWrapper.Messages.EditOriginalResponseAsync(
+                e.Interaction,
+                new DiscordWebhookBuilder().WithContent("На данный момент нет активных предсказаний на гонку")
             );
             return;
         }
-
         if (!start)
         {
             var driverName = e.Values.First()[InteractionsIds.F1PredictionsButtons.DriversSelectDropdownItemPrefix.Length..];
@@ -517,9 +520,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             var allPossibleDrivers = Enum.GetValues<F1DriverDto>();
             if (currentRace.Details!.Classification.Count == allPossibleDrivers.Length)
             {
-                await discordClientWrapper.Messages.ModifyAsync(
-                    e.Message,
-                    $"Итоговая таблица:\n{string.Join("\n", currentRace.Details!.Classification)}"
+                await discordClientWrapper.Messages.EditOriginalResponseAsync(
+                    e.Interaction,
+                    new DiscordWebhookBuilder().WithContent($"Итоговая таблица:\n{string.Join("\n", currentRace.Details!.Classification)}")
                 );
                 return;
             }
@@ -539,14 +542,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             InteractionsIds.F1PredictionsButtons.DriversSelectDropdown,
             $"Гонщик на {currentPlaceToEnter} месте", options
         );
-        var builder = new DiscordMessageBuilder()
+        var builder = new DiscordWebhookBuilder()
                       .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
                       .AddComponents(dropdown);
 
-        await discordClientWrapper.Messages.ModifyAsync(
-            e.Message,
-            builder
-        );
+        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder);
     }
 
     private void RegisterSlashCommands(DiscordClient client)

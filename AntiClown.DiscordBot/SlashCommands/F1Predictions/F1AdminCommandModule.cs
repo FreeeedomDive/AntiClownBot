@@ -29,7 +29,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         this.usersCache = usersCache;
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.F1Admin_Start, "Закрыть предсказания")]
+    [SlashCommand(InteractionsIds.CommandsNames.F1Admin_Start, "Начать предсказания на новую гонку")]
     public async Task StartPredictions(
         InteractionContext interactionContext,
         [Option("trackname", "Название гонки")]
@@ -136,6 +136,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                                   )
                               );
                 var message = await RespondToInteractionAsync(interactionContext, builder);
+                currentRace.Details!.Classification = new List<F1DriverDto>();
                 currentRace.MessageId = message.Id;
                 await interactivityRepository.UpdateAsync(currentRace);
             }
