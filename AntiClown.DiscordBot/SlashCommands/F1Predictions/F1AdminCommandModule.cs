@@ -202,7 +202,8 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                         var member = await usersCache.GetMemberByApiIdAsync(x.UserId);
                         embedBuilder.AddField(
                             member.ServerOrUserName(),
-                            $"{x.TenthPlacePoints} очков за предсказание 10 места, {x.FirstDnfPoints} за предсказание первого DNF"
+                            $"{x.TenthPlacePoints.ToPluralizedString("очко", "очка", "очков")} очков за предсказание 10 места, "
+                            + $"{x.FirstDnfPoints.ToPluralizedString("очко", "очка", "очков")} за предсказание первого DNF"
                         );
                     }
                 );
