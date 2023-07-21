@@ -115,7 +115,7 @@ public class TributeEmbedBuilder : ITributeEmbedBuilder
             );
         }
 
-        messageEmbedBuilder.WithFooter($"Время подношения: {tribute.TributeDateTime.ToYekaterinburgTime()}");
+        messageEmbedBuilder.WithFooter($"Время подношения: {tribute.TributeDateTime.ToYekaterinburgFormat()}");
 
         return messageEmbedBuilder.Build();
     }

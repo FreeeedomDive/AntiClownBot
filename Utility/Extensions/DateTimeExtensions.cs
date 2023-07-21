@@ -5,6 +5,6 @@ public static class DateTimeExtensions
     public static bool IsNightTime(this DateTime dateTime)
     {
         // с поправкой на ЕКБ таймзону
-        return dateTime.Hour is >= 20 or <= 4;
+        return dateTime.Hour is > 19 or < 4;
     }
 }

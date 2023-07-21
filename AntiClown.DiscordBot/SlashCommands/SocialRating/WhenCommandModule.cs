@@ -66,7 +66,7 @@ public class WhenCommandModule : SlashCommandModuleWithMiddlewares
                 {
                     embedBuilder.AddField(
                         $"А подношение император XI через {tributeDateTimeDifference.ToTimeDiffString()}",
-                        $"Приходи не раньше чем {result.NextTributeDateTime.ToYekaterinburgTime()}"
+                        $"Приходи не раньше чем {result.NextTributeDateTime.ToYekaterinburgFormat()}"
                     );
                 }
 

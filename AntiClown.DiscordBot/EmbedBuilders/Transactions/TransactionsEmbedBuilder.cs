@@ -26,7 +26,7 @@ public class TransactionsEmbedBuilder : ITransactionsEmbedBuilder
         foreach (var transaction in transactions)
         {
             var sign = transaction.ScamCoinDiff > 0 ? "+" : "";
-            messageEmbedBuilder.AddField(transaction.Reason, $"{sign}{transaction.ScamCoinDiff} скам-койнов ({transaction.DateTime.ToYekaterinburgTime()})");
+            messageEmbedBuilder.AddField(transaction.Reason, $"{sign}{transaction.ScamCoinDiff} скам-койнов ({transaction.DateTime.ToYekaterinburgFormat()})");
         }
 
         return messageEmbedBuilder.Build();

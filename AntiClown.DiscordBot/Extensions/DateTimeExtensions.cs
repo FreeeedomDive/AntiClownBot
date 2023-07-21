@@ -12,11 +12,16 @@ public static class DateTimeExtensions
         return $"{dateTime.Hour}:{dateTime.Minute.ToStringWithLeadingZeros(2)}:{dateTime.Second.ToStringWithLeadingZeros(2)}";
     }
 
-    public static DateTime ToYekaterinburgTime(this DateTime dateTime)
+    public static DateTime ToYekaterinburgTimeZone(this DateTime dateTime)
     {
         return TimeZoneInfo.ConvertTime(
-            dateTime, 
+            dateTime,
             TimeZoneInfo.FindSystemTimeZoneById("Asia/Yekaterinburg")
         );
+    }
+
+    public static string ToYekaterinburgFormat(this DateTime dateTime)
+    {
+        return dateTime.ToYekaterinburgTimeZone().ToString("dd-MM-yyyy HH:mm:ss");
     }
 }
