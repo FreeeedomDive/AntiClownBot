@@ -517,6 +517,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 ? (F1DriverDto)result
                 : throw new ArgumentException($"Unexpected driver {driverName}");
             currentRace.Details!.Classification.Add(driver);
+            await interactivityRepository.UpdateAsync(currentRace);
             var allPossibleDrivers = Enum.GetValues<F1DriverDto>();
             if (currentRace.Details!.Classification.Count == allPossibleDrivers.Length)
             {
@@ -526,8 +527,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 );
                 return;
             }
-
-            await interactivityRepository.UpdateAsync(currentRace);
         }
 
         var updatedDrivers = Enum.GetValues<F1DriverDto>().Except(currentRace.Details!.Classification).ToArray();
