@@ -4,7 +4,7 @@ public static class StringExtensions
 {
     public static string Repeat(this string input, int count)
     {
-        return string.Join("", Enumerable.Repeat(0, count).Select(_ => input));
+        return string.Concat(Enumerable.Repeat(input, count));
     }
 
     public static string AddSpaces(this string input, int totalLength, bool areLeadingSpaces = true)
