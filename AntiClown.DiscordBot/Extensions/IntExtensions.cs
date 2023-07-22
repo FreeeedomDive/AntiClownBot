@@ -23,4 +23,9 @@ public static class IntExtensions
         var leadingZerosCount = totalNumbers - number.ToString().Length;
         return $"{"0".Multiply(leadingZerosCount)}{number}";
     }
+
+    public static string AddSpaces(this int number, int totalLength, bool areLeadingSpaces = true)
+    {
+        return number.ToString().AddSpaces(totalLength, areLeadingSpaces);
+    }
 }

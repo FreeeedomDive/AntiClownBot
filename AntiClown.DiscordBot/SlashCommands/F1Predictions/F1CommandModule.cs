@@ -1,4 +1,5 @@
-﻿using AntiClown.DiscordBot.Cache.Users;
+﻿using System.Text;
+using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Extensions;
 using AntiClown.DiscordBot.Interactivity.Domain;
 using AntiClown.DiscordBot.Interactivity.Domain.F1Predictions;
@@ -92,6 +93,48 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                                 )
                             ).Build();
                 await RespondToInteractionAsync(interactionContext, embed);
+            }
+        );
+    }
+
+    [SlashCommand(InteractionsIds.CommandsNames.F1_Results, "Показать таблицу очков за предсказания")]
+    public async Task Results(InteractionContext interactionContext)
+    {
+        await ExecuteAsync(
+            interactionContext, async () =>
+            {
+                var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync();
+                var userToMember = standings.Keys.ToDictionary(x => x, x => usersCache.GetMemberByApiIdAsync(x).GetAwaiter().GetResult());
+                var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
+                var stringBuilder = new StringBuilder("```\n");
+                var predictionsTable = standings
+                                       .Select(
+                                           kv => new
+                                           {
+                                               UserId = kv.Key,
+                                               Predictions = kv.Value,
+                                               TotalPoints = kv.Value.Select(p => p.TenthPlacePoints + p.FirstDnfPoints).Sum(),
+                                           }
+                                       )
+                                       .OrderByDescending(x => x.TotalPoints);
+                var position = 1;
+                foreach (var userPredictions in predictionsTable)
+                {
+                    var member = userToMember[userPredictions.UserId];
+                    var userName = member.ServerOrUserName().AddSpaces(longestNameLength, false);
+                    stringBuilder
+                        .Append($"{position++} | {userName} | ")
+                        .Append(
+                            string.Join(" ", userPredictions.Predictions.Select(p => p.TenthPlacePoints + p.FirstDnfPoints).ToString()!.AddSpaces(2))
+                        )
+                        .Append($" | {userPredictions.TotalPoints}")
+                        .Append($" | {userPredictions.Predictions.Count(x => x.TenthPlacePoints == 25)}x25")
+                        .Append($" {userPredictions.Predictions.Count(x => x.FirstDnfPoints > 0)}xDNF")
+                        .AppendLine();
+                }
+
+                stringBuilder.Append("```");
+                await RespondToInteractionAsync(interactionContext, stringBuilder.ToString());
             }
         );
     }

@@ -68,6 +68,13 @@ public class F1PredictionsController : Controller
         return mapper.Map<F1PredictionResultDto[]>(result);
     }
 
+    [HttpGet("standings")]
+    public async Task<ActionResult<Dictionary<Guid, F1PredictionResultDto[]>>> ReadStandingsAsync()
+    {
+        var result = await f1PredictionsService.ReadStandingsAsync();
+        return mapper.Map<Dictionary<Guid, F1PredictionResultDto[]>>(result);
+    }
+
     private readonly IF1PredictionsService f1PredictionsService;
     private readonly IMapper mapper;
 }

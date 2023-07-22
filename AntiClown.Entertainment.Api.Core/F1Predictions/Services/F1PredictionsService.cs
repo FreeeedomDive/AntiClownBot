@@ -121,6 +121,34 @@ public class F1PredictionsService : IF1PredictionsService
         return participantsResults;
     }
 
+    public async Task<Dictionary<Guid, F1PredictionResult[]>> ReadStandingsAsync()
+    {
+        var allRaces = await f1RacesRepository.ReadAllAsync();
+        var totalRaces = allRaces.Length;
+        var result = new Dictionary<Guid, F1PredictionResult[]>();
+        for (var currentRaceIndex = 0; currentRaceIndex < totalRaces; currentRaceIndex++)
+        {
+            var currentRace = allRaces[currentRaceIndex];
+            var currentRacePredictionsResults = await f1PredictionResultsRepository.FindAsync(
+                new F1PredictionResultsFilter
+                {
+                    RaceId = currentRace.Id,
+                }
+            );
+            for (var i = 0; i < currentRace.Predictions.Count; i++)
+            {
+                var prediction = currentRace.Predictions[i];
+                if (!result.TryGetValue(prediction.UserId, out _))
+                {
+                    result.Add(prediction.UserId, new F1PredictionResult[totalRaces]);
+                }
+                result[prediction.UserId][i] = currentRacePredictionsResults.First(x => x.UserId == prediction.UserId);
+            }
+        }
+
+        return result;
+    }
+
     private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
     private readonly IF1RacesRepository f1RacesRepository;
 
