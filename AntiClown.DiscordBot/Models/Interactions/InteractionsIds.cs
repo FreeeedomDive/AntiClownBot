@@ -100,6 +100,8 @@ public static class InteractionsIds
 
         public const string Dev_DailyReset = "dailyReset";
 
+        public const string Dev_RefreshUsersCache = "refreshUsersCache";
+
         public const string Dev_UserEditor_Group = "userEditor";
         public const string Dev_UserEditor_Coins = "coins";
         public const string Dev_UserEditor_LootBox = "lootbox";

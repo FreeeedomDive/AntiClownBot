@@ -576,6 +576,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         // admin commands
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildId);
         slash.RegisterCommands<DailyResetCommandModule>(guildId);
+        slash.RegisterCommands<RefreshUsersCacheCommandModule>(guildId);
         slash.RegisterCommands<CreateMessageCommandModule>(guildId);
         slash.RegisterCommands<EventsCommandModule>(guildId);
         slash.RegisterCommands<F1AdminCommandModule>(guildId);
