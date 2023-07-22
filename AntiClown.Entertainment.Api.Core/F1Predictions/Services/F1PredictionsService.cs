@@ -142,7 +142,7 @@ public class F1PredictionsService : IF1PredictionsService
                 {
                     result.Add(prediction.UserId, new F1PredictionResult?[totalRaces]);
                 }
-                result[prediction.UserId][i] = currentRacePredictionsResults.First(x => x.UserId == prediction.UserId);
+                result[prediction.UserId][currentRaceIndex] = currentRacePredictionsResults.First(x => x.UserId == prediction.UserId);
             }
         }
 

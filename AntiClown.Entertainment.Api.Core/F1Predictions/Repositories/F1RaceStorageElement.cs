@@ -10,4 +10,5 @@ public class F1RaceStorageElement : VersionedSqlStorageElement
     public bool IsOpened { get; set; }
     public string SerializedPredictions { get; set; }
     public string SerializedResults { get; set; }
+    public DateTime CreatedAt { get; set; }
 }

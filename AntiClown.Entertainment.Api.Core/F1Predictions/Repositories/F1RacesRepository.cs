@@ -1,4 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Core.Repository;
 
@@ -20,12 +21,16 @@ public class F1RacesRepository : IF1RacesRepository
     public async Task CreateAsync(F1Race race)
     {
         var storageElement = ToStorageElement(race);
+        storageElement.CreatedAt = DateTime.UtcNow;
         await sqlRepository.CreateAsync(storageElement);
     }
 
     public async Task<F1Race[]> ReadAllAsync()
     {
-        var result = await sqlRepository.ReadAllAsync();
+        var result = await sqlRepository
+            .BuildCustomQuery()
+            .OrderBy(x => x.CreatedAt)
+            .ToArrayAsync();
         return result.Select(ToModel).ToArray();
     }
 
