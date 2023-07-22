@@ -128,12 +128,10 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                             string.Join(
                                 " ", userPredictions
                                      .Predictions
-                                     .Select(p => p is null ? 0 : p.TenthPlacePoints + p.FirstDnfPoints)
-                                     .ToString()!
-                                     .AddSpaces(2)
+                                     .Select(p => (p is null ? 0 : p.TenthPlacePoints + p.FirstDnfPoints).ToString().AddSpaces(2))
                             )
                         )
-                        .Append($" | {userPredictions.TotalPoints}")
+                        .Append($" | {userPredictions.TotalPoints.AddSpaces(3)}")
                         .Append($" | {userPredictions.Predictions.Count(x => x?.TenthPlacePoints == 25)}x25")
                         .Append($" {userPredictions.Predictions.Count(x => x?.FirstDnfPoints > 0)}xDNF")
                         .AppendLine();
