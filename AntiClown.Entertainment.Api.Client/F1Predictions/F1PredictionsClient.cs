@@ -70,11 +70,11 @@ public class F1PredictionsClient : IF1PredictionsClient
         return response.TryDeserialize<F1PredictionResultDto[]>();
     }
 
-    public async Task<Dictionary<Guid, F1PredictionResultDto[]>> ReadStandingsAsync()
+    public async Task<Dictionary<Guid, F1PredictionResultDto?[]>> ReadStandingsAsync()
     {
         var request = new RestRequest("f1Predictions/standings");
         var response = await restClient.ExecuteGetAsync(request);
-        return response.TryDeserialize<Dictionary<Guid, F1PredictionResultDto[]>>();
+        return response.TryDeserialize<Dictionary<Guid, F1PredictionResultDto?[]>>();
     }
 
     private readonly RestClient restClient;

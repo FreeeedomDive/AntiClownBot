@@ -113,7 +113,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                                            {
                                                UserId = kv.Key,
                                                Predictions = kv.Value,
-                                               TotalPoints = kv.Value.Select(p => p.TenthPlacePoints + p.FirstDnfPoints).Sum(),
+                                               TotalPoints = kv.Value.Select(p => p is null ? 0 : p.TenthPlacePoints + p.FirstDnfPoints).Sum(),
                                            }
                                        )
                                        .OrderByDescending(x => x.TotalPoints);
@@ -125,11 +125,17 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                     stringBuilder
                         .Append($"{position++} | {userName} | ")
                         .Append(
-                            string.Join(" ", userPredictions.Predictions.Select(p => p.TenthPlacePoints + p.FirstDnfPoints).ToString()!.AddSpaces(2))
+                            string.Join(
+                                " ", userPredictions
+                                     .Predictions
+                                     .Select(p => p is null ? 0 : p.TenthPlacePoints + p.FirstDnfPoints)
+                                     .ToString()!
+                                     .AddSpaces(2)
+                            )
                         )
                         .Append($" | {userPredictions.TotalPoints}")
-                        .Append($" | {userPredictions.Predictions.Count(x => x.TenthPlacePoints == 25)}x25")
-                        .Append($" {userPredictions.Predictions.Count(x => x.FirstDnfPoints > 0)}xDNF")
+                        .Append($" | {userPredictions.Predictions.Count(x => x?.TenthPlacePoints == 25)}x25")
+                        .Append($" {userPredictions.Predictions.Count(x => x?.FirstDnfPoints > 0)}xDNF")
                         .AppendLine();
                 }
 
