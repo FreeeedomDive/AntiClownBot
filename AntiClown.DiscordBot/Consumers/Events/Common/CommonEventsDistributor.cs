@@ -33,34 +33,41 @@ public class CommonEventsDistributor : IConsumer<CommonEventMessageDto>
 
     public async Task Consume(ConsumeContext<CommonEventMessageDto> context)
     {
-        switch (context.Message.EventType)
+        try
         {
-            case CommonEventTypeDto.GuessNumber:
-                await guessNumberEventConsumer.ConsumeAsync(context);
-                break;
-            case CommonEventTypeDto.Lottery:
-                await lotteryEventConsumer.ConsumeAsync(context);
-                break;
-            case CommonEventTypeDto.Race:
-                await raceEventConsumer.ConsumeAsync(context);
-                break;
-            case CommonEventTypeDto.RemoveCooldowns:
-                await removeCoolDownsEventConsumer.ConsumeAsync(context);
-                break;
-            case CommonEventTypeDto.Transfusion:
-                await transfusionEventConsumer.ConsumeAsync(context);
-                break;
-            case CommonEventTypeDto.Bedge:
-                await bedgeEventConsumer.ConsumeAsync(context);
-                break;
-            default:
-                await logger.WarnAsync(
-                    "Found an unknown event {eventType} with id {eventId} in {ConsumerName}",
-                    context.Message.EventType,
-                    context.Message.EventId,
-                    nameof(CommonEventsDistributor)
-                );
-                break;
+            switch (context.Message.EventType)
+            {
+                case CommonEventTypeDto.GuessNumber:
+                    await guessNumberEventConsumer.ConsumeAsync(context);
+                    break;
+                case CommonEventTypeDto.Lottery:
+                    await lotteryEventConsumer.ConsumeAsync(context);
+                    break;
+                case CommonEventTypeDto.Race:
+                    await raceEventConsumer.ConsumeAsync(context);
+                    break;
+                case CommonEventTypeDto.RemoveCooldowns:
+                    await removeCoolDownsEventConsumer.ConsumeAsync(context);
+                    break;
+                case CommonEventTypeDto.Transfusion:
+                    await transfusionEventConsumer.ConsumeAsync(context);
+                    break;
+                case CommonEventTypeDto.Bedge:
+                    await bedgeEventConsumer.ConsumeAsync(context);
+                    break;
+                default:
+                    await logger.WarnAsync(
+                        "Found an unknown event {eventType} with id {eventId} in {ConsumerName}",
+                        context.Message.EventType,
+                        context.Message.EventId,
+                        nameof(CommonEventsDistributor)
+                    );
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            await logger.ErrorAsync(e, "Unhandled exception in consumer {ConsumerName}", nameof(CommonEventsDistributor));
         }
     }
 

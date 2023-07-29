@@ -31,6 +31,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
 using Microsoft.Extensions.Options;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 
@@ -48,7 +49,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IGuessNumberEventService guessNumberEventService,
         ILotteryService lotteryService,
         IPartiesService partiesService,
-        IInteractivityRepository interactivityRepository
+        IInteractivityRepository interactivityRepository,
+        ILoggerClient loggerClient
         /*
         IRaceService raceService
         */
@@ -66,6 +68,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.lotteryService = lotteryService;
         this.partiesService = partiesService;
         this.interactivityRepository = interactivityRepository;
+        this.loggerClient = loggerClient;
     }
 
     public Task ConfigureAsync()
@@ -294,45 +297,57 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
     }
 
-    private async Task ComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
+    private async Task ComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs eventArgs)
     {
-        if (e.Id.StartsWith(InteractionsIds.InventoryButtons.Prefix))
+        try
         {
-            await HandleInventoryInteractionAsync(e);
-            return;
-        }
+            if (eventArgs.Id.StartsWith(InteractionsIds.InventoryButtons.Prefix))
+            {
+                await HandleInventoryInteractionAsync(eventArgs);
+                return;
+            }
 
-        if (e.Id.StartsWith(InteractionsIds.ShopButtons.Prefix))
-        {
-            await HandleShopInteractionAsync(e);
-            return;
-        }
+            if (eventArgs.Id.StartsWith(InteractionsIds.ShopButtons.Prefix))
+            {
+                await HandleShopInteractionAsync(eventArgs);
+                return;
+            }
 
-        if (e.Id.StartsWith(InteractionsIds.F1PredictionsButtons.StartRaceResultInputButton))
-        {
-            await HandleRaceResultInput(e, true);
-            return;
-        }
+            if (eventArgs.Id.StartsWith(InteractionsIds.F1PredictionsButtons.StartRaceResultInputButton))
+            {
+                await HandleRaceResultInput(eventArgs, true);
+                return;
+            }
 
-        if (e.Id.StartsWith(InteractionsIds.F1PredictionsButtons.DriversSelectDropdown))
-        {
-            await HandleRaceResultInput(e);
-            return;
-        }
+            if (eventArgs.Id.StartsWith(InteractionsIds.F1PredictionsButtons.DriversSelectDropdown))
+            {
+                await HandleRaceResultInput(eventArgs);
+                return;
+            }
 
-        if (e.Id.StartsWith(InteractionsIds.EventsButtons.GuessNumber.Prefix))
-        {
-            await HandleGuessNumberInteractionAsync(e);
-        }
+            if (eventArgs.Id.StartsWith(InteractionsIds.EventsButtons.GuessNumber.Prefix))
+            {
+                await HandleGuessNumberInteractionAsync(eventArgs);
+            }
 
-        if (e.Id.StartsWith(InteractionsIds.EventsButtons.Lottery.Prefix))
-        {
-            await HandleLotteryInteractionAsync(e);
-        }
+            if (eventArgs.Id.StartsWith(InteractionsIds.EventsButtons.Lottery.Prefix))
+            {
+                await HandleLotteryInteractionAsync(eventArgs);
+            }
 
-        if (e.Id.StartsWith(InteractionsIds.PartyButtons.Prefix))
+            if (eventArgs.Id.StartsWith(InteractionsIds.PartyButtons.Prefix))
+            {
+                await HandlePartyInteractionAsync(eventArgs);
+            }
+        }
+        catch (Exception exception)
         {
-            await HandlePartyInteractionAsync(e);
+            await loggerClient.ErrorAsync(
+                exception,
+                "Unhandled exception in component interaction {InteractionId} by member {MemberId}",
+                eventArgs.Id,
+                eventArgs.User.Id
+            );
         }
     }
 
@@ -510,6 +525,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             );
             return;
         }
+
         if (!start)
         {
             var driverName = e.Values.First()[InteractionsIds.F1PredictionsButtons.DriversSelectDropdownItemPrefix.Length..];
@@ -682,6 +698,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IGuessNumberEventService guessNumberEventService;
     private readonly IInteractivityRepository interactivityRepository;
     private readonly IInventoryService inventoryService;
+    private readonly ILoggerClient loggerClient;
     private readonly ILotteryService lotteryService;
     private readonly IPartiesService partiesService;
     private readonly IServiceProvider serviceProvider;

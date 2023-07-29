@@ -25,10 +25,17 @@ public class TributesConsumer : IConsumer<TributeMessageDto>
 
     public async Task Consume(ConsumeContext<TributeMessageDto> context)
     {
-        var tribute = context.Message;
-        await logger.InfoAsync("Received auto tribute for user {userId}", tribute.UserId);
-        var tributeEmbed = await tributeEmbedBuilder.BuildForSuccessfulTributeAsync(tribute.Tribute);
-        await discordClientWrapper.Messages.SendAsync(discordOptions.Value.TributeChannelId, tributeEmbed);
+        try
+        {
+            var tribute = context.Message;
+            await logger.InfoAsync("Received auto tribute for user {userId}", tribute.UserId);
+            var tributeEmbed = await tributeEmbedBuilder.BuildForSuccessfulTributeAsync(tribute.Tribute);
+            await discordClientWrapper.Messages.SendAsync(discordOptions.Value.TributeChannelId, tributeEmbed);
+        }
+        catch (Exception e)
+        {
+            await logger.ErrorAsync(e, "Unhandled exception in consumer {ConsumerName}", nameof(TributesConsumer));
+        }
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;

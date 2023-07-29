@@ -21,22 +21,29 @@ public class DailyEventsDistributor : IConsumer<DailyEventMessageDto>
 
     public async Task Consume(ConsumeContext<DailyEventMessageDto> context)
     {
-        switch (context.Message.EventType)
+        try
         {
-            case DailyEventTypeDto.Announce:
-                await announceEventsConsumer.ConsumeAsync(context);
-                break;
-            case DailyEventTypeDto.PaymentsAndResets:
-                await resetsAndPaymentsEventDto.ConsumeAsync(context);
-                break;
-            default:
-                await logger.WarnAsync(
-                    "Found an unknown event {eventType} with id {eventId} in {ConsumerName}",
-                    context.Message.EventType,
-                    context.Message.EventId,
-                    nameof(DailyEventsDistributor)
-                );
-                break;
+            switch (context.Message.EventType)
+            {
+                case DailyEventTypeDto.Announce:
+                    await announceEventsConsumer.ConsumeAsync(context);
+                    break;
+                case DailyEventTypeDto.PaymentsAndResets:
+                    await resetsAndPaymentsEventDto.ConsumeAsync(context);
+                    break;
+                default:
+                    await logger.WarnAsync(
+                        "Found an unknown event {eventType} with id {eventId} in {ConsumerName}",
+                        context.Message.EventType,
+                        context.Message.EventId,
+                        nameof(DailyEventsDistributor)
+                    );
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            await logger.ErrorAsync(e, "Unhandled exception in consumer {ConsumerName}", nameof(DailyEventsDistributor));
         }
     }
 

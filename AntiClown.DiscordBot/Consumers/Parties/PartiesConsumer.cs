@@ -18,8 +18,15 @@ public class PartiesConsumer : IConsumer<PartyUpdatedMessageDto>
 
     public async Task Consume(ConsumeContext<PartyUpdatedMessageDto> context)
     {
-        await logger.InfoAsync("{ConsumerName} received message with party {PartyId}", nameof(PartiesConsumer), context.Message.PartyId);
-        await partiesService.CreateOrUpdateAsync(context.Message.PartyId);
+        try
+        {
+            await logger.InfoAsync("{ConsumerName} received message with party {PartyId}", nameof(PartiesConsumer), context.Message.PartyId);
+            await partiesService.CreateOrUpdateAsync(context.Message.PartyId);
+        }
+        catch (Exception e)
+        {
+            await logger.ErrorAsync(e, "Unhandled exception in consumer {ConsumerName}", nameof(PartiesConsumer));
+        }
     }
 
     private readonly ILoggerClient logger;
