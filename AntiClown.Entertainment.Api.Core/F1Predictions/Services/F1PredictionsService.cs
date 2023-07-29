@@ -118,30 +118,34 @@ public class F1PredictionsService : IF1PredictionsService
         ).ToArray();
         await f1PredictionResultsRepository.CreateAsync(participantsResults);
 
+        race.IsOpened = false;
+        race.IsActive = false;
+        await f1RacesRepository.UpdateAsync(race);
+        
         return participantsResults;
     }
 
     public async Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync()
     {
-        var allRaces = await f1RacesRepository.ReadAllAsync();
-        var totalRaces = allRaces.Length;
+        var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
+        var totalRaces = finishedRaces.Length;
         var result = new Dictionary<Guid, F1PredictionResult?[]>();
         for (var currentRaceIndex = 0; currentRaceIndex < totalRaces; currentRaceIndex++)
         {
-            var currentRace = allRaces[currentRaceIndex];
+            var currentRace = finishedRaces[currentRaceIndex];
             var currentRacePredictionsResults = await f1PredictionResultsRepository.FindAsync(
                 new F1PredictionResultsFilter
                 {
                     RaceId = currentRace.Id,
                 }
             );
-            for (var i = 0; i < currentRace.Predictions.Count; i++)
+            foreach (var prediction in currentRace.Predictions)
             {
-                var prediction = currentRace.Predictions[i];
                 if (!result.TryGetValue(prediction.UserId, out _))
                 {
                     result.Add(prediction.UserId, new F1PredictionResult?[totalRaces]);
                 }
+
                 result[prediction.UserId][currentRaceIndex] = currentRacePredictionsResults.First(x => x.UserId == prediction.UserId);
             }
         }
