@@ -507,6 +507,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             case InteractionsIds.PartyButtons.Close:
                 await partiesService.ClosePartyAsync(eventId, e.User.Id);
                 break;
+            case InteractionsIds.PartyButtons.Ping:
+                await partiesService.PingReadyPlayersAsync(eventId, e.User.Id);
+                break;
         }
     }
 

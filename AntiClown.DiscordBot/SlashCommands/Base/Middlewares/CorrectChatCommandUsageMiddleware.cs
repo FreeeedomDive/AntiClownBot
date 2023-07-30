@@ -51,7 +51,7 @@ public class CorrectChatCommandUsageMiddleware : ICommandMiddleware
         // запрещаем использовать команды инвентаря и трибутов в любых других каналах, кроме предназначенного для этого канала
         if (command is InteractionsIds.CommandsNames.Inventory
                     or InteractionsIds.CommandsNames.LootBox
-                    or InteractionsIds.CommandsNames.Shop
+                    or InteractionsIds.CommandsNames.Shop_Open
                     or InteractionsIds.CommandsNames.Lohotron
                     or InteractionsIds.CommandsNames.Tribute
                     or InteractionsIds.CommandsNames.When

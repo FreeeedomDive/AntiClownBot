@@ -6,4 +6,5 @@ public interface IPartiesService
     Task RemovePlayerAsync(Guid partyId, ulong memberId);
     Task ClosePartyAsync(Guid partyId, ulong memberId);
     Task CreateOrUpdateAsync(Guid partyId);
+    Task PingReadyPlayersAsync(Guid partyId, ulong memberId);
 }

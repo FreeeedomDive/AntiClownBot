@@ -178,12 +178,11 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                                               .Select(x => (x.FirstFullPartyAt! - x.CreatedAt).Value.TotalSeconds)
                                               .Order()
                                               .ToArray();
-                var totalFullPartyTimeInSeconds = fullPartyTimesInSeconds.Sum();
-                var theQuickestParty = (int)(fullPartyTimesInSeconds.First());
-                var average = TimeSpan.FromSeconds(totalFullPartyTimeInSeconds / fullParties.Length).ToTimeDiffString();
+                var quickest = TimeSpan.FromSeconds(fullPartyTimesInSeconds.First()).ToTimeDiffString();
+                var average = TimeSpan.FromSeconds(fullPartyTimesInSeconds.Sum() / fullParties.Length).ToTimeDiffString();
                 await RespondToInteractionAsync(
                     context,
-                    $"Самое быстрое пати было собрано за {theQuickestParty} секунд\n" +
+                    $"Самое быстрое пати было собрано за {quickest}\n" +
                     $"В среднем пати собиралось за {average}"
                 );
             }
@@ -191,10 +190,9 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
     }
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-    private readonly IPartyEmbedBuilder partyEmbedBuilder;
-
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
+    private readonly IPartyEmbedBuilder partyEmbedBuilder;
     private readonly IUsersCache usersCache;
 }

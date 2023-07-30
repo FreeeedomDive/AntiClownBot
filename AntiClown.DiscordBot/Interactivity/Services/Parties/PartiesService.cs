@@ -96,26 +96,44 @@ public class PartiesService : IPartiesService
         // даем пинговать о полном пати только когда пати полностью собирается первый раз
         if (party.IsOpened && party.Participants.Count == party.MaxPlayers && interactivity.Details!.LastPing is null)
         {
-            var pingMessageBuilder = await BuildFullPartyPingMessageAsync(party);
-            await discordClientWrapper.Messages.SendAsync(interactivity.Details.ThreadId, pingMessageBuilder, true);
+            var readyPlayersMentions = await BuildReadyPlayersMentionsStringAsync(party);
+            var fullPartyContent =
+                $"{(party.FirstFullPartyAt ?? DateTime.UtcNow).GetDifferenceTimeSpan(party.CreatedAt).ToTimeDiffString()}\n{readyPlayersMentions}";
+            await SendMessageToThreadAsync(interactivity.Details.ThreadId, $"Набрано полное пати за {fullPartyContent}");
             interactivity.Details.LastPing = DateTime.UtcNow;
             await interactivityRepository.UpdateAsync(interactivity);
         }
     }
 
-    private async Task<DiscordMessageBuilder> BuildFullPartyPingMessageAsync(PartyDto party)
+    public async Task PingReadyPlayersAsync(Guid partyId, ulong memberId)
+    {
+        var userId = await usersCache.GetApiIdByMemberIdAsync(memberId);
+        var party = await antiClownEntertainmentApiClient.Parties.ReadAsync(partyId);
+        if (!party.Participants.Contains(userId))
+        {
+            return;
+        }
+        var interactivity = await interactivityRepository.TryReadAsync<PartyDetails>(partyId);
+        var readyPlayersMentions = await BuildReadyPlayersMentionsStringAsync(party);
+        await SendMessageToThreadAsync(interactivity!.Details!.ThreadId, readyPlayersMentions);
+    }
+
+    private async Task<string> BuildReadyPlayersMentionsStringAsync(PartyDto party)
     {
         var readyPlayersTasks = party.Participants
                                      .Take(party.MaxPlayers)
                                      .Select(playerId => usersCache.GetMemberByApiIdAsync(playerId));
         var readyPlayers = await Task.WhenAll(readyPlayersTasks);
         var readyPlayersMentions = readyPlayers.Select(x => x?.Mention);
-        var fullPartyContent = 
-            $"{(party.FirstFullPartyAt ?? DateTime.UtcNow).GetDifferenceTimeSpan(party.CreatedAt).ToTimeDiffString()}\n"
-            + $"{string.Join("\n", readyPlayersMentions.ToArray())}";
-        return new DiscordMessageBuilder()
-               .WithAllowedMention(UserMention.All)
-               .WithContent($"Набрано полное пати за {fullPartyContent}");
+        return string.Join("\n", readyPlayersMentions);
+    }
+
+    private async Task SendMessageToThreadAsync(ulong threadId, string content)
+    {
+        var messageBuilder = new DiscordMessageBuilder()
+                                 .WithAllowedMention(UserMention.All)
+                                 .WithContent(content);
+        await discordClientWrapper.Messages.SendAsync(threadId, messageBuilder, true);
     }
 
     private async Task<DiscordMessageBuilder> BuildMessageAsync(PartyDto party)
@@ -152,6 +170,14 @@ public class PartiesService : IPartiesService
                        "Закрыть сбор",
                        !party.IsOpened,
                        new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("BibleThump"))
+                   ),
+                   new DiscordButtonComponent
+                   (
+                       ButtonStyle.Danger,
+                       InteractionsIds.PartyButtons.BuildId(party.Id, InteractionsIds.PartyButtons.Ping),
+                       "Пинг участников",
+                       !party.IsOpened,
+                       new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("peepoPing"))
                    )
                );
     }

@@ -91,6 +91,7 @@ public static class InteractionsIds
         public const string Join = "Join";
         public const string Leave = "Leave";
         public const string Close = "Close";
+        public const string Ping = "Ping";
     }
 
     public static class CommandsNames
@@ -119,7 +120,9 @@ public static class InteractionsIds
 
         public const string Inventory = "inventory";
         public const string LootBox = "lootbox";
-        public const string Shop = "shop";
+        public const string Shop_Group = "shop";
+        public const string Shop_Open = "open";
+        public const string Shop_Stats = "stats";
 
         public const string Lohotron = "lohotron";
 
