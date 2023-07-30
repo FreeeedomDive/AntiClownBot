@@ -50,7 +50,7 @@ public class ShopClient : IShopClient
     public async Task<ShopStatsDto> ReadStatsAsync(Guid shopId)
     {
         var request = new RestRequest($"{BuildApiUrl(shopId)}/stats)");
-        var response = await restClient.ExecutePostAsync(request);
+        var response = await restClient.ExecuteGetAsync(request);
         return response.TryDeserialize<ShopStatsDto>();
     }
 
