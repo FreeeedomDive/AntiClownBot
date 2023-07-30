@@ -173,7 +173,7 @@ public class PartiesService : IPartiesService
                    ),
                    new DiscordButtonComponent
                    (
-                       ButtonStyle.Danger,
+                       ButtonStyle.Secondary,
                        InteractionsIds.PartyButtons.BuildId(party.Id, InteractionsIds.PartyButtons.Ping),
                        "Пинг участников",
                        !party.IsOpened,
