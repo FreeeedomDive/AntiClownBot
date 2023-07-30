@@ -109,6 +109,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                 }
 
                 await antiClownEntertainmentApiClient.F1Predictions.ClosePredictionsAsync(currentRace.Details!.RaceId);
+                await RespondToInteractionAsync(interactionContext, "Предсказания закрыты");
             }
         );
     }
@@ -202,7 +203,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                         var member = await usersCache.GetMemberByApiIdAsync(x.UserId);
                         embedBuilder.AddField(
                             member.ServerOrUserName(),
-                            $"{x.TenthPlacePoints.ToPluralizedString("очко", "очка", "очков")} очков за предсказание 10 места, "
+                            $"{x.TenthPlacePoints.ToPluralizedString("очко", "очка", "очков")} за предсказание 10 места\n"
                             + $"{x.FirstDnfPoints.ToPluralizedString("очко", "очка", "очков")} за предсказание первого DNF"
                         );
                     }
