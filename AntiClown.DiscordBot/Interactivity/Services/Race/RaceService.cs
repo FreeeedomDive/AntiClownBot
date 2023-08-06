@@ -198,7 +198,7 @@ public class RaceService : IRaceService
             stringBuilder.Append($"{position.AddSpaces(2)} | ")
                          .Append($"{driverNameTrigram} | ")
                          .Append($"{totalTime.MinSecMs()} | ")
-                         .Append($"{(i == 0 ? "Leader" : $"+{leaderTrailing.MinSecMs()}")} | ")
+                         .Append($"{(i == 0 ? "   LEADER" : $"+{leaderTrailing.MinSecMs()}")} | ")
                          .AppendLine(memberName);
         }
 
