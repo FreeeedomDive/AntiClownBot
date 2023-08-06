@@ -112,6 +112,7 @@ public static class InteractionsIds
         public const string Dev_EventsEditor_Read = "read";
         public const string Dev_EventsEditor_Edit = "edit";
         public const string Dev_EventsEditor_Start = "start";
+        public const string Dev_EventsEditor_Finish = "finish";
 
         public const string Party_Group = "party";
         public const string Party_CreateWithOldPrefix = "-g";

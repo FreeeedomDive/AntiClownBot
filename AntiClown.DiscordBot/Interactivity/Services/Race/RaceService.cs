@@ -128,7 +128,9 @@ public class RaceService : IRaceService
                            ? ButtonStyle.Primary
                            : ButtonStyle.Secondary,
                        InteractionsIds.EventsButtons.Race.BuildId(raceEvent.Id, InteractionsIds.EventsButtons.Race.Join),
-                       raceEvent.Participants.Length.ToPluralizedString("участник", "участника", "участников"),
+                       raceEvent.Participants
+                                .Count(x => x.UserId is not null)
+                                .ToPluralizedString("участник", "участника", "участников"),
                        raceEvent.Finished,
                        new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("monkaSTEER"))
                    )
@@ -206,7 +208,7 @@ public class RaceService : IRaceService
                     ? TimeSpan.FromMilliseconds(currentSector.FastestLap.Value).MinSecMs()
                     : "---")
             }"
-        );
+        ).Append("```");
 
         return stringBuilder.ToString();
     }

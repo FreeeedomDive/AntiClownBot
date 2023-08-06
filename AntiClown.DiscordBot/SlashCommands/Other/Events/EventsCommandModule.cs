@@ -56,11 +56,7 @@ public class EventsCommandModule : SlashCommandModuleWithMiddlewares
                             await RespondToInteractionAsync(context, lotteryEmbed);
                             break;
                         case CommonEventTypeDto.Race:
-                            // var raceEvent = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(eventId);
-                            // var raceEmbed = await raceEmbedBuilder.BuildAsync(raceEvent);
-                            // await RespondToInteractionAsync(context, raceEmbed);
                             throw new NotSupportedException("Отображение гонок пока недоступно");
-                            break;
                         case CommonEventTypeDto.RemoveCoolDowns:
                             var removeCoolDownsEvent = await antiClownEntertainmentApiClient.CommonEvents.RemoveCoolDowns.ReadAsync(eventId);
                             var removeCoolDownsEmbed = await removeCoolDownsEmbedBuilder.BuildAsync(removeCoolDownsEvent);
@@ -125,6 +121,34 @@ public class EventsCommandModule : SlashCommandModuleWithMiddlewares
                     _ => throw new ArgumentOutOfRangeException(nameof(commonEventTypeDto), commonEventTypeDto, null),
                 };
                 await RespondToInteractionAsync(context, newEventId.ToString());
+            }
+        );
+    }
+
+    [SlashCommand(InteractionsIds.CommandsNames.Dev_EventsEditor_Finish, "Закончить эвент")]
+    public async Task FinishEvent(
+        InteractionContext context,
+        [Option("type", "Тип эвента")] CommonEventTypeDto commonEventTypeDto,
+        [Option("id", "ID эвента")] string id
+    )
+    {
+        await ExecuteAsync(
+            context, async () =>
+            {
+                var eventId = Guid.TryParse(id, out var x) ? x : throw new InvalidOperationException("Неверный формат гуида");
+                switch(commonEventTypeDto)
+                {
+                    case CommonEventTypeDto.GuessNumber:
+                        await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.FinishAsync(eventId);
+                        break;
+                    case CommonEventTypeDto.Lottery: 
+                        await antiClownEntertainmentApiClient.CommonEvents.Lottery.FinishAsync(eventId);
+                        break;
+                    case CommonEventTypeDto.Race: 
+                        await antiClownEntertainmentApiClient.CommonEvents.Race.FinishAsync(eventId);
+                        break;
+                };
+                await RespondToInteractionAsync(context, $"Event {eventId} is finished");
             }
         );
     }
