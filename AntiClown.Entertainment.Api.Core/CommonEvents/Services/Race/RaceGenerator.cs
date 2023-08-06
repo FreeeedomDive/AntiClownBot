@@ -117,7 +117,7 @@ public class RaceGenerator : IRaceGenerator
                                                        .MinBy(driver => driver.CurrentLapTime)!
                                                        .CurrentLapTime;
 
-        lastSector.FastestLap = lastSector.FastestLap.HasValue
+        currentLapLastSector.FastestLap = lastSector.FastestLap.HasValue
             ? Math.Min(lastSector.FastestLap.Value, currentLapFastestLap)
             : currentLapFastestLap;
         return result;

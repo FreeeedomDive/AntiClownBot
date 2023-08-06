@@ -177,7 +177,8 @@ public class RaceService : IRaceService
         var totalSectorsInLap = raceEvent.Track.AccelerationDifficulty + raceEvent.Track.BreakingDifficulty + raceEvent.Track.CorneringDifficulty;
         var currentSector = raceEvent.Sectors[currentSectorIndex];
         var stringBuilder = new StringBuilder($"```\nКруг {currentSector.CurrentLap} / {raceEvent.TotalLaps}\t");
-        var currentSectorIndexOnLap = (currentSectorIndex % totalSectorsInLap) + 1;
+        var currentSectorIndexOnLap = currentSectorIndex % totalSectorsInLap;
+        currentSectorIndexOnLap = currentSectorIndexOnLap == 0 ? totalSectorsInLap : currentSectorIndexOnLap;
         stringBuilder.AppendLine(
             currentSectorIndex == 0
                 ? "СТАРТ"

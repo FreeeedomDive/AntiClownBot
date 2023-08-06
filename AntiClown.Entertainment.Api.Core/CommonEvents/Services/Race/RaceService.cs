@@ -79,10 +79,10 @@ public class RaceService : IRaceService
 
         var driversByName = @event.Participants.ToDictionary(x => x.Driver.DriverName);
         var startSectorPositions = GetOrderedDriversFromSector(@event.Sectors.First())
-                                   .Select((x, i) => new { Name = x.DriverName, Position = i })
+                                   .Select((x, i) => new { Name = x.DriverName, Position = i + 1})
                                    .ToDictionary(x => x.Name, x => x.Position);
         var finishSectorPositions = GetOrderedDriversFromSector(@event.Sectors.Last())
-                                    .Select((x, i) => new { Name = x.DriverName, Position = i })
+                                    .Select((x, i) => new { Name = x.DriverName, Position = i + 1})
                                     .ToArray();
 
         foreach (var t in finishSectorPositions)
