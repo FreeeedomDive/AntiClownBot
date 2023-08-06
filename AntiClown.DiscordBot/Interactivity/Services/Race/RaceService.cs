@@ -200,9 +200,11 @@ public class RaceService : IRaceService
                     ? (await memberTask).ServerOrUserName()
                     : "";
             var totalTime = TimeSpan.FromMilliseconds(driver.TotalTime);
+            var currentLapTime = TimeSpan.FromMilliseconds(driver.CurrentLapTime);
             var leaderTrailing = TimeSpan.FromMilliseconds(driver.TotalTime - leader.TotalTime);
             stringBuilder.Append($"{position.AddSpaces(2)} | ")
                          .Append($"{driverNameTrigram} | ")
+                         .Append($"{currentLapTime.MinSecMs()} | ")
                          .Append($"{totalTime.MinSecMs()} | ")
                          .Append($"{(i == 0 ? "   LEADER" : $"+{leaderTrailing.MinSecMs()}")} | ")
                          .AppendLine(memberName);

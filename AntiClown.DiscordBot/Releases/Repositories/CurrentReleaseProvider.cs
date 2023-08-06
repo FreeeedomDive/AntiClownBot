@@ -10,8 +10,8 @@ public class CurrentReleaseProvider : ICurrentReleaseProvider
         {
             Major = 3,
             Minor = 0,
-            Patch = 0,
-            Description = "Добавлен эвент с гонками\nДобавлено отображение информации про новые релизы",
+            Patch = 1,
+            Description = "Исправлены ошибки в гонках",
             CreatedAt = DateTime.UtcNow,
         };
     }
