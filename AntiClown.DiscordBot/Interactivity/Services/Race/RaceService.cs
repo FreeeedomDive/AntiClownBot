@@ -72,6 +72,11 @@ public class RaceService : IRaceService
         var userId = await usersCache.GetApiIdByMemberIdAsync(memberId);
         await antiClownEntertainmentApiClient.CommonEvents.Race.AddParticipantAsync(eventId, userId);
         var raceEvent = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(eventId);
+
+        var welcomeMessageBuilder = await BuildEventMessageAsync(raceEvent);
+        var welcomeMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity.MessageId);
+        await discordClientWrapper.Messages.ModifyAsync(welcomeMessage, welcomeMessageBuilder);
+
         var newGridMessageContent = await BuildStartingGridMessageAsync(raceEvent);
         var gridMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity.Details!.MainRaceMessageId);
         await discordClientWrapper.Messages.ModifyAsync(gridMessage, newGridMessageContent);
@@ -172,7 +177,7 @@ public class RaceService : IRaceService
         var totalSectorsInLap = raceEvent.Track.AccelerationDifficulty + raceEvent.Track.BreakingDifficulty + raceEvent.Track.CorneringDifficulty;
         var currentSector = raceEvent.Sectors[currentSectorIndex];
         var stringBuilder = new StringBuilder($"```\nКруг {currentSector.CurrentLap} / {raceEvent.TotalLaps}\t");
-        var currentSectorIndexOnLap = currentSectorIndex % (totalSectorsInLap + 1);
+        var currentSectorIndexOnLap = (currentSectorIndex % totalSectorsInLap) + 1;
         stringBuilder.AppendLine(
             currentSectorIndex == 0
                 ? "СТАРТ"
