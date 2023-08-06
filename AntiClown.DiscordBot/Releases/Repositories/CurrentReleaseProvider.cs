@@ -10,8 +10,8 @@ public class CurrentReleaseProvider : ICurrentReleaseProvider
         {
             Major = 3,
             Minor = 0,
-            Patch = 1,
-            Description = "Исправлены ошибки в гонках",
+            Patch = 2,
+            Description = "Добавлены команды для просмотра информации о гонщиках\n(текущий уровень прокачки и очки в личном зачете)",
             CreatedAt = DateTime.UtcNow,
         };
     }

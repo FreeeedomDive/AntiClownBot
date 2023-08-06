@@ -21,6 +21,7 @@ using AntiClown.DiscordBot.SlashCommands.Inventory;
 using AntiClown.DiscordBot.SlashCommands.Other;
 using AntiClown.DiscordBot.SlashCommands.Other.Events;
 using AntiClown.DiscordBot.SlashCommands.Other.Ip;
+using AntiClown.DiscordBot.SlashCommands.Other.Race;
 using AntiClown.DiscordBot.SlashCommands.Random;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
@@ -604,7 +605,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<RatingCommandModule>(guildId);
         // slash.RegisterCommands<RolesCommandModule>(guildId);
         slash.RegisterCommands<ChangeNicknameCommandModule>(guildId);
-        // slash.RegisterCommands<RaceCommandModule>(guildId);
+        slash.RegisterCommands<RaceCommandModule>(guildId);
         slash.RegisterCommands<TributeCommandModule>(guildId);
         slash.RegisterCommands<WhenCommandModule>(guildId);
         slash.RegisterCommands<TransactionsCommandModule>(guildId);
