@@ -27,7 +27,10 @@ public class RaceCommandModule : SlashCommandModuleWithMiddlewares
                 var longestNameLength = drivers.MaxBy(x => x.DriverName.Length)!.DriverName.Length;
                 var driversStats = drivers
                                    .OrderByDescending(x => x.AccelerationSkill + x.BreakingSkill + x.CorneringSkill)
-                                   .Select(x => $"{x.DriverName.AddSpaces(longestNameLength)} | {x.AccelerationSkill} | {x.BreakingSkill} | {x.CorneringSkill}");
+                                   .Select(x => $"{x.DriverName.AddSpaces(longestNameLength)} | "
+                                                + $"{x.AccelerationSkill:#.000} | "
+                                                + $"{x.BreakingSkill:#.000} | "
+                                                + $"{x.CorneringSkill:#.000}");
                 var messageContent = string.Join("\n", driversStats);
                 await RespondToInteractionAsync(interactionContext, $"```{messageContent}```");
             }
