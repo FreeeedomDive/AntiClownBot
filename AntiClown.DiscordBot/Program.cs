@@ -12,6 +12,7 @@ using AntiClown.DiscordBot.EmbedBuilders.Inventories;
 using AntiClown.DiscordBot.EmbedBuilders.Lottery;
 using AntiClown.DiscordBot.EmbedBuilders.Parties;
 using AntiClown.DiscordBot.EmbedBuilders.Rating;
+using AntiClown.DiscordBot.EmbedBuilders.Releases;
 using AntiClown.DiscordBot.EmbedBuilders.RemoveCoolDowns;
 using AntiClown.DiscordBot.EmbedBuilders.Shops;
 using AntiClown.DiscordBot.EmbedBuilders.Transactions;
@@ -25,6 +26,8 @@ using AntiClown.DiscordBot.Interactivity.Services.Parties;
 using AntiClown.DiscordBot.Interactivity.Services.Race;
 using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Options;
+using AntiClown.DiscordBot.Releases.Repositories;
+using AntiClown.DiscordBot.Releases.Services;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.DiscordBot.SlashCommands.Base.Middlewares;
 using AntiClown.Entertainment.Api.Client;
@@ -82,8 +85,13 @@ internal class Program
         var discordClientWrapper = app.Services.GetRequiredService<IDiscordClientWrapper>();
 
         await discordClientWrapper.StartDiscordAsync();
+
         await Task.Delay(5 * 1000);
         await InitializeCachesAsync(app.Services);
+
+        var releasesService = app.Services.GetRequiredService<IReleasesService>();
+        await releasesService.NotifyIfNewVersionAvailableAsync();
+
         await app.RunAsync();
     }
 
@@ -104,6 +112,7 @@ internal class Program
         builder.Services.ConfigurePostgreSql();
 
         builder.Services.AddTransient<IInteractivityRepository, InteractivityRepository>();
+        builder.Services.AddTransient<IReleasesRepository, ReleasesRepository>();
     }
 
     private static void BuildApiClients(WebApplicationBuilder builder)
@@ -170,6 +179,7 @@ internal class Program
         builder.Services.AddTransient<IPartyEmbedBuilder, PartyEmbedBuilder>();
         builder.Services.AddTransient<IRatingEmbedBuilder, RatingEmbedBuilder>();
         builder.Services.AddTransient<ILootBoxEmbedBuilder, LootBoxEmbedBuilder>();
+        builder.Services.AddTransient<IReleaseEmbedBuilder, ReleaseEmbedBuilder>();
     }
 
     private static void BuildInteractivityServices(WebApplicationBuilder builder)
@@ -181,6 +191,8 @@ internal class Program
         builder.Services.AddTransient<IRemoveCoolDownsEmbedBuilder, RemoveCoolDownsEmbedBuilder>();
         builder.Services.AddTransient<IPartiesService, PartiesService>();
         builder.Services.AddTransient<IRaceService, RaceService>();
+        builder.Services.AddTransient<ICurrentReleaseProvider, CurrentReleaseProvider>();
+        builder.Services.AddTransient<IReleasesService, ReleasesService>();
     }
 
     private static void BuildCommonEventsConsumers(WebApplicationBuilder builder)

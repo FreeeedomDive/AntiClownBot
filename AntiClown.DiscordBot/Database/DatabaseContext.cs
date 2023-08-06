@@ -1,5 +1,6 @@
 ﻿using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Options;
+using AntiClown.DiscordBot.Releases.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -21,6 +22,7 @@ public class DatabaseContext : DbContext
     }
     
     public DbSet<InteractivityStorageElement> Interactivity { get; set; }
+    public DbSet<ReleaseVersionStorageElement> Releases { get; set; }
 
     private DatabaseOptions Options { get; }
 }
