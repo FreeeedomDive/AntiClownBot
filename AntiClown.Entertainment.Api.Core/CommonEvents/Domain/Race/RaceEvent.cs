@@ -33,6 +33,7 @@ public class RaceEvent : CommonEventBase
     }
 
     public RaceTrack Track { get; set; }
+    public int TotalLaps { get; set; }
     public RaceParticipant[] Participants { get; set; }
     public RaceSnapshotOnSector[] Sectors { get; set; }
 

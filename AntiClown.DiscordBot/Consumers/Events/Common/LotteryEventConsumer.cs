@@ -22,21 +22,23 @@ public class LotteryEventConsumer : ICommonEventConsumer<LotteryEventDto>
         var eventId = context.Message.EventId;
         if (context.Message.Finished)
         {
+            await lotteryService.FinishAsync(eventId);
+
             await logger.InfoAsync(
                 "{ConsumerName} received FINISHED event with id {eventId}",
                 ConsumerName,
                 eventId
             );
-            await lotteryService.FinishAsync(eventId);
             return;
         }
 
         await lotteryService.StartAsync(eventId);
+
         await logger.InfoAsync("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
     }
 
     private static string ConsumerName => nameof(LotteryEventConsumer);
+    private readonly ILoggerClient logger;
 
     private readonly ILotteryService lotteryService;
-    private readonly ILoggerClient logger;
 }

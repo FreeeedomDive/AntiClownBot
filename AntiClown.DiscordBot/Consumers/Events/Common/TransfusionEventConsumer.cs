@@ -30,11 +30,11 @@ public class TransfusionEventConsumer : ICommonEventConsumer<TransfusionEventDto
     public async Task ConsumeAsync(ConsumeContext<CommonEventMessageDto> context)
     {
         var eventId = context.Message.EventId;
-        await logger.InfoAsync("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
-
         var transfusionEvent = await antiClownEntertainmentApiClient.CommonEvents.Transfusion.ReadAsync(eventId);
         var embed = await transfusionEmbedBuilder.BuildAsync(transfusionEvent);
         await discordClientWrapper.Messages.SendAsync(discordOptions.Value.BotChannelId, embed);
+
+        await logger.InfoAsync("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
     }
 
     private static string ConsumerName => nameof(TransfusionEventConsumer);

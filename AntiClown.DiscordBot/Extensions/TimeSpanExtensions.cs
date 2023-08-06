@@ -34,4 +34,9 @@ public static class TimeSpanExtensions
 
         return sb.ToString();
     }
+
+    public static string MinSecMs(this TimeSpan timeSpan)
+    {
+        return timeSpan.ToString(@"m\:ss\.fff");
+    }
 }

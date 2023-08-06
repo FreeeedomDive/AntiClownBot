@@ -23,6 +23,7 @@ public class RaceGenerator : IRaceGenerator
         var race = RaceEvent.Create();
         var track = (await raceTracksRepository.ReadAllAsync()).SelectRandomItem();
         race.Track = track;
+        race.TotalLaps = Constants.RaceLaps;
         var driversModels = await raceDriversRepository.ReadAllAsync();
         var participantsShuffledForStartingGrid = driversModels.Select(
             x => new RaceParticipant
@@ -34,7 +35,7 @@ public class RaceGenerator : IRaceGenerator
         race.Participants = participantsShuffledForStartingGrid;
         var startingGrid = GenerateStartingGrid(participantsShuffledForStartingGrid);
         var raceSectors = new List<RaceSnapshotOnSector> { startingGrid };
-        for (var lap = 1; lap <= Constants.RaceLaps; lap++)
+        for (var lap = 1; lap <= race.TotalLaps; lap++)
         {
             var lapSectors = GenerateSectorsForLap(raceSectors.Last(), track, lap, participantsShuffledForStartingGrid);
             raceSectors.AddRange(lapSectors);
@@ -78,6 +79,7 @@ public class RaceGenerator : IRaceGenerator
                 FastestLap = lastSector.FastestLap,
             }
         ).ToArray();
+
         for (var i = 0; i < track.CorneringDifficulty; i++)
         {
             result[i].SectorType = RaceSectorType.Cornering;

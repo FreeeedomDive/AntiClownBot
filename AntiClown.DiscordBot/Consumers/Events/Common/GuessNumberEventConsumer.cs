@@ -23,6 +23,7 @@ public class GuessNumberEventConsumer : ICommonEventConsumer<GuessNumberEventDto
         if (context.Message.Finished)
         {
             await guessNumberEventService.FinishAsync(eventId);
+
             await logger.InfoAsync(
                 "{ConsumerName} received FINISHED event with id {eventId}",
                 ConsumerName,
@@ -32,6 +33,7 @@ public class GuessNumberEventConsumer : ICommonEventConsumer<GuessNumberEventDto
         }
 
         await guessNumberEventService.CreateAsync(eventId);
+
         await logger.InfoAsync(
             "{ConsumerName} received event with id {eventId}",
             ConsumerName,

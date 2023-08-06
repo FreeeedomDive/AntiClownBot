@@ -10,6 +10,7 @@ using AntiClown.DiscordBot.Interactivity.Services.Inventory;
 using AntiClown.DiscordBot.Interactivity.Services.Lottery;
 using AntiClown.DiscordBot.Interactivity.Services.Parsers;
 using AntiClown.DiscordBot.Interactivity.Services.Parties;
+using AntiClown.DiscordBot.Interactivity.Services.Race;
 using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.Options;
@@ -50,10 +51,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         ILotteryService lotteryService,
         IPartiesService partiesService,
         IInteractivityRepository interactivityRepository,
-        ILoggerClient loggerClient
-        /*
+        ILoggerClient loggerClient,
         IRaceService raceService
-        */
     )
     {
         this.serviceProvider = serviceProvider;
@@ -69,6 +68,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.partiesService = partiesService;
         this.interactivityRepository = interactivityRepository;
         this.loggerClient = loggerClient;
+        this.raceService = raceService;
     }
 
     public Task ConfigureAsync()
@@ -142,7 +142,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         if (e.Channel.Id == discordOptions.Value.PartyChannelId)
         {
             var embedBuilder = new DiscordEmbedBuilder()
-                               //.WithTitle("Модерация чата пати")
+                               .WithTitle("Модерация чата пати")
                                .WithColor(DiscordColor.DarkRed)
                                .AddField(
                                    "Модерация чата пати",
@@ -335,6 +335,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 await HandleLotteryInteractionAsync(eventArgs);
             }
 
+            if (eventArgs.Id.StartsWith(InteractionsIds.EventsButtons.Race.Prefix))
+            {
+                await HandleRaceInteractionAsync(eventArgs);
+            }
+
             if (eventArgs.Id.StartsWith(InteractionsIds.PartyButtons.Prefix))
             {
                 await HandlePartyInteractionAsync(eventArgs);
@@ -485,6 +490,21 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         {
             case InteractionsIds.EventsButtons.Lottery.Join:
                 await lotteryService.AddParticipantAsync(eventId, e.User.Id);
+                break;
+        }
+    }
+
+    private async Task HandleRaceInteractionAsync(ComponentInteractionCreateEventArgs e)
+    {
+        await discordClientWrapper.Messages.RespondAsync(
+            e.Interaction, InteractionResponseType.DeferredMessageUpdate,
+            null
+        );
+        var (eventId, action) = RaceButtonsParser.Parse(e.Id);
+        switch (action)
+        {
+            case InteractionsIds.EventsButtons.Race.Join:
+                await raceService.AddParticipantAsync(eventId, e.User.Id);
                 break;
         }
     }
@@ -702,6 +722,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IInteractivityRepository interactivityRepository;
     private readonly IInventoryService inventoryService;
     private readonly ILoggerClient loggerClient;
+    private readonly IRaceService raceService;
     private readonly ILotteryService lotteryService;
     private readonly IPartiesService partiesService;
     private readonly IServiceProvider serviceProvider;

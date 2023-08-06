@@ -33,7 +33,7 @@ public static class InteractionsIds
         {
             return $"{Prefix}_{id}_{action}";
         }
-        
+
         public const string Prefix = "InventoryButtons_";
         public const string InventoryButton1 = "1";
         public const string InventoryButton2 = "2";
@@ -50,12 +50,13 @@ public static class InteractionsIds
     {
         public static class Race
         {
-            public static string BuildId(Guid raceId)
+            public static string BuildId(Guid id, string action)
             {
-                return $"{Prefix}_{raceId}";
+                return $"{Prefix}_{id}_{action}";
             }
 
-            public const string Prefix = "Race_Join";
+            public const string Prefix = "Race";
+            public const string Join = "Join";
         }
 
         public static class Lottery
@@ -86,7 +87,7 @@ public static class InteractionsIds
         {
             return $"{Prefix}_{partyId}_{action}";
         }
-        
+
         public const string Prefix = "Party";
         public const string Join = "Join";
         public const string Leave = "Leave";
