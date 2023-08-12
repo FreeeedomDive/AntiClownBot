@@ -12,4 +12,6 @@ public class DiscordOptions
     public ulong DotaRoleId { get; set; }
     public ulong CsRoleId { get; set; }
     public ulong SiGameRoleId { get; set; }
+    public int CreateRolePrice { get; set; }
+    public int JoinRolePrice { get; set; }
 }

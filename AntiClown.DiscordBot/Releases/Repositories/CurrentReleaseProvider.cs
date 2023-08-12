@@ -9,9 +9,9 @@ public class CurrentReleaseProvider : ICurrentReleaseProvider
         return new ReleaseVersion
         {
             Major = 3,
-            Minor = 0,
-            Patch = 2,
-            Description = "Добавлены команды для просмотра информации о гонщиках\n(текущий уровень прокачки и очки в личном зачете)",
+            Minor = 1,
+            Patch = 0,
+            Description = "Добавлено создание ролей и присоединение к ролям",
             CreatedAt = DateTime.UtcNow,
         };
     }

@@ -28,6 +28,7 @@ using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.Releases.Repositories;
 using AntiClown.DiscordBot.Releases.Services;
+using AntiClown.DiscordBot.Roles.Repositories;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.DiscordBot.SlashCommands.Base.Middlewares;
 using AntiClown.Entertainment.Api.Client;
@@ -113,6 +114,7 @@ internal class Program
 
         builder.Services.AddTransient<IInteractivityRepository, InteractivityRepository>();
         builder.Services.AddTransient<IReleasesRepository, ReleasesRepository>();
+        builder.Services.AddTransient<IRolesRepository, RolesRepository>();
     }
 
     private static void BuildApiClients(WebApplicationBuilder builder)

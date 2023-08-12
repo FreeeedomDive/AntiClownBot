@@ -163,6 +163,9 @@ public static class InteractionsIds
         public const string Roles_Grant = "-g";
         public const string Roles_Revoke = "-r";
 
+        public const string RolesAdmin_Group = "rolesadmin";
+        public const string RolesAdmin_Add = "add";
+
         public const string ScamCoins = "scamCoins";
 
         public const string Rating = "rating";

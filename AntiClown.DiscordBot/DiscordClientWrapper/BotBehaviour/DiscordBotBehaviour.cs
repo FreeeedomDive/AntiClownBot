@@ -23,6 +23,7 @@ using AntiClown.DiscordBot.SlashCommands.Other.Events;
 using AntiClown.DiscordBot.SlashCommands.Other.Ip;
 using AntiClown.DiscordBot.SlashCommands.Other.Race;
 using AntiClown.DiscordBot.SlashCommands.Random;
+using AntiClown.DiscordBot.SlashCommands.Roles;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
@@ -603,7 +604,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<ShopCommandModule>(guildId);
         slash.RegisterCommands<LohotronCommandModule>(guildId);
         slash.RegisterCommands<RatingCommandModule>(guildId);
-        // slash.RegisterCommands<RolesCommandModule>(guildId);
+        slash.RegisterCommands<RolesCommandModule>(guildId);
         slash.RegisterCommands<ChangeNicknameCommandModule>(guildId);
         slash.RegisterCommands<RaceCommandModule>(guildId);
         slash.RegisterCommands<TributeCommandModule>(guildId);
@@ -620,6 +621,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<CreateMessageCommandModule>(guildId);
         slash.RegisterCommands<EventsCommandModule>(guildId);
         slash.RegisterCommands<F1AdminCommandModule>(guildId);
+        slash.RegisterCommands<RolesAdminCommandModule>();
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
