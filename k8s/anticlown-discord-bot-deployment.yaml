@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anticlown-discord-bot-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anticlowndiscordbot
+  template:
+    metadata:
+      labels:
+        app: anticlowndiscordbot
+    spec:
+      containers:
+        - name: anticlowndiscordbot
+          image: localhost:5000/anticlowndiscordbot
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: TZ
+              value: Asia/Yekaterinburg

@@ -1,0 +1,12 @@
+﻿{
+  "profiles": {
+    "start": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local"
+      },
+      "commandLineArgs": "-tool ActualizeDailyEventsIndexTool"
+    }
+  }
+}

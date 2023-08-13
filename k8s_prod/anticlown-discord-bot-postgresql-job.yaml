@@ -1,0 +1,14 @@
+﻿apiVersion: batch/v1
+kind: Job
+metadata:
+  name: anticlown-discord-bot-postgresql-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: anticlowndiscordbotpostgresql
+          image: localhost:5000/anticlowndiscordbotpostgresql:{{TAG_NUMBER}}
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: PostgreSqlProduction
+      restartPolicy: Never

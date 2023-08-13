@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="12.0.1"/>
+        <PackageReference Include="MassTransit.Abstractions" Version="8.0.15"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4"/>
+        <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.14"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
+        <ProjectReference Include="..\AntiClown.Core\AntiClown.Core.csproj"/>
+        <ProjectReference Include="..\AntiClown.Entertainment.Api.Dto\AntiClown.Entertainment.Api.Dto.csproj"/>
+        <ProjectReference Include="..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj"/>
+        <ProjectReference Include="..\Utility\Utility.csproj"/>
+    </ItemGroup>
+</Project>

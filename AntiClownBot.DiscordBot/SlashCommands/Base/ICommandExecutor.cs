@@ -1,9 +1,0 @@
-﻿using AntiClownDiscordBotVersion2.SlashCommands.Base.Middlewares;
-
-namespace AntiClownDiscordBotVersion2.SlashCommands.Base;
-
-public interface ICommandExecutor
-{
-    void AddMiddleware<T>() where T : ICommandMiddleware;
-    Task ExecuteWithMiddlewares(SlashCommandContext interactionContext, Func<Task> command);
-}

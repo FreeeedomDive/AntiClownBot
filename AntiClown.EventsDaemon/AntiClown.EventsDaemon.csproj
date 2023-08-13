@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\AntiClown.Entertainment.Api.Client\AntiClown.Entertainment.Api.Client.csproj"/>
+        <ProjectReference Include="..\Utility\Utility.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Xdd.TelemetryApp.Api.Client" Version="1.0.12" />
+      <PackageReference Include="Xdd.TelemetryApp.Api.Utilities" Version="1.0.12" />
+    </ItemGroup>
+</Project>
