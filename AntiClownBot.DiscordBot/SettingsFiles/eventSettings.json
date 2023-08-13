@@ -1,6 +1,0 @@
-﻿{
-  "EventsType": "CommonDay",
-  "EventIntervalInMinutes": 120,
-  "LotteryStartDelayInMinutes": 10,
-  "RaceStartDelayInMinutes": 10
-}
