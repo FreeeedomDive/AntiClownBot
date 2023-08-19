@@ -1,6 +1,7 @@
 ﻿using AntiClown.Core.Dto.Exceptions;
 using AntiClown.Data.Api.Core.SettingsStoring.Domain;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
+using AntiClown.Data.Api.Dto.Exceptions;
 using AutoMapper;
 
 namespace AntiClown.Data.Api.Core.SettingsStoring.Services;
@@ -27,7 +28,7 @@ public class SettingsService : ISettingsService
         var result = await settingsRepository.TryReadAsync(category, key);
         if (result is null)
         {
-            throw new EntityNotFoundException(key);
+            throw new SettingNotFoundException(category, key);
         }
         return mapper.Map<Setting>(result);
     }
