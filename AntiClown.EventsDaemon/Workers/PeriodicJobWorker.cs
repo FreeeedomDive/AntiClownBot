@@ -5,22 +5,20 @@ namespace AntiClown.EventsDaemon.Workers;
 public abstract class PeriodicJobWorker
 {
     protected PeriodicJobWorker(
-        ILoggerClient logger,
-        TimeSpan iterationTime
+        ILoggerClient logger
     )
     {
-        this.iterationTime = iterationTime;
         Logger = logger;
     }
 
     public async Task StartAsync()
     {
-        var delay = CalculateTimeBeforeStart();
+        var delay = await CalculateTimeBeforeStartAsync();
         await Logger.InfoAsync("{WorkerName} will start in {delay}", WorkerName, TimeSpan.FromMilliseconds(delay));
         await Task.Delay(delay);
 
         currentIteration = 1;
-        timer = new PeriodicTimer(iterationTime);
+        timer = new PeriodicTimer(IterationTime);
         await ExecuteIterationWithLogAsync();
         while (await timer.WaitForNextTickAsync())
         {
@@ -60,12 +58,12 @@ public abstract class PeriodicJobWorker
         }
     }
 
-    protected abstract int CalculateTimeBeforeStart();
+    protected abstract Task<int> CalculateTimeBeforeStartAsync();
     protected abstract Task ExecuteIterationAsync();
 
     protected ILoggerClient Logger { get; }
-    protected abstract string WorkerName { get; }
-    private readonly TimeSpan iterationTime;
+    protected string WorkerName => this.GetType().Name;
+    protected abstract TimeSpan IterationTime { get; set; }
     private int currentIteration;
     private int failedIterations;
     private int successfulIterations;
