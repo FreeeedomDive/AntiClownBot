@@ -53,6 +53,5 @@ public class CreateDriversTool : ToolBase
         await Task.WhenAll(drivers.Select(x => antiClownEntertainmentApiClient.CommonEvents.Race.Drivers.CreateAsync(x)));
     }
 
-    public override string Name => nameof(CreateDriversTool);
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

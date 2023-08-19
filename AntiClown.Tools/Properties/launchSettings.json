@@ -6,7 +6,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local"
       },
-      "commandLineArgs": "-tool ActualizeDailyEventsIndexTool"
+      "commandLineArgs": "-tool ReadAllSettingsTool"
     }
   }
 }

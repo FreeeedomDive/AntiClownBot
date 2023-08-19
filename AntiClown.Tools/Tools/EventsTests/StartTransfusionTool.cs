@@ -20,6 +20,5 @@ public class StartTransfusionTool : ToolBase
         Logger.LogInformation(JsonConvert.SerializeObject(transfusionEvent, Formatting.Indented));
     }
 
-    public override string Name => nameof(StartTransfusionTool);
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

@@ -2,8 +2,10 @@
 
 public enum SettingsCategory
 {
-    DiscordGuildOptions,
+    DiscordGuild,
+    DiscordBot,
     Economy,
+    Shop,
     Inventory,
     DailyEvents,
     CommonEvents,

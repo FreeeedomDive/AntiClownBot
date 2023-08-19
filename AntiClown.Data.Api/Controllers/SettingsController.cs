@@ -39,7 +39,7 @@ public class SettingsController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateOrUpdateAsync(SettingDto settingDto)
+    public async Task<ActionResult> CreateOrUpdateAsync([FromBody] SettingDto settingDto)
     {
         await settingsService.CreateOrUpdateAsync(settingDto.Category, settingDto.Name, settingDto.Value);
         return NoContent();

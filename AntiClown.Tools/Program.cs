@@ -1,5 +1,7 @@
 using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
 using AntiClown.Tools.Args;
@@ -12,9 +14,11 @@ builder.Services.AddSingleton<IArgsProvider>(new ArgsProvider(args));
 
 var antiClownApiServiceUrl = builder.Configuration.GetSection("AntiClown").GetSection("ApiUrl").Value!;
 var antiClownEntertainmentApiServiceUrl = builder.Configuration.GetSection("AntiClown").GetSection("EntertainmentApiUrl").Value!;
+var antiClownDataApiServiceUrl = builder.Configuration.GetSection("AntiClown").GetSection("DataApiUrl").Value!;
 
 builder.Services.AddTransient<IAntiClownApiClient>(_ => AntiClownApiClientProvider.Build(antiClownApiServiceUrl));
 builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(_ => AntiClownEntertainmentApiClientProvider.Build(antiClownEntertainmentApiServiceUrl));
+builder.Services.AddTransient<IAntiClownDataApiClient>(_ => AntiClownDataApiClientProvider.Build(antiClownDataApiServiceUrl));
 
 var toolsTypes = AppDomain.CurrentDomain.GetAssemblies()
                           .SelectMany(x => x.GetTypes())

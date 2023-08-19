@@ -110,7 +110,7 @@ public class TributeService : ITributeService
                                         modifiers.Add(item.Id, 1);
                                     }
 
-                                    return currentCooldown * (100d - item.Speed) / 100;
+                                    return (int)(currentCooldown * (100d - item.Speed) / 100);
                                 }
                             );
 
@@ -133,11 +133,11 @@ public class TributeService : ITributeService
                                     modifiers.Add(item.Id, 1);
                                 }
 
-                                return currentCooldown * (100d + item.Thickness) / 100;
+                                return (int)(currentCooldown * (100d + item.Thickness) / 100);
                             }
                         );
 
-        return ((int)cooldown, modifiers);
+        return (cooldown, modifiers);
     }
 
     public async Task<Guid?> GetRandomCommunistAsync(Guid userId)

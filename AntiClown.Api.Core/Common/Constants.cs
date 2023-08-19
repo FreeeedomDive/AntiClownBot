@@ -10,7 +10,7 @@ public static class Constants
     public const int MaximumItemsInShop = 5;
 
     // стандартный кулдаун подношения
-    public const double DefaultCooldown = 60 * 60 * 1000d;
+    public const int DefaultCooldown = 60 * 60 * 1000;
 
     // начальная цена реролла магазина
     public const int DefaultReRollPrice = 100;

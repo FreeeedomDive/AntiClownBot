@@ -17,6 +17,5 @@ public class StartBedgeTool : ToolBase
         await antiClownEntertainmentApiClient.CommonEvents.Bedge.StartNewAsync();
     }
 
-    public override string Name => nameof(StartBedgeTool);
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

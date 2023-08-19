@@ -29,6 +29,5 @@ public class ActualizeDailyEventsIndexTool : ToolBase
         Logger.LogInformation("Current active events count after enabling them all: {count}", currentActive.Length);
     }
 
-    public override string Name => nameof(ActualizeDailyEventsIndexTool);
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }
