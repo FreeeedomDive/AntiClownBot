@@ -2,6 +2,8 @@ using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Consumers.Events.Common;
@@ -102,7 +104,6 @@ internal class Program
     {
         builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection("PostgreSql"));
         builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMQ"));
-        builder.Services.Configure<DiscordOptions>(builder.Configuration.GetSection("Discord"));
         builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
         builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));
         builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
@@ -139,13 +140,14 @@ internal class Program
             serviceProvider =>
             {
                 var settings = serviceProvider.GetService<IOptions<Settings>>()!.Value;
-                var discordOptions = serviceProvider.GetService<IOptions<DiscordOptions>>()!.Value;
+                var antiClownDataApiClient = serviceProvider.GetRequiredService<IAntiClownDataApiClient>();
+                var logLevel = antiClownDataApiClient.Settings.ReadAsync(SettingsCategory.DiscordBot, "LogLevel").GetAwaiter().GetResult().Value;
                 return new DiscordClient(
                     new DiscordConfiguration
                     {
-                        Token = discordOptions.ApiToken,
+                        Token = settings.ApiToken,
                         TokenType = TokenType.Bot,
-                        MinimumLogLevel = Enum.TryParse<LogLevel>(settings.LogLevel, out var level) ? level : LogLevel.Information,
+                        MinimumLogLevel = Enum.TryParse<LogLevel>(logLevel, out var level) ? level : LogLevel.Information,
                         Intents = DiscordIntents.All,
                     }
                 );

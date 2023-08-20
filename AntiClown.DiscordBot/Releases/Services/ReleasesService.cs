@@ -1,8 +1,9 @@
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.EmbedBuilders.Releases;
-using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.Releases.Repositories;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.Releases.Services;
 
@@ -11,15 +12,15 @@ public class ReleasesService : IReleasesService
     public ReleasesService(
         ICurrentReleaseProvider currentReleaseProvider,
         IDiscordClientWrapper discordClientWrapper,
-        IOptions<DiscordOptions> discordOptions,
         IReleaseEmbedBuilder releaseEmbedBuilder,
-        IReleasesRepository releasesRepository
+        IReleasesRepository releasesRepository,
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.releasesRepository = releasesRepository;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.currentReleaseProvider = currentReleaseProvider;
         this.discordClientWrapper = discordClientWrapper;
-        this.discordOptions = discordOptions;
         this.releaseEmbedBuilder = releaseEmbedBuilder;
     }
 
@@ -32,13 +33,14 @@ public class ReleasesService : IReleasesService
             return;
         }
 
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         await releasesRepository.CreateAsync(currentVersion);
-        await discordClientWrapper.Messages.SendAsync(discordOptions.Value.BotChannelId, releaseEmbedBuilder.Build(currentVersion));
+        await discordClientWrapper.Messages.SendAsync(botChannelId, releaseEmbedBuilder.Build(currentVersion));
     }
 
     private readonly ICurrentReleaseProvider currentReleaseProvider;
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IReleaseEmbedBuilder releaseEmbedBuilder;
     private readonly IReleasesRepository releasesRepository;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

@@ -1,13 +1,14 @@
-﻿using AntiClown.DiscordBot.Cache.Users;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.Extensions;
-using AntiClown.DiscordBot.Options;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.Announce;
 using AntiClown.Messages.Dto.Events.Daily;
 using DSharpPlus.Entities;
 using MassTransit;
-using Microsoft.Extensions.Options;
 using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Daily;
@@ -17,14 +18,14 @@ public class AnnounceEventConsumer : IDailyEventConsumer<AnnounceEventDto>
     public AnnounceEventConsumer(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IDiscordClientWrapper discordClientWrapper,
-        IOptions<DiscordOptions> discordOptions,
+        IAntiClownDataApiClient antiClownDataApiClient,
         IUsersCache usersCache,
         ILoggerClient logger
     )
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.discordClientWrapper = discordClientWrapper;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.usersCache = usersCache;
         this.logger = logger;
     }
@@ -62,14 +63,15 @@ public class AnnounceEventConsumer : IDailyEventConsumer<AnnounceEventDto>
             );
         }
 
-        await discordClientWrapper.Messages.SendAsync(discordOptions.Value.BotChannelId, embedBuilder.Build());
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
+        await discordClientWrapper.Messages.SendAsync(botChannelId, embedBuilder.Build());
     }
 
     private static string ConsumerName => nameof(AnnounceEventConsumer);
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly ILoggerClient logger;
     private readonly IUsersCache usersCache;
 }

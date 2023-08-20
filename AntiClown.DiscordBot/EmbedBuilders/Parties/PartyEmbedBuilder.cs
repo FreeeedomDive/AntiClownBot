@@ -1,14 +1,15 @@
-﻿using AntiClown.DiscordBot.Cache.Emotes;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.Extensions;
 using AntiClown.DiscordBot.Interactivity.Domain.Parties;
 using AntiClown.DiscordBot.Interactivity.Repository;
-using AntiClown.DiscordBot.Options;
 using AntiClown.Entertainment.Api.Dto.Parties;
 using AntiClown.Tools.Utility.Extensions;
 using DSharpPlus.Entities;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.EmbedBuilders.Parties;
 
@@ -19,14 +20,14 @@ public class PartyEmbedBuilder : IPartyEmbedBuilder
         IUsersCache usersCache,
         IEmotesCache emotesCache,
         IInteractivityRepository interactivityRepository,
-        IOptions<DiscordOptions> discordOptions
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.discordClientWrapper = discordClientWrapper;
         this.usersCache = usersCache;
         this.emotesCache = emotesCache;
         this.interactivityRepository = interactivityRepository;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task<DiscordEmbed> BuildPartyEmbedAsync(PartyDto partyDto)
@@ -71,11 +72,13 @@ public class PartyEmbedBuilder : IPartyEmbedBuilder
                                 .Where(x => x is not null)
                                 .OrderBy(x => x!.CreatedAt)
                                 .ToDictionary(x => x!.Id, x => x!.MessageId);
+        var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
+        var partyChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "PartyChannelId");
         var partiesLinks = parties
                            .Where(x => partyMessagesById.TryGetValue(x.Id, out _))
                            .ToDictionary(
                                p => p,
-                               p => $"https://discord.com/channels/{discordOptions.Value.GuildId}/{discordOptions.Value.PartyChannelId}/{partyMessagesById[p.Id]}"
+                               p => $"https://discord.com/channels/{guildId}/{partyChannelId}/{partyMessagesById[p.Id]}"
                            );
 
         embedBuilder.WithTitle("ТЕКУЩИЕ ПАТИ");
@@ -103,8 +106,8 @@ public class PartyEmbedBuilder : IPartyEmbedBuilder
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
     private readonly IInteractivityRepository interactivityRepository;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly IUsersCache usersCache;
 }

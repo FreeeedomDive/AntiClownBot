@@ -1,7 +1,8 @@
-﻿using AntiClown.DiscordBot.Options;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.Guilds;
 
@@ -9,16 +10,16 @@ public class GuildsClient : IGuildsClient
 {
     public GuildsClient(
         DiscordClient discordClient,
-        IOptions<DiscordOptions> discordOptions
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.discordClient = discordClient;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task<DiscordGuild> GetGuildAsync()
     {
-        var guildId = discordOptions.Value.GuildId;
+        var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
         var guild = await discordClient.GetGuildAsync(guildId);
         if (guild == null)
         {
@@ -29,5 +30,5 @@ public class GuildsClient : IGuildsClient
     }
 
     private readonly DiscordClient discordClient;
-    private readonly IOptions<DiscordOptions> discordOptions;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

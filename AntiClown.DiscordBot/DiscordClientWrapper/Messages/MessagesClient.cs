@@ -1,8 +1,9 @@
-﻿using AntiClown.DiscordBot.Options;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.Messages;
 
@@ -10,11 +11,11 @@ public class MessagesClient : IMessagesClient
 {
     public MessagesClient(
         DiscordClient discordClient,
-        IOptions<DiscordOptions> discordOptions
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.discordClient = discordClient;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task<DiscordMessage> RespondAsync(DiscordMessage message, string content)
@@ -83,59 +84,42 @@ public class MessagesClient : IMessagesClient
 
     public async Task<DiscordMessage> SendAsync(ulong channelId, string content, bool isThread = false)
     {
-        var guild = discordOptions.Value.GuildId;
+        var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
+        var guild = discordClient.Guilds[guildId];
         return isThread switch
         {
-            true => await discordClient
-                          .Guilds[guild]
-                          .Threads[channelId]
-                          .SendMessageAsync(content),
-            false => await discordClient
-                           .Guilds[guild]
-                           .Channels[channelId]
-                           .SendMessageAsync(content),
+            true => await guild.Threads[channelId].SendMessageAsync(content),
+            false => await guild.Channels[channelId].SendMessageAsync(content),
         };
     }
 
     public async Task<DiscordMessage> SendAsync(ulong channelId, DiscordEmbed embed, bool isThread = false)
     {
-        var guild = discordOptions.Value.GuildId;
+        var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
+        var guild = discordClient.Guilds[guildId];
         return isThread switch
         {
-            true => await discordClient
-                          .Guilds[guild]
-                          .Threads[channelId]
-                          .SendMessageAsync(embed),
-            false => await discordClient
-                           .Guilds[guild]
-                           .Channels[channelId]
-                           .SendMessageAsync(embed),
+            true => await guild.Threads[channelId].SendMessageAsync(embed),
+            false => await guild.Channels[channelId].SendMessageAsync(embed),
         };
     }
 
     public async Task<DiscordMessage> SendAsync(ulong channelId, DiscordMessageBuilder builder, bool isThread = false)
     {
-        var guild = discordOptions.Value.GuildId;
+        var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
+        var guild = discordClient.Guilds[guildId];
         return isThread switch
         {
-            true => await discordClient
-                          .Guilds[guild]
-                          .Threads[channelId]
-                          .SendMessageAsync(builder),
-            false => await discordClient
-                           .Guilds[guild]
-                           .Channels[channelId]
-                           .SendMessageAsync(builder),
+            true => await guild.Threads[channelId].SendMessageAsync(builder),
+            false => await guild.Channels[channelId].SendMessageAsync(builder),
         };
     }
 
     public async Task<DiscordMessage> FindMessageAsync(ulong channelId, ulong messageId)
     {
-        var guild = discordOptions.Value.GuildId;
-        var message = await discordClient
-                            .Guilds[guild]
-                            .GetChannel(channelId)
-                            .GetMessageAsync(messageId);
+        var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
+        var guild = discordClient.Guilds[guildId];
+        var message = await guild.GetChannel(channelId).GetMessageAsync(messageId);
 
         return message;
     }
@@ -166,7 +150,7 @@ public class MessagesClient : IMessagesClient
     }
 
     private readonly DiscordClient discordClient;
-    private readonly IOptions<DiscordOptions> discordOptions;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 
     private const int ThreadNameLengthLimit = 100;
 }

@@ -23,6 +23,13 @@ public static class SettingsClientExtensions
         return settingsClient.ReadAsync<T>(category.ToString(), key);
     }
 
+    // bool is not IParsable<T> for some reason, so there is another extension
+    public static async Task<bool> ReadBoolAsync(this ISettingsClient settingsClient, SettingsCategory category, string key)
+    {
+        var boolean = await settingsClient.ReadAsync(category.ToString(), key);
+        return bool.Parse(boolean.Value);
+    }
+
     public static async Task<T> ReadAndDeserializeJsonAsync<T>(this ISettingsClient settingsClient, string category, string key)
     {
         var setting = await settingsClient.ReadAsync(category, key);

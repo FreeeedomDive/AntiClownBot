@@ -1,8 +1,9 @@
 ﻿using System.Collections.Concurrent;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.DiscordClientWrapper;
-using AntiClown.DiscordBot.Options;
 using DSharpPlus.Entities;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.Cache.Emotes;
 
@@ -10,12 +11,12 @@ public class EmotesCache : IEmotesCache
 {
     public EmotesCache(
         IDiscordClientWrapper discordClientWrapper,
-        IOptions<DiscordOptions> discordOptions,
+        IAntiClownDataApiClient antiClownDataApiClient,
         ILogger<EmotesCache> logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.logger = logger;
         emotesCache = new ConcurrentDictionary<string, DiscordEmoji>();
     }
@@ -29,7 +30,7 @@ public class EmotesCache : IEmotesCache
                 return;
             }
 
-            var guildId = discordOptions.Value.GuildId;
+            var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
             var emotes = await discordClientWrapper.Emotes.GetAllGuildEmojisAsync(guildId);
             emotesCache = new ConcurrentDictionary<string, DiscordEmoji>(emotes.ToDictionary(x => x.Name));
             isInitialized = true;
@@ -67,6 +68,6 @@ public class EmotesCache : IEmotesCache
     private bool isInitialized;
     private ConcurrentDictionary<string, DiscordEmoji> emotesCache;
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly ILogger<EmotesCache> logger;
 }

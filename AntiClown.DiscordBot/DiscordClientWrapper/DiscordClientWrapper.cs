@@ -1,12 +1,11 @@
-﻿using AntiClown.DiscordBot.DiscordClientWrapper.Channels;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.DiscordBot.DiscordClientWrapper.Channels;
 using AntiClown.DiscordBot.DiscordClientWrapper.Emotes;
 using AntiClown.DiscordBot.DiscordClientWrapper.Guilds;
 using AntiClown.DiscordBot.DiscordClientWrapper.Members;
 using AntiClown.DiscordBot.DiscordClientWrapper.Messages;
 using AntiClown.DiscordBot.DiscordClientWrapper.Roles;
-using AntiClown.DiscordBot.Options;
 using DSharpPlus;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper;
 
@@ -14,15 +13,15 @@ public class DiscordClientWrapper : IDiscordClientWrapper
 {
     public DiscordClientWrapper(
         DiscordClient discordClient,
-        IOptions<DiscordOptions> discordOptions
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.discordClient = discordClient;
         Emotes = new EmotesClient(discordClient);
-        Guilds = new GuildsClient(discordClient, discordOptions);
-        Members = new MembersClient(discordClient, discordOptions);
-        Messages = new MessagesClient(discordClient, discordOptions);
-        Roles = new RolesClient(discordClient, Guilds, Members, discordOptions);
+        Guilds = new GuildsClient(discordClient, antiClownDataApiClient);
+        Members = new MembersClient(discordClient, antiClownDataApiClient);
+        Messages = new MessagesClient(discordClient, antiClownDataApiClient);
+        Roles = new RolesClient(discordClient, Guilds, Members, antiClownDataApiClient);
         Channels = new ChannelsClient(Guilds);
     }
 

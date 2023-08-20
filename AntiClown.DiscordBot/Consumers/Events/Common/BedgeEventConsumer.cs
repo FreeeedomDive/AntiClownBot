@@ -1,10 +1,11 @@
-﻿using AntiClown.DiscordBot.Cache.Emotes;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.DiscordClientWrapper;
-using AntiClown.DiscordBot.Options;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Bedge;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
-using Microsoft.Extensions.Options;
 using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
@@ -14,20 +15,21 @@ public class BedgeEventConsumer : ICommonEventConsumer<BedgeEventDto>
     public BedgeEventConsumer(
         IDiscordClientWrapper discordClientWrapper,
         IEmotesCache emotesCache,
-        IOptions<DiscordOptions> discordOptions,
+        IAntiClownDataApiClient antiClownDataApiClient,
         ILoggerClient logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
         this.emotesCache = emotesCache;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.logger = logger;
     }
 
     public async Task ConsumeAsync(ConsumeContext<CommonEventMessageDto> context)
     {
         var bedge = await emotesCache.GetEmoteAsTextAsync("Bedge");
-        await discordClientWrapper.Messages.SendAsync(discordOptions.Value.BotChannelId, bedge);
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
+        await discordClientWrapper.Messages.SendAsync(botChannelId, bedge);
 
         await logger.InfoAsync("{ConsumerName} received bedge event with id {eventId}",ConsumerName,context.Message.EventId);
     }
@@ -35,7 +37,7 @@ public class BedgeEventConsumer : ICommonEventConsumer<BedgeEventDto>
     private static string ConsumerName => nameof(BedgeEventConsumer);
 
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly ILoggerClient logger;
 }

@@ -1,4 +1,7 @@
 ﻿using System.Text;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
@@ -7,12 +10,10 @@ using AntiClown.DiscordBot.Interactivity.Domain;
 using AntiClown.DiscordBot.Interactivity.Domain.Race;
 using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Models.Interactions;
-using AntiClown.DiscordBot.Options;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Race;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.Interactivity.Services.Race;
 
@@ -23,8 +24,7 @@ public class RaceService : IRaceService
         IDiscordClientWrapper discordClientWrapper,
         IEmotesCache emotesCache,
         IInteractivityRepository interactivityRepository,
-        IOptions<DiscordOptions> discordOptions,
-        IOptions<Settings> settings,
+        IAntiClownDataApiClient antiClownDataApiClient,
         IUsersCache usersCache
     )
     {
@@ -33,20 +33,20 @@ public class RaceService : IRaceService
         this.usersCache = usersCache;
         this.emotesCache = emotesCache;
         this.interactivityRepository = interactivityRepository;
-        this.discordOptions = discordOptions;
-        this.settings = settings;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task StartAsync(Guid eventId)
     {
         var botDiscordId = await discordClientWrapper.Members.GetBotIdAsync();
         var botId = await usersCache.GetApiIdByMemberIdAsync(botDiscordId);
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         await antiClownEntertainmentApiClient.CommonEvents.Race.AddParticipantAsync(eventId, botId);
         var raceEvent = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(eventId);
         var welcomeMessageBuilder = await BuildEventMessageAsync(raceEvent);
-        var welcomeMessage = await discordClientWrapper.Messages.SendAsync(discordOptions.Value.BotChannelId, welcomeMessageBuilder);
+        var welcomeMessage = await discordClientWrapper.Messages.SendAsync(botChannelId, welcomeMessageBuilder);
         var gridMessageContent = await BuildStartingGridMessageAsync(raceEvent);
-        var gridMessage = await discordClientWrapper.Messages.SendAsync(discordOptions.Value.BotChannelId, gridMessageContent);
+        var gridMessage = await discordClientWrapper.Messages.SendAsync(botChannelId, gridMessageContent);
         var interactivity = new Interactivity<RaceDetails>
         {
             Id = eventId,
@@ -69,16 +69,17 @@ public class RaceService : IRaceService
             return;
         }
 
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         var userId = await usersCache.GetApiIdByMemberIdAsync(memberId);
         await antiClownEntertainmentApiClient.CommonEvents.Race.AddParticipantAsync(eventId, userId);
         var raceEvent = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(eventId);
 
         var welcomeMessageBuilder = await BuildEventMessageAsync(raceEvent);
-        var welcomeMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity.MessageId);
+        var welcomeMessage = await discordClientWrapper.Messages.FindMessageAsync(botChannelId, interactivity.MessageId);
         await discordClientWrapper.Messages.ModifyAsync(welcomeMessage, welcomeMessageBuilder);
 
         var newGridMessageContent = await BuildStartingGridMessageAsync(raceEvent);
-        var gridMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity.Details!.MainRaceMessageId);
+        var gridMessage = await discordClientWrapper.Messages.FindMessageAsync(botChannelId, interactivity.Details!.MainRaceMessageId);
         await discordClientWrapper.Messages.ModifyAsync(gridMessage, newGridMessageContent);
     }
 
@@ -90,8 +91,9 @@ public class RaceService : IRaceService
             return;
         }
 
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         var raceEvent = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(eventId);
-        var gridMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity.Details!.MainRaceMessageId);
+        var gridMessage = await discordClientWrapper.Messages.FindMessageAsync(botChannelId, interactivity.Details!.MainRaceMessageId);
         var members = raceEvent
                       .Participants
                       .Where(x => x.UserId is not null)
@@ -106,7 +108,7 @@ public class RaceService : IRaceService
 
     private async Task<DiscordMessageBuilder> BuildEventMessageAsync(RaceEventDto raceEvent)
     {
-        var ping = settings.Value.PingOnEvents ? "@everyone" : "";
+        var ping = await antiClownDataApiClient.Settings.ReadBoolAsync(SettingsCategory.DiscordBot, "PingOnEvents") ? "@everyone" : "";
         var raceWelcomeEmbed = new DiscordEmbedBuilder()
                                .WithTitle("Гонка")
                                .WithColor(DiscordColor.Teal)
@@ -223,9 +225,8 @@ public class RaceService : IRaceService
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
     private readonly IInteractivityRepository interactivityRepository;
-    private readonly IOptions<Settings> settings;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly IUsersCache usersCache;
 }

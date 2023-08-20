@@ -1,4 +1,4 @@
-﻿namespace AntiClownDiscordBotVersion2.SlashCommands.Base;
+﻿namespace AntiClown.DiscordBot.SlashCommands.Base;
 
 public class SlashCommandOptions
 {

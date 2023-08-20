@@ -1,16 +1,17 @@
-﻿using AntiClown.DiscordBot.Cache.Emotes;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.EmbedBuilders.Parties;
 using AntiClown.DiscordBot.Extensions;
 using AntiClown.DiscordBot.Models.Interactions;
-using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.Parties;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.SlashCommands.Gaming;
 
@@ -24,15 +25,15 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
         IPartyEmbedBuilder partyEmbedBuilder,
         IEmotesCache emotesCache,
         IUsersCache usersCache,
-        IOptions<DiscordOptions> discordOptions
+        IAntiClownDataApiClient antiClownDataApiClient
     ) : base(commandExecutor)
     {
         this.discordClientWrapper = discordClientWrapper;
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.partyEmbedBuilder = partyEmbedBuilder;
-        this.discordOptions = discordOptions;
         this.emotesCache = emotesCache;
         this.usersCache = usersCache;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.Party_CreateWithOldPrefix, "Быстрое создание пати по-старому")]
@@ -58,7 +59,7 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                                 CreatorId = userId,
                                 MaxPlayers = 5,
                                 Name = "Dota",
-                                RoleId = discordOptions.Value.DotaRoleId,
+                                RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "DotaRoleId"),
                                 Description = description,
                             }
                         );
@@ -70,7 +71,7 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                                 CreatorId = userId,
                                 MaxPlayers = 5,
                                 Name = "CS GO",
-                                RoleId = discordOptions.Value.CsRoleId,
+                                RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "CsRoleId"),
                                 Description = description,
                             }
                         );
@@ -82,7 +83,7 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                                 CreatorId = userId,
                                 MaxPlayers = 7,
                                 Name = "ДЕРЖУ ИГРУ",
-                                RoleId = discordOptions.Value.SiGameRoleId,
+                                RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "SiGameRoleId"),
                                 Description = description,
                             }
                         );
@@ -191,8 +192,8 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
     private readonly IPartyEmbedBuilder partyEmbedBuilder;
     private readonly IUsersCache usersCache;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }
