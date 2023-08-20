@@ -4,6 +4,9 @@ using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Transactions.Domain;
 using AntiClown.Api.Core.Transactions.Services;
 using AntiClown.Api.Core.Users.Services;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 
 namespace AntiClown.Api.Core.Economies.Services;
 
@@ -12,12 +15,14 @@ public class EconomyService : IEconomyService
     public EconomyService(
         IEconomyRepository economyRepository,
         IUsersService usersService,
-        ITransactionsService transactionsService
+        ITransactionsService transactionsService,
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.economyRepository = economyRepository;
         this.usersService = usersService;
         this.transactionsService = transactionsService;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task<Economy> ReadEconomyAsync(Guid userId)
@@ -84,7 +89,7 @@ public class EconomyService : IEconomyService
 
     public async Task CreateEmptyAsync(Guid userId)
     {
-        var newUserEconomy = Economy.Default;
+        var newUserEconomy = await CreateDefaultAsync(userId);
         newUserEconomy.Id = userId;
         await economyRepository.CreateAsync(newUserEconomy);
     }
@@ -116,7 +121,21 @@ public class EconomyService : IEconomyService
         );
     }
 
+    private async Task<Economy> CreateDefaultAsync(Guid id)
+    {
+        var defaultScamCoins = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.Economy, "DefaultScamCoins");
+        return new Economy
+        {
+            Id = id,
+            ScamCoins = defaultScamCoins,
+            NextTribute = DateTime.UtcNow,
+            LootBoxes = 0,
+            IsLohotronReady = true,
+        };
+    }
+
     private readonly IEconomyRepository economyRepository;
     private readonly ITransactionsService transactionsService;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly IUsersService usersService;
 }

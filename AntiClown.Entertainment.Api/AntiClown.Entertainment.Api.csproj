@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
         <ProjectReference Include="..\AntiClown.Entertainment.Api.Core\AntiClown.Entertainment.Api.Core.csproj"/>
     </ItemGroup>
 </Project>

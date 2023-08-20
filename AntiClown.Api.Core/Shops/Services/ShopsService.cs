@@ -1,5 +1,4 @@
-﻿using AntiClown.Api.Core.Common;
-using AntiClown.Api.Core.Economies.Services;
+﻿using AntiClown.Api.Core.Economies.Services;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base;
 using AntiClown.Api.Core.Inventory.Domain.Items.Builders;
 using AntiClown.Api.Core.Inventory.Services;
@@ -7,6 +6,9 @@ using AntiClown.Api.Core.Shops.Domain;
 using AntiClown.Api.Core.Shops.Repositories.Items;
 using AntiClown.Api.Core.Shops.Repositories.Shops;
 using AntiClown.Api.Core.Shops.Repositories.Stats;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Tools.Utility.Extensions;
 using AutoMapper;
 
@@ -21,6 +23,7 @@ public class ShopsService : IShopsService
         IShopsValidator shopsValidator,
         IEconomyService economyService,
         IItemsService itemsService,
+        IAntiClownDataApiClient antiClownDataApiClient,
         IMapper mapper
     )
     {
@@ -30,6 +33,7 @@ public class ShopsService : IShopsService
         this.shopsValidator = shopsValidator;
         this.economyService = economyService;
         this.itemsService = itemsService;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.mapper = mapper;
     }
 
@@ -71,7 +75,8 @@ public class ShopsService : IShopsService
         item.IsRevealed = true;
         await shopItemsRepository.UpdateAsync(item);
 
-        var price = shop.FreeReveals > 0 ? 0 : item.Price * Constants.RevealShopItemPercent / 100;
+        var revealShopItemPricePercent = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.Shop, "RevealShopItemPercent");
+        var price = shop.FreeReveals > 0 ? 0 : item.Price * revealShopItemPricePercent / 100;
         if (shop.FreeReveals > 0)
         {
             shop.FreeReveals--;
@@ -125,10 +130,12 @@ public class ShopsService : IShopsService
 
         await ResetShopItemsAsync(shopId);
 
+        var defaultReRollPrice = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.Shop, "DefaultReRollPrice");
+        var defaultReRollPriceIncrease = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.Shop, "DefaultReRollPriceIncrease");
         var price = shop.ReRollPrice;
         shop.ReRollPrice = Math.Max(
-            Constants.DefaultReRollPrice,
-            price + Constants.DefaultReRollPriceIncrease
+            defaultReRollPrice,
+            price + defaultReRollPriceIncrease
         );
         await shopsRepository.UpdateAsync(shop);
 
@@ -147,14 +154,16 @@ public class ShopsService : IShopsService
 
     public async Task ResetAllAsync()
     {
-        await shopsRepository.ResetAllAsync();
+        var defaultShop = await CreateDefaultShopAsync(Guid.Empty);
+        await shopsRepository.ResetAllAsync(defaultShop.ReRollPrice, defaultShop.FreeReveals);
     }
 
     private async Task ResetShopItemsAsync(Guid shopId)
     {
+        var maximumItemsInShop = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.Shop, "MaximumItemsInShop");
         var currentItems = await shopItemsRepository.FindAsync(shopId);
         await shopItemsRepository.DeleteManyAsync(currentItems.Select(x => x.Id).ToArray());
-        var newItems = Enumerable.Range(0, Constants.MaximumItemsInShop)
+        var newItems = Enumerable.Range(0, maximumItemsInShop)
                                  .Select(_ => ItemBuilder.BuildRandomItem())
                                  .Select(x => mapper.Map<ShopItem>(x))
                                  .Pipe(x => x.ShopId = shopId)
@@ -164,8 +173,7 @@ public class ShopsService : IShopsService
 
     private async Task ResetShop(Guid shopId, bool create)
     {
-        var shop = Shop.Default;
-        shop.Id = shopId;
+        var shop = await CreateDefaultShopAsync(shopId);
         if (create)
         {
             await shopsRepository.CreateAsync(shop);
@@ -176,11 +184,22 @@ public class ShopsService : IShopsService
         }
     }
 
+    private async Task<Shop> CreateDefaultShopAsync(Guid id)
+    {
+        var freeItemRevealsPerDay = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.Shop, "FreeItemRevealsPerDay");
+        return new Shop
+        {
+            Id = id,
+            ReRollPrice = 0,
+            FreeReveals = freeItemRevealsPerDay,
+        };
+    }
+
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly IEconomyService economyService;
     private readonly IItemsService itemsService;
     private readonly IMapper mapper;
     private readonly IShopItemsRepository shopItemsRepository;
-
     private readonly IShopsRepository shopsRepository;
     private readonly IShopStatsRepository shopStatsRepository;
     private readonly IShopsValidator shopsValidator;

@@ -1,4 +1,4 @@
-﻿using AntiClown.Api.Core.Common;
+﻿using AntiClown.Api.Core.IntegrationTests.Common;
 using AntiClown.Api.Core.Shops.Domain;
 using AntiClown.Api.Dto.Exceptions.Economy;
 using AntiClown.Api.Dto.Exceptions.Shops;
@@ -11,7 +11,7 @@ namespace AntiClown.Api.Core.IntegrationTests.Shops;
 public class ShopsServiceTests : IntegrationTestsBase
 {
     [SetUp]
-    public async Task EconomySetUp()
+    public async Task ShopSetUp()
     {
         try
         {
@@ -26,11 +26,10 @@ public class ShopsServiceTests : IntegrationTestsBase
     [Test]
     public void NewUserService_Should_CreateNewShopWithItems()
     {
-        var @default = Shop.Default;
         startShop.Id.Should().Be(User.Id);
-        startShop.ReRollPrice.Should().Be(@default.ReRollPrice);
-        startShop.FreeReveals.Should().Be(@default.FreeReveals);
-        startShop.Items.Length.Should().Be(Constants.MaximumItemsInShop);
+        startShop.ReRollPrice.Should().Be(0);
+        startShop.FreeReveals.Should().Be(TestConstants.FreeItemRevealsPerDay);
+        startShop.Items.Length.Should().Be(TestConstants.MaximumItemsInShop);
     }
 
     [Test]
@@ -86,7 +85,7 @@ public class ShopsServiceTests : IntegrationTestsBase
             }
 
             /* last iteration */
-            var revealPrice = itemToReveal.Price * Constants.RevealShopItemPercent / 100;
+            var revealPrice = itemToReveal.Price * TestConstants.RevealShopItemPercent / 100;
             var economy = await EconomyService.ReadEconomyAsync(User.Id);
             economy.ScamCoins.Should().Be(startEconomy.ScamCoins - revealPrice);
         }
@@ -113,7 +112,7 @@ public class ShopsServiceTests : IntegrationTestsBase
         var notRevealedItems2 = items2.Where(x => !x.IsRevealed);
         var itemToReveal2 = notRevealedItems2.SelectRandomItem();
         await ShopsService.RevealAsync(User.Id, itemToReveal2.Id);
-        var revealPrice = itemToReveal2.Price * Constants.RevealShopItemPercent / 100;
+        var revealPrice = itemToReveal2.Price * TestConstants.RevealShopItemPercent / 100;
         var stats2 = await ShopStatsRepository.ReadAsync(User.Id);
         stats2.TotalReveals.Should().Be(startStats.TotalReveals + totalReveals + 1);
         stats2.ScamCoinsLostOnReveals.Should().Be(startStats.ScamCoinsLostOnReveals + revealPrice);

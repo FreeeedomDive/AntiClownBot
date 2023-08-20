@@ -2,6 +2,7 @@
 using AntiClown.Api.Dto.Exceptions.Economy;
 using AutoFixture;
 using FluentAssertions;
+using NSubstitute;
 
 namespace AntiClown.Api.Core.IntegrationTests.Economies;
 
@@ -17,7 +18,7 @@ public class LohotronServiceTests : IntegrationTestsBase
         {
             RewardType = LohotronRewardType.Nothing,
         };
-        LohotronRewardGeneratorMock.Setup(x => x.Generate()).Returns(nothingReward);
+        LohotronRewardGenerator.Generate().Returns(nothingReward);
 
         await LohotronService.UseLohotronAsync(User.Id);
         var economy2 = await EconomyService.ReadEconomyAsync(User.Id);
@@ -37,7 +38,7 @@ public class LohotronServiceTests : IntegrationTestsBase
         {
             RewardType = LohotronRewardType.Nothing,
         };
-        LohotronRewardGeneratorMock.Setup(x => x.Generate()).Returns(nothingReward);
+        LohotronRewardGenerator.Generate().Returns(nothingReward);
         var economyBefore = await EconomyService.ReadEconomyAsync(User.Id);
 
         var actualReward = await LohotronService.UseLohotronAsync(User.Id);
@@ -56,7 +57,7 @@ public class LohotronServiceTests : IntegrationTestsBase
             RewardType = LohotronRewardType.ScamCoins,
             ScamCoinsReward = Fixture.Create<int>() * (isPositiveReward ? 1 : -1),
         };
-        LohotronRewardGeneratorMock.Setup(x => x.Generate()).Returns(scamCoinsReward);
+        LohotronRewardGenerator.Generate().Returns(scamCoinsReward);
         var economyBefore = await EconomyService.ReadEconomyAsync(User.Id);
 
         var actualReward = await LohotronService.UseLohotronAsync(User.Id);
@@ -73,7 +74,7 @@ public class LohotronServiceTests : IntegrationTestsBase
         {
             RewardType = LohotronRewardType.LootBox,
         };
-        LohotronRewardGeneratorMock.Setup(x => x.Generate()).Returns(lootBoxReward);
+        LohotronRewardGenerator.Generate().Returns(lootBoxReward);
         var economyBefore = await EconomyService.ReadEconomyAsync(User.Id);
 
         var actualReward = await LohotronService.UseLohotronAsync(User.Id);

@@ -14,6 +14,8 @@ using AntiClown.Api.Core.Users.Repositories;
 using AntiClown.Api.Core.Users.Services;
 using AntiClown.Api.Middlewares;
 using AntiClown.Core.Schedules;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Configuration;
 using Hangfire;
 using Hangfire.PostgreSql;
 using MassTransit;
@@ -43,6 +45,7 @@ public class Startup
 
         services.Configure<DatabaseOptions>(Configuration.GetSection("PostgreSql"));
         services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMQ"));
+        services.Configure<AntiClownDataApiConnectionOptions>(Configuration.GetSection("AntiClownDataApi"));
         var telemetryApiUrl = Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
         services.ConfigureTelemetryClientWithLogger("AntiClownBot", "Api", telemetryApiUrl);
 
@@ -70,6 +73,9 @@ public class Startup
                     }
                 );
             }
+        );
+        services.AddTransient<IAntiClownDataApiClient>(
+            serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetService<IOptions<AntiClownDataApiConnectionOptions>>()?.Value.ServiceUrl)
         );
 
         // temp manual build VersionedSqlRepository

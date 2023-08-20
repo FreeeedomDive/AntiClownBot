@@ -21,16 +21,6 @@ public class DatabaseContext : DbContext
         Options = dbOptionsAccessor.Value;
     }
 
-    public DatabaseContext()
-    {
-        var connectionString = Environment.GetEnvironmentVariable("AntiClown.Tests.PostgreSqlConnectionString")
-                               ?? throw new InvalidOperationException("No ConnectionString was provided");
-        Options = new DatabaseOptions
-        {
-            ConnectionString = connectionString,
-        };
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(Options.ConnectionString);
