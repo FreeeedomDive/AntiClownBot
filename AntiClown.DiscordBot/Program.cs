@@ -1,5 +1,7 @@
 using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Consumers.Events.Common;
@@ -104,6 +106,7 @@ internal class Program
         builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
         builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));
         builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
+        builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
     }
 
     private static void ConfigurePostgreSql(WebApplicationBuilder builder)
@@ -120,10 +123,13 @@ internal class Program
     private static void BuildApiClients(WebApplicationBuilder builder)
     {
         builder.Services.AddTransient<IAntiClownApiClient>(
-            serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetService<IOptions<AntiClownApiConnectionOptions>>()?.Value.ServiceUrl)
+            serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownApiConnectionOptions>>().Value.ServiceUrl)
         );
         builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(
-            serviceProvider => AntiClownEntertainmentApiClientProvider.Build(serviceProvider.GetService<IOptions<AntiClownEntertainmentApiConnectionOptions>>()?.Value.ServiceUrl)
+            serviceProvider => AntiClownEntertainmentApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownEntertainmentApiConnectionOptions>>().Value.ServiceUrl)
+        );
+        builder.Services.AddTransient<IAntiClownDataApiClient>(
+            serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
         );
     }
 

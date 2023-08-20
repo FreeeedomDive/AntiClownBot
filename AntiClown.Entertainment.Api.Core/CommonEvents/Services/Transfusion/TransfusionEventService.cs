@@ -1,5 +1,7 @@
 ﻿using AntiClown.Api.Client;
-using AntiClown.Entertainment.Api.Core.Common;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Transfusion;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
@@ -15,11 +17,13 @@ public class TransfusionEventService : ITransfusionEventService
     public TransfusionEventService(
         ICommonEventsRepository commonEventsRepository,
         IAntiClownApiClient antiClownApiClient,
+        IAntiClownDataApiClient antiClownDataApiClient,
         ICommonEventsMessageProducer commonEventsMessageProducer
     )
     {
         this.commonEventsRepository = commonEventsRepository;
         this.antiClownApiClient = antiClownApiClient;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.commonEventsMessageProducer = commonEventsMessageProducer;
     }
 
@@ -41,7 +45,9 @@ public class TransfusionEventService : ITransfusionEventService
         var allUsers = await antiClownApiClient.Users.ReadAllAsync();
         var donor = allUsers.SelectRandomItem();
         var recipient = allUsers.Except(new[] { donor }).SelectRandomItem();
-        var exchange = Randomizer.GetRandomNumberInclusive(Constants.TransfusionMinimumExchange, Constants.TransfusionMaximumExchange);
+        var transfusionMinimumExchange = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "TransfusionMinimumExchange");
+        var transfusionMaximumExchange = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "TransfusionMaximumExchange");
+        var exchange = Randomizer.GetRandomNumberInclusive(transfusionMinimumExchange, transfusionMaximumExchange);
 
         newEvent.DonorUserId = donor.Id;
         newEvent.RecipientUserId = recipient.Id;
@@ -57,6 +63,7 @@ public class TransfusionEventService : ITransfusionEventService
     }
 
     private readonly IAntiClownApiClient antiClownApiClient;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
 
     private readonly ICommonEventsRepository commonEventsRepository;

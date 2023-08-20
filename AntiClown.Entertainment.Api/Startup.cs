@@ -1,6 +1,8 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
 using AntiClown.Core.Schedules;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories.ActiveEventsIndex;
@@ -55,6 +57,7 @@ public class Startup
         services.Configure<DatabaseOptions>(Configuration.GetSection("PostgreSql"));
         services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMQ"));
         services.Configure<AntiClownApiConnectionOptions>(Configuration.GetSection("AntiClownApi"));
+        services.Configure<AntiClownDataApiConnectionOptions>(Configuration.GetSection("AntiClownDataApi"));
         var telemetryApiUrl = Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
         services.ConfigureTelemetryClientWithLogger("AntiClownBot", "EntertainmentApi", telemetryApiUrl);
 
@@ -97,7 +100,10 @@ public class Startup
 
         // configure other stuff
         services.AddTransient<IAntiClownApiClient>(
-            serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetService<IOptions<AntiClownApiConnectionOptions>>()?.Value.ServiceUrl)
+            serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownApiConnectionOptions>>().Value.ServiceUrl)
+        );
+        services.AddTransient<IAntiClownDataApiClient>(
+            serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
         );
         services.AddTransient<ICommonEventsMessageProducer, CommonEventsMessageProducer>();
         services.AddTransient<IDailyEventsMessageProducer, DailyEventsMessageProducer>();

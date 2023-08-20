@@ -1,6 +1,8 @@
-﻿using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Domain;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Domain;
 using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Repositories;
-using AntiClown.Entertainment.Api.Core.Common;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Race;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
@@ -11,11 +13,13 @@ public class RaceGenerator : IRaceGenerator
 {
     public RaceGenerator(
         IRaceDriversRepository raceDriversRepository,
-        IRaceTracksRepository raceTracksRepository
+        IRaceTracksRepository raceTracksRepository,
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.raceDriversRepository = raceDriversRepository;
         this.raceTracksRepository = raceTracksRepository;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task<RaceEvent> GenerateAsync()
@@ -23,7 +27,7 @@ public class RaceGenerator : IRaceGenerator
         var race = RaceEvent.Create();
         var track = (await raceTracksRepository.ReadAllAsync()).SelectRandomItem();
         race.Track = track;
-        race.TotalLaps = Constants.RaceLaps;
+        race.TotalLaps = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "RaceLaps");
         var driversModels = await raceDriversRepository.ReadAllAsync();
         var participantsShuffledForStartingGrid = driversModels.Select(
             x => new RaceParticipant
@@ -33,7 +37,7 @@ public class RaceGenerator : IRaceGenerator
             }
         ).Shuffle().ToArray();
         race.Participants = participantsShuffledForStartingGrid;
-        var startingGrid = GenerateStartingGrid(participantsShuffledForStartingGrid);
+        var startingGrid = await GenerateStartingGridAsync(participantsShuffledForStartingGrid);
         var raceSectors = new List<RaceSnapshotOnSector> { startingGrid };
         for (var lap = 1; lap <= race.TotalLaps; lap++)
         {
@@ -46,8 +50,9 @@ public class RaceGenerator : IRaceGenerator
         return race;
     }
 
-    private static RaceSnapshotOnSector GenerateStartingGrid(IEnumerable<RaceParticipant> participants)
+    private async Task<RaceSnapshotOnSector> GenerateStartingGridAsync(IEnumerable<RaceParticipant> participants)
     {
+        var gridPositionPenalty = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "RaceGridPositionPenalty");
         return new RaceSnapshotOnSector
         {
             FastestLap = null,
@@ -56,8 +61,8 @@ public class RaceGenerator : IRaceGenerator
                 (participant, position) => new RaceSnapshotForDriverOnSector
                 {
                     DriverName = participant.Driver.DriverName,
-                    SectorTime = position * Constants.RaceGridPositionPenalty,
-                    TotalTime = position * Constants.RaceGridPositionPenalty,
+                    SectorTime = position * gridPositionPenalty,
+                    TotalTime = position * gridPositionPenalty,
                 }
             ).ToArray(),
         };
@@ -156,4 +161,5 @@ public class RaceGenerator : IRaceGenerator
 
     private readonly IRaceDriversRepository raceDriversRepository;
     private readonly IRaceTracksRepository raceTracksRepository;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

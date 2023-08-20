@@ -1,6 +1,8 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Core.Schedules;
-using AntiClown.Entertainment.Api.Core.Common;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.GuessNumber;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
@@ -16,12 +18,14 @@ public class GuessNumberEventService : IGuessNumberEventService
         IAntiClownApiClient antiClownApiClient,
         ICommonEventsRepository commonEventsRepository,
         ICommonEventsMessageProducer commonEventsMessageProducer,
+        IAntiClownDataApiClient antiClownDataApiClient,
         IScheduler scheduler
     )
     {
         this.antiClownApiClient = antiClownApiClient;
         this.commonEventsRepository = commonEventsRepository;
         this.commonEventsMessageProducer = commonEventsMessageProducer;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.scheduler = scheduler;
     }
 
@@ -41,7 +45,7 @@ public class GuessNumberEventService : IGuessNumberEventService
         var newEvent = GuessNumberEvent.Create();
         await commonEventsRepository.CreateAsync(newEvent);
         await commonEventsMessageProducer.ProduceAsync(newEvent);
-        ScheduleEventFinish(newEvent.Id);
+        await ScheduleEventFinishAsync(newEvent.Id);
 
         return newEvent.Id;
     }
@@ -78,16 +82,18 @@ public class GuessNumberEventService : IGuessNumberEventService
         await commonEventsMessageProducer.ProduceAsync(@event);
     }
 
-    private void ScheduleEventFinish(Guid eventId)
+    private async Task ScheduleEventFinishAsync(Guid eventId)
     {
+        var delayInMilliseconds = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "GuessNumberEvent.WaitingTimeInMilliseconds");
         scheduler.Schedule(
             () => BackgroundJob.Schedule(
                 () => SafeFinishAsync(eventId),
-                TimeSpan.FromMilliseconds(Constants.GuessNumberEventWaitingTimeInMilliseconds)
+                TimeSpan.FromMilliseconds(delayInMilliseconds)
             )
         );
     }
 
+    // keep this method public for Hangfire
     public async Task SafeFinishAsync(Guid eventId)
     {
         try
@@ -101,6 +107,7 @@ public class GuessNumberEventService : IGuessNumberEventService
 
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly ICommonEventsRepository commonEventsRepository;
     private readonly IScheduler scheduler;
 }

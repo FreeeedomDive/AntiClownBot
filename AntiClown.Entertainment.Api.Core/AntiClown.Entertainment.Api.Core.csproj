@@ -16,6 +16,7 @@
     <ItemGroup>
         <ProjectReference Include="..\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
         <ProjectReference Include="..\AntiClown.Core\AntiClown.Core.csproj"/>
+        <ProjectReference Include="..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
         <ProjectReference Include="..\AntiClown.Entertainment.Api.Dto\AntiClown.Entertainment.Api.Dto.csproj"/>
         <ProjectReference Include="..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj"/>
         <ProjectReference Include="..\Utility\Utility.csproj"/>
