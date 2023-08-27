@@ -162,6 +162,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                 }
 
                 currentRace.Details!.FirstDnf = dnfDriver;
+                await interactivityRepository.UpdateAsync(currentRace);
                 await RespondToInteractionAsync(interactionContext, "Принято");
             }
         );

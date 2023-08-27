@@ -128,7 +128,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                             string.Join(
                                 " ", userPredictions
                                      .Predictions
-                                     .Select(p => (p is null ? 0 : p.TenthPlacePoints + p.FirstDnfPoints).ToString().AddSpaces(2))
+                                     .Select(p => p is null ? "  " : (p.TenthPlacePoints + p.FirstDnfPoints).ToString().AddSpaces(2))
                             )
                         )
                         .Append($" | {userPredictions.TotalPoints.AddSpaces(3)}")
