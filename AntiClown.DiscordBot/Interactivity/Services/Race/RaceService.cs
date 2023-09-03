@@ -91,6 +91,11 @@ public class RaceService : IRaceService
         }
 
         var raceEvent = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(eventId);
+
+        var welcomeMessageBuilder = await BuildEventMessageAsync(raceEvent);
+        var welcomeMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity.MessageId);
+        await discordClientWrapper.Messages.ModifyAsync(welcomeMessage, welcomeMessageBuilder);
+
         var gridMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity.Details!.MainRaceMessageId);
         var members = raceEvent
                       .Participants

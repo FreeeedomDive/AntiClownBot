@@ -7,6 +7,7 @@ using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
+using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
@@ -47,8 +48,15 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                 }
 
                 var userId = await usersCache.GetApiIdByMemberIdAsync(interactionContext.Member.Id);
-                await antiClownEntertainmentApiClient.F1Predictions.AddPredictionAsync(currentRace.Details!.RaceId, userId, tenthPlaceDriver, dnfDriver);
-                await RespondToInteractionAsync(interactionContext, "Принято");
+                try
+                {
+                    await antiClownEntertainmentApiClient.F1Predictions.AddPredictionAsync(currentRace.Details!.RaceId, userId, tenthPlaceDriver, dnfDriver);
+                    await RespondToInteractionAsync(interactionContext, "Принято");
+                }
+                catch (PredictionsAlreadyClosedException)
+                {
+                    await RespondToInteractionAsync(interactionContext, "Предсказания на текущую гонку уже закрыты");
+                }
             }
         );
     }
