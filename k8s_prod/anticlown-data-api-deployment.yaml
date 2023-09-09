@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anticlown-data-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anticlowndataapi
+  template:
+    metadata:
+      labels:
+        app: anticlowndataapi
+    spec:
+      containers:
+        - name: anticlownapi
+          image: localhost:5000/anticlowndataapi:{{TAG_NUMBER}}
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+              value: /certificate/https/certificate.pfx
+            - name: ASPNETCORE_KESTREL__Certificates__Default__Password
+              value: aspnet
+            - name: ASPNETCORE_URLS
+              value: https://+:7206
+            - name: TZ
+              value: Asia/Yekaterinburg
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: anticlown-data-api-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: anticlowndataapi
+  ports:
+    - name: anticlowndataapi
+      protocol: TCP
+      port: 7206
+      targetPort: 7206

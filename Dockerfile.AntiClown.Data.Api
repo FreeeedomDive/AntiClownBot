@@ -1,0 +1,22 @@
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+
+WORKDIR /certificate
+RUN dotnet dev-certs https --clean
+RUN dotnet dev-certs https -ep ./https/certificate.pfx -p aspnet
+RUN dotnet dev-certs https --trust
+
+WORKDIR /src
+COPY ["AntiClown.Data.Api/AntiClown.Data.Api.csproj", "AntiClown.Data.Api/"]
+COPY ["AntiClown.Data.Api.Core/AntiClown.Data.Api.Core.csproj", "AntiClown.Data.Api.Core/"]
+RUN dotnet restore "AntiClown.Data.Api/AntiClown.Data.Api.csproj"
+COPY . .
+
+FROM build AS publish
+WORKDIR "/src/AntiClown.Data.Api"
+RUN dotnet publish "AntiClown.Data.Api.csproj" -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS final
+WORKDIR /app
+COPY --from=build /certificate /certificate
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "AntiClown.Data.Api.dll"]
