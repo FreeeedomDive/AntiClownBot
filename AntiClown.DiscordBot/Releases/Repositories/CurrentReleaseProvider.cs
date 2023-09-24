@@ -9,9 +9,9 @@ public class CurrentReleaseProvider : ICurrentReleaseProvider
         return new ReleaseVersion
         {
             Major = 3,
-            Minor = 1,
+            Minor = 2,
             Patch = 0,
-            Description = "Добавлено создание ролей и присоединение к ролям",
+            Description = "Технический релиз\nВсе настройки вынесены в отдельный сервис для легкого редактирования",
             CreatedAt = DateTime.UtcNow,
         };
     }
