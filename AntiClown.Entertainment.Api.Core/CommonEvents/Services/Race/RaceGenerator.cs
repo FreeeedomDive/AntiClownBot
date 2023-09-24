@@ -27,7 +27,7 @@ public class RaceGenerator : IRaceGenerator
         var race = RaceEvent.Create();
         var track = (await raceTracksRepository.ReadAllAsync()).SelectRandomItem();
         race.Track = track;
-        race.TotalLaps = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "RaceLaps");
+        race.TotalLaps = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "Race.Laps");
         var driversModels = await raceDriversRepository.ReadAllAsync();
         var participantsShuffledForStartingGrid = driversModels.Select(
             x => new RaceParticipant
@@ -52,7 +52,7 @@ public class RaceGenerator : IRaceGenerator
 
     private async Task<RaceSnapshotOnSector> GenerateStartingGridAsync(IEnumerable<RaceParticipant> participants)
     {
-        var gridPositionPenalty = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "RaceGridPositionPenalty");
+        var gridPositionPenalty = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "Race.GridPositionPenalty");
         return new RaceSnapshotOnSector
         {
             FastestLap = null,
