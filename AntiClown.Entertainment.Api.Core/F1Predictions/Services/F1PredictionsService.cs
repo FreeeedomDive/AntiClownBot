@@ -1,5 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
+using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 
@@ -46,6 +47,7 @@ public class F1PredictionsService : IF1PredictionsService
         var race = await f1RacesRepository.ReadAsync(raceId);
         if (!race.IsOpened)
         {
+            throw new PredictionsAlreadyClosedException(raceId);
         }
 
         var userPrediction = race.Predictions.FirstOrDefault(x => x.UserId == userId);

@@ -122,7 +122,9 @@ public class InventoryService : IInventoryService
             return;
         }
 
-        interactivity.Details!.CurrentPage = (interactivity.Details!.CurrentPage + pageDiff) % interactivity.Details!.Pages.Length;
+        var pagesCount = interactivity.Details!.Pages.Length;
+        var nextPage = interactivity.Details!.CurrentPage + pageDiff;
+        interactivity.Details!.CurrentPage = (nextPage < 0 ? pagesCount + nextPage : nextPage) % pagesCount;
         await interactivityRepository.UpdateAsync(interactivity);
         var inventory = await antiClownApiClient.Inventories.ReadInventoryAsync(interactivity.Details.UserId);
         var items = CollectItems(inventory);
