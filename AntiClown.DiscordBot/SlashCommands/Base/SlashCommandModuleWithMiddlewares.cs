@@ -1,5 +1,4 @@
-﻿using AntiClownDiscordBotVersion2.SlashCommands.Base;
-using DSharpPlus.Entities;
+﻿using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClown.DiscordBot.SlashCommands.Base;

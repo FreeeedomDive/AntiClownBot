@@ -1,9 +1,10 @@
-﻿using AntiClown.DiscordBot.DiscordClientWrapper;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.EmbedBuilders.Tributes;
-using AntiClown.DiscordBot.Options;
 using AntiClown.Messages.Dto.Tributes;
 using MassTransit;
-using Microsoft.Extensions.Options;
 using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Tributes;
@@ -13,13 +14,13 @@ public class TributesConsumer : IConsumer<TributeMessageDto>
     public TributesConsumer(
         IDiscordClientWrapper discordClientWrapper,
         ITributeEmbedBuilder tributeEmbedBuilder,
-        IOptions<DiscordOptions> discordOptions,
+        IAntiClownDataApiClient antiClownDataApiClient,
         ILoggerClient logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
         this.tributeEmbedBuilder = tributeEmbedBuilder;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.logger = logger;
     }
 
@@ -30,7 +31,9 @@ public class TributesConsumer : IConsumer<TributeMessageDto>
             var tribute = context.Message;
             await logger.InfoAsync("Received auto tribute for user {userId}", tribute.UserId);
             var tributeEmbed = await tributeEmbedBuilder.BuildForSuccessfulTributeAsync(tribute.Tribute);
-            await discordClientWrapper.Messages.SendAsync(discordOptions.Value.TributeChannelId, tributeEmbed);
+            
+            var tributeChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "TributeChannelId");
+            await discordClientWrapper.Messages.SendAsync(tributeChannelId, tributeEmbed);
         }
         catch (Exception e)
         {
@@ -39,7 +42,7 @@ public class TributesConsumer : IConsumer<TributeMessageDto>
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
     private readonly ILoggerClient logger;
     private readonly ITributeEmbedBuilder tributeEmbedBuilder;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

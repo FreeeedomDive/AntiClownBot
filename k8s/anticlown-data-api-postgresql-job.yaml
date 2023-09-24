@@ -1,0 +1,14 @@
+﻿apiVersion: batch/v1
+kind: Job
+metadata:
+  name: anticlown-data-api-postgresql-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: anticlowndataapipostgresql
+          image: localhost:5000/anticlowndataapipostgresql
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+      restartPolicy: Never

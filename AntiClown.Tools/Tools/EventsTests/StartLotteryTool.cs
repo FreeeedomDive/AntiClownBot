@@ -33,7 +33,6 @@ public class StartLotteryTool : ToolBase
         Logger.LogInformation(JsonConvert.SerializeObject(userEconomy, Formatting.Indented));
     }
 
-    public override string Name => nameof(StartLotteryTool);
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

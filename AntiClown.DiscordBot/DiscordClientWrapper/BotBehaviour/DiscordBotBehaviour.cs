@@ -1,4 +1,7 @@
 ﻿using System.Text;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Interactivity.Domain;
 using AntiClown.DiscordBot.Interactivity.Domain.F1Predictions;
@@ -13,7 +16,6 @@ using AntiClown.DiscordBot.Interactivity.Services.Parties;
 using AntiClown.DiscordBot.Interactivity.Services.Race;
 using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Models.Interactions;
-using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Dev;
 using AntiClown.DiscordBot.SlashCommands.F1Predictions;
 using AntiClown.DiscordBot.SlashCommands.Gaming;
@@ -33,7 +35,6 @@ using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
-using Microsoft.Extensions.Options;
 using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
@@ -45,8 +46,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         DiscordClient discordClient,
         IDiscordClientWrapper discordClientWrapper,
         IEmotesCache emotesCache,
-        IOptions<DiscordOptions> discordOptions,
-        IOptions<Settings> settings,
+        IAntiClownDataApiClient antiClownDataApiClient,
         IInventoryService inventoryService,
         IShopService shopService,
         IGuessNumberEventService guessNumberEventService,
@@ -61,8 +61,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.discordClient = discordClient;
         this.discordClientWrapper = discordClientWrapper;
         this.emotesCache = emotesCache;
-        this.discordOptions = discordOptions;
-        this.settings = settings;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.inventoryService = inventoryService;
         this.shopService = shopService;
         this.guessNumberEventService = guessNumberEventService;
@@ -73,24 +72,25 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.raceService = raceService;
     }
 
-    public Task ConfigureAsync()
+    public async Task ConfigureAsync()
     {
         discordClient.GuildEmojisUpdated += GuildEmojisUpdated;
         discordClient.MessageCreated += MessageCreated;
         discordClient.MessageReactionAdded += MessageReactionAdded;
         discordClient.ComponentInteractionCreated += ComponentInteractionCreated;
-        RegisterSlashCommands(discordClient);
 
-        return Task.CompletedTask;
+        await RegisterSlashCommandsAsync(discordClient);
     }
 
     private async Task GuildEmojisUpdated(DiscordClient _, GuildEmojisUpdateEventArgs e)
     {
-        if (!settings.Value.IsEmoteNotificationEnabled)
+        var isEmoteNotificationEnabled = await antiClownDataApiClient.Settings.ReadBoolAsync(SettingsCategory.DiscordBot, "IsEmoteNotificationEnabled");
+        if (!isEmoteNotificationEnabled)
         {
             return;
         }
 
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         if (e.EmojisAfter.Count > e.EmojisBefore.Count)
         {
             var messageBuilder = new StringBuilder(
@@ -106,7 +106,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             }
 
             await discordClientWrapper.Messages.SendAsync(
-                discordOptions.Value.BotChannelId,
+                botChannelId,
                 messageBuilder.ToString()
             );
             return;
@@ -125,7 +125,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
             messageBuilder.Append($"удалили {await emotesCache.GetEmoteAsTextAsync("BibleThump")}");
             await discordClientWrapper.Messages.SendAsync(
-                discordOptions.Value.BotChannelId,
+                botChannelId,
                 messageBuilder.ToString()
             );
         }
@@ -140,8 +140,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
         var message = e.Message.Content;
 
+        var partyChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "PartyChannelId");
         // удаляем все сообщения из чата с пати, чтобы люди отвечали в треды
-        if (e.Channel.Id == discordOptions.Value.PartyChannelId)
+        if (e.Channel.Id == partyChannelId)
         {
             var embedBuilder = new DiscordEmbedBuilder()
                                .WithTitle("Модерация чата пати")
@@ -252,7 +253,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             }
         }
 
-        if (settings.Value.XddAnswersEnabled && Randomizer.GetRandomNumberBetween(0, 25) == 0)
+        var xddAnswersEnabled = await antiClownDataApiClient.Settings.ReadBoolAsync(SettingsCategory.DiscordBot, "XddAnswersEnabled");
+        if (xddAnswersEnabled && Randomizer.GetRandomNumberBetween(0, 25) == 0)
         {
             var xddPool = new[]
             {
@@ -589,9 +591,9 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder);
     }
 
-    private void RegisterSlashCommands(DiscordClient client)
+    private async Task RegisterSlashCommandsAsync(DiscordClient client)
     {
-        var guildId = discordOptions.Value.GuildId;
+        var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
         var slash = client.UseSlashCommands(
             new SlashCommandsConfiguration
             {
@@ -719,8 +721,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private readonly DiscordClient discordClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly IGuessNumberEventService guessNumberEventService;
     private readonly IInteractivityRepository interactivityRepository;
     private readonly IInventoryService inventoryService;
@@ -729,6 +731,5 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly ILotteryService lotteryService;
     private readonly IPartiesService partiesService;
     private readonly IServiceProvider serviceProvider;
-    private readonly IOptions<Settings> settings;
     private readonly IShopService shopService;
 }

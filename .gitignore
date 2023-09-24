@@ -29,3 +29,7 @@ AntiClown.DiscordBot.PostgreSqlMigrationsApplier/appsettings.Production.json
 AntiClown.DiscordBot.PostgreSqlMigrationsApplier/appsettings.PostgreSqlLocal.json
 AntiClown.DiscordBot.PostgreSqlMigrationsApplier/appsettings.PostgreSqlProduction.json
 AntiClown.DiscordBot/appsettings.RemoteProduction.json
+AntiClown.Data.Api.PostgreSqlMigrationsApplier/appsettings.Local.json
+AntiClown.Data.Api.PostgreSqlMigrationsApplier/appsettings.Production.json
+AntiClown.Data.Api/appsettings.Local.json
+AntiClown.Data.Api/appsettings.Production.json

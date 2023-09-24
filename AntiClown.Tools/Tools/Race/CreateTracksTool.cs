@@ -206,7 +206,5 @@ public class CreateTracksTool : ToolBase
         await Task.WhenAll(tracks.Select(x => antiClownEntertainmentApiClient.CommonEvents.Race.Tracks.CreateAsync(x)));
     }
 
-    public override string Name => nameof(CreateTracksTool);
-
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

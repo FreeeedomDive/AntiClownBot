@@ -1,6 +1,4 @@
-﻿using AntiClown.Api.Core.Common;
-
-namespace AntiClown.Api.Core.Economies.Domain;
+﻿namespace AntiClown.Api.Core.Economies.Domain;
 
 public class Economy
 {
@@ -15,12 +13,4 @@ public class Economy
     public DateTime NextTribute { get; set; }
     public int LootBoxes { get; set; }
     public bool IsLohotronReady { get; set; }
-
-    public static readonly Economy Default = new()
-    {
-        ScamCoins = Constants.DefaultScamCoins,
-        NextTribute = DateTime.UtcNow,
-        LootBoxes = 0,
-        IsLohotronReady = true,
-    };
 }

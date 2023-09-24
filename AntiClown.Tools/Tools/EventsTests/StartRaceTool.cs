@@ -38,8 +38,6 @@ public class StartRaceTool : ToolBase
         Logger.LogInformation("Last sector info:\n{info}", string.Join("\n", lastSector.Select(x => $"{x.DriverName}   {x.TotalTime}")));
     }
 
-    public override string Name => nameof(StartRaceTool);
-
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

@@ -32,7 +32,6 @@ public class StartGuessNumberTool : ToolBase
         Logger.LogInformation(JsonConvert.SerializeObject(userEconomy, Formatting.Indented));
     }
 
-    public override string Name => nameof(StartGuessNumberTool);
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

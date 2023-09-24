@@ -1,6 +1,7 @@
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
-using AntiClown.EventsDaemon.Options;
 using AntiClown.EventsDaemon.Workers;
 using Microsoft.Extensions.Options;
 using TelemetryApp.Utilities.Extensions;
@@ -11,12 +12,14 @@ builder.Services.AddLogging();
 var telemetryApiUrl = builder.Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
 builder.Services.ConfigureTelemetryClientWithLogger("AntiClownBot", "EventsDaemon", telemetryApiUrl);
 
-builder.Services.Configure<CommonEventsWorkerOptions>(builder.Configuration.GetSection("CommonEventsWorker"));
-builder.Services.Configure<DailyEventsWorkerOptions>(builder.Configuration.GetSection("DailyEventsWorker"));
 builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
+builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
 
 builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(
-    serviceProvider => AntiClownEntertainmentApiClientProvider.Build(serviceProvider.GetService<IOptions<AntiClownEntertainmentApiConnectionOptions>>()?.Value.ServiceUrl)
+    serviceProvider => AntiClownEntertainmentApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownEntertainmentApiConnectionOptions>>().Value.ServiceUrl)
+);
+builder.Services.AddTransient<IAntiClownDataApiClient>(
+    serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
 );
 
 var toolsTypes = AppDomain.CurrentDomain.GetAssemblies()

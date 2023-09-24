@@ -28,7 +28,6 @@ public class StartRemoveCoolDownsTool : ToolBase
         Logger.LogInformation(JsonConvert.SerializeObject(userEconomy, Formatting.Indented));
     }
 
-    public override string Name => nameof(StartRemoveCoolDownsTool);
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

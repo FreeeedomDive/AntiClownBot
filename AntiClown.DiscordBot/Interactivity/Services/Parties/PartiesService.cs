@@ -1,4 +1,7 @@
-﻿using AntiClown.DiscordBot.Cache.Emotes;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.EmbedBuilders.Parties;
@@ -7,12 +10,10 @@ using AntiClown.DiscordBot.Interactivity.Domain;
 using AntiClown.DiscordBot.Interactivity.Domain.Parties;
 using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Models.Interactions;
-using AntiClown.DiscordBot.Options;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.Parties;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.Interactivity.Services.Parties;
 
@@ -25,7 +26,7 @@ public class PartiesService : IPartiesService
         IPartyEmbedBuilder partyEmbedBuilder,
         IEmotesCache emotesCache,
         IUsersCache usersCache,
-        IOptions<DiscordOptions> discordOptions
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
@@ -34,7 +35,7 @@ public class PartiesService : IPartiesService
         this.partyEmbedBuilder = partyEmbedBuilder;
         this.emotesCache = emotesCache;
         this.usersCache = usersCache;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task AddPlayerAsync(Guid partyId, ulong memberId)
@@ -66,10 +67,11 @@ public class PartiesService : IPartiesService
         var party = await antiClownEntertainmentApiClient.Parties.ReadAsync(partyId);
         var interactivity = await interactivityRepository.TryReadAsync<PartyDetails>(partyId);
         var messageBuilder = await BuildMessageAsync(party);
+        var partyChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "PartyChannelId");
         DiscordMessage message;
         if (interactivity is null)
         {
-            message = await discordClientWrapper.Messages.SendAsync(discordOptions.Value.PartyChannelId, messageBuilder);
+            message = await discordClientWrapper.Messages.SendAsync(partyChannelId, messageBuilder);
             var thread = await discordClientWrapper.Messages.CreateThreadAsync(message, $"{party.Name} {party.Description}");
             var author = await usersCache.GetMemberByApiIdAsync(party.CreatorId);
             interactivity = new Interactivity<PartyDetails>
@@ -89,7 +91,7 @@ public class PartiesService : IPartiesService
         }
         else
         {
-            message = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.PartyChannelId, interactivity.MessageId);
+            message = await discordClientWrapper.Messages.FindMessageAsync(partyChannelId, interactivity.MessageId);
             await discordClientWrapper.Messages.ModifyAsync(message, messageBuilder);
         }
 
@@ -184,9 +186,9 @@ public class PartiesService : IPartiesService
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
     private readonly IInteractivityRepository interactivityRepository;
     private readonly IPartyEmbedBuilder partyEmbedBuilder;
     private readonly IUsersCache usersCache;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

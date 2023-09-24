@@ -1,13 +1,14 @@
 ﻿using AntiClown.Api.Client;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.Models.Interactions;
-using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.Roles.Repositories;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.SlashCommands.Roles;
 
@@ -20,14 +21,14 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
         IAntiClownApiClient antiClownApiClient,
         IRolesRepository rolesRepository,
         IUsersCache usersCache,
-        IOptions<DiscordOptions> discordOptions
+        IAntiClownDataApiClient antiClownDataApiClient
     ) : base(commandExecutor)
     {
         this.discordClientWrapper = discordClientWrapper;
         this.antiClownApiClient = antiClownApiClient;
         this.rolesRepository = rolesRepository;
         this.usersCache = usersCache;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.Roles_All, "Посмотреть доступные роли")]
@@ -64,7 +65,7 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
                 return;
             }
 
-            var createRolePrice = discordOptions.Value.CreateRolePrice;
+            var createRolePrice = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.DiscordGuild, "CreateRolePrice");
             var userId = await usersCache.GetApiIdByMemberIdAsync(context.User.Id);
             var economy = await antiClownApiClient.Economy.ReadAsync(userId);
 
@@ -106,7 +107,7 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
                 return;
             }
 
-            var joinRolePrice = discordOptions.Value.JoinRolePrice;
+            var joinRolePrice = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.DiscordGuild, "JoinRolePrice");
             var userId = await usersCache.GetApiIdByMemberIdAsync(context.User.Id);
             var economy = await antiClownApiClient.Economy.ReadAsync(userId);
             var serverMember = await discordClientWrapper.Members.GetAsync(context.User.Id);
@@ -187,5 +188,5 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IRolesRepository rolesRepository;
     private readonly IUsersCache usersCache;
-    private readonly IOptions<DiscordOptions> discordOptions;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

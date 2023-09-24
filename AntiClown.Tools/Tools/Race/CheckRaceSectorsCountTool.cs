@@ -22,8 +22,6 @@ public class CheckRaceSectorsCountTool : ToolBase
         Logger.LogInformation("Sectors in race: {x}", race.Sectors.Length);
     }
 
-    public override string Name => nameof(CheckRaceSectorsCountTool);
-
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IArgsProvider argsProvider;
 }

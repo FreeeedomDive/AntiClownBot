@@ -1,5 +1,4 @@
 ﻿using AntiClown.DiscordBot.SlashCommands.Base.Middlewares;
-using AntiClownDiscordBotVersion2.SlashCommands.Base;
 
 namespace AntiClown.DiscordBot.SlashCommands.Base;
 
@@ -37,6 +36,5 @@ public class CommandExecutor : ICommandExecutor
     }
 
     private readonly Stack<ICommandMiddleware> middlewares;
-
     private readonly IServiceProvider serviceProvider;
 }

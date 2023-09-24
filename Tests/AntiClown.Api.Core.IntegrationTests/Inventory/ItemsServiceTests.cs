@@ -1,4 +1,4 @@
-﻿using AntiClown.Api.Core.Common;
+﻿using AntiClown.Api.Core.IntegrationTests.Common;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base;
 using AntiClown.Api.Core.Inventory.Domain.Items.Builders;
 using AntiClown.Api.Dto.Exceptions.Economy;
@@ -37,7 +37,7 @@ public class ItemsServiceTests : IntegrationTestsBase
     public async Task ItemsService_SetActiveStatusForMoreThanMaximumActiveItems_Should_ThrowOnValidation()
     {
         var positiveItems = Enumerable
-                            .Range(0, Constants.MaximumActiveItemsOfOneType + 1)
+                            .Range(0, TestConstants.MaximumActiveItemsOfOneType + 1)
                             .Select(_ => ItemBuilder.BuildRandomItem(config => config.Name = ItemName.CatWife))
                             .ToArray();
         for (var i = 0; i < positiveItems.Length; i++)
@@ -46,7 +46,7 @@ public class ItemsServiceTests : IntegrationTestsBase
             item.IsActive.Should().BeFalse();
             await ItemsService.WriteItemAsync(User.Id, item);
             var setActiveStatus = () => ItemsService.ChangeItemActiveStatusAsync(User.Id, item.Id, true);
-            if (i < Constants.MaximumActiveItemsOfOneType)
+            if (i < TestConstants.MaximumActiveItemsOfOneType)
             {
                 await setActiveStatus.Should().NotThrowAsync<TooManyActiveItemsCountException>();
                 var activeItem = await ItemsService.ReadItemAsync(User.Id, item.Id);
@@ -71,7 +71,7 @@ public class ItemsServiceTests : IntegrationTestsBase
         var readItem = () => ItemsService.ReadItemAsync(User.Id, item.Id);
         await readItem.Should().ThrowAsync<SqlEntityNotFoundException>();
         var economyAfter = await EconomyService.ReadEconomyAsync(User.Id);
-        economyAfter.ScamCoins.Should().Be(economyBefore.ScamCoins + item.Price * Constants.SellItemPercent / 100);
+        economyAfter.ScamCoins.Should().Be(economyBefore.ScamCoins + item.Price * TestConstants.SellItemPercent / 100);
     }
 
     [Test]
@@ -85,7 +85,7 @@ public class ItemsServiceTests : IntegrationTestsBase
         var readItem = () => ItemsService.ReadItemAsync(User.Id, item.Id);
         await readItem.Should().ThrowAsync<SqlEntityNotFoundException>();
         var economyAfter = await EconomyService.ReadEconomyAsync(User.Id);
-        economyAfter.ScamCoins.Should().Be(economyBefore.ScamCoins - item.Price * Constants.SellItemPercent / 100);
+        economyAfter.ScamCoins.Should().Be(economyBefore.ScamCoins - item.Price * TestConstants.SellItemPercent / 100);
     }
 
     [Test]

@@ -1,10 +1,11 @@
-﻿using AntiClown.DiscordBot.DiscordClientWrapper;
-using AntiClown.DiscordBot.Options;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.ResetsAndPayments;
 using AntiClown.Messages.Dto.Events.Daily;
 using DSharpPlus.Entities;
 using MassTransit;
-using Microsoft.Extensions.Options;
 using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Daily;
@@ -13,12 +14,12 @@ public class ResetsAndPaymentsConsumer : IDailyEventConsumer<ResetsAndPaymentsEv
 {
     public ResetsAndPaymentsConsumer(
         IDiscordClientWrapper discordClientWrapper,
-        IOptions<DiscordOptions> discordOptions,
+        IAntiClownDataApiClient antiClownDataApiClient,
         ILoggerClient logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.logger = logger;
     }
 
@@ -36,12 +37,13 @@ public class ResetsAndPaymentsConsumer : IDailyEventConsumer<ResetsAndPaymentsEv
                     .AddField("Все получают по 250 скам-койнов", "А также сброшены лохотроны и магазины!")
                     .Build();
 
-        await discordClientWrapper.Messages.SendAsync(discordOptions.Value.BotChannelId, embed);
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
+        await discordClientWrapper.Messages.SendAsync(botChannelId, embed);
     }
 
     private static string ConsumerName => nameof(ResetsAndPaymentsConsumer);
 
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly ILoggerClient logger;
 }

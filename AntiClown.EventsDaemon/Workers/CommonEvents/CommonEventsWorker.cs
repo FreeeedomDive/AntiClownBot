@@ -1,8 +1,9 @@
-﻿using AntiClown.Entertainment.Api.Client;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents;
-using AntiClown.EventsDaemon.Options;
 using AntiClown.Tools.Utility.Extensions;
-using Microsoft.Extensions.Options;
 using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.EventsDaemon.Workers.CommonEvents;
@@ -11,18 +12,19 @@ public class CommonEventsWorker : PeriodicJobWorker
 {
     public CommonEventsWorker(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-        IOptions<CommonEventsWorkerOptions> commonEventsWorkerOptions,
+        IAntiClownDataApiClient antiClownDataApiClient,
         ILoggerClient loggerClient
-    ) : base(loggerClient, commonEventsWorkerOptions.Value.IterationTime)
+    ) : base(loggerClient)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
-        options = commonEventsWorkerOptions.Value;
+        this.antiClownDataApiClient = antiClownDataApiClient;
+        IterationTime = antiClownDataApiClient.Settings.ReadAsync<TimeSpan>(SettingsCategory.CommonEvents, "CommonEventsWorker.IterationTime").GetAwaiter().GetResult();
     }
 
-    protected override int CalculateTimeBeforeStart()
+    protected override async Task<int> CalculateTimeBeforeStartAsync()
     {
-        var eventStartHour = options.StartHour;
-        var eventStartMinute = options.StartMinute;
+        var eventStartHour = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "CommonEventsWorker.StartHour");
+        var eventStartMinute = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "CommonEventsWorker.StartMinute");
         var now = DateTime.Now;
         var secondsToSleep = 60 - now.Second;
         var minutesToSleep = now.Minute < eventStartMinute
@@ -39,8 +41,7 @@ public class CommonEventsWorker : PeriodicJobWorker
 
     protected override async Task ExecuteIterationAsync()
     {
-        var activeEvents =
-            await antiClownEntertainmentApiClient.CommonEvents.ActiveCommonEventsIndex.ReadActiveEventsAsync();
+        var activeEvents = await antiClownEntertainmentApiClient.CommonEvents.ActiveCommonEventsIndex.ReadActiveEventsAsync();
         if (activeEvents.Length == 0)
         {
             return;
@@ -49,14 +50,11 @@ public class CommonEventsWorker : PeriodicJobWorker
         var eventToExecute = activeEvents.SelectRandomItem();
         var eventId = eventToExecute switch
         {
-            CommonEventTypeDto.GuessNumber => await antiClownEntertainmentApiClient.CommonEvents.GuessNumber
-                                                                                   .StartNewAsync(),
+            CommonEventTypeDto.GuessNumber => await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.StartNewAsync(),
             CommonEventTypeDto.Lottery => await antiClownEntertainmentApiClient.CommonEvents.Lottery.StartNewAsync(),
             CommonEventTypeDto.Race => await antiClownEntertainmentApiClient.CommonEvents.Race.StartNewAsync(),
-            CommonEventTypeDto.RemoveCoolDowns => await antiClownEntertainmentApiClient.CommonEvents.RemoveCoolDowns
-                                                                                       .StartNewAsync(),
-            CommonEventTypeDto.Transfusion => await antiClownEntertainmentApiClient.CommonEvents.Transfusion
-                                                                                   .StartNewAsync(),
+            CommonEventTypeDto.RemoveCoolDowns => await antiClownEntertainmentApiClient.CommonEvents.RemoveCoolDowns.StartNewAsync(),
+            CommonEventTypeDto.Transfusion => await antiClownEntertainmentApiClient.CommonEvents.Transfusion.StartNewAsync(),
             CommonEventTypeDto.Bedge => await antiClownEntertainmentApiClient.CommonEvents.Bedge.StartNewAsync(),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(eventToExecute),
@@ -69,8 +67,8 @@ public class CommonEventsWorker : PeriodicJobWorker
         );
     }
 
-    protected override string WorkerName => nameof(CommonEventsWorker);
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
+    protected sealed override TimeSpan IterationTime { get; set; }
 
-    private readonly CommonEventsWorkerOptions options;
+    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

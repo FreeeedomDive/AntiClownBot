@@ -1,8 +1,10 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Core.Schedules;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Domain;
 using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Repositories;
-using AntiClown.Entertainment.Api.Core.Common;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain.Race;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
@@ -22,6 +24,7 @@ public class RaceService : IRaceService
         IRaceGenerator raceGenerator,
         ICommonEventsMessageProducer commonEventsMessageProducer,
         IAntiClownApiClient antiClownApiClient,
+        IAntiClownDataApiClient antiClownDataApiClient,
         IScheduler scheduler
     )
     {
@@ -30,6 +33,7 @@ public class RaceService : IRaceService
         this.raceGenerator = raceGenerator;
         this.commonEventsMessageProducer = commonEventsMessageProducer;
         this.antiClownApiClient = antiClownApiClient;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.scheduler = scheduler;
     }
 
@@ -49,7 +53,7 @@ public class RaceService : IRaceService
         var race = await raceGenerator.GenerateAsync();
         await commonEventsRepository.CreateAsync(race);
         await commonEventsMessageProducer.ProduceAsync(race);
-        ScheduleEventFinish(race.Id);
+        await ScheduleEventFinishAsync(race.Id);
 
         return race.Id;
     }
@@ -134,16 +138,18 @@ public class RaceService : IRaceService
         }
     }
 
-    private void ScheduleEventFinish(Guid eventId)
+    private async Task ScheduleEventFinishAsync(Guid eventId)
     {
+        var delayInMilliseconds = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "RaceEvent.WaitingTimeInMilliseconds");
         scheduler.Schedule(
             () => BackgroundJob.Schedule(
                 () => SafeFinishAsync(eventId),
-                TimeSpan.FromMilliseconds(Constants.RaceEventWaitingTimeInMilliseconds)
+                TimeSpan.FromMilliseconds(delayInMilliseconds)
             )
         );
     }
 
+    // keep this method public for Hangfire
     public async Task SafeFinishAsync(Guid eventId)
     {
         try
@@ -156,6 +162,7 @@ public class RaceService : IRaceService
     }
 
     private readonly IAntiClownApiClient antiClownApiClient;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
 
     private readonly ICommonEventsRepository commonEventsRepository;

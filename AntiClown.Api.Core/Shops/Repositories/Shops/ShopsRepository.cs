@@ -40,7 +40,7 @@ public class ShopsRepository : IShopsRepository
         );
     }
 
-    public async Task ResetAllAsync()
+    public async Task ResetAllAsync(int reRollPrice, int freeReveals)
     {
         await sqlRepository.ModifyDbSetAsync(
             async set =>
@@ -49,8 +49,8 @@ public class ShopsRepository : IShopsRepository
                 shops.ForEach(
                     x =>
                     {
-                        x.ReRollPrice = Shop.Default.ReRollPrice;
-                        x.FreeReveals = Shop.Default.FreeReveals;
+                        x.ReRollPrice = reRollPrice;
+                        x.FreeReveals = freeReveals;
                         x.Version++;
                     }
                 );
@@ -59,6 +59,5 @@ public class ShopsRepository : IShopsRepository
     }
 
     private readonly IMapper mapper;
-
     private readonly IVersionedSqlRepository<ShopStorageElement> sqlRepository;
 }

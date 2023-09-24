@@ -1,8 +1,9 @@
-﻿using AntiClown.DiscordBot.Options;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.Net.Models;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.Members;
 
@@ -10,11 +11,11 @@ public class MembersClient : IMembersClient
 {
     public MembersClient(
         DiscordClient discordClient,
-        IOptions<DiscordOptions> discordOptions
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.discordClient = discordClient;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public Task<ulong> GetBotIdAsync()
@@ -24,12 +25,14 @@ public class MembersClient : IMembersClient
 
     public async Task<DiscordMember[]> GetAllAsync()
     {
-        return (await discordClient.Guilds[discordOptions.Value.GuildId].GetAllMembersAsync()).ToArray();
+        var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
+        return (await discordClient.Guilds[guildId].GetAllMembersAsync()).ToArray();
     }
 
     public async Task<DiscordMember> GetAsync(ulong userId)
     {
-        var member = await discordClient.Guilds[discordOptions.Value.GuildId].GetMemberAsync(userId);
+        var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
+        var member = await discordClient.Guilds[guildId].GetMemberAsync(userId);
 
         return member;
     }
@@ -40,5 +43,5 @@ public class MembersClient : IMembersClient
     }
 
     private readonly DiscordClient discordClient;
-    private readonly IOptions<DiscordOptions> discordOptions;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

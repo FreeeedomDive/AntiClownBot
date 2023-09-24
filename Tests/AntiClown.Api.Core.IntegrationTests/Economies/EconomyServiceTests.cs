@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Core.Economies.Domain;
+using AntiClown.Api.Core.IntegrationTests.Common;
 using AntiClown.Tools.Utility.Extensions;
 using AutoFixture;
 using FluentAssertions;
@@ -25,7 +26,13 @@ public class EconomyServiceTests : IntegrationTestsBase
     public void NewUserService_Should_CreateNewEconomy()
     {
         // создание объекта экономики провалидирует EconomySetUp, а тест проверит, что созданный объект валидный
-        economy.Should().BeEquivalentTo(Economy.Default);
+        economy.Should().BeEquivalentTo(new Economy
+        {
+            Id = User.Id,
+            LootBoxes = 0,
+            IsLohotronReady = true,
+            ScamCoins = TestConstants.DefaultScamCoins,
+        }, options => options.Excluding(x => x.NextTribute));
     }
 
     [Test]

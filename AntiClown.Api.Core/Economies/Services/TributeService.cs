@@ -1,4 +1,3 @@
-using AntiClown.Api.Core.Common;
 using AntiClown.Api.Core.Economies.Domain;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base.Extensions;
@@ -6,6 +5,9 @@ using AntiClown.Api.Core.Inventory.Services;
 using AntiClown.Api.Dto.Economies;
 using AntiClown.Api.Dto.Exceptions.Tribute;
 using AntiClown.Core.Schedules;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
 using Hangfire;
@@ -18,12 +20,14 @@ public class TributeService : ITributeService
         IEconomyService economyService,
         IItemsService itemsService,
         ITributeMessageProducer tributeMessageProducer,
+        IAntiClownDataApiClient antiClownDataApiClient,
         IScheduler scheduler
     )
     {
         this.economyService = economyService;
         this.itemsService = itemsService;
         this.tributeMessageProducer = tributeMessageProducer;
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.scheduler = scheduler;
     }
 
@@ -38,6 +42,7 @@ public class TributeService : ITributeService
         return await InnerMakeTributeAsync(userId, false);
     }
 
+    // keep this method public for Hangfire scheduler
     public async Task<Tribute> InnerMakeTributeAsync(Guid userId, bool isAutomatic)
     {
         var userEconomy = await economyService.ReadEconomyAsync(userId);
@@ -51,7 +56,7 @@ public class TributeService : ITributeService
         }
 
         var userItems = await itemsService.ReadAllActiveItemsForUserAsync(userId);
-        var (cooldown, modifiers) = CalculateCooldown(userItems);
+        var (cooldown, modifiers) = await CalculateCooldownAsync(userItems);
 
         var minTribute = TributeHelpers.MinTributeValue - userItems.RiceBowls().Sum(x => x.NegativeRangeExtend);
         var maxTribute = TributeHelpers.MaxTributeValue + userItems.RiceBowls().Sum(x => x.PositiveRangeExtend);
@@ -87,14 +92,16 @@ public class TributeService : ITributeService
         return tribute;
     }
 
-    public static (int Cooldown, Dictionary<Guid, int> CooldownModifiers) CalculateCooldown(BaseItem[] items)
+    // keep this method public for Hangfire scheduler
+    public async Task<(int Cooldown, Dictionary<Guid, int> CooldownModifiers)> CalculateCooldownAsync(BaseItem[] items)
     {
         var modifiers = new Dictionary<Guid, int>();
 
+        var defaultCooldown = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.Economy, "DefaultTributeCooldown");
         var cooldown = items.Internets()
                             .SelectMany(item => Enumerable.Repeat(item, item.Gigabytes))
                             .Aggregate(
-                                Constants.DefaultCooldown, (currentCooldown, item) =>
+                                defaultCooldown, (currentCooldown, item) =>
                                 {
                                     if (Randomizer.GetRandomNumberBetween(0, 100) >= item.Ping)
                                     {
@@ -110,7 +117,7 @@ public class TributeService : ITributeService
                                         modifiers.Add(item.Id, 1);
                                     }
 
-                                    return currentCooldown * (100d - item.Speed) / 100;
+                                    return (int)(currentCooldown * (100d - item.Speed) / 100);
                                 }
                             );
 
@@ -133,13 +140,14 @@ public class TributeService : ITributeService
                                     modifiers.Add(item.Id, 1);
                                 }
 
-                                return currentCooldown * (100d + item.Thickness) / 100;
+                                return (int)(currentCooldown * (100d + item.Thickness) / 100);
                             }
                         );
 
-        return ((int)cooldown, modifiers);
+        return (cooldown, modifiers);
     }
 
+    // keep this method public for Hangfire scheduler
     public async Task<Guid?> GetRandomCommunistAsync(Guid userId)
     {
         var communists = (await ReadDistributedCommunistsAsync())
@@ -148,6 +156,7 @@ public class TributeService : ITributeService
         return communists.Length == 0 ? null : communists.SelectRandomItem();
     }
 
+    // keep this method public for Hangfire scheduler
     public async Task<Guid[]> ReadDistributedCommunistsAsync()
     {
         var allCommunismBanners = await itemsService.ReadItemsWithNameAsync(ItemName.CommunismBanner);
@@ -157,6 +166,7 @@ public class TributeService : ITributeService
                .ToArray();
     }
 
+    // keep this method public for Hangfire scheduler
     public async Task MakeTributeAsync(Tribute tribute)
     {
         await economyService.UpdateScamCoinsAsync(tribute.UserId, tribute.ScamCoins, "Подношение");
@@ -179,6 +189,7 @@ public class TributeService : ITributeService
         }
     }
 
+    // keep this method public for Hangfire scheduler
     public void ScheduleNextTribute(Tribute tribute)
     {
         if (!tribute.IsNextAutomatic)
@@ -194,6 +205,7 @@ public class TributeService : ITributeService
         );
     }
 
+    // keep this method public for Hangfire scheduler
     public async Task ExecuteAutoTributeAsync(Tribute tribute)
     {
         try
@@ -213,4 +225,5 @@ public class TributeService : ITributeService
     private readonly IItemsService itemsService;
     private readonly IScheduler scheduler;
     private readonly ITributeMessageProducer tributeMessageProducer;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

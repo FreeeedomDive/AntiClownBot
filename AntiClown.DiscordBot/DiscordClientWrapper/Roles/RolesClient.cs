@@ -1,9 +1,10 @@
-﻿using AntiClown.DiscordBot.DiscordClientWrapper.Guilds;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.DiscordClientWrapper.Guilds;
 using AntiClown.DiscordBot.DiscordClientWrapper.Members;
-using AntiClown.DiscordBot.Options;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.Roles;
 
@@ -13,13 +14,13 @@ public class RolesClient : IRolesClient
         DiscordClient discordClient,
         IGuildsClient guildsClient,
         IMembersClient membersClient,
-        IOptions<DiscordOptions> discordOptions
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.discordClient = discordClient;
         this.guildsClient = guildsClient;
         this.membersClient = membersClient;
-        this.discordOptions = discordOptions;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task<DiscordRole> CreateNewRoleAsync(string roleName)
@@ -30,15 +31,16 @@ public class RolesClient : IRolesClient
         return newRole;
     }
 
-    public Task<DiscordRole> FindRoleAsync(ulong roleId)
+    public async Task<DiscordRole> FindRoleAsync(ulong roleId)
     {
-        var guild = discordClient.Guilds[discordOptions.Value.GuildId];
+        var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
+        var guild = discordClient.Guilds[guildId];
         if (!guild.Roles.ContainsKey(roleId))
         {
             throw new ArgumentException($"Role {roleId} doesn't exist");
         }
 
-        return Task.FromResult(guild.Roles[roleId]);
+        return guild.Roles[roleId];
     }
 
     public async Task GrantRoleAsync(ulong userId, DiscordRole role)
@@ -56,5 +58,5 @@ public class RolesClient : IRolesClient
     private readonly DiscordClient discordClient;
     private readonly IGuildsClient guildsClient;
     private readonly IMembersClient membersClient;
-    private readonly IOptions<DiscordOptions> discordOptions;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

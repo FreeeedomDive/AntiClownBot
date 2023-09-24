@@ -1,4 +1,7 @@
-﻿using AntiClown.DiscordBot.Cache.Emotes;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.EmbedBuilders.Lottery;
@@ -6,12 +9,10 @@ using AntiClown.DiscordBot.Extensions;
 using AntiClown.DiscordBot.Interactivity.Domain;
 using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Models.Interactions;
-using AntiClown.DiscordBot.Options;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Lottery;
 using DSharpPlus;
 using DSharpPlus.Entities;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.Interactivity.Services.Lottery;
 
@@ -24,8 +25,7 @@ public class LotteryService : ILotteryService
         ILotteryEmbedBuilder lotteryEmbedBuilder,
         IUsersCache usersCache,
         IEmotesCache emotesCache,
-        IOptions<DiscordOptions> discordOptions,
-        IOptions<Settings> settings
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
@@ -33,16 +33,16 @@ public class LotteryService : ILotteryService
         this.interactivityRepository = interactivityRepository;
         this.lotteryEmbedBuilder = lotteryEmbedBuilder;
         this.usersCache = usersCache;
-        this.discordOptions = discordOptions;
         this.emotesCache = emotesCache;
-        this.settings = settings;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task StartAsync(Guid eventId)
     {
         var lotteryEvent = await antiClownEntertainmentApiClient.CommonEvents.Lottery.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(lotteryEvent);
-        var message = await discordClientWrapper.Messages.SendAsync(discordOptions.Value.BotChannelId, messageBuilder);
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
+        var message = await discordClientWrapper.Messages.SendAsync(botChannelId, messageBuilder);
         var interactivity = new Interactivity<object>
         {
             Id = eventId,
@@ -60,7 +60,8 @@ public class LotteryService : ILotteryService
         var lotteryEvent = await antiClownEntertainmentApiClient.CommonEvents.Lottery.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(lotteryEvent);
         var interactivity = await interactivityRepository.TryReadAsync<object>(eventId);
-        var oldMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity!.MessageId);
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
+        var oldMessage = await discordClientWrapper.Messages.FindMessageAsync(botChannelId, interactivity!.MessageId);
         await discordClientWrapper.Messages.ModifyAsync(oldMessage, messageBuilder);
     }
 
@@ -69,13 +70,14 @@ public class LotteryService : ILotteryService
         var interactivity = await interactivityRepository.TryReadAsync<object>(eventId);
         var lotteryEvent = await antiClownEntertainmentApiClient.CommonEvents.Lottery.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(lotteryEvent);
-        var oldMessage = await discordClientWrapper.Messages.FindMessageAsync(discordOptions.Value.BotChannelId, interactivity!.MessageId);
+        var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
+        var oldMessage = await discordClientWrapper.Messages.FindMessageAsync(botChannelId, interactivity!.MessageId);
         await discordClientWrapper.Messages.ModifyAsync(oldMessage, messageBuilder);
     }
 
     private async Task<DiscordMessageBuilder> BuildEventMessageAsync(LotteryEventDto lotteryEventDto)
     {
-        var ping = settings.Value.PingOnEvents ? "@everyone" : "";
+        var ping = await antiClownDataApiClient.Settings.ReadBoolAsync(SettingsCategory.DiscordBot, "PingOnEvents") ? "@everyone" : "";
         return new DiscordMessageBuilder()
                .WithAllowedMentions(Mentions.All)
                .WithContent(ping)
@@ -95,10 +97,9 @@ public class LotteryService : ILotteryService
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IOptions<DiscordOptions> discordOptions;
     private readonly IEmotesCache emotesCache;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly IInteractivityRepository interactivityRepository;
     private readonly ILotteryEmbedBuilder lotteryEmbedBuilder;
-    private readonly IOptions<Settings> settings;
     private readonly IUsersCache usersCache;
 }

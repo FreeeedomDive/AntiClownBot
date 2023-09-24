@@ -1,9 +1,11 @@
 ﻿using AntiClown.Api.Core.Database;
 using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Economies.Services;
+using AntiClown.Api.Core.IntegrationTests.Common;
 using AntiClown.Api.Core.IntegrationTests.Mocks;
 using AntiClown.Api.Core.Inventory.Repositories;
 using AntiClown.Api.Core.Inventory.Services;
+using AntiClown.Api.Core.Options;
 using AntiClown.Api.Core.Shops.Repositories.Items;
 using AntiClown.Api.Core.Shops.Repositories.Shops;
 using AntiClown.Api.Core.Shops.Repositories.Stats;
@@ -13,9 +15,13 @@ using AntiClown.Api.Core.Transactions.Services;
 using AntiClown.Api.Core.Users.Domain;
 using AntiClown.Api.Core.Users.Repositories;
 using AntiClown.Api.Core.Users.Services;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Dto.Settings;
 using AutoFixture;
 using AutoMapper;
-using Moq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using NSubstitute;
 using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api.Core.IntegrationTests;
@@ -31,7 +37,15 @@ public class IntegrationTestsBase
         var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddMaps(assemblies));
         var mapper = mapperConfiguration.CreateMapper();
 
-        var databaseContext = new DatabaseContext();
+        var databaseContext = new DatabaseContext(
+            new DbContextOptions<DatabaseContext>(), new OptionsWrapper<DatabaseOptions>(
+                new DatabaseOptions
+                {
+                    ConnectionString = Environment.GetEnvironmentVariable("AntiClown.Tests.PostgreSqlConnectionString")
+                                       ?? throw new InvalidOperationException("No ConnectionString was provided"),
+                }
+            )
+        );
 
         var usersSqlRepository = new SqlRepository<UserStorageElement>(databaseContext);
         var usersRepository = new UsersRepository(usersSqlRepository, mapper);
@@ -54,28 +68,127 @@ public class IntegrationTestsBase
         var shopStatsSqlRepository = new VersionedSqlRepository<ShopStatsStorageElement>(databaseContext);
         ShopStatsRepository = new ShopStatsRepository(shopStatsSqlRepository, mapper);
 
+        AntiClownDataApiClient = Substitute.For<IAntiClownDataApiClient>();
+        ConfigureDataApiClientMock();
+
         UsersService = new UsersService(usersRepository);
         TransactionsService = new TransactionsService(transactionsRepository);
-        EconomyService = new EconomyService(economiesRepository, UsersService, TransactionsService);
-        LohotronRewardGeneratorMock = new Mock<ILohotronRewardGenerator>();
-        LohotronService = new LohotronService(EconomyService, LohotronRewardGeneratorMock.Object);
+        EconomyService = new EconomyService(economiesRepository, UsersService, TransactionsService, AntiClownDataApiClient);
+        LohotronRewardGenerator = Substitute.For<ILohotronRewardGenerator>();
+        LohotronService = new LohotronService(EconomyService, LohotronRewardGenerator);
         ItemsService = new ItemsService(
-            new ItemsValidator(EconomyService, itemsRepository),
+            new ItemsValidator(EconomyService, itemsRepository, AntiClownDataApiClient),
             itemsRepository,
-            EconomyService
+            EconomyService,
+            AntiClownDataApiClient
         );
         ShopsService = new ShopsService(
             ShopsRepository,
             ShopItemsRepository,
             ShopStatsRepository,
-            new ShopsValidator(EconomyService, ShopItemsRepository),
+            new ShopsValidator(EconomyService, ShopItemsRepository, AntiClownDataApiClient),
             EconomyService,
             ItemsService,
+            AntiClownDataApiClient,
             mapper
         );
         NewUserService = new NewUserService(usersRepository, EconomyService, ShopsService, mapper);
         Scheduler = new SchedulerMock();
-        TributeService = new TributeService(EconomyService, ItemsService, new TributeMessageProducerMock(), Scheduler);
+        TributeService = new TributeService(EconomyService, ItemsService, new TributeMessageProducerMock(), AntiClownDataApiClient, Scheduler);
+    }
+
+    private void ConfigureDataApiClientMock()
+    {
+        AntiClownDataApiClient.Settings.ReadAsync(SettingsCategory.Inventory.ToString(), "MaximumActiveItemsOfOneType").Returns(
+            Task.FromResult(
+                new SettingDto
+                {
+                    Category = SettingsCategory.Inventory.ToString(),
+                    Name = "MaximumActiveItemsOfOneType",
+                    Value = TestConstants.MaximumActiveItemsOfOneType.ToString(),
+                }
+            )
+        );
+        AntiClownDataApiClient.Settings.ReadAsync(SettingsCategory.Inventory.ToString(), "SellItemPercent").Returns(
+            Task.FromResult(
+                new SettingDto
+                {
+                    Category = SettingsCategory.Inventory.ToString(),
+                    Name = "MaximumItemsInShop",
+                    Value = TestConstants.SellItemPercent.ToString(),
+                }
+            )
+        );
+        AntiClownDataApiClient.Settings.ReadAsync(SettingsCategory.Economy.ToString(), "DefaultTributeCooldown").Returns(
+            Task.FromResult(
+                new SettingDto
+                {
+                    Category = SettingsCategory.Economy.ToString(),
+                    Name = "DefaultTributeCooldown",
+                    Value = TestConstants.DefaultCooldown.ToString(),
+                }
+            )
+        );
+        AntiClownDataApiClient.Settings.ReadAsync(SettingsCategory.Economy.ToString(), "DefaultScamCoins").Returns(
+            Task.FromResult(
+                new SettingDto
+                {
+                    Category = SettingsCategory.Economy.ToString(),
+                    Name = "DefaultScamCoins",
+                    Value = TestConstants.DefaultScamCoins.ToString(),
+                }
+            )
+        );
+        AntiClownDataApiClient.Settings.ReadAsync(SettingsCategory.Shop.ToString(), "RevealShopItemPercent").Returns(
+            Task.FromResult(
+                new SettingDto
+                {
+                    Category = SettingsCategory.Shop.ToString(),
+                    Name = "RevealShopItemPercent",
+                    Value = TestConstants.RevealShopItemPercent.ToString(),
+                }
+            )
+        );
+        AntiClownDataApiClient.Settings.ReadAsync(SettingsCategory.Shop.ToString(), "DefaultReRollPrice").Returns(
+            Task.FromResult(
+                new SettingDto
+                {
+                    Category = SettingsCategory.Shop.ToString(),
+                    Name = "DefaultReRollPrice",
+                    Value = TestConstants.DefaultReRollPrice.ToString(),
+                }
+            )
+        );
+        AntiClownDataApiClient.Settings.ReadAsync(SettingsCategory.Shop.ToString(), "DefaultReRollPriceIncrease").Returns(
+            Task.FromResult(
+                new SettingDto
+                {
+                    Category = SettingsCategory.Shop.ToString(),
+                    Name = "DefaultReRollPriceIncrease",
+                    Value = TestConstants.DefaultReRollPriceIncrease.ToString(),
+                }
+            )
+        );
+        AntiClownDataApiClient.Settings.ReadAsync(SettingsCategory.Shop.ToString(), "MaximumItemsInShop").Returns(
+            Task.FromResult(
+                new SettingDto
+                {
+                    Category = SettingsCategory.Shop.ToString(),
+                    Name = "MaximumItemsInShop",
+                    Value = TestConstants.MaximumItemsInShop.ToString(),
+                }
+            )
+        );
+        AntiClownDataApiClient.Settings.ReadAsync(SettingsCategory.Shop.ToString(), "FreeItemRevealsPerDay").Returns(
+            Task.FromResult(
+                new SettingDto
+                {
+                    Category = SettingsCategory.Shop.ToString(),
+                    Name = "MaximumItemsInShop",
+                    Value = TestConstants.FreeItemRevealsPerDay.ToString(),
+                }
+            )
+        );
     }
 
     [SetUp]
@@ -101,8 +214,9 @@ public class IntegrationTestsBase
     protected INewUserService NewUserService { get; private set; } = null!;
     protected ITransactionsService TransactionsService { get; private set; } = null!;
     protected IEconomyService EconomyService { get; private set; } = null!;
-    protected Mock<ILohotronRewardGenerator> LohotronRewardGeneratorMock { get; private set; } = null!;
+    protected ILohotronRewardGenerator LohotronRewardGenerator { get; private set; } = null!;
     protected ILohotronService LohotronService { get; private set; } = null!;
+    protected IAntiClownDataApiClient AntiClownDataApiClient { get; private set; } = null!;
     protected IItemsService ItemsService { get; private set; } = null!;
     protected IShopsRepository ShopsRepository { get; private set; } = null!;
     protected IShopItemsRepository ShopItemsRepository { get; private set; } = null!;

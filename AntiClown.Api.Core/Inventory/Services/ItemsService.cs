@@ -1,10 +1,12 @@
-﻿using AntiClown.Api.Core.Common;
-using AntiClown.Api.Core.Economies.Domain;
+﻿using AntiClown.Api.Core.Economies.Domain;
 using AntiClown.Api.Core.Economies.Services;
 using AntiClown.Api.Core.Inventory.Domain;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base;
 using AntiClown.Api.Core.Inventory.Domain.Items.Builders;
 using AntiClown.Api.Core.Inventory.Repositories;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Tools.Utility.Random;
 
 namespace AntiClown.Api.Core.Inventory.Services;
@@ -14,12 +16,14 @@ public class ItemsService : IItemsService
     public ItemsService(
         IItemsValidator validator,
         IItemsRepository itemsRepository,
-        IEconomyService economyService
+        IEconomyService economyService,
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.validator = validator;
         this.itemsRepository = itemsRepository;
         this.economyService = economyService;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task<BaseItem> ReadItemAsync(Guid userId, Guid itemId)
@@ -97,7 +101,8 @@ public class ItemsService : IItemsService
         var item = await itemsRepository.ReadAsync(itemId);
         await validator.ValidateSellItemAsync(userId, item);
         var sign = item.ItemType == ItemType.Positive ? 1 : -1;
-        var price = sign * item.Price * Constants.SellItemPercent / 100;
+        var sellItemPercent = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.Inventory, "SellItemPercent");
+        var price = sign * item.Price * sellItemPercent / 100;
         await itemsRepository.DeleteAsync(itemId);
         await economyService.UpdateScamCoinsAsync(userId, price, $"Продажа предмета {itemId}");
     }
@@ -109,6 +114,7 @@ public class ItemsService : IItemsService
     }
 
     private readonly IEconomyService economyService;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly IItemsRepository itemsRepository;
 
     private readonly IItemsValidator validator;

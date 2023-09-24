@@ -1,10 +1,12 @@
-﻿using AntiClown.Api.Core.Common;
-using AntiClown.Api.Core.Economies.Services;
+﻿using AntiClown.Api.Core.Economies.Services;
 using AntiClown.Api.Core.Inventory.Domain;
 using AntiClown.Api.Core.Inventory.Domain.Items.Base;
 using AntiClown.Api.Core.Inventory.Repositories;
 using AntiClown.Api.Dto.Exceptions.Economy;
 using AntiClown.Api.Dto.Exceptions.Items;
+using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 
 namespace AntiClown.Api.Core.Inventory.Services;
 
@@ -12,11 +14,13 @@ public class ItemsValidator : IItemsValidator
 {
     public ItemsValidator(
         IEconomyService economyService,
-        IItemsRepository itemsRepository
+        IItemsRepository itemsRepository,
+        IAntiClownDataApiClient antiClownDataApiClient
     )
     {
         this.economyService = economyService;
         this.itemsRepository = itemsRepository;
+        this.antiClownDataApiClient = antiClownDataApiClient;
     }
 
     public async Task ValidateEditItemActiveStatusAsync(Guid userId, BaseItem item, bool isActive)
@@ -38,7 +42,8 @@ public class ItemsValidator : IItemsValidator
                 Name = itemName,
             }
         );
-        if (currentUserItemsOfThisType.Length >= Constants.MaximumActiveItemsOfOneType)
+        var maxActiveItemsOfOneType = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.Inventory, "MaximumActiveItemsOfOneType");
+        if (currentUserItemsOfThisType.Length >= maxActiveItemsOfOneType)
         {
             throw new TooManyActiveItemsCountException(userId, itemName);
         }
@@ -52,7 +57,8 @@ public class ItemsValidator : IItemsValidator
         }
 
         var userEconomy = await economyService.ReadEconomyAsync(userId);
-        var cost = item.Price * Constants.SellItemPercent / 100;
+        var sellItemPercent = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.Inventory, "SellItemPercent");
+        var cost = item.Price * sellItemPercent / 100;
         if (userEconomy.ScamCoins < cost)
         {
             throw new NotEnoughBalanceException(userId, userEconomy.ScamCoins, cost);
@@ -70,4 +76,5 @@ public class ItemsValidator : IItemsValidator
 
     private readonly IEconomyService economyService;
     private readonly IItemsRepository itemsRepository;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

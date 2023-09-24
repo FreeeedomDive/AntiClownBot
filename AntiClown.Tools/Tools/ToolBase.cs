@@ -29,5 +29,5 @@ public abstract class ToolBase
     protected abstract Task RunAsync();
 
     protected ILogger Logger { get; }
-    public abstract string Name { get; }
+    public string Name => this.GetType().Name;
 }

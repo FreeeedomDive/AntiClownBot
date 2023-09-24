@@ -1,22 +1,22 @@
-﻿using AntiClown.DiscordBot.Cache.Users;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Extensions;
-using AntiClown.DiscordBot.Options;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
-using AntiClown.Tools.Utility.Extensions;
 using DSharpPlus.Entities;
-using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.EmbedBuilders.GuessNumber;
 
 public class GuessNumberEmbedBuilder : IGuessNumberEmbedBuilder
 {
     public GuessNumberEmbedBuilder(
-        IUsersCache usersCache,
-        IOptions<Settings> settings
+        IAntiClownDataApiClient antiClownDataApiClient,
+        IUsersCache usersCache
     )
     {
+        this.antiClownDataApiClient = antiClownDataApiClient;
         this.usersCache = usersCache;
-        this.settings = settings;
     }
 
     public async Task<DiscordEmbed> BuildAsync(GuessNumberEventDto guessNumberEvent)
@@ -36,12 +36,13 @@ public class GuessNumberEmbedBuilder : IGuessNumberEmbedBuilder
         }
         else
         {
-            embedBuilder.AddField("Я загадал число, угадайте его!", "У вас 10 минут");
+            var waitingTime = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "GuessNumberEvent.WaitingTimeInMilliseconds");
+            embedBuilder.AddField("Я загадал число, угадайте его!", $"У вас {waitingTime / (60 * 1000)} минут");
         }
 
         return embedBuilder.Build();
     }
 
-    private readonly IOptions<Settings> settings;
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly IUsersCache usersCache;
 }

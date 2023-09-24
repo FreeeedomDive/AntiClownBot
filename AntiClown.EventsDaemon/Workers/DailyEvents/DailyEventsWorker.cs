@@ -1,7 +1,8 @@
-﻿using AntiClown.Entertainment.Api.Client;
+﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.DailyEvents;
-using AntiClown.EventsDaemon.Options;
-using Microsoft.Extensions.Options;
 using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.EventsDaemon.Workers.DailyEvents;
@@ -10,18 +11,19 @@ public class DailyEventsWorker : PeriodicJobWorker
 {
     public DailyEventsWorker(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-        IOptions<DailyEventsWorkerOptions> dailyEventsWorkerOptions,
+        IAntiClownDataApiClient antiClownDataApiClient,
         ILoggerClient loggerClient
-    ) : base(loggerClient, dailyEventsWorkerOptions.Value.IterationTime)
+    ) : base(loggerClient)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
-        options = dailyEventsWorkerOptions.Value;
+        this.antiClownDataApiClient = antiClownDataApiClient;
+        IterationTime = antiClownDataApiClient.Settings.ReadAsync<TimeSpan>(SettingsCategory.DailyEvents, "DailyEventsWorker.IterationTime").GetAwaiter().GetResult();
     }
 
-    protected override int CalculateTimeBeforeStart()
+    protected override async Task<int> CalculateTimeBeforeStartAsync()
     {
-        var dailyEventStartHour = options.StartHour;
-        var dailyEventStartMinute = options.StartMinute;
+        var dailyEventStartHour = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.DailyEvents, "DailyEventsWorker.StartHour");
+        var dailyEventStartMinute = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.DailyEvents, "DailyEventsWorker.StartMinute");
 
         const int utcDiff = 5;
 
@@ -62,8 +64,7 @@ public class DailyEventsWorker : PeriodicJobWorker
         }
     }
 
-    protected override string WorkerName => nameof(DailyEventsWorker);
+    protected sealed override TimeSpan IterationTime { get; set; }
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-
-    private readonly DailyEventsWorkerOptions options;
 }
