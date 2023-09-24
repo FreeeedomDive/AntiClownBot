@@ -45,8 +45,8 @@ public class TransfusionEventService : ITransfusionEventService
         var allUsers = await antiClownApiClient.Users.ReadAllAsync();
         var donor = allUsers.SelectRandomItem();
         var recipient = allUsers.Except(new[] { donor }).SelectRandomItem();
-        var transfusionMinimumExchange = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "TransfusionMinimumExchange");
-        var transfusionMaximumExchange = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "TransfusionMaximumExchange");
+        var transfusionMinimumExchange = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "Transfusion.MinimumExchange");
+        var transfusionMaximumExchange = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "Transfusion.MaximumExchange");
         var exchange = Randomizer.GetRandomNumberInclusive(transfusionMinimumExchange, transfusionMaximumExchange);
 
         newEvent.DonorUserId = donor.Id;
