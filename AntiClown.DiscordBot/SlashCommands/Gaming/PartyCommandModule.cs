@@ -64,13 +64,13 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                             }
                         );
                         break;
-                    case PartyPrefix.CsGo:
+                    case PartyPrefix.Cs2:
                         await antiClownEntertainmentApiClient.Parties.CreateAsync(
                             new CreatePartyDto
                             {
                                 CreatorId = userId,
                                 MaxPlayers = 5,
-                                Name = "CS GO",
+                                Name = "CS2",
                                 RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "CsRoleId"),
                                 Description = description,
                             }
