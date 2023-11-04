@@ -1,5 +1,6 @@
 ﻿using AntiClown.Data.Api.Core.Options;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
+using AntiClown.Data.Api.Core.Tokens.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -21,6 +22,7 @@ public class DatabaseContext : DbContext
     }
 
     public DbSet<SettingStorageElement> Settings { get; set; }
+    public DbSet<TokenStorageElement> Tokens { get; set; }
 
     private DatabaseOptions Options { get; }
 }

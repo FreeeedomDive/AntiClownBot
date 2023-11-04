@@ -2,6 +2,8 @@
 using AntiClown.Data.Api.Core.Options;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
 using AntiClown.Data.Api.Core.SettingsStoring.Services;
+using AntiClown.Data.Api.Core.Tokens.Repositories;
+using AntiClown.Data.Api.Core.Tokens.Services;
 using AntiClown.Data.Api.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -36,9 +38,12 @@ public class Startup
 
         // configure repositories
         services.AddTransient<ISettingsRepository, SettingsRepository>();
+        services.AddTransient<ITokensRepository, TokensRepository>();
 
         // configure services
         services.AddTransient<ISettingsService, SettingsService>();
+        services.AddTransient<ITokenGenerator, GuidTokenGenerator>();
+        services.AddTransient<ITokensService, TokensService>();
 
         services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.TypeNameHandling = TypeNameHandling.All);
     }
