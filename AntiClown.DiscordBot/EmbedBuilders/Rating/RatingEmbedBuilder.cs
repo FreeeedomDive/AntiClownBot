@@ -32,7 +32,7 @@ public class RatingEmbedBuilder : IRatingEmbedBuilder
         embedBuilder.WithTitle($"ЧЕЛА РЕАЛЬНО ЗОВУТ {name.ToUpper()} {aRolf} {aRolf} {aRolf}");
 
         embedBuilder.AddField("Скам-койны", $"{economy.ScamCoins}");
-        embedBuilder.AddField("Общая ценность", $"{inventory.NetWorth}");
+        embedBuilder.AddField("Общая ценность", $"{inventory.NetWorth + economy.ScamCoins}");
 
         AddFieldForItems(embedBuilder, inventory.CatWives, ItemNameDto.CatWife);
         AddFieldForItems(embedBuilder, inventory.DogWives, ItemNameDto.DogWife);
