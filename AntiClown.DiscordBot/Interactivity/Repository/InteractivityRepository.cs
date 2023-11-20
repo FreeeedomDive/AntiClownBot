@@ -1,4 +1,5 @@
 ﻿using AntiClown.DiscordBot.Interactivity.Domain;
+using Medallion.Threading;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Core.Repository;
 
@@ -6,67 +7,75 @@ namespace AntiClown.DiscordBot.Interactivity.Repository;
 
 public class InteractivityRepository : IInteractivityRepository
 {
-    public InteractivityRepository(ISqlRepository<InteractivityStorageElement> sqlRepository)
+    public InteractivityRepository(
+        ISqlRepository<InteractivityStorageElement> sqlRepository,
+        IDistributedLockProvider distributedLockProvider
+    )
     {
         this.sqlRepository = sqlRepository;
+        this.distributedLockProvider = distributedLockProvider;
     }
 
     public async Task CreateAsync<T>(Interactivity<T> interactivity)
     {
-        await sqlRepository.CreateAsync(
-            new InteractivityStorageElement
-            {
-                Id = interactivity.Id,
-                Type = interactivity.Type.ToString(),
-                MessageId = interactivity.MessageId,
-                AuthorId = interactivity.AuthorId,
-                Details = interactivity.Details is not null
-                    ? JsonConvert.SerializeObject(
-                        interactivity.Details, Formatting.Indented, new JsonSerializerSettings
-                        {
-                            TypeNameHandling = TypeNameHandling.All,
-                        }
-                    )
-                    : string.Empty,
-                CreatedAt = DateTime.UtcNow,
-            }
-        );
+        await using (await distributedLockProvider.AcquireLockAsync($"Interactivity {interactivity.Id}"))
+        {
+            await sqlRepository.CreateAsync(
+                new InteractivityStorageElement
+                {
+                    Id = interactivity.Id,
+                    Type = interactivity.Type.ToString(),
+                    MessageId = interactivity.MessageId,
+                    AuthorId = interactivity.AuthorId,
+                    Details = interactivity.Details is not null
+                        ? JsonConvert.SerializeObject(
+                            interactivity.Details, Formatting.Indented, new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All,
+                            }
+                        )
+                        : string.Empty,
+                    CreatedAt = DateTime.UtcNow,
+                }
+            );
+        }
     }
 
     public async Task<Interactivity<T>?> TryReadAsync<T>(Guid id)
     {
-        var result = await sqlRepository.TryReadAsync(id);
-        if (result == null)
+        await using (await distributedLockProvider.AcquireLockAsync($"Interactivity {id}"))
         {
-            return null;
+            var result = await sqlRepository.TryReadAsync(id);
+            return result == null ? null : ToModel<T>(result);
         }
-
-        return ToModel<T>(result);
     }
 
     public async Task<Interactivity<T>[]> FindByTypeAsync<T>(InteractivityType interactivityType)
     {
         var result = await sqlRepository.FindAsync(x => x.Type == interactivityType.ToString());
-        return result.Select(x => ToModel<T>(x)).ToArray();
+        return result.Select(ToModel<T>).ToArray();
     }
 
     public async Task UpdateAsync<T>(Interactivity<T> interactivity)
     {
-        await sqlRepository.UpdateAsync(
-            interactivity.Id, x =>
-            {
-                x.MessageId = interactivity.MessageId;
-                x.Type = interactivity.Type.ToString();
-                x.Details = interactivity.Details is not null
-                    ? JsonConvert.SerializeObject(
-                        interactivity.Details, Formatting.Indented, new JsonSerializerSettings
-                        {
-                            TypeNameHandling = TypeNameHandling.All,
-                        }
-                    )
-                    : string.Empty;
-            }
-        );
+        await using (await distributedLockProvider.AcquireLockAsync($"Interactivity {interactivity.Id}"))
+        {
+            await sqlRepository.UpdateAsync(
+                interactivity.Id, x =>
+                {
+                    x.MessageId = interactivity.MessageId;
+                    x.Type = interactivity.Type.ToString();
+                    x.Details = interactivity.Details is not null
+                        ? JsonConvert.SerializeObject(
+                            interactivity.Details, Formatting.Indented, new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All,
+                            }
+                        )
+                        : string.Empty;
+                }
+            );
+        }
     }
 
     private static Interactivity<T> ToModel<T>(InteractivityStorageElement storageElement)
@@ -84,5 +93,6 @@ public class InteractivityRepository : IInteractivityRepository
         };
     }
 
+    private readonly IDistributedLockProvider distributedLockProvider;
     private readonly ISqlRepository<InteractivityStorageElement> sqlRepository;
 }
