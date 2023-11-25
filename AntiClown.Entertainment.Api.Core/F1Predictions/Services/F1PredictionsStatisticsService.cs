@@ -51,7 +51,9 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
                                                 Driver = kv.Key,
                                                 Score = kv.Value,
                                             }
-                                        ).ToArray();
+                                        )
+                                        .OrderByDescending(x => x.Score)
+                                        .ToArray();
         var tenthPlaceCount = CountAndOrderByScore(raceResults, x => x.Classification[9]);
         var firstDnfCount = CountAndOrderByScore(raceResults, x => x.FirstDnf);
 
