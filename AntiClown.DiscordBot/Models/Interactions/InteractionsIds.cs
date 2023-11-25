@@ -142,7 +142,8 @@ public static class InteractionsIds
         public const string F1_Results = "results";
 
         public const string F1Stats_Group = "f1stats";
-        public const string F1Stats_MostPickedDriversByUsers = "mostPickedDriversByUsers";
+        public const string F1Stats_MostPickedDrivers = "mostPickedDrivers";
+        public const string F1Stats_MostPickedDriversByUser = "mostPickedDriversByUser";
         public const string F1Stats_MostProfitableDrivers = "mostProfitableDrivers";
 
         public const string Ip = "ip";

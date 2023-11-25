@@ -1,4 +1,5 @@
-﻿using AntiClown.DiscordBot.EmbedBuilders.F1PredictionsStats;
+﻿using AntiClown.DiscordBot.Cache.Users;
+using AntiClown.DiscordBot.EmbedBuilders.F1PredictionsStats;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
@@ -12,20 +13,36 @@ public class F1StatsCommand : SlashCommandModuleWithMiddlewares
     public F1StatsCommand(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IF1PredictionStatsEmbedBuilder f1PredictionStatsEmbedBuilder,
+        IUsersCache usersCache,
         ICommandExecutor commandExecutor
     ) : base(commandExecutor)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.f1PredictionStatsEmbedBuilder = f1PredictionStatsEmbedBuilder;
+        this.usersCache = usersCache;
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.F1Stats_MostPickedDriversByUsers, "Самые выбираемые гонщики")]
-    public async Task GetMostPickedDriversByUsers(InteractionContext interactionContext)
+    [SlashCommand(InteractionsIds.CommandsNames.F1Stats_MostPickedDrivers, "Самые выбираемые гонщики среди всех участников предсказаний")]
+    public async Task GetMostPickedDrivers(InteractionContext interactionContext)
     {
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var mostPickedDriversByUsers = await antiClownEntertainmentApiClient.F1PredictionsStats.GetMostPickedDriversByUsersAsync();
+                var mostPickedDriversByUsers = await antiClownEntertainmentApiClient.F1PredictionsStats.GetMostPickedDriversAsync();
+                var embed = f1PredictionStatsEmbedBuilder.Build(mostPickedDriversByUsers);
+                await RespondToInteractionAsync(interactionContext, embed);
+            }
+        );
+    }
+
+    [SlashCommand(InteractionsIds.CommandsNames.F1Stats_MostPickedDriversByUser, "Твои самые выбираемые гонщики")]
+    public async Task GetMostPickedDriversByUser(InteractionContext interactionContext)
+    {
+        await ExecuteAsync(
+            interactionContext, async () =>
+            {
+                var apiUserId = await usersCache.GetApiIdByMemberIdAsync(interactionContext.Member.Id);
+                var mostPickedDriversByUsers = await antiClownEntertainmentApiClient.F1PredictionsStats.GetMostPickedDriversAsync(apiUserId);
                 var embed = f1PredictionStatsEmbedBuilder.Build(mostPickedDriversByUsers);
                 await RespondToInteractionAsync(interactionContext, embed);
             }
@@ -47,4 +64,5 @@ public class F1StatsCommand : SlashCommandModuleWithMiddlewares
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IF1PredictionStatsEmbedBuilder f1PredictionStatsEmbedBuilder;
+    private readonly IUsersCache usersCache;
 }

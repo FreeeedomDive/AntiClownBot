@@ -4,6 +4,7 @@ namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 
 public interface IF1PredictionsStatisticsService
 {
-    Task<MostPickedDriversByUsersStats> GetMostPickedDriversByUsersAsync();
+    Task<MostPickedDriversStats> GetMostPickedDriversAsync();
+    Task<MostPickedDriversStats> GetMostPickedDriversAsync(Guid userId);
     Task<MostProfitableDriversStats> GetMostProfitableDriversAsync();
 }

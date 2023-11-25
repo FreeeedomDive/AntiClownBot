@@ -6,11 +6,11 @@ namespace AntiClown.DiscordBot.EmbedBuilders.F1PredictionsStats;
 
 public class F1PredictionStatsEmbedBuilder : IF1PredictionStatsEmbedBuilder
 {
-    public DiscordEmbed Build(MostPickedDriversByUsersStatsDto mostPickedDriversByUsersStats)
+    public DiscordEmbed Build(MostPickedDriversStatsDto mostPickedDriversStats)
     {
         var embedBuilder = new DiscordEmbedBuilder().WithTitle("Самые выбираемые гонщики");
-        AddInlineFieldWithRating(embedBuilder, "10 место", mostPickedDriversByUsersStats.TenthPlacePickedDrivers);
-        AddInlineFieldWithRating(embedBuilder, "Первый DNF", mostPickedDriversByUsersStats.FirstDnfPickedDrivers);
+        AddInlineFieldWithRating(embedBuilder, "10 место", mostPickedDriversStats.TenthPlacePickedDrivers);
+        AddInlineFieldWithRating(embedBuilder, "Первый DNF", mostPickedDriversStats.FirstDnfPickedDrivers);
 
         return embedBuilder.Build();
     }

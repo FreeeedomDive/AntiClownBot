@@ -5,6 +5,6 @@ namespace AntiClown.DiscordBot.EmbedBuilders.F1PredictionsStats;
 
 public interface IF1PredictionStatsEmbedBuilder
 {
-    DiscordEmbed Build(MostPickedDriversByUsersStatsDto mostPickedDriversByUsersStats);
+    DiscordEmbed Build(MostPickedDriversStatsDto mostPickedDriversStats);
     DiscordEmbed Build(MostProfitableDriversStatsDto mostProfitableDriversStats);
 }

@@ -14,14 +14,14 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
         this.f1PredictionResultsRepository = f1PredictionResultsRepository;
     }
 
-    public async Task<MostPickedDriversByUsersStats> GetMostPickedDriversByUsersAsync()
+    public async Task<MostPickedDriversStats> GetMostPickedDriversAsync()
     {
         var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
         var predictions = finishedRaces.SelectMany(x => x.Predictions).ToArray();
         var tenthPlacePredictions = CountAndOrderByScore(predictions, x => x.TenthPlacePickedDriver);
         var dnfPredictions = CountAndOrderByScore(predictions, x => x.FirstDnfPickedDriver);
 
-        return new MostPickedDriversByUsersStats
+        return new MostPickedDriversStats
         {
             TenthPlacePickedDrivers = tenthPlacePredictions,
             FirstDnfPickedDrivers = dnfPredictions,
@@ -62,6 +62,23 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
             TenthPlacePoints = correctedTenthPlacePoints,
             TenthPlaceCount = tenthPlaceCount,
             FirstDnfCount = firstDnfCount,
+        };
+    }
+
+    public async Task<MostPickedDriversStats> GetMostPickedDriversAsync(Guid userId)
+    {
+        var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
+        var predictions = finishedRaces
+                          .SelectMany(x => x.Predictions)
+                          .Where(x => x.UserId == userId)
+                          .ToArray();
+        var tenthPlacePredictions = CountAndOrderByScore(predictions, x => x.TenthPlacePickedDriver);
+        var dnfPredictions = CountAndOrderByScore(predictions, x => x.FirstDnfPickedDriver);
+
+        return new MostPickedDriversStats
+        {
+            TenthPlacePickedDrivers = tenthPlacePredictions,
+            FirstDnfPickedDrivers = dnfPredictions,
         };
     }
 

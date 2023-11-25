@@ -11,11 +11,18 @@ public class F1PredictionsStatsClient : IF1PredictionsStatsClient
         this.restClient = restClient;
     }
 
-    public async Task<MostPickedDriversByUsersStatsDto> GetMostPickedDriversByUsersAsync()
+    public async Task<MostPickedDriversStatsDto> GetMostPickedDriversAsync()
     {
-        var request = new RestRequest("f1Predictions/stats/mostPickedDriversByUsers");
+        var request = new RestRequest("f1Predictions/stats/mostPickedDrivers");
         var response = await restClient.ExecuteGetAsync(request);
-        return response.TryDeserialize<MostPickedDriversByUsersStatsDto>();
+        return response.TryDeserialize<MostPickedDriversStatsDto>();
+    }
+
+    public async Task<MostPickedDriversStatsDto> GetMostPickedDriversAsync(Guid userId)
+    {
+        var request = new RestRequest($"f1Predictions/stats/{userId}/mostPickedDrivers");
+        var response = await restClient.ExecuteGetAsync(request);
+        return response.TryDeserialize<MostPickedDriversStatsDto>();
     }
 
     public async Task<MostProfitableDriversStatsDto> GetMostProfitableDriversAsync()

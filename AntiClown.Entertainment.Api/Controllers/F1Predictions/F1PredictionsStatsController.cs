@@ -17,15 +17,22 @@ public class F1PredictionsStatsController : Controller
         this.mapper = mapper;
     }
 
-    [HttpGet("mostPickedDriversByUsers")]
-    public async Task<MostPickedDriversByUsersStatsDto> GetMostPickedDriversByUsersAsync()
+    [HttpGet("mostPickedDrivers")]
+    public async Task<MostPickedDriversStatsDto> GetMostPickedDrivers()
     {
-        var result = await f1PredictionsStatisticsService.GetMostPickedDriversByUsersAsync();
-        return mapper.Map<MostPickedDriversByUsersStatsDto>(result);
+        var result = await f1PredictionsStatisticsService.GetMostPickedDriversAsync();
+        return mapper.Map<MostPickedDriversStatsDto>(result);
+    }
+
+    [HttpGet("{userId:guid}/mostPickedDrivers")]
+    public async Task<MostPickedDriversStatsDto> GetMostPickedDrivers([FromRoute] Guid userId)
+    {
+        var result = await f1PredictionsStatisticsService.GetMostPickedDriversAsync(userId);
+        return mapper.Map<MostPickedDriversStatsDto>(result);
     }
 
     [HttpGet("mostProfitableDrivers")]
-    public async Task<MostProfitableDriversStatsDto> GetMostProfitableDriversAsync()
+    public async Task<MostProfitableDriversStatsDto> GetMostProfitableDrivers()
     {
         var result = await f1PredictionsStatisticsService.GetMostProfitableDriversAsync();
         return mapper.Map<MostProfitableDriversStatsDto>(result);
