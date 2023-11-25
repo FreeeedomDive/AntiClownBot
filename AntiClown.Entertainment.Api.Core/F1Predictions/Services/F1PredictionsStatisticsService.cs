@@ -3,7 +3,7 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 
-public class F1PredictionsStatisticsService
+public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
 {
     public F1PredictionsStatisticsService(
         IF1RacesRepository f1RacesRepository,
