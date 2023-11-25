@@ -616,8 +616,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<IpCommandModule>(guildId);
         slash.RegisterCommands<SelectCommandModule>(guildId);
         slash.RegisterCommands<F1CommandModule>(guildId);
-        // TODO: uncomment for release
-        // slash.RegisterCommands<F1StatsCommand>(guildId);
+        slash.RegisterCommands<F1StatsCommand>(guildId);
 
         // admin commands
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildId);
