@@ -47,6 +47,8 @@ using AntiClown.Entertainment.Api.Dto.DailyEvents.Announce;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.ResetsAndPayments;
 using DSharpPlus;
 using MassTransit;
+using Medallion.Threading;
+using Medallion.Threading.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SqlRepositoryBase.Configuration.Extensions;
@@ -115,6 +117,13 @@ internal class Program
         builder.Services.AddTransient<DbContext, DatabaseContext>();
         builder.Services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
         builder.Services.ConfigurePostgreSql();
+
+        builder.Services.AddSingleton<IDistributedLockProvider>(
+            serviceProvider =>
+            {
+                var databaseOptions = serviceProvider.GetRequiredService<IOptions<DatabaseOptions>>();
+                return new PostgresDistributedSynchronizationProvider(databaseOptions.Value.ConnectionString);
+            });
 
         builder.Services.AddTransient<IInteractivityRepository, InteractivityRepository>();
         builder.Services.AddTransient<IReleasesRepository, ReleasesRepository>();

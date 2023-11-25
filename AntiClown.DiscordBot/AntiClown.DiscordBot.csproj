@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="DistributedLock" Version="2.3.3"/>
         <PackageReference Include="DSharpPlus" Version="4.4.2"/>
         <PackageReference Include="DSharpPlus.SlashCommands" Version="4.4.2"/>
         <PackageReference Include="MassTransit" Version="8.0.15"/>
@@ -20,7 +21,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
-        <ProjectReference Include="..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
+        <ProjectReference Include="..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj"/>
         <ProjectReference Include="..\AntiClown.Entertainment.Api.Client\AntiClown.Entertainment.Api.Client.csproj"/>
         <ProjectReference Include="..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj"/>
         <ProjectReference Include="..\Utility\Utility.csproj"/>
