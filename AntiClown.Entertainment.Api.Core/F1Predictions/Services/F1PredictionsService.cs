@@ -109,8 +109,8 @@ public class F1PredictionsService : IF1PredictionsService
             {
                 RaceId = raceId,
                 UserId = x.UserId,
-                FirstDnfPoints = x.FirstDnfPickedDriver == race.Result.FirstDnf ? PointsForCorrectFirstDnfPrediction : 0,
-                TenthPlacePoints = PointsDistribution.TryGetValue(
+                FirstDnfPoints = x.FirstDnfPickedDriver == race.Result.FirstDnf ? F1PredictionsPointsHelper.PointsForCorrectFirstDnfPrediction : 0,
+                TenthPlacePoints = F1PredictionsPointsHelper.PointsDistribution.TryGetValue(
                     driverToPosition.TryGetValue(x.TenthPlacePickedDriver, out var driverPosition) ? driverPosition : 0,
                     out var points
                 )
@@ -157,30 +157,4 @@ public class F1PredictionsService : IF1PredictionsService
 
     private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
     private readonly IF1RacesRepository f1RacesRepository;
-
-    private const int PointsForCorrectFirstDnfPrediction = 5;
-
-    private static readonly Dictionary<int, int> PointsDistribution = new()
-    {
-        { 1, 1 },
-        { 2, 2 },
-        { 3, 4 },
-        { 4, 6 },
-        { 5, 8 },
-        { 6, 10 },
-        { 7, 12 },
-        { 8, 15 },
-        { 9, 18 },
-        { 10, 25 },
-        { 11, 18 },
-        { 12, 15 },
-        { 13, 12 },
-        { 14, 10 },
-        { 15, 8 },
-        { 16, 6 },
-        { 17, 4 },
-        { 18, 2 },
-        { 19, 1 },
-        { 20, 1 },
-    };
 }
