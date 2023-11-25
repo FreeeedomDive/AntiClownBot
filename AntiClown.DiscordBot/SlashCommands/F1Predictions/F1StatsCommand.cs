@@ -32,6 +32,19 @@ public class F1StatsCommand : SlashCommandModuleWithMiddlewares
         );
     }
 
+    [SlashCommand(InteractionsIds.CommandsNames.F1Stats_MostProfitableDrivers, "Самые выбираемые гонщики")]
+    public async Task GetMostProfitableDrivers(InteractionContext interactionContext)
+    {
+        await ExecuteAsync(
+            interactionContext, async () =>
+            {
+                var mostPickedDriversByUsers = await antiClownEntertainmentApiClient.F1PredictionsStats.GetMostProfitableDriversAsync();
+                var embed = f1PredictionStatsEmbedBuilder.Build(mostPickedDriversByUsers);
+                await RespondToInteractionAsync(interactionContext, embed);
+            }
+        );
+    }
+
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IF1PredictionStatsEmbedBuilder f1PredictionStatsEmbedBuilder;
 }
