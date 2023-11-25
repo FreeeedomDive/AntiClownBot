@@ -32,7 +32,7 @@ public class F1StatsCommand : SlashCommandModuleWithMiddlewares
         );
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.F1Stats_MostProfitableDrivers, "Самые выбираемые гонщики")]
+    [SlashCommand(InteractionsIds.CommandsNames.F1Stats_MostProfitableDrivers, "\"Правильные ответы\" на предсказания")]
     public async Task GetMostProfitableDrivers(InteractionContext interactionContext)
     {
         await ExecuteAsync(
