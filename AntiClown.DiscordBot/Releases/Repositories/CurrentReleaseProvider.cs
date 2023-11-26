@@ -10,8 +10,8 @@ public class CurrentReleaseProvider : ICurrentReleaseProvider
         {
             Major = 3,
             Minor = 3,
-            Patch = 1,
-            Description = "Добавлена возможность смотреть турнирую таблицу по предсказаниям за любой сезон (на момент релиза доступен только 2023)",
+            Patch = 2,
+            Description = "Обновлен список предсказаний на текущую гонку",
             CreatedAt = DateTime.UtcNow,
         };
     }

@@ -88,17 +88,24 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                 var embed = new DiscordEmbedBuilder()
                             .WithTitle($"Предсказания на гонку {race.Name} {race.Season}")
                             .AddField(
+                                "Предсказатель",
+                                string.Join(
+                                    "\n",
+                                    race.Predictions.Select(p => apiIdToMember[p.UserId].ServerOrUserName())
+                                ), true
+                            )
+                            .AddField(
                                 "10 место",
                                 string.Join(
                                     "\n",
-                                    race.Predictions.Select(p => $"{apiIdToMember[p.UserId].ServerOrUserName()}: {p.TenthPlacePickedDriver}")
+                                    race.Predictions.Select(p => p.TenthPlacePickedDriver.ToString())
                                 ), true
                             )
                             .AddField(
                                 "Первый DNF",
                                 string.Join(
                                     "\n",
-                                    race.Predictions.Select(p => $"{apiIdToMember[p.UserId].ServerOrUserName()}: {p.FirstDnfPickedDriver}")
+                                    race.Predictions.Select(p => p.FirstDnfPickedDriver.ToString())
                                 ), true
                             ).Build();
                 await RespondToInteractionAsync(interactionContext, embed);
