@@ -117,6 +117,11 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
             interactionContext, async () =>
             {
                 var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season is null ? null : (int)season);
+                if (standings.Count == 0)
+                {
+                    await RespondToInteractionAsync(interactionContext, $"В сезоне {season} еще не было ни одной гонки");
+                    return;
+                }
                 var userToMember = standings.Keys.ToDictionary(x => x, x => usersCache.GetMemberByApiIdAsync(x).GetAwaiter().GetResult());
                 var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
                 var stringBuilder = new StringBuilder("```\n");
