@@ -92,14 +92,14 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                                 string.Join(
                                     "\n",
                                     race.Predictions.Select(p => $"{apiIdToMember[p.UserId].ServerOrUserName()}: {p.TenthPlacePickedDriver}")
-                                )
+                                ), true
                             )
                             .AddField(
                                 "Первый DNF",
                                 string.Join(
                                     "\n",
                                     race.Predictions.Select(p => $"{apiIdToMember[p.UserId].ServerOrUserName()}: {p.FirstDnfPickedDriver}")
-                                )
+                                ), true
                             ).Build();
                 await RespondToInteractionAsync(interactionContext, embed);
             }
@@ -122,6 +122,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                     await RespondToInteractionAsync(interactionContext, $"В сезоне {season} еще не было ни одной гонки");
                     return;
                 }
+
                 var userToMember = standings.Keys.ToDictionary(x => x, x => usersCache.GetMemberByApiIdAsync(x).GetAwaiter().GetResult());
                 var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
                 var stringBuilder = new StringBuilder("```\n");
