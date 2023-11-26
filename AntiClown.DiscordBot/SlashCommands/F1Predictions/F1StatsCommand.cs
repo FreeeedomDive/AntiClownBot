@@ -62,7 +62,7 @@ public class F1StatsCommand : SlashCommandModuleWithMiddlewares
         );
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.F1Stats_MostProfitableDrivers, "Показать текущие предсказания")]
+    [SlashCommand(InteractionsIds.CommandsNames.F1Stats_UserPointsStats, "Среднее и медианное количество очков за гонку")]
     public async Task GetUserPointsStats(InteractionContext interactionContext)
     {
         await ExecuteAsync(
