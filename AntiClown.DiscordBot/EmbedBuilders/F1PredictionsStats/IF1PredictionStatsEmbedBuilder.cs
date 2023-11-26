@@ -7,4 +7,5 @@ public interface IF1PredictionStatsEmbedBuilder
 {
     DiscordEmbed Build(MostPickedDriversStatsDto mostPickedDriversStats);
     DiscordEmbed Build(MostProfitableDriversStatsDto mostProfitableDriversStats);
+    DiscordEmbed Build(UserPointsStatsDto userPointsStats);
 }

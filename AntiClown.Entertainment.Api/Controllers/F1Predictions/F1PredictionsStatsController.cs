@@ -38,6 +38,13 @@ public class F1PredictionsStatsController : Controller
         return mapper.Map<MostProfitableDriversStatsDto>(result);
     }
 
+    [HttpGet("{userId:guid}/userPointsStats")]
+    public async Task<UserPointsStatsDto> GetUserPointsStats([FromRoute] Guid userId)
+    {
+        var result = await f1PredictionsStatisticsService.GetUserPointsStatsAsync(userId);
+        return mapper.Map<UserPointsStatsDto>(result);
+    }
+
     private readonly IF1PredictionsStatisticsService f1PredictionsStatisticsService;
     private readonly IMapper mapper;
 }

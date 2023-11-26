@@ -25,6 +25,16 @@ public class F1PredictionStatsEmbedBuilder : IF1PredictionStatsEmbedBuilder
         return embedBuilder.Build();
     }
 
+    public DiscordEmbed Build(UserPointsStatsDto userPointsStats)
+    {
+        var embedBuilder = new DiscordEmbedBuilder().WithTitle("Статистика по очкам");
+        embedBuilder.AddField("Гонки", userPointsStats.Races.ToString());
+        embedBuilder.AddField("Среднее за гонку", $"{userPointsStats.AveragePoints} очков");
+        embedBuilder.AddField("Медиана", $"{userPointsStats.MedianPoints} очков");
+
+        return embedBuilder.Build();
+    }
+
     private static void AddInlineFieldWithRating(DiscordEmbedBuilder embedBuilder, string title, DriverStatisticsDto[] drivers)
     {
         embedBuilder.AddField(

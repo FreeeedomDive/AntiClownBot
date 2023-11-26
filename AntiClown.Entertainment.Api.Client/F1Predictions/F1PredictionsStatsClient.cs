@@ -32,5 +32,12 @@ public class F1PredictionsStatsClient : IF1PredictionsStatsClient
         return response.TryDeserialize<MostProfitableDriversStatsDto>();
     }
 
+    public async Task<UserPointsStatsDto> GetUserPointsStats(Guid userId)
+    {
+        var request = new RestRequest($"f1Predictions/stats/{userId}/userPointsStats");
+        var response = await restClient.ExecuteGetAsync(request);
+        return response.TryDeserialize<UserPointsStatsDto>();
+    }
+
     private readonly RestClient restClient;
 }

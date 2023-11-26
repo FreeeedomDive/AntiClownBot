@@ -7,4 +7,5 @@ public interface IF1PredictionsStatisticsService
     Task<MostPickedDriversStats> GetMostPickedDriversAsync();
     Task<MostPickedDriversStats> GetMostPickedDriversAsync(Guid userId);
     Task<MostProfitableDriversStats> GetMostProfitableDriversAsync();
+    Task<UserPointsStats> GetUserPointsStatsAsync(Guid userId);
 }

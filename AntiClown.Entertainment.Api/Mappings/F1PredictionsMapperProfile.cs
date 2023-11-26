@@ -16,5 +16,6 @@ public class F1PredictionsMapperProfile : Profile
         CreateMap<DriverStatistics, DriverStatisticsDto>();
         CreateMap<MostPickedDriversStats, MostPickedDriversStatsDto>();
         CreateMap<MostProfitableDriversStats, MostProfitableDriversStatsDto>();
+        CreateMap<UserPointsStats, UserPointsStatsDto>();
     }
 }

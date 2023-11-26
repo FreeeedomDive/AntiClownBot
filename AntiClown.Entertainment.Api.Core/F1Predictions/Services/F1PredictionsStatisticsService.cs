@@ -65,6 +65,41 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
         };
     }
 
+    public async Task<UserPointsStats> GetUserPointsStatsAsync(Guid userId)
+    {
+        var userPredictionsResults = (await f1PredictionResultsRepository.FindAsync(
+            new F1PredictionResultsFilter
+            {
+                UserId = userId,
+            }
+        )).Select(x => x.TenthPlacePoints + x.FirstDnfPoints).ToArray();
+        if (userPredictionsResults.Length == 0)
+        {
+            return new UserPointsStats
+            {
+                UserId = userId,
+                Races = 0,
+                AveragePoints = 0,
+                MedianPoints = 0,
+            };
+        }
+
+        var average = userPredictionsResults.Sum() / userPredictionsResults.Length;
+        var result = new UserPointsStats
+        {
+            UserId = userId,
+            Races = userPredictionsResults.Length,
+            AveragePoints = average,
+        };
+
+        var sortedPoints = userPredictionsResults.Order().ToArray();
+        var median = sortedPoints.Length % 2 == 1
+            ? sortedPoints[sortedPoints.Length / 2]
+            : (sortedPoints[sortedPoints.Length / 2 - 1] + sortedPoints[sortedPoints.Length / 2]) / 2;
+        result.MedianPoints = median;
+        return result;
+    }
+
     public async Task<MostPickedDriversStats> GetMostPickedDriversAsync(Guid userId)
     {
         var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();

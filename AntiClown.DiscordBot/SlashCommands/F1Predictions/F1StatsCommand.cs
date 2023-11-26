@@ -62,6 +62,20 @@ public class F1StatsCommand : SlashCommandModuleWithMiddlewares
         );
     }
 
+    [SlashCommand(InteractionsIds.CommandsNames.F1Stats_MostProfitableDrivers, "Показать текущие предсказания")]
+    public async Task GetUserPointsStats(InteractionContext interactionContext)
+    {
+        await ExecuteAsync(
+            interactionContext, async () =>
+            {
+                var apiUserId = await usersCache.GetApiIdByMemberIdAsync(interactionContext.Member.Id);
+                var userPointsStats = await antiClownEntertainmentApiClient.F1PredictionsStats.GetUserPointsStats(apiUserId);
+                var embed = f1PredictionStatsEmbedBuilder.Build(userPointsStats);
+                await RespondToInteractionAsync(interactionContext, embed);
+            }
+        );
+    }
+
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IF1PredictionStatsEmbedBuilder f1PredictionStatsEmbedBuilder;
     private readonly IUsersCache usersCache;
