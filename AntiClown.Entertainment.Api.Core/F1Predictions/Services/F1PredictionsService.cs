@@ -26,6 +26,7 @@ public class F1PredictionsService : IF1PredictionsService
         var newRace = new F1Race
         {
             Id = raceId,
+            Season = DateTime.UtcNow.Year,
             Name = name,
             IsActive = true,
             IsOpened = true,
@@ -127,14 +128,20 @@ public class F1PredictionsService : IF1PredictionsService
         return participantsResults;
     }
 
-    public async Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync()
+    public async Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync(int? season)
     {
-        var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
-        var totalRaces = finishedRaces.Length;
+        var finishedRacesOfThisSeason = await f1RacesRepository.FindAsync(
+            new F1RaceFilter
+            {
+                Season = season ?? DateTime.UtcNow.Year,
+                IsActive = false,
+            }
+        );
+        var totalRaces = finishedRacesOfThisSeason.Length;
         var result = new Dictionary<Guid, F1PredictionResult?[]>();
         for (var currentRaceIndex = 0; currentRaceIndex < totalRaces; currentRaceIndex++)
         {
-            var currentRace = finishedRaces[currentRaceIndex];
+            var currentRace = finishedRacesOfThisSeason[currentRaceIndex];
             var currentRacePredictionsResults = await f1PredictionResultsRepository.FindAsync(
                 new F1PredictionResultsFilter
                 {
