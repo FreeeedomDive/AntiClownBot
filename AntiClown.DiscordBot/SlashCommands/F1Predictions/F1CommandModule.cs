@@ -86,6 +86,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                     x => usersCache.GetMemberByApiIdAsync(x.UserId).GetAwaiter().GetResult()
                 );
                 var embed = new DiscordEmbedBuilder()
+                            .WithTitle($"Предсказания на гонку {race.Name} {race.Season}")
                             .AddField(
                                 "10 место",
                                 string.Join(
@@ -105,13 +106,17 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
         );
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.F1_Results, "Показать таблицу очков за предсказания")]
-    public async Task Results(InteractionContext interactionContext)
+    [SlashCommand(InteractionsIds.CommandsNames.F1_Standings, "Показать таблицу очков за предсказания")]
+    public async Task Standings(
+        InteractionContext interactionContext,
+        [Option("season", "Сезон (по умолчанию текущий год)")]
+        long? season = null
+    )
     {
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync();
+                var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season is null ? null : (int)season);
                 var userToMember = standings.Keys.ToDictionary(x => x, x => usersCache.GetMemberByApiIdAsync(x).GetAwaiter().GetResult());
                 var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
                 var stringBuilder = new StringBuilder("```\n");

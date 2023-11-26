@@ -69,7 +69,7 @@ public class F1PredictionsController : Controller
     }
 
     [HttpGet("standings")]
-    public async Task<ActionResult<Dictionary<Guid, F1PredictionResultDto?[]>>> ReadStandingsAsync([FromQuery] int? season)
+    public async Task<ActionResult<Dictionary<Guid, F1PredictionResultDto?[]>>> ReadStandingsAsync([FromQuery] int? season = null)
     {
         var result = await f1PredictionsService.ReadStandingsAsync(season);
         return mapper.Map<Dictionary<Guid, F1PredictionResultDto?[]>>(result);

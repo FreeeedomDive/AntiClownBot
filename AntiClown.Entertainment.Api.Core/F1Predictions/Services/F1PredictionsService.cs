@@ -128,7 +128,7 @@ public class F1PredictionsService : IF1PredictionsService
         return participantsResults;
     }
 
-    public async Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync(int? season)
+    public async Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync(int? season = null)
     {
         var finishedRacesOfThisSeason = await f1RacesRepository.FindAsync(
             new F1RaceFilter
