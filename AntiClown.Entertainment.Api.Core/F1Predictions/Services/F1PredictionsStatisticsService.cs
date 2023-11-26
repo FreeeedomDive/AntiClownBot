@@ -84,7 +84,7 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
             };
         }
 
-        var average = userPredictionsResults.Sum() / userPredictionsResults.Length;
+        var average = userPredictionsResults.Sum() / (double)userPredictionsResults.Length;
         var result = new UserPointsStats
         {
             UserId = userId,
@@ -95,7 +95,7 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
         var sortedPoints = userPredictionsResults.Order().ToArray();
         var median = sortedPoints.Length % 2 == 1
             ? sortedPoints[sortedPoints.Length / 2]
-            : (sortedPoints[sortedPoints.Length / 2 - 1] + sortedPoints[sortedPoints.Length / 2]) / 2;
+            : (double)(sortedPoints[sortedPoints.Length / 2 - 1] + sortedPoints[sortedPoints.Length / 2]) / 2;
         result.MedianPoints = median;
         return result;
     }

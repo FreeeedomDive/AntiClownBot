@@ -4,6 +4,6 @@ public class UserPointsStatsDto
 {
     public Guid UserId { get; set; }
     public int Races { get; set; }
-    public int AveragePoints { get; set; }
-    public int MedianPoints { get; set; }
+    public double AveragePoints { get; set; }
+    public double MedianPoints { get; set; }
 }
