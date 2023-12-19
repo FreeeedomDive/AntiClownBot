@@ -616,6 +616,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<IpCommandModule>(guildId);
         slash.RegisterCommands<SelectCommandModule>(guildId);
         slash.RegisterCommands<F1CommandModule>(guildId);
+        slash.RegisterCommands<F1StatsCommand>(guildId);
+
         // admin commands
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildId);
         slash.RegisterCommands<DailyResetCommandModule>(guildId);
@@ -623,7 +625,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<CreateMessageCommandModule>(guildId);
         slash.RegisterCommands<EventsCommandModule>(guildId);
         slash.RegisterCommands<F1AdminCommandModule>(guildId);
-        slash.RegisterCommands<RolesAdminCommandModule>();
+        slash.RegisterCommands<RolesAdminCommandModule>(guildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)

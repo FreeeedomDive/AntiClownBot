@@ -123,6 +123,7 @@ public class Startup
         services.AddTransient<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
         services.AddTransient<IPartiesService, PartiesService>();
         services.AddTransient<IF1PredictionsService, F1PredictionsService>();
+        services.AddTransient<IF1PredictionsStatisticsService, F1PredictionsStatisticsService>();
 
         // configure HangFire
         services.AddHangfire(

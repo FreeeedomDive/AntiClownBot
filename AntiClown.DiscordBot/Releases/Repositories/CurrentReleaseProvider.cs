@@ -9,9 +9,9 @@ public class CurrentReleaseProvider : ICurrentReleaseProvider
         return new ReleaseVersion
         {
             Major = 3,
-            Minor = 2,
-            Patch = 0,
-            Description = "Технический релиз\nВсе настройки вынесены в отдельный сервис для легкого редактирования",
+            Minor = 3,
+            Patch = 2,
+            Description = "Обновлен список предсказаний на текущую гонку",
             CreatedAt = DateTime.UtcNow,
         };
     }

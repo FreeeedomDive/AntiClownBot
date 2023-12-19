@@ -1,6 +1,7 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using SqlRepositoryBase.Core.Extensions;
 using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
@@ -34,6 +35,17 @@ public class F1RacesRepository : IF1RacesRepository
         return result.Select(ToModel).ToArray();
     }
 
+    public async Task<F1Race[]> FindAsync(F1RaceFilter filter)
+    {
+        var result = await sqlRepository
+                           .BuildCustomQuery()
+                           .WhereIf(filter.Name is not null, x => x.Name == filter.Name)
+                           .WhereIf(filter.Season is not null, x => x.Season == filter.Season!.Value)
+                           .WhereIf(filter.IsActive is not null, x => x.IsActive == filter.IsActive!.Value)
+                           .ToArrayAsync();
+        return result.Select(ToModel).ToArray();
+    }
+
     public async Task UpdateAsync(F1Race race)
     {
         var storageElement = ToStorageElement(race);
@@ -53,6 +65,8 @@ public class F1RacesRepository : IF1RacesRepository
         return new F1RaceStorageElement
         {
             Id = race.Id,
+            Season = race.Season,
+            Name = race.Name,
             IsActive = race.IsActive,
             IsOpened = race.IsOpened,
             SerializedPredictions = JsonConvert.SerializeObject(race.Predictions),
@@ -65,6 +79,8 @@ public class F1RacesRepository : IF1RacesRepository
         return new F1Race
         {
             Id = storageElement.Id,
+            Season = storageElement.Season,
+            Name = storageElement.Name,
             IsActive = storageElement.IsActive,
             IsOpened = storageElement.IsOpened,
             Predictions = JsonConvert.DeserializeObject<List<F1Prediction>>(storageElement.SerializedPredictions)!,

@@ -139,7 +139,13 @@ public static class InteractionsIds
         public const string F1_Group = "f1";
         public const string F1_Predict = "predict";
         public const string F1_List = "list";
-        public const string F1_Results = "results";
+        public const string F1_Standings = "standings";
+
+        public const string F1Stats_Group = "f1stats";
+        public const string F1Stats_MostPickedDrivers = "mostPickedDrivers";
+        public const string F1Stats_MostPickedDriversByUser = "mostPickedDriversByUser";
+        public const string F1Stats_MostProfitableDrivers = "mostProfitableDrivers";
+        public const string F1Stats_UserPointsStats = "userPointsStats";
 
         public const string Ip = "ip";
 

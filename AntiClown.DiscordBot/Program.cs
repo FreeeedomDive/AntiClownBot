@@ -11,6 +11,7 @@ using AntiClown.DiscordBot.Consumers.Events.Daily;
 using AntiClown.DiscordBot.Database;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
+using AntiClown.DiscordBot.EmbedBuilders.F1PredictionsStats;
 using AntiClown.DiscordBot.EmbedBuilders.GuessNumber;
 using AntiClown.DiscordBot.EmbedBuilders.Inventories;
 using AntiClown.DiscordBot.EmbedBuilders.Lottery;
@@ -201,6 +202,7 @@ internal class Program
         builder.Services.AddTransient<IRatingEmbedBuilder, RatingEmbedBuilder>();
         builder.Services.AddTransient<ILootBoxEmbedBuilder, LootBoxEmbedBuilder>();
         builder.Services.AddTransient<IReleaseEmbedBuilder, ReleaseEmbedBuilder>();
+        builder.Services.AddTransient<IF1PredictionStatsEmbedBuilder, F1PredictionStatsEmbedBuilder>();
     }
 
     private static void BuildInteractivityServices(WebApplicationBuilder builder)

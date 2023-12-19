@@ -3,6 +3,7 @@
 public class F1Race
 {
     public Guid Id { get; set; }
+    public int Season { get; set; }
     public string Name { get; set; }
     public bool IsActive { get; set; }
     public bool IsOpened { get; set; }

@@ -14,10 +14,12 @@ public class AntiClownEntertainmentApiClient : IAntiClownEntertainmentApiClient
         DailyEvents = new DailyEventsClient(restClient);
         Parties = new PartiesClient(restClient);
         F1Predictions = new F1PredictionsClient(restClient);
+        F1PredictionsStats = new F1PredictionsStatsClient(restClient);
     }
 
     public ICommonEventsClient CommonEvents { get; }
     public IDailyEventsClient DailyEvents { get; }
     public IPartiesClient Parties { get; }
     public IF1PredictionsClient F1Predictions { get; }
+    public IF1PredictionsStatsClient F1PredictionsStats { get; }
 }

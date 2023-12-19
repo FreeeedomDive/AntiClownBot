@@ -11,4 +11,5 @@ public interface IAntiClownEntertainmentApiClient
     IDailyEventsClient DailyEvents { get; }
     IPartiesClient Parties { get; }
     IF1PredictionsClient F1Predictions { get; }
+    IF1PredictionsStatsClient F1PredictionsStats { get; }
 }

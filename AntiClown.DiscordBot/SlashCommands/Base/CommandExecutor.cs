@@ -12,7 +12,7 @@ public class CommandExecutor : ICommandExecutor
 
     public void AddMiddleware<T>() where T : ICommandMiddleware
     {
-        var middleware = serviceProvider.GetService<T>() ?? throw new ArgumentException($"{typeof(T)} was not provided in DI-container");
+        var middleware = serviceProvider.GetRequiredService<T>();
         middlewares.Push(middleware);
     }
 
