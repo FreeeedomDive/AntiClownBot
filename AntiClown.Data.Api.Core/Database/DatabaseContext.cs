@@ -1,7 +1,5 @@
-﻿using AntiClown.Data.Api.Core.Options;
-using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
+﻿using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using SqlRepositoryBase.Core.ContextBuilders;
 
 namespace AntiClown.Data.Api.Core.Database;

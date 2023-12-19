@@ -1,9 +1,7 @@
 ﻿using AntiClown.Data.Api.Core.Database;
-using AntiClown.Data.Api.Core.Options;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
 using AntiClown.Data.Api.Core.SettingsStoring.Services;
 using AntiClown.Data.Api.Middlewares;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Configuration.Extensions;
 using TelemetryApp.Utilities.Extensions;
