@@ -51,6 +51,7 @@ using Medallion.Threading;
 using Medallion.Threading.Postgres;
 using Microsoft.Extensions.Options;
 using SqlRepositoryBase.Configuration.Extensions;
+using SqlRepositoryBase.Core.Options;
 using TelemetryApp.Utilities.Extensions;
 
 namespace AntiClown.DiscordBot;
@@ -119,7 +120,7 @@ internal class Program
         builder.Services.AddSingleton<IDistributedLockProvider>(
             serviceProvider =>
             {
-                var databaseOptions = serviceProvider.GetRequiredService<IOptions<DatabaseOptions>>();
+                var databaseOptions = serviceProvider.GetRequiredService<IOptions<AppSettingsDatabaseOptions>>();
                 return new PostgresDistributedSynchronizationProvider(databaseOptions.Value.ConnectionString);
             }
         );
