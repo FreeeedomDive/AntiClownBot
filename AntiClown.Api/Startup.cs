@@ -19,10 +19,10 @@ using AntiClown.Data.Api.Client.Configuration;
 using Hangfire;
 using Hangfire.PostgreSql;
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Configuration.Extensions;
+using SqlRepositoryBase.Core.Options;
 using SqlRepositoryBase.Core.Repository;
 using TelemetryApp.Utilities.Extensions;
 using TelemetryApp.Utilities.Middlewares;
@@ -113,7 +113,7 @@ public class Startup
         // configure HangFire
         services.AddHangfire(
             (serviceProvider, config) =>
-                config.UsePostgreSqlStorage(serviceProvider.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString)
+                config.UsePostgreSqlStorage(serviceProvider.GetRequiredService<IOptions<AppSettingsDatabaseOptions>>().Value.ConnectionString)
         );
         services.AddHangfireServer();
 
