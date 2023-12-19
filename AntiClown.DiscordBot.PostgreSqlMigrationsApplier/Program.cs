@@ -1,14 +1,15 @@
 using AntiClown.DiscordBot.Database;
-using AntiClown.DiscordBot.Options;
 using Microsoft.EntityFrameworkCore;
+using SqlRepositoryBase.Configuration.Extensions;
+using SqlRepositoryBase.Core.ContextBuilders;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var postgresSection = builder.Configuration.GetSection("PostgreSql");
-builder.Services.Configure<DatabaseOptions>(postgresSection);
-builder.Services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
+builder.Services.ConfigureConnectionStringFromAppSettings(builder.Configuration.GetSection("PostgreSql"))
+       .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
+       .ConfigurePostgreSql();
 
 var app = builder.Build();
 
-var databaseContext = app.Services.GetService<DatabaseContext>()!;
+var databaseContextFactory = app.Services.GetRequiredService<IDbContextFactory>();
+var databaseContext = databaseContextFactory.Build();
 await databaseContext.Database.MigrateAsync();
