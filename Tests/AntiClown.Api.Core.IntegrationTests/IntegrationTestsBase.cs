@@ -19,9 +19,8 @@ using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Dto.Settings;
 using AutoFixture;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using NSubstitute;
+using SqlRepositoryBase.Core.ContextBuilders;
 using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api.Core.IntegrationTests;
@@ -37,35 +36,28 @@ public class IntegrationTestsBase
         var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddMaps(assemblies));
         var mapper = mapperConfiguration.CreateMapper();
 
-        var databaseContext = new DatabaseContext(
-            new DbContextOptions<DatabaseContext>(), new OptionsWrapper<DatabaseOptions>(
-                new DatabaseOptions
-                {
-                    ConnectionString = Environment.GetEnvironmentVariable("AntiClown.Tests.PostgreSqlConnectionString")
-                                       ?? throw new InvalidOperationException("No ConnectionString was provided"),
-                }
-            )
-        );
+        var connectionStringProvider = new TestsConnectionStringProvider();
+        var dbContextFactory = new DbContextFactory(connectionStringProvider, connectionString => new DatabaseContext(connectionString));
 
-        var usersSqlRepository = new SqlRepository<UserStorageElement>(databaseContext);
+        var usersSqlRepository = new SqlRepository<UserStorageElement>(dbContextFactory);
         var usersRepository = new UsersRepository(usersSqlRepository, mapper);
 
-        var economiesSqlRepository = new VersionedSqlRepository<EconomyStorageElement>(databaseContext);
+        var economiesSqlRepository = new VersionedSqlRepository<EconomyStorageElement>(dbContextFactory);
         var economiesRepository = new EconomyRepository(economiesSqlRepository, mapper);
 
-        var transactionsSqlRepository = new SqlRepository<TransactionStorageElement>(databaseContext);
+        var transactionsSqlRepository = new SqlRepository<TransactionStorageElement>(dbContextFactory);
         var transactionsRepository = new TransactionsRepository(transactionsSqlRepository, mapper);
 
-        var itemsSqlRepository = new SqlRepository<ItemStorageElement>(databaseContext);
+        var itemsSqlRepository = new SqlRepository<ItemStorageElement>(dbContextFactory);
         var itemsRepository = new ItemsRepository(itemsSqlRepository, mapper);
 
-        var shopsSqlRepository = new VersionedSqlRepository<ShopStorageElement>(databaseContext);
+        var shopsSqlRepository = new VersionedSqlRepository<ShopStorageElement>(dbContextFactory);
         ShopsRepository = new ShopsRepository(shopsSqlRepository, mapper);
 
-        var shopItemsSqlRepository = new SqlRepository<ShopItemStorageElement>(databaseContext);
+        var shopItemsSqlRepository = new SqlRepository<ShopItemStorageElement>(dbContextFactory);
         ShopItemsRepository = new ShopItemsRepository(shopItemsSqlRepository, mapper);
 
-        var shopStatsSqlRepository = new VersionedSqlRepository<ShopStatsStorageElement>(databaseContext);
+        var shopStatsSqlRepository = new VersionedSqlRepository<ShopStatsStorageElement>(dbContextFactory);
         ShopStatsRepository = new ShopStatsRepository(shopStatsSqlRepository, mapper);
 
         AntiClownDataApiClient = Substitute.For<IAntiClownDataApiClient>();

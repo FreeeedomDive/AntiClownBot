@@ -43,16 +43,15 @@ public class Startup
         // configure AutoMapper
         services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
-        services.Configure<DatabaseOptions>(Configuration.GetSection("PostgreSql"));
         services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMQ"));
         services.Configure<AntiClownDataApiConnectionOptions>(Configuration.GetSection("AntiClownDataApi"));
         var telemetryApiUrl = Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
         services.ConfigureTelemetryClientWithLogger("AntiClownBot", "Api", telemetryApiUrl);
 
         // configure database
-        services.AddTransient<DbContext, DatabaseContext>();
-        services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
-        services.ConfigurePostgreSql();
+        services.ConfigureConnectionStringFromAppSettings(Configuration.GetSection("PostgreSql"))
+                .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
+                .ConfigurePostgreSql();
 
         services.AddMassTransit(
             massTransitConfiguration =>
@@ -61,7 +60,7 @@ public class Startup
                 massTransitConfiguration.UsingRabbitMq(
                     (context, rabbitMqConfiguration) =>
                     {
-                        var rabbitMqOptions = context.GetService<IOptions<RabbitMqOptions>>()!.Value;
+                        var rabbitMqOptions = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
                         rabbitMqConfiguration.ConfigureEndpoints(context);
                         rabbitMqConfiguration.Host(
                             rabbitMqOptions.Host, "/", hostConfiguration =>

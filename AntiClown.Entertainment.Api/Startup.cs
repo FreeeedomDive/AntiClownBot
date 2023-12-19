@@ -31,7 +31,6 @@ using AntiClown.Entertainment.Api.Middlewares;
 using Hangfire;
 using Hangfire.PostgreSql;
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Configuration.Extensions;
@@ -54,7 +53,6 @@ public class Startup
         // configure AutoMapper
         services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
-        services.Configure<DatabaseOptions>(Configuration.GetSection("PostgreSql"));
         services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMQ"));
         services.Configure<AntiClownApiConnectionOptions>(Configuration.GetSection("AntiClownApi"));
         services.Configure<AntiClownDataApiConnectionOptions>(Configuration.GetSection("AntiClownDataApi"));
@@ -62,9 +60,9 @@ public class Startup
         services.ConfigureTelemetryClientWithLogger("AntiClownBot", "EntertainmentApi", telemetryApiUrl);
 
         // configure database
-        services.AddTransient<DbContext, DatabaseContext>();
-        services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
-        services.ConfigurePostgreSql();
+        services.ConfigureConnectionStringFromAppSettings(Configuration.GetSection("PostgreSql"))
+                .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
+                .ConfigurePostgreSql();
 
         services.AddMassTransit(
             massTransitConfiguration =>

@@ -25,14 +25,13 @@ public class Startup
         // configure AutoMapper
         services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
-        services.Configure<DatabaseOptions>(Configuration.GetSection("PostgreSql"));
         var telemetryApiUrl = Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
         services.ConfigureTelemetryClientWithLogger("AntiClownBot", "DataApi", telemetryApiUrl);
 
         // configure database
-        services.AddTransient<DbContext, DatabaseContext>();
-        services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
-        services.ConfigurePostgreSql();
+        services.ConfigureConnectionStringFromAppSettings(Configuration.GetSection("PostgreSql"))
+                .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
+                .ConfigurePostgreSql();
 
         // configure repositories
         services.AddTransient<ISettingsRepository, SettingsRepository>();
