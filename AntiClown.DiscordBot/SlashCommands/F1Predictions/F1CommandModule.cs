@@ -86,32 +86,50 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                     x => usersCache.GetMemberByApiIdAsync(x.UserId).GetAwaiter().GetResult()
                 );
                 var embed = new DiscordEmbedBuilder()
+                            .WithTitle($"Предсказания на гонку {race.Name} {race.Season}")
+                            .AddField(
+                                "Предсказатель",
+                                string.Join(
+                                    "\n",
+                                    race.Predictions.Select(p => apiIdToMember[p.UserId].ServerOrUserName())
+                                ), true
+                            )
                             .AddField(
                                 "10 место",
                                 string.Join(
                                     "\n",
-                                    race.Predictions.Select(p => $"{apiIdToMember[p.UserId].ServerOrUserName()}: {p.TenthPlacePickedDriver}")
-                                )
+                                    race.Predictions.Select(p => p.TenthPlacePickedDriver.ToString())
+                                ), true
                             )
                             .AddField(
                                 "Первый DNF",
                                 string.Join(
                                     "\n",
-                                    race.Predictions.Select(p => $"{apiIdToMember[p.UserId].ServerOrUserName()}: {p.FirstDnfPickedDriver}")
-                                )
+                                    race.Predictions.Select(p => p.FirstDnfPickedDriver.ToString())
+                                ), true
                             ).Build();
                 await RespondToInteractionAsync(interactionContext, embed);
             }
         );
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.F1_Results, "Показать таблицу очков за предсказания")]
-    public async Task Results(InteractionContext interactionContext)
+    [SlashCommand(InteractionsIds.CommandsNames.F1_Standings, "Показать таблицу очков за предсказания")]
+    public async Task Standings(
+        InteractionContext interactionContext,
+        [Option("season", "Сезон (по умолчанию текущий год)")]
+        long? season = null
+    )
     {
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync();
+                var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season is null ? null : (int)season);
+                if (standings.Count == 0)
+                {
+                    await RespondToInteractionAsync(interactionContext, $"В сезоне {season} еще не было ни одной гонки");
+                    return;
+                }
+
                 var userToMember = standings.Keys.ToDictionary(x => x, x => usersCache.GetMemberByApiIdAsync(x).GetAwaiter().GetResult());
                 var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
                 var stringBuilder = new StringBuilder("```\n");

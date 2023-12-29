@@ -11,6 +11,7 @@ using AntiClown.DiscordBot.Consumers.Events.Daily;
 using AntiClown.DiscordBot.Database;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
+using AntiClown.DiscordBot.EmbedBuilders.F1PredictionsStats;
 using AntiClown.DiscordBot.EmbedBuilders.GuessNumber;
 using AntiClown.DiscordBot.EmbedBuilders.Inventories;
 using AntiClown.DiscordBot.EmbedBuilders.Lottery;
@@ -47,9 +48,11 @@ using AntiClown.Entertainment.Api.Dto.DailyEvents.Announce;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.ResetsAndPayments;
 using DSharpPlus;
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
+using Medallion.Threading;
+using Medallion.Threading.Postgres;
 using Microsoft.Extensions.Options;
 using SqlRepositoryBase.Configuration.Extensions;
+using SqlRepositoryBase.Core.Options;
 using TelemetryApp.Utilities.Extensions;
 
 namespace AntiClown.DiscordBot;
@@ -102,7 +105,6 @@ internal class Program
 
     private static void ConfigureOptions(WebApplicationBuilder builder)
     {
-        builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection("PostgreSql"));
         builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMQ"));
         builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
         builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));
@@ -112,9 +114,17 @@ internal class Program
 
     private static void ConfigurePostgreSql(WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<DbContext, DatabaseContext>();
-        builder.Services.AddDbContext<DatabaseContext>(ServiceLifetime.Transient, ServiceLifetime.Transient);
-        builder.Services.ConfigurePostgreSql();
+        builder.Services.ConfigureConnectionStringFromAppSettings(builder.Configuration.GetSection("PostgreSql"))
+               .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
+               .ConfigurePostgreSql();
+
+        builder.Services.AddSingleton<IDistributedLockProvider>(
+            serviceProvider =>
+            {
+                var databaseOptions = serviceProvider.GetRequiredService<IOptions<AppSettingsDatabaseOptions>>();
+                return new PostgresDistributedSynchronizationProvider(databaseOptions.Value.ConnectionString);
+            }
+        );
 
         builder.Services.AddTransient<IInteractivityRepository, InteractivityRepository>();
         builder.Services.AddTransient<IReleasesRepository, ReleasesRepository>();
@@ -127,7 +137,9 @@ internal class Program
             serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownApiConnectionOptions>>().Value.ServiceUrl)
         );
         builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(
-            serviceProvider => AntiClownEntertainmentApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownEntertainmentApiConnectionOptions>>().Value.ServiceUrl)
+            serviceProvider => AntiClownEntertainmentApiClientProvider.Build(
+                serviceProvider.GetRequiredService<IOptions<AntiClownEntertainmentApiConnectionOptions>>().Value.ServiceUrl
+            )
         );
         builder.Services.AddTransient<IAntiClownDataApiClient>(
             serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
@@ -190,6 +202,7 @@ internal class Program
         builder.Services.AddTransient<IRatingEmbedBuilder, RatingEmbedBuilder>();
         builder.Services.AddTransient<ILootBoxEmbedBuilder, LootBoxEmbedBuilder>();
         builder.Services.AddTransient<IReleaseEmbedBuilder, ReleaseEmbedBuilder>();
+        builder.Services.AddTransient<IF1PredictionStatsEmbedBuilder, F1PredictionStatsEmbedBuilder>();
     }
 
     private static void BuildInteractivityServices(WebApplicationBuilder builder)

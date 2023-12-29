@@ -11,5 +11,5 @@ public interface IF1PredictionsClient
     Task AddFirstDnfResultAsync(Guid raceId, F1DriverDto firstDnfDriver);
     Task AddClassificationsResultAsync(Guid raceId, F1DriverDto[] f1Drivers);
     Task<F1PredictionResultDto[]> FinishRaceAsync(Guid raceId);
-    Task<Dictionary<Guid, F1PredictionResultDto?[]>> ReadStandingsAsync();
+    Task<Dictionary<Guid, F1PredictionResultDto?[]>> ReadStandingsAsync(int? season = null);
 }

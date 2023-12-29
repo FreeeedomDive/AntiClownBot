@@ -209,6 +209,13 @@ namespace AntiClown.Entertainment.Api.Core.Migrations
                     b.Property<bool>("IsOpened")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Season")
+                        .HasColumnType("integer");
+
                     b.Property<string>("SerializedPredictions")
                         .IsRequired()
                         .HasColumnType("text");
@@ -223,6 +230,10 @@ namespace AntiClown.Entertainment.Api.Core.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("IsActive");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("Season");
 
                     b.ToTable("F1PredictionsRaces");
                 });

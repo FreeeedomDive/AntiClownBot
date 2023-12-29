@@ -8,7 +8,7 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="12.0.1"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
-        <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.14"/>
+        <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.0.17" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj"/>

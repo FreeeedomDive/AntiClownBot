@@ -26,6 +26,7 @@ public class F1PredictionsService : IF1PredictionsService
         var newRace = new F1Race
         {
             Id = raceId,
+            Season = DateTime.UtcNow.Year,
             Name = name,
             IsActive = true,
             IsOpened = true,
@@ -109,8 +110,8 @@ public class F1PredictionsService : IF1PredictionsService
             {
                 RaceId = raceId,
                 UserId = x.UserId,
-                FirstDnfPoints = x.FirstDnfPickedDriver == race.Result.FirstDnf ? PointsForCorrectFirstDnfPrediction : 0,
-                TenthPlacePoints = PointsDistribution.TryGetValue(
+                FirstDnfPoints = x.FirstDnfPickedDriver == race.Result.FirstDnf ? F1PredictionsPointsHelper.PointsForCorrectFirstDnfPrediction : 0,
+                TenthPlacePoints = F1PredictionsPointsHelper.PointsDistribution.TryGetValue(
                     driverToPosition.TryGetValue(x.TenthPlacePickedDriver, out var driverPosition) ? driverPosition : 0,
                     out var points
                 )
@@ -127,14 +128,20 @@ public class F1PredictionsService : IF1PredictionsService
         return participantsResults;
     }
 
-    public async Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync()
+    public async Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync(int? season = null)
     {
-        var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
-        var totalRaces = finishedRaces.Length;
+        var finishedRacesOfThisSeason = await f1RacesRepository.FindAsync(
+            new F1RaceFilter
+            {
+                Season = season ?? DateTime.UtcNow.Year,
+                IsActive = false,
+            }
+        );
+        var totalRaces = finishedRacesOfThisSeason.Length;
         var result = new Dictionary<Guid, F1PredictionResult?[]>();
         for (var currentRaceIndex = 0; currentRaceIndex < totalRaces; currentRaceIndex++)
         {
-            var currentRace = finishedRaces[currentRaceIndex];
+            var currentRace = finishedRacesOfThisSeason[currentRaceIndex];
             var currentRacePredictionsResults = await f1PredictionResultsRepository.FindAsync(
                 new F1PredictionResultsFilter
                 {
@@ -157,30 +164,4 @@ public class F1PredictionsService : IF1PredictionsService
 
     private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
     private readonly IF1RacesRepository f1RacesRepository;
-
-    private const int PointsForCorrectFirstDnfPrediction = 5;
-
-    private static readonly Dictionary<int, int> PointsDistribution = new()
-    {
-        { 1, 1 },
-        { 2, 2 },
-        { 3, 4 },
-        { 4, 6 },
-        { 5, 8 },
-        { 6, 10 },
-        { 7, 12 },
-        { 8, 15 },
-        { 9, 18 },
-        { 10, 25 },
-        { 11, 18 },
-        { 12, 15 },
-        { 13, 12 },
-        { 14, 10 },
-        { 15, 8 },
-        { 16, 6 },
-        { 17, 4 },
-        { 18, 2 },
-        { 19, 1 },
-        { 20, 1 },
-    };
 }
