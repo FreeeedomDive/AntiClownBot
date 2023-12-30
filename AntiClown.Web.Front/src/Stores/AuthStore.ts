@@ -1,14 +1,18 @@
 import { makeAutoObservable } from "mobx";
 import { Cookies } from "react-cookie";
 
-const cookies = new Cookies();
+const cookies = new Cookies({}, {
+  path: "/"
+});
 
 export class AuthStore {
   userId: string | undefined;
 
   constructor() {
     makeAutoObservable(this);
-    this.userId = cookies.get("userId");
+    this.userId = cookies.get("userId", {
+      doNotParse: true,
+    });
   }
 
   setUserId(userId: string) {

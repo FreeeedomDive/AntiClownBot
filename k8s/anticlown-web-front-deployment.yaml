@@ -1,0 +1,31 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anticlown-web-front-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anticlownwebfront
+  template:
+    metadata:
+      labels:
+        app: anticlownwebfront
+    spec:
+      containers:
+        - name: anticlownwebfront
+          image: localhost:5000/anticlownwebfront
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: anticlown-web-front-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: anticlownwebfront
+  ports:
+    - name: anticlownwebfront
+      protocol: TCP
+      port: 6820
+      targetPort: 6820
