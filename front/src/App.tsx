@@ -1,16 +1,31 @@
-import React from 'react';
-import './App.css';
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import UserMainPage from "./Routes/User/UserMainPage";
+import "./App.css";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import UserMainPage from "./Routes/User/MainPage/UserMainPage";
+import LoginPage from "./Routes/Auth/LoginPage";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import React from "react";
+
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+    background: {
+      default: "#000019",
+    },
+  },
+});
 
 function App() {
   return (
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
       <BrowserRouter basename="/">
         <Routes>
-            <Route path="/" element={<div>Login page</div>}/>
-            <Route path="/:userId" element={<UserMainPage/>}/>
+          <Route path="/" element={<Navigate to={"/auth"} />} />
+          <Route path="/auth" element={<LoginPage />} />
+          <Route path="/user/:userId/*" element={<UserMainPage />} />
         </Routes>
       </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
