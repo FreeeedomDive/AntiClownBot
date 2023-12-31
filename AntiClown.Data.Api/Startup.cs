@@ -26,7 +26,8 @@ public class Startup
         services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
         var telemetryApiUrl = Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
-        services.ConfigureTelemetryClientWithLogger("AntiClownBot", "DataApi", telemetryApiUrl);
+        var deployingEnvironment = Configuration.GetValue<string>("DeployingEnvironment") ?? "Production";
+        services.ConfigureTelemetryClientWithLogger($"AntiClownBot_{deployingEnvironment}", "DataApi", telemetryApiUrl);
 
         // configure database
         services.ConfigureConnectionStringFromAppSettings(Configuration.GetSection("PostgreSql"))

@@ -46,7 +46,8 @@ public class Startup
         services.Configure<RabbitMqOptions>(Configuration.GetSection("RabbitMQ"));
         services.Configure<AntiClownDataApiConnectionOptions>(Configuration.GetSection("AntiClownDataApi"));
         var telemetryApiUrl = Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
-        services.ConfigureTelemetryClientWithLogger("AntiClownBot", "Api", telemetryApiUrl);
+        var deployingEnvironment = Configuration.GetValue<string>("DeployingEnvironment") ?? "Production";
+        services.ConfigureTelemetryClientWithLogger($"AntiClownBot_{deployingEnvironment}", "Api", telemetryApiUrl);
 
         // configure database
         services.ConfigureConnectionStringFromAppSettings(Configuration.GetSection("PostgreSql"))
