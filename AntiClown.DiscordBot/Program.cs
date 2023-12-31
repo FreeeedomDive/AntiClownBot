@@ -65,8 +65,12 @@ internal class Program
 
         builder.Services.AddLogging();
         var telemetryApiUrl = builder.Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
-        var deployingEnvironment = builder.Configuration.GetValue<string>("DeployingEnvironment") ?? "Production";
-        builder.Services.ConfigureTelemetryClientWithLogger($"AntiClownBot_{deployingEnvironment}", "DiscordBot", telemetryApiUrl);
+        var deployingEnvironment = builder.Configuration.GetValue<string>("DeployingEnvironment");
+        builder.Services.ConfigureTelemetryClientWithLogger(
+            "AntiClownBot" + (string.IsNullOrEmpty(deployingEnvironment) ? "" : $"_{deployingEnvironment}"),
+            "DiscordBot",
+            telemetryApiUrl
+        );
 
         ConfigureOptions(builder);
         ConfigurePostgreSql(builder);
