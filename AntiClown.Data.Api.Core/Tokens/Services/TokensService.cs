@@ -22,12 +22,10 @@ public class TokensService : ITokensService
     public async Task ValidateAsync(Guid userId, string token)
     {
         var existingToken = await tokensRepository.TryReadAsync(userId);
-        if (existingToken == token)
+        if (existingToken is null || existingToken != token)
         {
-            return;
+            throw new AntiClownUnauthorizedException($"Wrong token was provided for user {userId}");
         }
-
-        throw new AntiClownUnauthorizedException($"Wrong token was provided for user {userId}");
     }
 
     public async Task<string> GetAsync(Guid userId)
