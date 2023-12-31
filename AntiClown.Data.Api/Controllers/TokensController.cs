@@ -28,7 +28,7 @@ public class TokensController : Controller
     [HttpGet]
     public async Task<ActionResult<string>> GetAsync([FromRoute] Guid userId)
     {
-        return await tokensService.GetAsync(userId);
+        return Json(await tokensService.GetAsync(userId));
     }
 
     private readonly ITokensService tokensService;

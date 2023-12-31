@@ -115,6 +115,7 @@ internal class Program
         builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));
         builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
         builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
+        builder.Services.Configure<WebOptions>(builder.Configuration.GetSection("Web"));
     }
 
     private static void ConfigurePostgreSql(WebApplicationBuilder builder)

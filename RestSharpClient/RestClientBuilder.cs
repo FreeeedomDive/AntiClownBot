@@ -1,10 +1,10 @@
 ﻿using RestSharp;
 
-namespace RestClient;
+namespace RestSharpClient;
 
 public static class RestClientBuilder
 {
-    public static RestSharp.RestClient BuildRestClient(string url, bool validateSsl = true)
+    public static RestClient BuildRestClient(string url, bool validateSsl = true)
     {
         var restClientOptions = new RestClientOptions
         {
@@ -14,6 +14,6 @@ public static class RestClientBuilder
         {
             restClientOptions.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
         }
-        return new RestSharp.RestClient(restClientOptions);
+        return new RestClient(restClientOptions);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Dto.MinecraftServerDto;
-using RestClient;
+using RestSharpClient;
 using RestSharp;
 
 namespace CommonServices.IpService;

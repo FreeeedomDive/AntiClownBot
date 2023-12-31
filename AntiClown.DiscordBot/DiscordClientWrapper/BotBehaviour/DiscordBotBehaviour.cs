@@ -27,6 +27,7 @@ using AntiClown.DiscordBot.SlashCommands.Other.Race;
 using AntiClown.DiscordBot.SlashCommands.Random;
 using AntiClown.DiscordBot.SlashCommands.Roles;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
+using AntiClown.DiscordBot.SlashCommands.Web;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AntiClown.Tools.Utility.Extensions;
@@ -617,6 +618,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<SelectCommandModule>(guildId);
         slash.RegisterCommands<F1CommandModule>(guildId);
         slash.RegisterCommands<F1StatsCommand>(guildId);
+        slash.RegisterCommands<WebCommandModule>(guildId);
 
         // admin commands
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildId);
