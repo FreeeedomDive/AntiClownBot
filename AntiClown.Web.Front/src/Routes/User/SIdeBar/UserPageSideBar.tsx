@@ -34,15 +34,15 @@ const UserPageSideBar = observer(() => {
         <>
           <Divider />
           <List>
+            <ListItem key={"Economy"} disablePadding>
+              <ListItemButton
+                onClick={() => navigate(buildLink(userId, "economy"))}
+                selected={location.pathname === buildLink(userId, "economy")}
+              >
+                <ListItemText primary={"Economy"}/>
+              </ListItemButton>
+            </ListItem>
             <ListItem key={"Inventory"} disablePadding>
-              <ListItem key={"Economy"} disablePadding>
-                <ListItemButton
-                  onClick={() => navigate(buildLink(userId, "economy"))}
-                  selected={location.pathname === buildLink(userId, "economy")}
-                >
-                  <ListItemText primary={"Economy"}/>
-                </ListItemButton>
-              </ListItem>
               <ListItemButton
                 onClick={() => navigate(buildLink(userId, "inventory"))}
                 selected={location.pathname === buildLink(userId, "inventory")}
