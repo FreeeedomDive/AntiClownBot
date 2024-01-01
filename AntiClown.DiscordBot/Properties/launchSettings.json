@@ -3,7 +3,7 @@
     "start": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:3228",
+      "applicationUrl": "https://localhost:6325",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local"
       }

@@ -30,6 +30,7 @@ using AntiClown.DiscordBot.Interactivity.Services.Lottery;
 using AntiClown.DiscordBot.Interactivity.Services.Parties;
 using AntiClown.DiscordBot.Interactivity.Services.Race;
 using AntiClown.DiscordBot.Interactivity.Services.Shop;
+using AntiClown.DiscordBot.Middlewares;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.Releases.Repositories;
 using AntiClown.DiscordBot.Releases.Services;
@@ -51,9 +52,11 @@ using MassTransit;
 using Medallion.Threading;
 using Medallion.Threading.Postgres;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using SqlRepositoryBase.Configuration.Extensions;
 using SqlRepositoryBase.Core.Options;
 using TelemetryApp.Utilities.Extensions;
+using TelemetryApp.Utilities.Middlewares;
 
 namespace AntiClown.DiscordBot;
 
@@ -84,6 +87,8 @@ internal class Program
         BuildMassTransit(builder);
         BuildSlashCommands(builder);
 
+        builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.TypeNameHandling = TypeNameHandling.All);
+
         var app = builder.Build();
 
         var discordBotBehaviour = app.Services.GetRequiredService<IDiscordBotBehaviour>();
@@ -104,6 +109,15 @@ internal class Program
 
         var releasesService = app.Services.GetRequiredService<IReleasesService>();
         await releasesService.NotifyIfNewVersionAvailableAsync();
+
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
+        app.UseWebSockets();
+
+        app.UseMiddleware<RequestLoggingMiddleware>();
+        app.UseMiddleware<ServiceExceptionHandlingMiddleware>();
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
 
         await app.RunAsync();
     }

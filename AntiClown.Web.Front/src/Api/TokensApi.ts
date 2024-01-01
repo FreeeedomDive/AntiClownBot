@@ -15,7 +15,6 @@ export default class TokensApi {
 
   static isTokenValid = async (userId: string, token: string): Promise<boolean> => {
     const result = await TokensApi.init().post(`/${userId}/validate`, token);
-    console.log(result.status);
     return result.status === 204;
   }
 }
