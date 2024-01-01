@@ -69,8 +69,10 @@ internal class Program
         builder.Services.AddLogging();
         var telemetryApiUrl = builder.Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
         var deployingEnvironment = builder.Configuration.GetValue<string>("DeployingEnvironment");
+        var projectName = "AntiClownBot" + (string.IsNullOrEmpty(deployingEnvironment) ? "" : $"_{deployingEnvironment}");
+        Console.WriteLine($"DeployingEnvironment: {deployingEnvironment}, project name: {projectName}");
         builder.Services.ConfigureTelemetryClientWithLogger(
-            "AntiClownBot" + (string.IsNullOrEmpty(deployingEnvironment) ? "" : $"_{deployingEnvironment}"),
+            projectName,
             "DiscordBot",
             telemetryApiUrl
         );
