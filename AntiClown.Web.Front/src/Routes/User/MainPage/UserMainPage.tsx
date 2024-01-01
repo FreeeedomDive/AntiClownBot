@@ -25,7 +25,7 @@ const UserMainPage = observer(() => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 1,
+          p: "16px",
           width: { sm: `calc(100% - ${sideBarWidth}px)` },
         }}
       >

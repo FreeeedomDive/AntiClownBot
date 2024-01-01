@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { Route, Routes, useParams } from "react-router-dom";
 import React from "react";
 import { useStore } from "../../../Stores";
-import UserOverview from "./UserOverview";
+import UserOverview from "./UserOverview/UserOverview";
 import UserInventory from "./ControlPanel/UserInventory";
 import UserShop from "./ControlPanel/UserShop";
 import UserEconomy from "./ControlPanel/UserEconomy";
