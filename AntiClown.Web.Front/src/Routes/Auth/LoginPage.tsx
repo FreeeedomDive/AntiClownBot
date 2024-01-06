@@ -13,7 +13,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const currentLoggedInUserId = authStore.userId;
+  const currentLoggedInUserId = authStore.loggedInUserId;
   return (
     <div className="background">
       <Snackbar open={!!error} autoHideDuration={5000} onClose={() => setError("")}>
@@ -61,7 +61,7 @@ const LoginPage = () => {
               setError(`Невалидный токен`)
               return;
             }
-            authStore.setUserId(userId);
+            authStore.logIn(userId);
             navigate(`/user/${userId}`);
           }}
         >
