@@ -181,5 +181,7 @@ public static class InteractionsIds
         public const string Transactions = "transactions";
 
         public const string When = "when";
+
+        public const string Web = "web";
     }
 }

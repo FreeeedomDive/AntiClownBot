@@ -1,0 +1,15 @@
+.background {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+}
+
+.auth {
+    margin: auto;
+    align-items: flex-start;
+    width: 15%;
+}
+
+.input {
+    margin: 8px;
+}

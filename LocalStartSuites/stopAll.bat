@@ -1,5 +1,6 @@
 @echo off
 kubectl delete deploy anticlown-nginx-deployment
+kubectl delete deploy anticlown-web-front-deployment
 kubectl delete deploy anticlown-discord-bot-deployment
 kubectl delete deploy anticlown-events-daemon-deployment
 kubectl delete deploy anticlown-entertainment-api-deployment

@@ -10,7 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddLogging();
 var telemetryApiUrl = builder.Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
-builder.Services.ConfigureTelemetryClientWithLogger("AntiClownBot", "EventsDaemon", telemetryApiUrl);
+var deployingEnvironment = builder.Configuration.GetValue<string>("DeployingEnvironment");
+builder.Services.ConfigureTelemetryClientWithLogger(
+    "AntiClownBot" + (string.IsNullOrEmpty(deployingEnvironment) ? "" : $"_{deployingEnvironment}"),
+    "EventsDaemon",
+    telemetryApiUrl
+);
 
 builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
 builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));

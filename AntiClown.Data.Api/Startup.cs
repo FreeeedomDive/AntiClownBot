@@ -1,6 +1,8 @@
 ﻿using AntiClown.Data.Api.Core.Database;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
 using AntiClown.Data.Api.Core.SettingsStoring.Services;
+using AntiClown.Data.Api.Core.Tokens.Repositories;
+using AntiClown.Data.Api.Core.Tokens.Services;
 using AntiClown.Data.Api.Middlewares;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Configuration.Extensions;
@@ -24,7 +26,12 @@ public class Startup
         services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
         var telemetryApiUrl = Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
-        services.ConfigureTelemetryClientWithLogger("AntiClownBot", "DataApi", telemetryApiUrl);
+        var deployingEnvironment = Configuration.GetValue<string>("DeployingEnvironment");
+        services.ConfigureTelemetryClientWithLogger(
+            "AntiClownBot" + (string.IsNullOrEmpty(deployingEnvironment) ? "" : $"_{deployingEnvironment}"),
+            "DataApi",
+            telemetryApiUrl
+        );
 
         // configure database
         services.ConfigureConnectionStringFromAppSettings(Configuration.GetSection("PostgreSql"))
@@ -33,9 +40,12 @@ public class Startup
 
         // configure repositories
         services.AddTransient<ISettingsRepository, SettingsRepository>();
+        services.AddTransient<ITokensRepository, TokensRepository>();
 
         // configure services
         services.AddTransient<ISettingsService, SettingsService>();
+        services.AddTransient<ITokenGenerator, GuidTokenGenerator>();
+        services.AddTransient<ITokensService, TokensService>();
 
         services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.TypeNameHandling = TypeNameHandling.All);
     }

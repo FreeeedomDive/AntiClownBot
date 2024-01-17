@@ -30,6 +30,7 @@ using AntiClown.DiscordBot.Interactivity.Services.Lottery;
 using AntiClown.DiscordBot.Interactivity.Services.Parties;
 using AntiClown.DiscordBot.Interactivity.Services.Race;
 using AntiClown.DiscordBot.Interactivity.Services.Shop;
+using AntiClown.DiscordBot.Middlewares;
 using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.Releases.Repositories;
 using AntiClown.DiscordBot.Releases.Services;
@@ -51,9 +52,11 @@ using MassTransit;
 using Medallion.Threading;
 using Medallion.Threading.Postgres;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using SqlRepositoryBase.Configuration.Extensions;
 using SqlRepositoryBase.Core.Options;
 using TelemetryApp.Utilities.Extensions;
+using TelemetryApp.Utilities.Middlewares;
 
 namespace AntiClown.DiscordBot;
 
@@ -65,7 +68,14 @@ internal class Program
 
         builder.Services.AddLogging();
         var telemetryApiUrl = builder.Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
-        builder.Services.ConfigureTelemetryClientWithLogger("AntiClownBot", "DiscordBot", telemetryApiUrl);
+        var deployingEnvironment = builder.Configuration.GetValue<string>("DeployingEnvironment");
+        var projectName = "AntiClownBot" + (string.IsNullOrEmpty(deployingEnvironment) ? "" : $"_{deployingEnvironment}");
+        Console.WriteLine($"DeployingEnvironment: {deployingEnvironment}, project name: {projectName}");
+        builder.Services.ConfigureTelemetryClientWithLogger(
+            projectName,
+            "DiscordBot",
+            telemetryApiUrl
+        );
 
         ConfigureOptions(builder);
         ConfigurePostgreSql(builder);
@@ -78,6 +88,8 @@ internal class Program
         BuildDailyEventsConsumers(builder);
         BuildMassTransit(builder);
         BuildSlashCommands(builder);
+
+        builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.TypeNameHandling = TypeNameHandling.All);
 
         var app = builder.Build();
 
@@ -100,6 +112,15 @@ internal class Program
         var releasesService = app.Services.GetRequiredService<IReleasesService>();
         await releasesService.NotifyIfNewVersionAvailableAsync();
 
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
+        app.UseWebSockets();
+
+        app.UseMiddleware<RequestLoggingMiddleware>();
+        app.UseMiddleware<ServiceExceptionHandlingMiddleware>();
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
+
         await app.RunAsync();
     }
 
@@ -110,6 +131,7 @@ internal class Program
         builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));
         builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
         builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
+        builder.Services.Configure<WebOptions>(builder.Configuration.GetSection("Web"));
     }
 
     private static void ConfigurePostgreSql(WebApplicationBuilder builder)

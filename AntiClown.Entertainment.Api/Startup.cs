@@ -58,7 +58,12 @@ public class Startup
         services.Configure<AntiClownApiConnectionOptions>(Configuration.GetSection("AntiClownApi"));
         services.Configure<AntiClownDataApiConnectionOptions>(Configuration.GetSection("AntiClownDataApi"));
         var telemetryApiUrl = Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
-        services.ConfigureTelemetryClientWithLogger("AntiClownBot", "EntertainmentApi", telemetryApiUrl);
+        var deployingEnvironment = Configuration.GetValue<string>("DeployingEnvironment");
+        services.ConfigureTelemetryClientWithLogger(
+            "AntiClownBot" + (string.IsNullOrEmpty(deployingEnvironment) ? "" : $"_{deployingEnvironment}"),
+            "EntertainmentApi",
+            telemetryApiUrl
+        );
 
         // configure database
         services.ConfigureConnectionStringFromAppSettings(Configuration.GetSection("PostgreSql"))

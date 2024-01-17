@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OldShit", "OldShit", "{7D5D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{B3879B85-BE5D-49A0-AE5E-6B4AC647ADC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestClient", "RestClient\RestClient.csproj", "{96505177-1819-4FD7-8702-93058CD19EC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharpClient", "RestSharpClient\RestSharpClient.csproj", "{96505177-1819-4FD7-8702-93058CD19EC9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dto", "Dto\Dto.csproj", "{447FFD91-912F-4170-99EA-312E8661FE32}"
 EndProject

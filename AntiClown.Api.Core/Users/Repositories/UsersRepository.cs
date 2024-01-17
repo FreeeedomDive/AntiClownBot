@@ -1,6 +1,8 @@
 ﻿using AntiClown.Api.Core.Users.Domain;
+using AntiClown.Core.Dto.Exceptions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using SqlRepositoryBase.Core.Exceptions;
 using SqlRepositoryBase.Core.Extensions;
 using SqlRepositoryBase.Core.Repository;
 
@@ -25,8 +27,15 @@ public class UsersRepository : IUsersRepository
 
     public async Task<User> ReadAsync(Guid id)
     {
-        var result = await sqlRepository.ReadAsync(id);
-        return mapper.Map<User>(result);
+        try
+        {
+            var result = await sqlRepository.ReadAsync(id);
+            return mapper.Map<User>(result);
+        }
+        catch (SqlEntityNotFoundException)
+        {
+            throw new EntityNotFoundException(id);
+        }
     }
 
     public async Task<User[]> FindAsync(UserFilter filter)

@@ -48,6 +48,21 @@ namespace AntiClown.Data.Api.Core.Migrations
 
                     b.ToTable("Settings");
                 });
+
+            modelBuilder.Entity("AntiClown.Data.Api.Core.Tokens.Repositories.TokenStorageElement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tokens");
+                });
 #pragma warning restore 612, 618
         }
     }
