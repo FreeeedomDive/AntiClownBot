@@ -4,6 +4,7 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories.ActiveEventsInd
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.ActiveEventsIndex;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
+using AntiClown.Entertainment.Api.Core.MinecraftAuth.Repositories;
 using AntiClown.Entertainment.Api.Core.Parties.Repositories;
 using Microsoft.EntityFrameworkCore;
 using SqlRepositoryBase.Core.ContextBuilders;
@@ -25,4 +26,5 @@ public class DatabaseContext : PostgreSqlDbContext
     public DbSet<PartyStorageElement> Parties { get; set; }
     public DbSet<F1RaceStorageElement> F1PredictionsRaces { get; set; }
     public DbSet<F1PredictionResultStorageElement> F1PredictionsResults { get; set; }
+    public DbSet<MinecraftAccountStorageElement> MinecraftAccounts { get; set; }
 }

@@ -4,7 +4,7 @@ namespace AntiClown.Entertainment.Api.Core.MinecraftAuth.Services;
 
 public interface IMinecraftAuthService
 {
-    Task<AuthResponse> Auth(string username, string password);
+    Task<AuthResponse?> Auth(string username, string password);
 
     Task<bool> Join(string accessToken, string userId, string serverId);
 

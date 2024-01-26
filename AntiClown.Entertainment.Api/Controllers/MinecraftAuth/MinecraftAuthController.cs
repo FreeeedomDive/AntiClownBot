@@ -24,7 +24,11 @@ public class MinecraftAuthController : ControllerBase
     [HttpPost("auth")]
     public async Task<ActionResult<AuthResponseDto>> Auth([FromBody] AuthRequest request)
     {
-        return mapper.Map<AuthResponseDto>(await minecraftAuthService.Auth(request.Username, request.Password));
+        var authResponse = await minecraftAuthService.Auth(request.Username, request.Password);
+        if (authResponse is null)
+            return BadRequest();
+
+        return mapper.Map<AuthResponseDto>(authResponse);
     }
 
     [HttpPost("join")]

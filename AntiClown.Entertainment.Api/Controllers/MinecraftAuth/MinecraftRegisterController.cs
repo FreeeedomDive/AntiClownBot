@@ -18,7 +18,7 @@ public class MinecraftRegisterController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<bool>> Register(RegisterRequest request)
+    public async Task<ActionResult<bool>> Register([FromBody] RegisterRequest request)
     {
         return await minecraftRegisterService.CreateOrChangeAccountAsync(request.DiscordId, request.Username,
             request.Password);

@@ -13,25 +13,15 @@ public class MinecraftAuthService : IMinecraftAuthService
         this.minecraftAccountRepository = minecraftAccountRepository;
     }
 
-    public async Task<AuthResponse> Auth(string username, string password)
+    public async Task<AuthResponse?> Auth(string username, string password)
     {
         var account = (await minecraftAccountRepository.GetAccountsByNicknamesAsync(username)).FirstOrDefault();
         if (account is null)
-            return new AuthResponse
-            {
-                Username = username,
-                UserId = null,
-                AccessToken = null
-            };
+            return null;
 
         var hashedAuthData = HashingHelper.Hash(username + password);
         if (account.UsernameAndPasswordHash != hashedAuthData)
-            return new AuthResponse
-            {
-                Username = username,
-                UserId = null,
-                AccessToken = null
-            };
+            return null;
 
         var accessToken = Guid.NewGuid();
         account.AccessTokenHash = HashingHelper.Hash(accessToken.ToString());
