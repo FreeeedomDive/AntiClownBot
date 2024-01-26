@@ -1,0 +1,72 @@
+﻿using AntiClown.Entertainment.Api.Core.MinecraftAuth.Domain;
+using AutoMapper;
+using SqlRepositoryBase.Core.Repository;
+
+namespace AntiClown.Entertainment.Api.Core.MinecraftAuth.Repositories;
+
+public class MinecraftAccountRepository : IMinecraftAccountRepository
+{
+    private readonly IMapper mapper;
+    private readonly ISqlRepository<MinecraftAccountStorageElement> sqlRepository;
+
+    public MinecraftAccountRepository(
+        ISqlRepository<MinecraftAccountStorageElement> sqlRepository,
+        IMapper mapper
+    )
+    {
+        this.sqlRepository = sqlRepository;
+        this.mapper = mapper;
+    }
+
+    public async Task<MinecraftAccount> ReadAsync(Guid userId)
+    {
+        return mapper.Map<MinecraftAccount>(await sqlRepository.ReadAsync(userId));
+    }
+
+    public async Task<MinecraftAccount[]> ReadManyAsync(Guid[] userId)
+    {
+        var elements = await sqlRepository.ReadAsync(userId);
+
+        return elements.Select(x => mapper.Map<MinecraftAccount>(x)).ToArray();
+    }
+
+    public async Task<MinecraftAccount> CreateOrUpdateAsync(MinecraftAccount account)
+    {
+        var accountById = await sqlRepository.TryReadAsync(account.UserId);
+
+        if (accountById is null)
+        {
+            var accountByUsername = await sqlRepository.FindAsync(x => x.Username == account.Username);
+            if (accountByUsername == null)
+                throw new ArgumentException("Аккаунт с таким именем уже существует");
+
+            await sqlRepository.CreateAsync(mapper.Map<MinecraftAccountStorageElement>(account));
+            return account;
+        }
+
+        await sqlRepository.UpdateAsync(account.UserId, se =>
+        {
+            var newSe = mapper.Map<MinecraftAccountStorageElement>(account);
+            se.Username = newSe.Username;
+            se.UsernameAndPasswordHash = newSe.UsernameAndPasswordHash;
+            se.AccessTokenHash = newSe.AccessTokenHash;
+            se.SkinUrl = newSe.SkinUrl;
+            se.CapeUrl = newSe.CapeUrl;
+            se.DiscordId = newSe.DiscordId;
+        });
+
+        return mapper.Map<MinecraftAccount>(await sqlRepository.ReadAsync(account.UserId));
+    }
+
+    public async Task DeleteAsync(Guid userId)
+    {
+        await sqlRepository.DeleteAsync(userId);
+    }
+
+    public async Task<MinecraftAccount[]> GetAccountsByNicknamesAsync(params string[] nicknames)
+    {
+        var elements = await sqlRepository.FindAsync(x => nicknames.Contains(x.Username));
+
+        return elements.Select(x => mapper.Map<MinecraftAccount>(x)).ToArray();
+    }
+}

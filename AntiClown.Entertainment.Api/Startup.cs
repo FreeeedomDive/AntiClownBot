@@ -1,4 +1,5 @@
-﻿using AntiClown.Api.Client;
+﻿using System.Text;
+using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
 using AntiClown.Core.Schedules;
 using AntiClown.Data.Api.Client;
@@ -23,6 +24,7 @@ using AntiClown.Entertainment.Api.Core.DailyEvents.Services.PaymentsAndResets;
 using AntiClown.Entertainment.Api.Core.Database;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
+using AntiClown.Entertainment.Api.Core.MinecraftAuth.Services;
 using AntiClown.Entertainment.Api.Core.Options;
 using AntiClown.Entertainment.Api.Core.Parties.Repositories;
 using AntiClown.Entertainment.Api.Core.Parties.Services;
@@ -129,6 +131,7 @@ public class Startup
         services.AddTransient<IPartiesService, PartiesService>();
         services.AddTransient<IF1PredictionsService, F1PredictionsService>();
         services.AddTransient<IF1PredictionsStatisticsService, F1PredictionsStatisticsService>();
+        services.AddTransient<IMinecraftAuthService, MinecraftAuthService>();
 
         // configure HangFire
         services.AddHangfire(
