@@ -26,7 +26,14 @@ public class MinecraftAuthController : ControllerBase
     {
         var authResponse = await minecraftAuthService.Auth(request.Username, request.Password);
         if (authResponse is null)
-            return BadRequest();
+            return Ok(new MinecraftErrorResponse
+            {
+                Error = new MinecraftErrorDto
+                {
+                    Code = 200,
+                    Message = "Неверный логин или пароль"
+                }
+            });
 
         return mapper.Map<AuthResponseDto>(authResponse);
     }
@@ -40,7 +47,11 @@ public class MinecraftAuthController : ControllerBase
     [HttpPost("hasJoin")]
     public async Task<ActionResult<HasJoinedResponseDto>> HasJoin([FromBody] HasJoinRequest request)
     {
-        return mapper.Map<HasJoinedResponseDto>(await minecraftAuthService.HasJoined(request.Username, request.ServerID));
+        var hasJoinedResponse = await minecraftAuthService.HasJoined(request.Username, request.ServerID);
+        if (hasJoinedResponse == null)
+            throw new ArgumentException();
+
+        return mapper.Map<HasJoinedResponseDto>(hasJoinedResponse);
     }
 
     [HttpPost("profile")]

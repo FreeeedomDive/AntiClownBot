@@ -1,6 +1,7 @@
 ﻿using AntiClown.Entertainment.Api.Client.CommonEvents;
 using AntiClown.Entertainment.Api.Client.DailyEvents;
 using AntiClown.Entertainment.Api.Client.F1Predictions;
+using AntiClown.Entertainment.Api.Client.MinecraftAuth;
 using AntiClown.Entertainment.Api.Client.Parties;
 using RestSharp;
 
@@ -15,6 +16,7 @@ public class AntiClownEntertainmentApiClient : IAntiClownEntertainmentApiClient
         Parties = new PartiesClient(restClient);
         F1Predictions = new F1PredictionsClient(restClient);
         F1PredictionsStats = new F1PredictionsStatsClient(restClient);
+        MinecraftRegisterClient = new MinecraftRegisterClient(restClient);
     }
 
     public ICommonEventsClient CommonEvents { get; }
@@ -22,4 +24,5 @@ public class AntiClownEntertainmentApiClient : IAntiClownEntertainmentApiClient
     public IPartiesClient Parties { get; }
     public IF1PredictionsClient F1Predictions { get; }
     public IF1PredictionsStatsClient F1PredictionsStats { get; }
+    public IMinecraftRegisterClient MinecraftRegisterClient { get; }
 }

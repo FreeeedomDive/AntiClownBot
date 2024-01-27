@@ -8,7 +8,7 @@ public interface IMinecraftAuthService
 
     Task<bool> Join(string accessToken, string userId, string serverId);
 
-    Task<HasJoinedResponse> HasJoined(string username, string serverId);
+    Task<HasJoinedResponse?> HasJoined(string username, string serverId);
 
     Task<ProfileResponse> Profile(string userId);
 

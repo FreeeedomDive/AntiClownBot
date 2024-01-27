@@ -43,22 +43,17 @@ public class MinecraftAuthService : IMinecraftAuthService
         return account.AccessTokenHash == hashedAccessToken;
     }
 
-    public async Task<HasJoinedResponse> HasJoined(string username, string serverId)
+    public async Task<HasJoinedResponse?> HasJoined(string username, string serverId)
     {
         var account = (await minecraftAccountRepository.GetAccountsByNicknamesAsync(username)).FirstOrDefault();
         if (account == null)
-            return new HasJoinedResponse
-            {
-                UserId = null,
-                SkinUrl = null,
-                CapeUrl = null
-            };
+            return null;
 
         return new HasJoinedResponse
         {
             UserId = account.UserId.ToString(),
-            SkinUrl = "https://s.namemc.com/i/fc31cc8d6fceca7b.png",
-            CapeUrl = "https://s.namemc.com/i/fc31cc8d6fceca7b.png"
+            SkinUrl = account.SkinUrl,
+            CapeUrl = account.CapeUrl
         };
     }
 
@@ -69,8 +64,8 @@ public class MinecraftAuthService : IMinecraftAuthService
         return new ProfileResponse
         {
             Name = account.Username,
-            SkinUrl = "https://s.namemc.com/i/fc31cc8d6fceca7b.png",
-            CapeUrl = "https://s.namemc.com/i/fc31cc8d6fceca7b.png"
+            SkinUrl = account.SkinUrl,
+            CapeUrl = account.CapeUrl
         };
     }
 
