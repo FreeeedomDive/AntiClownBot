@@ -128,6 +128,8 @@ public static class InteractionsIds
 
         public const string Lohotron = "lohotron";
 
+        public const string MineRegistration = "mineRegistration";
+
         public const string F1Admin_Group = "f1admin";
         public const string F1Admin_Start = "start";
         public const string F1Admin_Predict = "predict";

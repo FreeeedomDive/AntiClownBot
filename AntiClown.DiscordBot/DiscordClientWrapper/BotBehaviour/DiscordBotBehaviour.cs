@@ -20,6 +20,7 @@ using AntiClown.DiscordBot.SlashCommands.Dev;
 using AntiClown.DiscordBot.SlashCommands.F1Predictions;
 using AntiClown.DiscordBot.SlashCommands.Gaming;
 using AntiClown.DiscordBot.SlashCommands.Inventory;
+using AntiClown.DiscordBot.SlashCommands.MinecraftRegister;
 using AntiClown.DiscordBot.SlashCommands.Other;
 using AntiClown.DiscordBot.SlashCommands.Other.Events;
 using AntiClown.DiscordBot.SlashCommands.Other.Ip;
@@ -601,6 +602,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 Services = serviceProvider,
             }
         );
+        slash.RegisterCommands<MinecraftRegisterCommand>(guildId);
         slash.RegisterCommands<PartyCommandModule>(guildId);
         slash.RegisterCommands<InventoryCommandModule>(guildId);
         slash.RegisterCommands<LootBoxCommandModule>(guildId);
