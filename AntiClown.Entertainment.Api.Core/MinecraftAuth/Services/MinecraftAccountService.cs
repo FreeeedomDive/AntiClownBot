@@ -36,7 +36,7 @@ public class MinecraftAccountService : IMinecraftAccountService
                 Username = username,
                 UsernameAndPasswordHash = HashingHelper.Hash(username + password),
                 AccessTokenHash = null,
-                SkinUrl = null,
+                SkinUrl = "https://s.namemc.com/i/affc03a1431dee1c.png",
                 CapeUrl = null,
                 DiscordId = discordId.ToString()
             });
