@@ -1,4 +1,6 @@
-﻿using AntiClown.DiscordBot.Cache.Users;
+﻿using AntiClown.Api.Client;
+using AntiClown.Api.Dto.Economies;
+using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
@@ -7,13 +9,16 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClown.DiscordBot.SlashCommands.MinecraftRegister;
 
+[SlashCommandGroup(InteractionsIds.CommandsNames.MinecraftGroup, "Команды для работы с аккаунтом майнкрафта")]
 public class MinecraftRegisterCommand : SlashCommandModuleWithMiddlewares
 {
     public MinecraftRegisterCommand(ICommandExecutor commandExecutor,
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+        IAntiClownApiClient antiClownApiClient,
         IUsersCache usersCache) : base(commandExecutor)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
+        this.antiClownApiClient = antiClownApiClient;
         this.usersCache = usersCache;
     }
 
@@ -31,8 +36,8 @@ public class MinecraftRegisterCommand : SlashCommandModuleWithMiddlewares
                 await RespondToInteractionAsync(context, "Пошёл нахуй");
                 return;
             }
-            
-            var result = await antiClownEntertainmentApiClient.MinecraftRegisterClient.Register(new RegisterRequest
+
+            var result = await antiClownEntertainmentApiClient.MinecraftAccountClient.Register(new RegisterRequest
             {
                 DiscordId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id),
                 Username = login,
@@ -42,6 +47,113 @@ public class MinecraftRegisterCommand : SlashCommandModuleWithMiddlewares
             var registrationMessage = GetMessageByRegistrationStatus(result);
             await RespondToInteractionAsync(context, registrationMessage);
         });
+    }
+
+    [SlashCommand(InteractionsIds.CommandsNames.MineSkin,
+        "Установка скина и/или плаща(платно). Бери скины тут: namemc.com")]
+    public async Task SetSkin(InteractionContext context,
+        [Option("skinUrl", "URL скина. Цена: 2000. Бери ссылку на картинку тут: namemc.com")]
+        string? skinUrl = null,
+        [Option("capeUrl", "URL плаща. Цена: 10000. Бери ссылку на картинку тут: namemc.com")]
+        string? capeUrl = null)
+    {
+        await ExecuteAsync(context, async () =>
+        {
+            if (skinUrl == null && capeUrl == null)
+            {
+                await RespondToInteractionAsync(context, "Не указана ни одна из ссылок");
+                return;
+            }
+
+            var discordUserId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
+            var economy = await antiClownApiClient.Economy.ReadAsync(discordUserId);
+
+            if (await IsPlayerBeggar(context, skinUrl, capeUrl, economy))
+                return;
+
+            var hasAccount = await antiClownEntertainmentApiClient.MinecraftAccountClient
+                .HasRegistrationByDiscordUser(discordUserId);
+            if (!hasAccount)
+            {
+                await RespondToInteractionAsync(context, "Сначала зарегайся лол");
+                return;
+            }
+
+            await antiClownEntertainmentApiClient.MinecraftAccountClient.SetSkinAsync(new ChangeSkinRequest
+            {
+                DiscordUserId = discordUserId,
+                SkinUrl = skinUrl,
+                CapeUrl = capeUrl
+            });
+
+            var totalPrice = (skinUrl is null ? 0 : SkinPrice) + (capeUrl is null ? 0 : CapePrice);
+            await antiClownApiClient.Economy.UpdateScamCoinsAsync(
+                discordUserId,
+                -totalPrice,
+                "Установка скина или плаща");
+
+            await RespondToInteractionAsync(context, "Скины успешно установлены");
+        });
+    }
+
+    [SlashCommand(InteractionsIds.CommandsNames.MineShowUsers,
+        "Посмотреть список зарегистрированных никнеймов игроков")]
+    public async Task GetAllNicknames(InteractionContext context)
+    {
+        await ExecuteAsync(
+            context, async () =>
+            {
+                var usernames = await antiClownEntertainmentApiClient.MinecraftAccountClient.GetAllNicknames();
+                await RespondToInteractionAsync(context,
+                    $"Никнеймы зареганных игроков:\n{string.Join('\n', usernames)}");
+            }
+        );
+    }
+
+    [SlashCommand(InteractionsIds.CommandsNames.MineHelp,
+        "Посмотреть список зарегистрированных никнеймов игроков")]
+    public async Task Help(InteractionContext context)
+    {
+        await ExecuteAsync(
+            context, async () =>
+            {
+                await RespondToInteractionAsync(context,
+                    $"-reg: Регистрация и редактирование аккаунта. После регистрации меняет ник и пароль. " +
+                    $"НЕ рекомендуется использовать пароли, которые используются где то ещё. На бэке пароли хешируются, " +
+                    $"но неизвестно как дискорд хранит атрибуты команд у себя на серверах." +
+                    $"\n" +
+                    $"-skin: Устанавливает или изменяет скин или плащ. Для скинов вставляй ссылки с сайта https://namemc.com/, " +
+                    $"другие URL пока что не поддерживаются. На сайте найди интересный скин -> на странице скина " +
+                    $"правой кнопкой мыши по значку загрузи скина -> копировать адрес ссылки. " +
+                    $"Установка плащей аналогична, но плащи бери тут: https://minecraftcapes.net/" +
+                    $"\n" +
+                    $"Установка и смена скинов и плащей платные: {SkinPrice} коинов за скин, {CapePrice} коинов за плащ.");
+            }
+        );
+    }
+
+    private static async Task<bool> IsPlayerBeggar(InteractionContext context, string? skinUrl, string? capeUrl,
+        EconomyDto economy)
+    {
+        if (capeUrl != null && economy.ScamCoins < CapePrice)
+        {
+            await RespondToInteractionAsync(context, "Ты слишком нищий чтобы купить плащ");
+            return true;
+        }
+
+        if (skinUrl != null && economy.ScamCoins < SkinPrice)
+        {
+            await RespondToInteractionAsync(context, "Ты слишком нищий чтобы сменить скин");
+            return true;
+        }
+
+        if (skinUrl != null && capeUrl != null && economy.ScamCoins < SkinPrice + CapePrice)
+        {
+            await RespondToInteractionAsync(context, "Ты слишком нищий чтобы купить и скин и плащ");
+            return true;
+        }
+
+        return false;
     }
 
     private static string GetMessageByRegistrationStatus(RegistrationStatusDto statusDto)
@@ -54,10 +166,14 @@ public class MinecraftRegisterCommand : SlashCommandModuleWithMiddlewares
                 "Придумай более уникальный ник, такой уже кто то зарегистрировал",
             RegistrationStatusDto.SuccessCreate => "Поздравляю брат, ты смог зарегистрироваться, брат",
             RegistrationStatusDto.SuccessUpdate => "Ты поменял логин и/или пароль своего майнкрафт аккаунта. Молодец.",
-            _ => throw new ArgumentOutOfRangeException(nameof(statusDto), statusDto, "Какой то неприкольный статус регистрации майнкрафт аккаунта, лол.")
+            _ => throw new ArgumentOutOfRangeException(nameof(statusDto), statusDto,
+                "Какой то неприкольный статус регистрации майнкрафт аккаунта, лол.")
         };
     }
 
+    private const int SkinPrice = 2000;
+    private const int CapePrice = 10000;
+    private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IUsersCache usersCache;
 }

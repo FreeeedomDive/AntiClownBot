@@ -1,4 +1,5 @@
-﻿using AntiClown.Entertainment.Api.Core.MinecraftAuth.Domain;
+﻿using AntiClown.Entertainment.Api.Core.Mappings;
+using AntiClown.Entertainment.Api.Core.MinecraftAuth.Domain;
 using AutoMapper;
 using SqlRepositoryBase.Core.Repository;
 
@@ -70,10 +71,17 @@ public class MinecraftAccountRepository : IMinecraftAccountRepository
         return elements.Select(x => mapper.Map<MinecraftAccount>(x)).ToArray();
     }
 
-    public async Task<MinecraftAccount?> GetAccountByDiscordId(Guid discordId)
+    public async Task<MinecraftAccount?> GetAccountByDiscordIdAsync(Guid discordId)
     {
         var account = (await sqlRepository.FindAsync(x => x.DiscordId == discordId.ToString())).SingleOrDefault();
 
         return account is null ? null : mapper.Map<MinecraftAccount>(account);
+    }
+
+    public async Task<MinecraftAccount[]> ReadAllAsync()
+    {
+        var allAccounts = await sqlRepository.ReadAllAsync();
+
+        return allAccounts.Select(x => mapper.Map<MinecraftAccount>(x)).ToArray();
     }
 }

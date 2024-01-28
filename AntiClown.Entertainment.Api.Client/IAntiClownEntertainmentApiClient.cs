@@ -13,5 +13,5 @@ public interface IAntiClownEntertainmentApiClient
     IPartiesClient Parties { get; }
     IF1PredictionsClient F1Predictions { get; }
     IF1PredictionsStatsClient F1PredictionsStats { get; }
-    IMinecraftRegisterClient MinecraftRegisterClient { get; }
+    IMinecraftAccountClient MinecraftAccountClient { get; }
 }

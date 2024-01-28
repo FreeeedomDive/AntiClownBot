@@ -134,7 +134,7 @@ public class Startup
         services.AddTransient<IF1PredictionsStatisticsService, F1PredictionsStatisticsService>();
         services.AddTransient<IMinecraftAuthService, MinecraftAuthService>();
         services.AddTransient<IMinecraftAccountRepository, MinecraftAccountRepository>();
-        services.AddTransient<IMinecraftRegisterService, MinecraftRegisterService>();
+        services.AddTransient<IMinecraftAccountService, MinecraftAccountService>();
 
         // configure HangFire
         services.AddHangfire(

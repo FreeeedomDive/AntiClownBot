@@ -14,5 +14,7 @@ public interface IMinecraftAccountRepository
 
     Task<MinecraftAccount[]> GetAccountsByNicknamesAsync(params string[] nicknames);
 
-    Task<MinecraftAccount?> GetAccountByDiscordId(Guid discordId);
+    Task<MinecraftAccount?> GetAccountByDiscordIdAsync(Guid discordId);
+
+    Task<MinecraftAccount[]> ReadAllAsync();
 }

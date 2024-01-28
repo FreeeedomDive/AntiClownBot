@@ -128,7 +128,11 @@ public static class InteractionsIds
 
         public const string Lohotron = "lohotron";
 
-        public const string MineRegistration = "mineRegistration";
+        public const string MinecraftGroup = "minecraft";
+        public const string MineRegistration = "-reg";
+        public const string MineSkin = "-skin";
+        public const string MineShowUsers = "-users";
+        public const string MineHelp = "-help";
 
         public const string F1Admin_Group = "f1admin";
         public const string F1Admin_Start = "start";
