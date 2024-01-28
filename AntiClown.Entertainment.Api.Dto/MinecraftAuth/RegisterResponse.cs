@@ -2,5 +2,5 @@
 
 public class RegisterResponse
 {
-    public bool IsSuccessful { get; set; }
+    public RegistrationStatusDto SuccessfulStatus { get; set; }
 }

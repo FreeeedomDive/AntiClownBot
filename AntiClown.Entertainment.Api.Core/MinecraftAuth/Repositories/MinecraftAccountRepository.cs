@@ -32,19 +32,19 @@ public class MinecraftAccountRepository : IMinecraftAccountRepository
 
     public async Task<MinecraftAccount> CreateOrUpdateAsync(MinecraftAccount account)
     {
-        var accountById = await sqlRepository.TryReadAsync(account.UserId);
+        var accountById = await sqlRepository.TryReadAsync(account.Id);
 
         if (accountById is null)
         {
-            var accountByUsername = await sqlRepository.FindAsync(x => x.Username == account.Username);
-            if (accountByUsername == null)
+            var accountByUsername = (await sqlRepository.FindAsync(x => x.Username == account.Username)).SingleOrDefault();
+            if (accountByUsername != null)
                 throw new ArgumentException("Аккаунт с таким именем уже существует");
 
             await sqlRepository.CreateAsync(mapper.Map<MinecraftAccountStorageElement>(account));
             return account;
         }
 
-        await sqlRepository.UpdateAsync(account.UserId, se =>
+        await sqlRepository.UpdateAsync(account.Id, se =>
         {
             var newSe = mapper.Map<MinecraftAccountStorageElement>(account);
             se.Username = newSe.Username;
@@ -55,7 +55,7 @@ public class MinecraftAccountRepository : IMinecraftAccountRepository
             se.DiscordId = newSe.DiscordId;
         });
 
-        return mapper.Map<MinecraftAccount>(await sqlRepository.ReadAsync(account.UserId));
+        return mapper.Map<MinecraftAccount>(await sqlRepository.ReadAsync(account.Id));
     }
 
     public async Task DeleteAsync(Guid userId)
@@ -68,5 +68,12 @@ public class MinecraftAccountRepository : IMinecraftAccountRepository
         var elements = await sqlRepository.FindAsync(x => nicknames.Contains(x.Username));
 
         return elements.Select(x => mapper.Map<MinecraftAccount>(x)).ToArray();
+    }
+
+    public async Task<MinecraftAccount?> GetAccountByDiscordId(Guid discordId)
+    {
+        var account = (await sqlRepository.FindAsync(x => x.DiscordId == discordId.ToString())).SingleOrDefault();
+
+        return account is null ? null : mapper.Map<MinecraftAccount>(account);
     }
 }

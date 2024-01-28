@@ -2,7 +2,7 @@
 
 public class MinecraftAccount
 {
-    public Guid UserId { get; set; }
+    public Guid Id { get; set; }
 
     public string Username { get; set; }
 

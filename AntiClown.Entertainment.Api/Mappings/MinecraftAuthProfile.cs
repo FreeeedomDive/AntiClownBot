@@ -24,5 +24,6 @@ public class MinecraftAuthProfile : Profile
             .ReverseMap();
         CreateMap<ProfileResponseDto, ProfileResponse>().ReverseMap();
         CreateMap<ProfilesResponseDto, ProfilesResponse>().ReverseMap();
+        CreateMap<RegistrationStatusDto, RegistrationStatus>().ReverseMap();
     }
 }

@@ -31,7 +31,7 @@ public class MinecraftAuthService : IMinecraftAuthService
         {
             AccessToken = accessToken.ToString(),
             Username = username,
-            UserId = account.UserId.ToString()
+            UserId = account.Id.ToString()
         };
     }
 
@@ -51,7 +51,7 @@ public class MinecraftAuthService : IMinecraftAuthService
 
         return new HasJoinedResponse
         {
-            UserId = account.UserId.ToString(),
+            UserId = account.Id.ToString(),
             SkinUrl = account.SkinUrl,
             CapeUrl = account.CapeUrl
         };
@@ -75,7 +75,7 @@ public class MinecraftAuthService : IMinecraftAuthService
 
         return accounts.Select(x => new ProfilesResponse
         {
-            Id = x.UserId.ToString(),
+            Id = x.Id.ToString(),
             Name = x.Username
         });
     }

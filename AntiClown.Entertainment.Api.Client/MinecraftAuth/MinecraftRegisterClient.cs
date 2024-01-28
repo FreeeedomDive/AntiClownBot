@@ -11,12 +11,12 @@ public class MinecraftRegisterClient : IMinecraftRegisterClient
         this.restClient = restClient;
     }
 
-    public async Task<bool> Register(RegisterRequest request)
+    public async Task<RegistrationStatusDto> Register(RegisterRequest request)
     {
         var clientRequest = new RestRequest($"{ControllerUrl}/register");
         clientRequest.AddJsonBody(request);
         var response = await restClient.ExecutePostAsync(clientRequest);
-        return response.TryDeserialize<RegisterResponse>().IsSuccessful;
+        return response.TryDeserialize<RegisterResponse>().SuccessfulStatus;
     }
 
     private readonly RestClient restClient;

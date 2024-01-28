@@ -13,15 +13,26 @@ public class MinecraftRegisterService : IMinecraftRegisterService
         this.minecraftAccountRepository = minecraftAccountRepository;
     }
 
-    public async Task<bool> CreateOrChangeAccountAsync(Guid discordId, string username, string password)
+    public async Task<RegistrationStatus> CreateOrChangeAccountAsync(Guid discordId, string username, string password)
     {
-        var account = (await minecraftAccountRepository.GetAccountsByNicknamesAsync(username)).SingleOrDefault();
+        var account = await minecraftAccountRepository.GetAccountByDiscordId(discordId);
+        var accountByNickname = (await minecraftAccountRepository.GetAccountsByNicknamesAsync(username)).SingleOrDefault();
+
+        if (accountByNickname is not null && account is null)
+        {
+            return RegistrationStatus.FailedCreate_NicknameOwnedByOtherUser;
+        }
+        
+        if (accountByNickname is not null && account!.DiscordId != accountByNickname.DiscordId)
+        {
+            return RegistrationStatus.FailedUpdate_NicknameOwnedByOtherUser;
+        }
 
         if (account == null)
         {
             await minecraftAccountRepository.CreateOrUpdateAsync(new MinecraftAccount
             {
-                UserId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Username = username,
                 UsernameAndPasswordHash = HashingHelper.Hash(username + password),
                 AccessTokenHash = null,
@@ -30,19 +41,20 @@ public class MinecraftRegisterService : IMinecraftRegisterService
                 DiscordId = discordId.ToString()
             });
 
-            return true;
+            return RegistrationStatus.SuccessCreate;
         }
 
-        if (account.DiscordId != discordId.ToString())
-            return false;
-
         account.Username = username;
-        account.UsernameAndPasswordHash = HashingHelper.Hash(username + password);
-        account.AccessTokenHash = null;
-        account.SkinUrl = null;
-        account.CapeUrl = null;
+
+        var loginPasswordHash = HashingHelper.Hash(username + password);
+        if (loginPasswordHash != account.UsernameAndPasswordHash)
+        {
+            account.UsernameAndPasswordHash = loginPasswordHash;
+            account.AccessTokenHash = null;
+        }
 
         await minecraftAccountRepository.CreateOrUpdateAsync(account);
-        return true;
+
+        return RegistrationStatus.SuccessUpdate;
     }
 }

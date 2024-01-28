@@ -18,9 +18,9 @@ public class MinecraftRegisterCommand : SlashCommandModuleWithMiddlewares
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.MineRegistration,
-        "Регистрация на майнкрафт сервере. НЕ юзай свои обычные пароли, дискорд не сильно защищает передачу сообщений на бэк. Используй эту же команду для смены пароля у пользователя. Разрешена регистрация нескольких пользователей.")]
+        "Регистрация и редактирование майнкрафт аккаунта. Придумай уникальный пароль!!")]
     public async Task Register(InteractionContext context,
-        [Option("login", "Ник какой хочешь")] string login,
+        [Option("login", "Твой ник(любой)")] string login,
         [Option("password", "Пароль(придумай новый, не тот, который используешь на других сайтах)")]
         string password)
     {
@@ -39,17 +39,24 @@ public class MinecraftRegisterCommand : SlashCommandModuleWithMiddlewares
                 Password = password
             });
 
-            if (!result)
-            {
-                await RespondToInteractionAsync(context,
-                    "Произошёл прикол, регистрация отменяется. Возможно чел с таким ником уже зареган другим юзером дискорда, а возможно всё поломалось нахуй");
-                return;
-            }
-
-            await RespondToInteractionAsync(context, "Поздравляю брат, ты смог зарегистрироваться, брат.");
+            var registrationMessage = GetMessageByRegistrationStatus(result);
+            await RespondToInteractionAsync(context, registrationMessage);
         });
     }
 
+    private static string GetMessageByRegistrationStatus(RegistrationStatusDto statusDto)
+    {
+        return statusDto switch
+        {
+            RegistrationStatusDto.FailedUpdate_NicknameOwnedByOtherUser =>
+                "Чел, ты думал сможешь спиздить ник другого чела если отредактируешь свой аккаунт?))) Ты еблан?",
+            RegistrationStatusDto.FailedCreate_NicknameOwnedByOtherUser =>
+                "Придумай более уникальный ник, такой уже кто то зарегистрировал",
+            RegistrationStatusDto.SuccessCreate => "Поздравляю брат, ты смог зарегистрироваться, брат",
+            RegistrationStatusDto.SuccessUpdate => "Ты поменял логин и/или пароль своего майнкрафт аккаунта. Молодец.",
+            _ => throw new ArgumentOutOfRangeException(nameof(statusDto), statusDto, "Какой то неприкольный статус регистрации майнкрафт аккаунта, лол.")
+        };
+    }
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IUsersCache usersCache;

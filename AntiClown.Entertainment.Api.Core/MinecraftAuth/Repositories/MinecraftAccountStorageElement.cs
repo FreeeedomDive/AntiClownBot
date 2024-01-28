@@ -4,6 +4,7 @@ using SqlRepositoryBase.Core.Models;
 namespace AntiClown.Entertainment.Api.Core.MinecraftAuth.Repositories;
 
 [Index(nameof(Username))]
+[Index(nameof(DiscordId))]
 public class MinecraftAccountStorageElement : SqlStorageElement
 {
     // Id это UserId

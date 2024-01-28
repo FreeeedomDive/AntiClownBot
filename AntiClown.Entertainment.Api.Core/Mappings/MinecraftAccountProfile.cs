@@ -10,7 +10,7 @@ public class MinecraftAccountProfile : Profile
     {
         CreateMap<MinecraftAccount, MinecraftAccountStorageElement>()
             .ForMember(x => x.Id,
-                cfg => cfg.MapFrom(e => e.UserId))
+                cfg => cfg.MapFrom(e => e.Id))
             .ReverseMap();
     }
 }

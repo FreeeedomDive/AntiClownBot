@@ -4,13 +4,15 @@ namespace AntiClown.Entertainment.Api.Core.MinecraftAuth.Repositories;
 
 public interface IMinecraftAccountRepository
 {
-    public Task<MinecraftAccount> ReadAsync(Guid userId);
+    Task<MinecraftAccount> ReadAsync(Guid userId);
 
-    public Task<MinecraftAccount[]> ReadManyAsync(Guid[] userId);
+    Task<MinecraftAccount[]> ReadManyAsync(Guid[] userId);
 
-    public Task<MinecraftAccount> CreateOrUpdateAsync(MinecraftAccount account);
+    Task<MinecraftAccount> CreateOrUpdateAsync(MinecraftAccount account);
 
-    public Task DeleteAsync(Guid userId);
+    Task DeleteAsync(Guid userId);
 
-    public Task<MinecraftAccount[]> GetAccountsByNicknamesAsync(params string[] nicknames);
+    Task<MinecraftAccount[]> GetAccountsByNicknamesAsync(params string[] nicknames);
+
+    Task<MinecraftAccount?> GetAccountByDiscordId(Guid discordId);
 }

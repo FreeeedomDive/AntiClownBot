@@ -1,5 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.MinecraftAuth.Services;
 using AntiClown.Entertainment.Api.Dto.MinecraftAuth;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Entertainment.Api.Controllers.MinecraftAuth;
@@ -8,19 +9,19 @@ namespace AntiClown.Entertainment.Api.Controllers.MinecraftAuth;
 [ApiController]
 public class MinecraftRegisterController : ControllerBase
 {
-    private readonly IMinecraftRegisterService minecraftRegisterService;
-
     public MinecraftRegisterController(
-        IMinecraftRegisterService minecraftRegisterService
+        IMinecraftRegisterService minecraftRegisterService,
+        IMapper mapper
     )
     {
         this.minecraftRegisterService = minecraftRegisterService;
+        this.mapper = mapper;
     }
 
     [HttpPost("register")]
     public async Task<ActionResult<RegisterResponse>> RegisterAsync([FromBody] RegisterRequest request)
     {
-        var isSuccessful = await minecraftRegisterService.CreateOrChangeAccountAsync(
+        var authStatus = await minecraftRegisterService.CreateOrChangeAccountAsync(
             request.DiscordId,
             request.Username,
             request.Password
@@ -28,7 +29,10 @@ public class MinecraftRegisterController : ControllerBase
 
         return new RegisterResponse
         {
-            IsSuccessful = isSuccessful
+            SuccessfulStatus = mapper.Map<RegistrationStatusDto>(authStatus)
         };
     }
+
+    private readonly IMinecraftRegisterService minecraftRegisterService;
+    private readonly IMapper mapper;
 }

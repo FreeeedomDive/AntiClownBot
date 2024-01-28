@@ -4,5 +4,5 @@ namespace AntiClown.Entertainment.Api.Client.MinecraftAuth;
 
 public interface IMinecraftRegisterClient
 {
-    Task<bool> Register(RegisterRequest request);
+    Task<RegistrationStatusDto> Register(RegisterRequest request);
 }
