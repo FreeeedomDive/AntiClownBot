@@ -49,6 +49,5 @@ public class UsersController : Controller
 
     private readonly IMapper mapper;
     private readonly INewUserService newUserService;
-
     private readonly IUsersService usersService;
 }

@@ -1,16 +1,21 @@
-import {observer} from "mobx-react-lite";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import React from "react";
 import {Divider, List, ListItem, ListItemButton, ListItemText, Stack,} from "@mui/material";
 import {useStore} from "../../../Stores";
+import {UserDto} from "../../../Dto/Users/UserDto";
 
 const buildLink = (userId: string, subLink?: string): string => {
   return `/user/${userId}` + (subLink ? `/${subLink}` : "");
 }
 
-const UserPageSideBar = observer(() => {
+interface Props {
+  user: UserDto | undefined;
+  updateViewedUser: (userId: string) => Promise<void>;
+}
+
+const UserPageSideBar = ({user, updateViewedUser}: Props) => {
   const {authStore} = useStore();
-  const currentLoggedInUserId = authStore.userId;
+  const currentLoggedInUserId = authStore.loggedInUserId;
   const {userId = ""} = useParams<"userId">();
   const isMyPage = currentLoggedInUserId === userId;
   const navigate = useNavigate();
@@ -26,20 +31,20 @@ const UserPageSideBar = observer(() => {
             onClick={() => navigate(buildLink(userId))}
             selected={location.pathname === buildLink(userId)}
           >
-            <ListItemText primary={"User"}/>
+            <ListItemText primary={"Профиль"}/>
           </ListItemButton>
         </ListItem>
       </List>
       {isMyPage && (
         <>
-          <Divider />
+          <Divider/>
           <List>
             <ListItem key={"Economy"} disablePadding>
               <ListItemButton
                 onClick={() => navigate(buildLink(userId, "economy"))}
                 selected={location.pathname === buildLink(userId, "economy")}
               >
-                <ListItemText primary={"Economy"}/>
+                <ListItemText primary={"Экономика"}/>
               </ListItemButton>
             </ListItem>
             <ListItem key={"Inventory"} disablePadding>
@@ -47,7 +52,7 @@ const UserPageSideBar = observer(() => {
                 onClick={() => navigate(buildLink(userId, "inventory"))}
                 selected={location.pathname === buildLink(userId, "inventory")}
               >
-                <ListItemText primary={"Inventory"}/>
+                <ListItemText primary={"Инвентарь"}/>
               </ListItemButton>
             </ListItem>
             <ListItem key={"Shop"} disablePadding>
@@ -55,22 +60,22 @@ const UserPageSideBar = observer(() => {
                 onClick={() => navigate(buildLink(userId, "shop"))}
                 selected={location.pathname === buildLink(userId, "shop")}
               >
-                <ListItemText primary={"Shop"}/>
+                <ListItemText primary={"Магазин"}/>
               </ListItemButton>
             </ListItem>
           </List>
         </>
       )}
-      {!isMyPage && currentLoggedInUserId && (
+      {!isMyPage && currentLoggedInUserId && user && (
         <>
           <Divider/>
           <List>
-            <ListItem key={"Items trade"} disablePadding>
+            <ListItem key={"ItemsTrade"} disablePadding>
               <ListItemButton
                 onClick={() => navigate(buildLink(userId, "itemsTrade"))}
                 selected={location.pathname === buildLink(userId, "itemsTrade")}
               >
-                <ListItemText primary={"Items trade"}/>
+                <ListItemText primary={"Обмен предметами"}/>
               </ListItemButton>
             </ListItem>
           </List>
@@ -80,6 +85,18 @@ const UserPageSideBar = observer(() => {
         <>
           <Divider/>
           <List>
+            {
+              !isMyPage && (
+                <ListItem key="BackToMyPage" disablePadding>
+                  <ListItemButton onClick={async () => {
+                    navigate(buildLink(currentLoggedInUserId))
+                    await updateViewedUser(currentLoggedInUserId);
+                  }}>
+                    <ListItemText primary={"Вернуться на мою страницу"}/>
+                  </ListItemButton>
+                </ListItem>
+              )
+            }
             <ListItem key={"Logout"} disablePadding>
               <ListItemButton
                 onClick={() => {
@@ -87,7 +104,7 @@ const UserPageSideBar = observer(() => {
                   navigate(buildLink(userId));
                 }}
               >
-                <ListItemText primary={"Log out"} />
+                <ListItemText primary={"Выход"}/>
               </ListItemButton>
             </ListItem>
           </List>
@@ -95,13 +112,13 @@ const UserPageSideBar = observer(() => {
       )}
       {!currentLoggedInUserId && (
         <>
-          <Divider />
+          <Divider/>
           <List>
             <ListItem key={"Login"} disablePadding>
               <ListItemButton
                 onClick={() => navigate("/auth")}
               >
-                <ListItemText primary={"Log in"} />
+                <ListItemText primary={"Логин"}/>
               </ListItemButton>
             </ListItem>
           </List>
@@ -109,6 +126,6 @@ const UserPageSideBar = observer(() => {
       )}
     </Stack>
   );
-});
+};
 
 export default UserPageSideBar;

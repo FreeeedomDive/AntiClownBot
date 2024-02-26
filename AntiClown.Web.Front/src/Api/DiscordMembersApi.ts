@@ -16,6 +16,9 @@ export default class DiscordMembersApi {
 
   static getMember = async (userId: string): Promise<DiscordMemberDto | undefined> => {
     const result = await DiscordMembersApi.init().get(`/${userId}`);
+    if (result.status !== 200){
+      return undefined;
+    }
     return result.data;
   }
 }

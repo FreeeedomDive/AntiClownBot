@@ -6,23 +6,23 @@ const cookies = new Cookies({}, {
 });
 
 export class AuthStore {
-  userId: string | undefined;
+  loggedInUserId: string | undefined;
 
   constructor() {
     makeAutoObservable(this);
-    this.userId = cookies.get("userId", {
+    this.loggedInUserId = cookies.get("userId", {
       doNotParse: true,
     });
   }
 
-  setUserId(userId: string) {
+  logIn(userId: string) {
     cookies.set("userId", userId);
-    this.userId = userId;
+    this.loggedInUserId = userId;
   }
 
   logOut() {
     cookies.remove("userId");
-    this.userId = undefined;
+    this.loggedInUserId = undefined;
   }
 }
 

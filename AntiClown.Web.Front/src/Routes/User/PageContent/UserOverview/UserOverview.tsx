@@ -7,12 +7,12 @@ import "./UserOverview.css";
 
 export default function UserOverview() {
   const {userId = ""} = useParams<"userId">();
-  const [user, setUser] = useState<DiscordMemberDto | undefined>(undefined);
+  const [member, setMember] = useState<DiscordMemberDto | undefined>(undefined);
   const [loading, setLoading] = useState(true);
 
   async function updateUser(): Promise<void> {
-    const user = await DiscordMembersApi.getMember(userId);
-    setUser(user)
+    const member = await DiscordMembersApi.getMember(userId);
+    setMember(member)
   }
 
   useEffect(() => {
@@ -28,16 +28,16 @@ export default function UserOverview() {
       )
     }
     {
-      user && (
+      member && (
         <Stack direction={"row"} alignItems={"center"} spacing="16px">
           <Avatar
             alt="Discord profile pic"
-            src={user.avatarUrl}
+            src={member.avatarUrl}
             sx={{width: 128, height: 128}}
           />
           <Stack direction={"column"} spacing="8px">
-            {user.serverName && < Typography variant={"h5"}>Имя на сервере: {user.serverName}</Typography>}
-            {user.userName && <Typography variant={"h5"}>Имя в дискорде: {user.userName}</Typography>}
+            {member.serverName && <Typography variant={"h5"}>Имя на сервере: {member.serverName}</Typography>}
+            {member.userName && <Typography variant={"h5"}>Имя в дискорде: {member.userName}</Typography>}
           </Stack>
         </Stack>
       )

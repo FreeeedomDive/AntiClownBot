@@ -1,11 +1,25 @@
-import React from "react";
-import { observer } from "mobx-react-lite";
+import React, {useEffect, useState} from "react";
 import { Box } from "@mui/material";
 import UserPageSideBar from "../SIdeBar/UserPageSideBar";
 import UserPageContent from "../PageContent/UserPageContent";
+import UsersApi from "../../../Api/UsersApi";
+import {UserDto} from "../../../Dto/Users/UserDto";
+import {useParams} from "react-router-dom";
 
-const UserMainPage = observer(() => {
+const UserMainPage = () => {
+  const {userId = ""} = useParams<"userId">();
   const sideBarWidth = 250;
+  const [user, setUser] = useState<UserDto | undefined>(undefined);
+
+  async function updateUser(userId: string): Promise<void> {
+    const user = await UsersApi.get(userId);
+    setUser(user);
+  }
+
+  useEffect(() => {
+    updateUser(userId).catch(console.error);
+  }, []);
+
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <Box
@@ -16,9 +30,8 @@ const UserMainPage = observer(() => {
           borderColor: "primary.main",
           flexShrink: { sm: 0 },
         }}
-        aria-label="mailbox folders"
       >
-        <UserPageSideBar />
+        <UserPageSideBar user={user} updateViewedUser={updateUser}/>
       </Box>
 
       <Box
@@ -29,10 +42,10 @@ const UserMainPage = observer(() => {
           width: { sm: `calc(100% - ${sideBarWidth}px)` },
         }}
       >
-        <UserPageContent />
+        <UserPageContent user={user}/>
       </Box>
     </Box>
   );
-});
+};
 
 export default UserMainPage;
