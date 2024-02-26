@@ -75,6 +75,13 @@ public class F1PredictionsController : Controller
         return mapper.Map<Dictionary<Guid, F1PredictionResultDto?[]>>(result);
     }
 
+    [HttpGet("convert")]
+    public async Task<ActionResult> Convert()
+    {
+        await f1PredictionsService.Convert();
+        return NoContent();
+    }
+
     private readonly IF1PredictionsService f1PredictionsService;
     private readonly IMapper mapper;
 }

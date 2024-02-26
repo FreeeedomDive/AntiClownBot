@@ -162,6 +162,11 @@ public class F1PredictionsService : IF1PredictionsService
         return result;
     }
 
+    public Task Convert()
+    {
+        return f1RacesRepository.Convert();
+    }
+
     private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
     private readonly IF1RacesRepository f1RacesRepository;
 }

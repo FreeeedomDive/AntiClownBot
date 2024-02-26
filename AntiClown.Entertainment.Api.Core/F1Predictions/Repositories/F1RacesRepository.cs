@@ -29,9 +29,9 @@ public class F1RacesRepository : IF1RacesRepository
     public async Task<F1Race[]> ReadAllAsync()
     {
         var result = await sqlRepository
-            .BuildCustomQuery()
-            .OrderBy(x => x.CreatedAt)
-            .ToArrayAsync();
+                           .BuildCustomQuery()
+                           .OrderBy(x => x.CreatedAt)
+                           .ToArrayAsync();
         return result.Select(ToModel).ToArray();
     }
 
@@ -58,6 +58,34 @@ public class F1RacesRepository : IF1RacesRepository
                 x.SerializedResults = storageElement.SerializedResults;
             }
         );
+    }
+
+    public async Task Convert()
+    {
+        var races = await sqlRepository.ReadAllAsync();
+        foreach (var storedRace in races)
+        {
+            var race = ToModel(storedRace);
+            race.Predictions.ForEach(
+                x =>
+                {
+                    x.DnfPrediction = new F1DnfPrediction
+                    {
+                        NoDnfPredicted = false,
+                        DnfPickedDrivers = new[] { x.FirstDnfPickedDriver },
+                    };
+                }
+            );
+            race.Result.DnfDrivers = race.Result.FirstDnf is null ? Array.Empty<F1Driver>() : new[] { race.Result.FirstDnf.Value };
+            var updatedStoredRace = ToStorageElement(race);
+            await sqlRepository.ConcurrentUpdateAsync(
+                storedRace.Id, x =>
+                {
+                    x.SerializedPredictions = updatedStoredRace.SerializedPredictions;
+                    x.SerializedResults = updatedStoredRace.SerializedResults;
+                }
+            );
+        }
     }
 
     private static F1RaceStorageElement ToStorageElement(F1Race race)
