@@ -1,50 +1,60 @@
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import React from "react";
-import {Divider, List, ListItem, ListItemButton, ListItemText, Stack,} from "@mui/material";
-import {useStore} from "../../../Stores";
-import {UserDto} from "../../../Dto/Users/UserDto";
+import {
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Stack,
+} from "@mui/material";
+import { useStore } from "../../../Stores";
+import { UserDto } from "../../../Dto/Users/UserDto";
 
 const buildLink = (userId: string, subLink?: string): string => {
   return `/user/${userId}` + (subLink ? `/${subLink}` : "");
-}
+};
 
 interface Props {
   user: UserDto | undefined;
   updateViewedUser: (userId: string) => Promise<void>;
 }
 
-const UserPageSideBar = ({user, updateViewedUser}: Props) => {
-  const {authStore} = useStore();
+const UserPageSideBar = ({ user, updateViewedUser }: Props) => {
+  const { authStore } = useStore();
   const currentLoggedInUserId = authStore.loggedInUserId;
-  const {userId = ""} = useParams<"userId">();
+  const { userId = "" } = useParams<"userId">();
   const isMyPage = currentLoggedInUserId === userId;
   const navigate = useNavigate();
   const location = useLocation();
 
   return (
-    <Stack direction="column" sx={{
-      paddingTop: "8px"
-    }}>
+    <Stack
+      direction="column"
+      sx={{
+        paddingTop: "8px",
+      }}
+    >
       <List>
         <ListItem key="Overview" disablePadding>
           <ListItemButton
             onClick={() => navigate(buildLink(userId))}
             selected={location.pathname === buildLink(userId)}
           >
-            <ListItemText primary={"Профиль"}/>
+            <ListItemText primary={"Профиль"} />
           </ListItemButton>
         </ListItem>
       </List>
       {isMyPage && (
         <>
-          <Divider/>
+          <Divider />
           <List>
             <ListItem key={"Economy"} disablePadding>
               <ListItemButton
                 onClick={() => navigate(buildLink(userId, "economy"))}
                 selected={location.pathname === buildLink(userId, "economy")}
               >
-                <ListItemText primary={"Экономика"}/>
+                <ListItemText primary={"Экономика"} />
               </ListItemButton>
             </ListItem>
             <ListItem key={"Inventory"} disablePadding>
@@ -52,7 +62,7 @@ const UserPageSideBar = ({user, updateViewedUser}: Props) => {
                 onClick={() => navigate(buildLink(userId, "inventory"))}
                 selected={location.pathname === buildLink(userId, "inventory")}
               >
-                <ListItemText primary={"Инвентарь"}/>
+                <ListItemText primary={"Инвентарь"} />
               </ListItemButton>
             </ListItem>
             <ListItem key={"Shop"} disablePadding>
@@ -60,7 +70,17 @@ const UserPageSideBar = ({user, updateViewedUser}: Props) => {
                 onClick={() => navigate(buildLink(userId, "shop"))}
                 selected={location.pathname === buildLink(userId, "shop")}
               >
-                <ListItemText primary={"Магазин"}/>
+                <ListItemText primary={"Магазин"} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem key={"F1Predictions"} disablePadding>
+              <ListItemButton
+                onClick={() => navigate(buildLink(userId, "f1Predictions"))}
+                selected={
+                  location.pathname === buildLink(userId, "f1Predictions")
+                }
+              >
+                <ListItemText primary={"Предсказания F1"} />
               </ListItemButton>
             </ListItem>
           </List>
@@ -68,14 +88,14 @@ const UserPageSideBar = ({user, updateViewedUser}: Props) => {
       )}
       {!isMyPage && currentLoggedInUserId && user && (
         <>
-          <Divider/>
+          <Divider />
           <List>
             <ListItem key={"ItemsTrade"} disablePadding>
               <ListItemButton
                 onClick={() => navigate(buildLink(userId, "itemsTrade"))}
                 selected={location.pathname === buildLink(userId, "itemsTrade")}
               >
-                <ListItemText primary={"Обмен предметами"}/>
+                <ListItemText primary={"Обмен предметами"} />
               </ListItemButton>
             </ListItem>
           </List>
@@ -83,20 +103,20 @@ const UserPageSideBar = ({user, updateViewedUser}: Props) => {
       )}
       {currentLoggedInUserId && (
         <>
-          <Divider/>
+          <Divider />
           <List>
-            {
-              !isMyPage && (
-                <ListItem key="BackToMyPage" disablePadding>
-                  <ListItemButton onClick={async () => {
-                    navigate(buildLink(currentLoggedInUserId))
+            {!isMyPage && (
+              <ListItem key="BackToMyPage" disablePadding>
+                <ListItemButton
+                  onClick={async () => {
+                    navigate(buildLink(currentLoggedInUserId));
                     await updateViewedUser(currentLoggedInUserId);
-                  }}>
-                    <ListItemText primary={"Вернуться на мою страницу"}/>
-                  </ListItemButton>
-                </ListItem>
-              )
-            }
+                  }}
+                >
+                  <ListItemText primary={"Вернуться на мою страницу"} />
+                </ListItemButton>
+              </ListItem>
+            )}
             <ListItem key={"Logout"} disablePadding>
               <ListItemButton
                 onClick={() => {
@@ -104,7 +124,7 @@ const UserPageSideBar = ({user, updateViewedUser}: Props) => {
                   navigate(buildLink(userId));
                 }}
               >
-                <ListItemText primary={"Выход"}/>
+                <ListItemText primary={"Выход"} />
               </ListItemButton>
             </ListItem>
           </List>
@@ -112,13 +132,11 @@ const UserPageSideBar = ({user, updateViewedUser}: Props) => {
       )}
       {!currentLoggedInUserId && (
         <>
-          <Divider/>
+          <Divider />
           <List>
             <ListItem key={"Login"} disablePadding>
-              <ListItemButton
-                onClick={() => navigate("/auth")}
-              >
-                <ListItemText primary={"Логин"}/>
+              <ListItemButton onClick={() => navigate("/auth")}>
+                <ListItemText primary={"Логин"} />
               </ListItemButton>
             </ListItem>
           </List>
