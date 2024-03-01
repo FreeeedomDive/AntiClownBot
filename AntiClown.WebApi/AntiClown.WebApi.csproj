@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.16" />
+      <PackageReference Include="Xdd.TelemetryApp.Api.Utilities" Version="1.0.12" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AntiClown.Api.Client\AntiClown.Api.Client.csproj" />
+      <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj" />
+      <ProjectReference Include="..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
+      <ProjectReference Include="..\AntiClown.DiscordApi.Client\AntiClown.DiscordApi.Client.csproj" />
+      <ProjectReference Include="..\AntiClown.Entertainment.Api.Client\AntiClown.Entertainment.Api.Client.csproj" />
+    </ItemGroup>
+
+</Project>
