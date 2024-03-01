@@ -1,4 +1,4 @@
-﻿namespace AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+﻿namespace AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 
 public class F1PredictionUserResult
 {

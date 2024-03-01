@@ -1,4 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 
@@ -43,7 +45,7 @@ public class F1PredictionsService : IF1PredictionsService
         return raceId;
     }
 
-    public async Task AddPredictionAsync(Guid raceId, Guid userId, F1Driver tenthPlaceDriver, F1Driver firstDnfDriver)
+    public async Task AddPredictionAsync(Guid raceId, Guid userId, F1Prediction prediction)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
         if (!race.IsOpened)
@@ -51,32 +53,22 @@ public class F1PredictionsService : IF1PredictionsService
             throw new PredictionsAlreadyClosedException(raceId);
         }
 
-        var userPrediction = race.Predictions.FirstOrDefault(x => x.UserId == userId);
-        if (userPrediction is null)
-        {
-            race.Predictions.Add(
-                new F1Prediction
-                {
-                    RaceId = raceId,
-                    UserId = userId,
-                    TenthPlacePickedDriver = tenthPlaceDriver,
-                    FirstDnfPickedDriver = firstDnfDriver,
-                }
-            );
-        }
-        else
-        {
-            userPrediction.TenthPlacePickedDriver = tenthPlaceDriver;
-            userPrediction.FirstDnfPickedDriver = firstDnfDriver;
-        }
-
-        await f1RacesRepository.UpdateAsync(race);
+        prediction.RaceId = raceId;
+        race.Predictions.RemoveAll(x => x.UserId == userId);
+        race.Predictions.Add(prediction);
     }
 
     public async Task ClosePredictionsAsync(Guid raceId)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
         race.IsOpened = false;
+        await f1RacesRepository.UpdateAsync(race);
+    }
+
+    public async Task AddRaceResultAsync(Guid raceId, F1PredictionRaceResult raceResult)
+    {
+        var race = await f1RacesRepository.ReadAsync(raceId);
+        race.Result = raceResult;
         await f1RacesRepository.UpdateAsync(race);
     }
 
@@ -110,13 +102,11 @@ public class F1PredictionsService : IF1PredictionsService
             {
                 RaceId = raceId,
                 UserId = x.UserId,
-                FirstDnfPoints = x.FirstDnfPickedDriver == race.Result.FirstDnf ? F1PredictionsPointsHelper.PointsForCorrectFirstDnfPrediction : 0,
-                TenthPlacePoints = F1PredictionsPointsHelper.PointsDistribution.TryGetValue(
-                    driverToPosition.TryGetValue(x.TenthPlacePickedDriver, out var driverPosition) ? driverPosition : 0,
-                    out var points
-                )
-                    ? points
-                    : 0,
+                // TODO: FirstDnfPoints = x.FirstDnfPickedDriver == race.Result.FirstDnf ? F1PredictionsPointsHelper.PointsForCorrectFirstDnfPrediction : 0,
+                TenthPlacePoints = F1PredictionsPointsHelper.PointsDistribution.GetValueOrDefault(
+                    driverToPosition.GetValueOrDefault(x.TenthPlacePickedDriver, 0),
+                    0
+                ),
             }
         ).ToArray();
         await f1PredictionResultsRepository.CreateAsync(participantsResults);
@@ -124,7 +114,7 @@ public class F1PredictionsService : IF1PredictionsService
         race.IsOpened = false;
         race.IsActive = false;
         await f1RacesRepository.UpdateAsync(race);
-        
+
         return participantsResults;
     }
 
@@ -160,11 +150,6 @@ public class F1PredictionsService : IF1PredictionsService
         }
 
         return result;
-    }
-
-    public Task Convert()
-    {
-        return f1RacesRepository.Convert();
     }
 
     private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;

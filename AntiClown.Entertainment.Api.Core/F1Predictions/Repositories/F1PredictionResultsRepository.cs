@@ -1,4 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using Microsoft.EntityFrameworkCore;
 using SqlRepositoryBase.Core.Extensions;
 using SqlRepositoryBase.Core.Repository;

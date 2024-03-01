@@ -82,7 +82,8 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
+                await RespondToInteractionAsync(interactionContext, "Теперь предсказания на гонки можно делать только через веб-приложение, используй команду /web");
+                /*var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
                 if (currentRace is null)
                 {
                     await RespondToInteractionAsync(interactionContext, "На данный момент нет активных предсказаний на гонку");
@@ -98,7 +99,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                 catch (PredictionsAlreadyClosedException)
                 {
                     await RespondToInteractionAsync(interactionContext, "Предсказания на текущую гонку уже закрыты");
-                }
+                }*/
             }
         );
     }
@@ -182,7 +183,8 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
+                await RespondToInteractionAsync(interactionContext, "Внести результаты гонки теперь можно только через веб-приложение, используй команду /web");
+                /*var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
                 if (currentRace is null)
                 {
                     await RespondToInteractionAsync(interactionContext, "На данный момент нет активных предсказаний на гонку");
@@ -190,7 +192,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                 }
 
                 var raceDetails = currentRace.Details!;
-                var raceId = currentRace.Details!.RaceId;
+                var raceId = raceDetails.RaceId;
                 if (raceDetails.Classification.Count != 20)
                 {
                     await RespondToInteractionAsync(interactionContext, "В финальной таблице внесено менее 20 гонщиков");
@@ -220,7 +222,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
 
                 await RespondToInteractionAsync(interactionContext, embedBuilder.Build());
                 currentRace.Type = InteractivityType.F1PredictionsFinished;
-                await interactivityRepository.UpdateAsync(currentRace);
+                await interactivityRepository.UpdateAsync(currentRace);*/
             }
         );
     }

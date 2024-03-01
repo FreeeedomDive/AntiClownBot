@@ -1,4 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Stats;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 

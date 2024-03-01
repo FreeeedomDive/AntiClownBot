@@ -1,4 +1,7 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Stats;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics;
 using AutoMapper;
@@ -11,7 +14,7 @@ public class F1PredictionsMapperProfile : Profile
     {
         CreateMap<F1Driver, F1DriverDto>().ReverseMap();
         CreateMap<F1Prediction, F1PredictionDto>().ReverseMap();
-        CreateMap<F1PredictionResult, F1PredictionResultDto>();
+        CreateMap<F1PredictionResult, F1PredictionUserResultDto>();
         CreateMap<F1Race, F1RaceDto>();
         CreateMap<DriverStatistics, DriverStatisticsDto>();
         CreateMap<MostPickedDriversStats, MostPickedDriversStatsDto>();

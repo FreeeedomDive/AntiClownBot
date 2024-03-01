@@ -1,6 +1,6 @@
 ﻿namespace AntiClown.Entertainment.Api.Dto.F1Predictions;
 
-public class F1PredictionResultDto
+public class F1PredictionUserResultDto
 {
     public Guid RaceId { get; set; }
     public Guid UserId { get; set; }

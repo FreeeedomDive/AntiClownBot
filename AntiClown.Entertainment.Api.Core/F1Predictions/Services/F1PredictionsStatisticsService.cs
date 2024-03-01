@@ -1,4 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Stats;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
@@ -19,12 +21,12 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
         var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
         var predictions = finishedRaces.SelectMany(x => x.Predictions).ToArray();
         var tenthPlacePredictions = CountAndOrderByScore(predictions, x => x.TenthPlacePickedDriver);
-        var dnfPredictions = CountAndOrderByScore(predictions, x => x.FirstDnfPickedDriver);
+        // var dnfPredictions = CountAndOrderByScore(predictions, x => x.FirstDnfPickedDriver);
 
         return new MostPickedDriversStats
         {
             TenthPlacePickedDrivers = tenthPlacePredictions,
-            FirstDnfPickedDrivers = dnfPredictions,
+            FirstDnfPickedDrivers = Array.Empty<DriverStatistics>(),
         };
     }
 
@@ -108,12 +110,12 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
                           .Where(x => x.UserId == userId)
                           .ToArray();
         var tenthPlacePredictions = CountAndOrderByScore(predictions, x => x.TenthPlacePickedDriver);
-        var dnfPredictions = CountAndOrderByScore(predictions, x => x.FirstDnfPickedDriver);
+        // var dnfPredictions = CountAndOrderByScore(predictions, x => x.FirstDnfPickedDriver);
 
         return new MostPickedDriversStats
         {
             TenthPlacePickedDrivers = tenthPlacePredictions,
-            FirstDnfPickedDrivers = dnfPredictions,
+            FirstDnfPickedDrivers = Array.Empty<DriverStatistics>(),
         };
     }
 
