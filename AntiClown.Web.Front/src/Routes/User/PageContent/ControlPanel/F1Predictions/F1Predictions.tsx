@@ -46,9 +46,7 @@ export default function F1Predictions() {
 
   return (
     <Stack spacing={3} direction={"column"}>
-      {f1Races ? (
-        <Typography variant={"h5"}>Тут типа выбор гонки</Typography>
-      ) : (
+      {f1Races ? null /* здесь будет селект по гонкам*/: (
         <Loader />
       )}
       {currentF1Race ? <F1Prediction f1Race={currentF1Race} /> : null}
