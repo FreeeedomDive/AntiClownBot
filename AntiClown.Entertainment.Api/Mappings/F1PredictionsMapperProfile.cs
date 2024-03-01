@@ -13,6 +13,8 @@ public class F1PredictionsMapperProfile : Profile
     public F1PredictionsMapperProfile()
     {
         CreateMap<F1Driver, F1DriverDto>().ReverseMap();
+        CreateMap<F1SafetyCars, F1SafetyCarsPredictionDto>().ReverseMap();
+        CreateMap<F1DnfPrediction, F1DnfPredictionDto>().ReverseMap();
         CreateMap<F1Prediction, F1PredictionDto>().ReverseMap();
         CreateMap<F1PredictionResult, F1PredictionUserResultDto>();
         CreateMap<F1Race, F1RaceDto>();
