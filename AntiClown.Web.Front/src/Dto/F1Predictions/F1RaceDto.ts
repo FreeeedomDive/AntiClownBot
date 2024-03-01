@@ -1,10 +1,14 @@
-import {F1PredictionDto} from "./F1PredictionDto";
+import { F1PredictionDto } from "./F1PredictionDto";
 
-export interface F1RaceDto{
+export interface F1RaceDto {
   id: string;
-  season: int;
+  season: number;
   name: string;
   isActive: boolean;
   isOpened: boolean;
-  predictions: F1PredictionDto[];
+  predictions:
+    | {
+        $values: F1PredictionDto[];
+      }
+    | F1PredictionDto[];
 }

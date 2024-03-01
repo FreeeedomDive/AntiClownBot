@@ -8,10 +8,11 @@ import UserEconomy from "./ControlPanel/UserEconomy";
 import ItemsTrade from "./Interaction/ItemsTrade";
 import { UserDto } from "../../../Dto/Users/UserDto";
 import { Typography } from "@mui/material";
-import F1Predictions from "./ControlPanel/F1Predictions";
+import F1Predictions from "./ControlPanel/F1Predictions/F1Predictions";
+import { Loader } from "../../../Components/Loader/Loader";
 
 interface Props {
-  user: UserDto | undefined;
+  user: UserDto | null | undefined;
 }
 
 const UserPageContent = ({ user }: Props) => {
@@ -20,35 +21,32 @@ const UserPageContent = ({ user }: Props) => {
   const { userId } = useParams<"userId">();
   const isMyPage = currentLoggedInUserId === userId;
 
-  const renderUserNotFound = () => {
+  if (user === null) {
     return <Typography variant={"h5"}>Пользователь не найден</Typography>;
-  };
+  }
+
+  if (user === undefined) {
+    return <Loader />;
+  }
 
   return (
     <>
-      {user ? (
-        <Routes>
-          <Route path="/" element={<UserOverview />} />
-        </Routes>
-      ) : (
-        renderUserNotFound()
-      )}
-      {isMyPage ? (
+      <Routes>
+        <Route path="/" element={<UserOverview />} />
+      </Routes>
+
+      {isMyPage && (
         <Routes>
           <Route path="/economy" element={<UserEconomy />} />
           <Route path="/inventory" element={<UserInventory />} />
           <Route path="/shop" element={<UserShop />} />
           <Route path="/f1Predictions" element={<F1Predictions />} />
         </Routes>
-      ) : (
-        <></>
       )}
-      {!isMyPage && currentLoggedInUserId && user ? (
+      {Boolean(!isMyPage && currentLoggedInUserId && user) && (
         <Routes>
           <Route path="/itemsTrade" element={<ItemsTrade />} />
         </Routes>
-      ) : (
-        <></>
       )}
     </>
   );

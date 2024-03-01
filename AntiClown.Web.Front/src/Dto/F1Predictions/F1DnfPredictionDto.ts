@@ -1,6 +1,6 @@
-import {F1DriverDto} from "./F1DriverDto";
+import { F1DriverDto } from "./F1DriverDto";
 
-export interface F1DnfPredictionDto{
-  noDnfPrediction: boolean;
-  dnfPickedDrivers: F1DriverDto[] | null;
+export interface F1DnfPredictionDto {
+  noDnfPredicted: boolean;
+  dnfPickedDrivers: { $values: F1DriverDto[] | null } | F1DriverDto[] | null;
 }

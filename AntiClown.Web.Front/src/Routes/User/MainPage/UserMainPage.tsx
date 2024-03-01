@@ -1,24 +1,24 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import UserPageSideBar from "../SIdeBar/UserPageSideBar";
 import UserPageContent from "../PageContent/UserPageContent";
 import UsersApi from "../../../Api/UsersApi";
-import {UserDto} from "../../../Dto/Users/UserDto";
-import {useParams} from "react-router-dom";
+import { UserDto } from "../../../Dto/Users/UserDto";
+import { useParams } from "react-router-dom";
 
 const UserMainPage = () => {
-  const {userId = ""} = useParams<"userId">();
+  const { userId = "" } = useParams<"userId">();
   const sideBarWidth = 250;
-  const [user, setUser] = useState<UserDto | undefined>(undefined);
-
-  async function updateUser(userId: string): Promise<void> {
-    const user = await UsersApi.get(userId);
-    setUser(user);
-  }
+  const [user, setUser] = useState<UserDto | null | undefined>(undefined);
 
   useEffect(() => {
+    async function updateUser(userId: string): Promise<void> {
+      const user = await UsersApi.get(userId);
+      setUser(user);
+    }
+
     updateUser(userId).catch(console.error);
-  }, []);
+  }, [userId]);
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
@@ -31,7 +31,7 @@ const UserMainPage = () => {
           flexShrink: { sm: 0 },
         }}
       >
-        <UserPageSideBar user={user} updateViewedUser={updateUser}/>
+        <UserPageSideBar user={user} />
       </Box>
 
       <Box
@@ -42,7 +42,7 @@ const UserMainPage = () => {
           width: { sm: `calc(100% - ${sideBarWidth}px)` },
         }}
       >
-        <UserPageContent user={user}/>
+        <UserPageContent user={user} />
       </Box>
     </Box>
   );

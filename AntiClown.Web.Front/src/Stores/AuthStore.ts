@@ -1,9 +1,11 @@
 import { makeAutoObservable } from "mobx";
 import { Cookies } from "react-cookie";
 
-const cookies = new Cookies({}, {
-  path: "/"
-});
+const cookiesOptions = {
+  path: "/",
+};
+
+const cookies = new Cookies(null, cookiesOptions);
 
 export class AuthStore {
   loggedInUserId: string | undefined;
@@ -16,12 +18,12 @@ export class AuthStore {
   }
 
   logIn(userId: string) {
-    cookies.set("userId", userId);
+    cookies.set("userId", userId, cookiesOptions);
     this.loggedInUserId = userId;
   }
 
   logOut() {
-    cookies.remove("userId");
+    cookies.remove("userId", cookiesOptions);
     this.loggedInUserId = undefined;
   }
 }

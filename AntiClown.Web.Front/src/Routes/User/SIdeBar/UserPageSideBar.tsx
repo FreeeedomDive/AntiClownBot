@@ -16,11 +16,10 @@ const buildLink = (userId: string, subLink?: string): string => {
 };
 
 interface Props {
-  user: UserDto | undefined;
-  updateViewedUser: (userId: string) => Promise<void>;
+  user: UserDto | null | undefined;
 }
 
-const UserPageSideBar = ({ user, updateViewedUser }: Props) => {
+const UserPageSideBar = ({ user }: Props) => {
   const { authStore } = useStore();
   const currentLoggedInUserId = authStore.loggedInUserId;
   const { userId = "" } = useParams<"userId">();
@@ -110,7 +109,6 @@ const UserPageSideBar = ({ user, updateViewedUser }: Props) => {
                 <ListItemButton
                   onClick={async () => {
                     navigate(buildLink(currentLoggedInUserId));
-                    await updateViewedUser(currentLoggedInUserId);
                   }}
                 >
                   <ListItemText primary={"Вернуться на мою страницу"} />
