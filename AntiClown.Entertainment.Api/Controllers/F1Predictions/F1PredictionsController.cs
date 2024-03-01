@@ -4,6 +4,8 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.Entertainment.Api.Controllers.F1Predictions;
 
@@ -12,11 +14,13 @@ public class F1PredictionsController : Controller
 {
     public F1PredictionsController(
         IF1PredictionsService f1PredictionsService,
-        IMapper mapper
+        IMapper mapper,
+        ILoggerClient loggerClient
     )
     {
         this.f1PredictionsService = f1PredictionsService;
         this.mapper = mapper;
+        this.loggerClient = loggerClient;
     }
 
     [HttpGet("active")]
@@ -42,7 +46,11 @@ public class F1PredictionsController : Controller
     [HttpPost("{raceId:guid}/addPrediction")]
     public async Task<ActionResult> AddPredictionAsync([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction)
     {
-        await f1PredictionsService.AddPredictionAsync(raceId, prediction.UserId, mapper.Map<F1Prediction>(prediction));
+        var dtoJson = JsonConvert.SerializeObject(prediction, Formatting.Indented);
+        var model = mapper.Map<F1Prediction>(prediction);
+        var modelJson = JsonConvert.SerializeObject(prediction, Formatting.Indented);
+        await loggerClient.InfoAsync("Json from front: {front}, json from businessModel: {businessModel}", dtoJson, modelJson);
+        await f1PredictionsService.AddPredictionAsync(raceId, prediction.UserId, model);
         return NoContent();
     }
 
@@ -90,4 +98,5 @@ public class F1PredictionsController : Controller
 
     private readonly IF1PredictionsService f1PredictionsService;
     private readonly IMapper mapper;
+    private readonly ILoggerClient loggerClient;
 }

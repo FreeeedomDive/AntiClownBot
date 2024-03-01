@@ -64,6 +64,7 @@ public class F1PredictionsService : IF1PredictionsService
         prediction.RaceId = raceId;
         race.Predictions.RemoveAll(x => x.UserId == userId);
         race.Predictions.Add(prediction);
+        await f1RacesRepository.UpdateAsync(race);
     }
 
     public async Task ClosePredictionsAsync(Guid raceId)
