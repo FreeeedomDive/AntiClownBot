@@ -20,7 +20,7 @@ public class F1PredictionsClient : IF1PredictionsClient
 
     public async Task<Guid> StartNewRaceAsync(string name)
     {
-        var request = new RestRequest("f1Predictions");
+        var request = new RestRequest("f1Predictions").AddQueryParameter("name", name);
         var response = await restClient.ExecutePostAsync(request);
         return response.TryDeserialize<Guid>();
     }
