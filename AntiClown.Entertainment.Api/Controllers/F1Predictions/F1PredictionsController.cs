@@ -19,6 +19,13 @@ public class F1PredictionsController : Controller
         this.mapper = mapper;
     }
 
+    [HttpGet("active")]
+    public async Task<ActionResult<F1RaceDto[]>> ReadActiveAsync()
+    {
+        var result = await f1PredictionsService.ReadActiveAsync();
+        return mapper.Map<F1RaceDto[]>(result);
+    }
+
     [HttpGet("{raceId:guid}")]
     public async Task<ActionResult<F1RaceDto>> ReadAsync(Guid raceId)
     {

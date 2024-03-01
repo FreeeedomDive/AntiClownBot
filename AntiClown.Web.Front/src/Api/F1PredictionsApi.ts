@@ -1,5 +1,6 @@
 import axios from "axios";
 import {F1PredictionDto} from "../Dto/F1Predictions/F1PredictionDto";
+import {F1RaceDto} from "../Dto/F1Predictions/F1RaceDto";
 
 export default class F1PredictionsApi {
   static init = () => {
@@ -12,6 +13,11 @@ export default class F1PredictionsApi {
         return status < 500;
       }
     });
+  }
+
+  static readAllActive = async (): Promise<F1RaceDto[]> => {
+    const result = await F1PredictionsApi.init().get<F1RaceDto[]>(`active`);
+    return result.data;
   }
 
   static addPrediction = async (raceId: string, prediction: F1PredictionDto): Promise<boolean> => {

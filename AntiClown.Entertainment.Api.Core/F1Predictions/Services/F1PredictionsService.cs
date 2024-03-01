@@ -22,6 +22,14 @@ public class F1PredictionsService : IF1PredictionsService
         return await f1RacesRepository.ReadAsync(raceId);
     }
 
+    public async Task<F1Race[]> ReadActiveAsync()
+    {
+        return await f1RacesRepository.FindAsync(new F1RaceFilter
+        {
+            IsActive = true,
+        });
+    }
+
     public async Task<Guid> StartNewRaceAsync(string name)
     {
         var raceId = Guid.NewGuid();
