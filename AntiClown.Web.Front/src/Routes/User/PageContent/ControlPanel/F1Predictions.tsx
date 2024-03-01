@@ -86,7 +86,7 @@ export default function F1Predictions() {
             >
               {DRIVERS.map((driver) => (
                 <MenuItem key={driver} value={driver}>
-                  {driver.toString()}
+                  {driver}
                 </MenuItem>
               ))}
             </Select>
@@ -126,7 +126,7 @@ export default function F1Predictions() {
                 >
                   {DRIVERS.map((driver) => (
                     <MenuItem key={driver} value={driver}>
-                      {driver.toString()}
+                      {driver}
                     </MenuItem>
                   ))}
                 </Select>
@@ -141,7 +141,7 @@ export default function F1Predictions() {
                 >
                   {DRIVERS.map((driver) => (
                     <MenuItem key={driver} value={driver}>
-                      {driver.toString()}
+                      {driver}
                     </MenuItem>
                   ))}
                 </Select>
@@ -156,7 +156,7 @@ export default function F1Predictions() {
                 >
                   {DRIVERS.map((driver) => (
                     <MenuItem key={driver} value={driver}>
-                      {driver.toString()}
+                      {driver}
                     </MenuItem>
                   ))}
                 </Select>
@@ -171,7 +171,7 @@ export default function F1Predictions() {
                 >
                   {DRIVERS.map((driver) => (
                     <MenuItem key={driver} value={driver}>
-                      {driver.toString()}
+                      {driver}
                     </MenuItem>
                   ))}
                 </Select>
@@ -186,7 +186,7 @@ export default function F1Predictions() {
                 >
                   {DRIVERS.map((driver) => (
                     <MenuItem key={driver} value={driver}>
-                      {driver.toString()}
+                      {driver}
                     </MenuItem>
                   ))}
                 </Select>
@@ -314,7 +314,7 @@ export default function F1Predictions() {
                     selectedDriversFromTeams.push(driver1)
                   }}
                 >
-                  {driver1.toString()}
+                  {driver1}
                 </Button>
                 <span>vs</span>
                 <Button
@@ -328,7 +328,7 @@ export default function F1Predictions() {
                     selectedDriversFromTeams.push(driver2)
                   }}
                 >
-                  {driver2.toString()}
+                  {driver2}
                 </Button>
               </Stack>
             ))}
