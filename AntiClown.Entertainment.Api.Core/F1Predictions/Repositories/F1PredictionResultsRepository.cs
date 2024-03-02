@@ -50,7 +50,7 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
             UserId = storageElement.UserId,
             RaceId = storageElement.RaceId,
             TenthPlacePoints = storageElement.TenthPlacePoints,
-            DnfsPoints = storageElement.FirstDnfPoints,
+            DnfsPoints = storageElement.DnfPoints,
             SafetyCarsPoints = storageElement.SafetyCarsPoints,
             FirstPlaceLeadPoints = storageElement.FirstPlaceLeadPoints,
             TeamMatesPoints = storageElement.TeamMatesPoints,
