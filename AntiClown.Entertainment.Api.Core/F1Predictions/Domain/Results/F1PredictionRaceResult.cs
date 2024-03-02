@@ -6,8 +6,7 @@ public class F1PredictionRaceResult
 {
     public Guid RaceId { get; set; }
     public F1Driver[] Classification { get; set; }
-    public F1Driver? FirstDnf { get; set; }
     public F1Driver[] DnfDrivers { get; set; }
-    public F1SafetyCars SafetyCars { get; set; }
+    public int SafetyCars { get; set; }
     public decimal FirstPlaceLead { get; set; }
 }

@@ -36,7 +36,7 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
             Id = Guid.NewGuid(),
             UserId = predictionResult.UserId,
             RaceId = predictionResult.RaceId,
-            FirstDnfPoints = predictionResult.FirstDnfPoints,
+            FirstDnfPoints = predictionResult.DnfsPoints,
             TenthPlacePoints = predictionResult.TenthPlacePoints,
         };
     }
@@ -47,7 +47,7 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
         {
             UserId = storageElement.UserId,
             RaceId = storageElement.RaceId,
-            FirstDnfPoints = storageElement.FirstDnfPoints,
+            DnfsPoints = storageElement.FirstDnfPoints,
             TenthPlacePoints = storageElement.TenthPlacePoints,
         };
     }

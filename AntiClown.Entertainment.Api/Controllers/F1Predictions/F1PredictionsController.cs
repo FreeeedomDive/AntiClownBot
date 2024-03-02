@@ -1,5 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AutoMapper;
@@ -55,30 +56,44 @@ public class F1PredictionsController : Controller
     }
 
     [HttpPost("{raceId:guid}/close")]
-    public async Task<ActionResult> ClosePredictionsAsync([FromRoute] Guid raceId)
+    public async Task<ActionResult> ClosePredictions([FromRoute] Guid raceId)
     {
         await f1PredictionsService.ClosePredictionsAsync(raceId);
         return NoContent();
     }
 
     [HttpPost("{raceId:guid}/addResult")]
-    public async Task<ActionResult> AddResultAsync([FromRoute] Guid raceId, [FromQuery] F1DriverDto firstDnfDriver)
+    public async Task<ActionResult> AddResult([FromRoute] Guid raceId, [FromBody] F1PredictionRaceResultDto raceResult)
     {
-        await f1PredictionsService.AddFirstDnfResultAsync(raceId, mapper.Map<F1Driver>(firstDnfDriver));
-        return NoContent();
-    }
-
-    [HttpPost("{raceId:guid}/addFirstDnf")]
-    public async Task<ActionResult> AddFirstDnfResultAsync([FromRoute] Guid raceId, [FromQuery] F1DriverDto firstDnfDriver)
-    {
-        await f1PredictionsService.AddFirstDnfResultAsync(raceId, mapper.Map<F1Driver>(firstDnfDriver));
+        await f1PredictionsService.AddRaceResultAsync(raceId, mapper.Map<F1PredictionRaceResult>(raceResult));
         return NoContent();
     }
 
     [HttpPost("{raceId:guid}/addClassification")]
-    public async Task<ActionResult> AddClassificationsResultAsync([FromRoute] Guid raceId, [FromBody] F1DriverDto[] f1Drivers)
+    public async Task<ActionResult> AddClassificationsResult([FromRoute] Guid raceId, [FromBody] F1DriverDto[] f1Drivers)
     {
         await f1PredictionsService.AddClassificationsResultAsync(raceId, mapper.Map<F1Driver[]>(f1Drivers));
+        return NoContent();
+    }
+
+    [HttpPost("{raceId:guid}/addDnf")]
+    public async Task<ActionResult> AddDnfDriver([FromRoute] Guid raceId, [FromQuery] F1DriverDto dnfDriver)
+    {
+        await f1PredictionsService.AddDnfDriverAsync(raceId, mapper.Map<F1Driver>(dnfDriver));
+        return NoContent();
+    }
+
+    [HttpPost("{raceId:guid}/addSafetyCar")]
+    public async Task<ActionResult> AddSafetyCar([FromRoute] Guid raceId)
+    {
+        await f1PredictionsService.AddSafetyCarAsync(raceId);
+        return NoContent();
+    }
+
+    [HttpPost("{raceId:guid}/addFirstPlaceLead")]
+    public async Task<ActionResult> AddFirstPlaceLead([FromRoute] Guid raceId, [FromQuery] decimal firstPlaceLead)
+    {
+        await f1PredictionsService.AddFirstPlaceLeadAsync(raceId, firstPlaceLead);
         return NoContent();
     }
 

@@ -57,13 +57,13 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
                                         .OrderByDescending(x => x.Score)
                                         .ToArray();
         var tenthPlaceCount = CountAndOrderByScore(raceResults, x => x.Classification[9]);
-        var firstDnfCount = CountAndOrderByScore(raceResults, x => x.FirstDnf);
+        // var firstDnfCount = CountAndOrderByScore(raceResults, x => x.FirstDnf);
 
         return new MostProfitableDriversStats
         {
             TenthPlacePoints = correctedTenthPlacePoints,
             TenthPlaceCount = tenthPlaceCount,
-            FirstDnfCount = firstDnfCount,
+            FirstDnfCount = Array.Empty<DriverStatistics>(),
         };
     }
 
@@ -74,7 +74,7 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
             {
                 UserId = userId,
             }
-        )).Select(x => x.TenthPlacePoints + x.FirstDnfPoints).ToArray();
+        )).Select(x => x.TenthPlacePoints + x.DnfsPoints).ToArray();
         if (userPredictionsResults.Length == 0)
         {
             return new UserPointsStats
