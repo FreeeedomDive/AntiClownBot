@@ -131,6 +131,7 @@ public class Startup
         services.AddTransient<IPaymentsAndResetsService, PaymentsAndResetsService>();
         services.AddTransient<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
         services.AddTransient<IPartiesService, PartiesService>();
+        services.AddTransient<IF1PredictionsMessageProducer, F1PredictionsMessageProducer>();
         services.AddTransient<IF1PredictionsService, F1PredictionsService>();
         services.AddTransient<IF1PredictionsStatisticsService, F1PredictionsStatisticsService>();
         services.AddTransient<IMinecraftAuthService, MinecraftAuthService>();

@@ -10,11 +10,13 @@ public class F1PredictionsService : IF1PredictionsService
 {
     public F1PredictionsService(
         IF1RacesRepository f1RacesRepository,
-        IF1PredictionResultsRepository f1PredictionResultsRepository
+        IF1PredictionResultsRepository f1PredictionResultsRepository,
+        IF1PredictionsMessageProducer f1PredictionsMessageProducer
     )
     {
         this.f1RacesRepository = f1RacesRepository;
         this.f1PredictionResultsRepository = f1PredictionResultsRepository;
+        this.f1PredictionsMessageProducer = f1PredictionsMessageProducer;
     }
 
     public async Task<F1Race> ReadAsync(Guid raceId)
@@ -65,6 +67,7 @@ public class F1PredictionsService : IF1PredictionsService
         race.Predictions.RemoveAll(x => x.UserId == userId);
         race.Predictions.Add(prediction);
         await f1RacesRepository.UpdateAsync(race);
+        await f1PredictionsMessageProducer.ProducePredictionUpdatedAsync(userId, raceId);
     }
 
     public async Task ClosePredictionsAsync(Guid raceId)
@@ -162,5 +165,6 @@ public class F1PredictionsService : IF1PredictionsService
     }
 
     private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
+    private readonly IF1PredictionsMessageProducer f1PredictionsMessageProducer;
     private readonly IF1RacesRepository f1RacesRepository;
 }
