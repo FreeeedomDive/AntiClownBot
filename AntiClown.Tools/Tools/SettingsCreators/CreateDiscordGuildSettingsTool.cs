@@ -21,6 +21,7 @@ public class CreateDiscordGuildSettingsTool : ToolBase
         await antiClownDataApiClient.Settings.CreateOrUpdateAsync(SettingsCategory.DiscordGuild, "BotChannelId", 0);
         await antiClownDataApiClient.Settings.CreateOrUpdateAsync(SettingsCategory.DiscordGuild, "TributeChannelId", 0);
         await antiClownDataApiClient.Settings.CreateOrUpdateAsync(SettingsCategory.DiscordGuild, "PartyChannelId", 0);
+        await antiClownDataApiClient.Settings.CreateOrUpdateAsync(SettingsCategory.DiscordGuild, "F1PredictionsChatId", 0);
         await antiClownDataApiClient.Settings.CreateOrUpdateAsync(SettingsCategory.DiscordGuild, "HiddenTestChannelId", 0);
         await antiClownDataApiClient.Settings.CreateOrUpdateAsync(SettingsCategory.DiscordGuild, "DotaRoleId", 0);
         await antiClownDataApiClient.Settings.CreateOrUpdateAsync(SettingsCategory.DiscordGuild, "CsRoleId", 0);

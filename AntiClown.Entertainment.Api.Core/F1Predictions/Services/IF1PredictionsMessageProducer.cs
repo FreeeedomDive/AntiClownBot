@@ -2,5 +2,5 @@
 
 public interface IF1PredictionsMessageProducer
 {
-    Task ProducePredictionUpdatedAsync(Guid userId, Guid raceId);
+    Task ProducePredictionUpdatedAsync(Guid userId, Guid raceId, bool isNew);
 }

@@ -10,12 +10,13 @@ public class F1PredictionsMessageProducer : IF1PredictionsMessageProducer
         this.bus = bus;
     }
 
-    public async Task ProducePredictionUpdatedAsync(Guid userId, Guid raceId)
+    public async Task ProducePredictionUpdatedAsync(Guid userId, Guid raceId, bool isNew)
     {
         await bus.Publish(new F1UserPredictionUpdatedMessageDto
         {
             UserId = userId,
             RaceId = raceId,
+            IsNew = isNew,
         });
     }
 

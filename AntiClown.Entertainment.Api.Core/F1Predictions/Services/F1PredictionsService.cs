@@ -64,10 +64,10 @@ public class F1PredictionsService : IF1PredictionsService
         }
 
         prediction.RaceId = raceId;
-        race.Predictions.RemoveAll(x => x.UserId == userId);
+        var deletedCount = race.Predictions.RemoveAll(x => x.UserId == userId);
         race.Predictions.Add(prediction);
         await f1RacesRepository.UpdateAsync(race);
-        await f1PredictionsMessageProducer.ProducePredictionUpdatedAsync(userId, raceId);
+        await f1PredictionsMessageProducer.ProducePredictionUpdatedAsync(userId, raceId, deletedCount == 0);
     }
 
     public async Task ClosePredictionsAsync(Guid raceId)

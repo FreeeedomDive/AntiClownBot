@@ -4,4 +4,5 @@ public class F1UserPredictionUpdatedMessageDto
 {
     public Guid UserId { get; set; }
     public Guid RaceId { get; set; }
+    public bool IsNew { get; set; }
 }
