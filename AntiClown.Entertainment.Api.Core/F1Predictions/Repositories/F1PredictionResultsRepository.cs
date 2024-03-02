@@ -1,5 +1,4 @@
-﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
+﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using Microsoft.EntityFrameworkCore;
 using SqlRepositoryBase.Core.Extensions;
 using SqlRepositoryBase.Core.Repository;
@@ -36,8 +35,11 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
             Id = Guid.NewGuid(),
             UserId = predictionResult.UserId,
             RaceId = predictionResult.RaceId,
-            FirstDnfPoints = predictionResult.DnfsPoints,
             TenthPlacePoints = predictionResult.TenthPlacePoints,
+            DnfPoints = predictionResult.DnfsPoints,
+            SafetyCarsPoints = predictionResult.SafetyCarsPoints,
+            FirstPlaceLeadPoints = predictionResult.FirstPlaceLeadPoints,
+            TeamMatesPoints = predictionResult.TeamMatesPoints,
         };
     }
 
@@ -47,8 +49,11 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
         {
             UserId = storageElement.UserId,
             RaceId = storageElement.RaceId,
-            DnfsPoints = storageElement.FirstDnfPoints,
             TenthPlacePoints = storageElement.TenthPlacePoints,
+            DnfsPoints = storageElement.FirstDnfPoints,
+            SafetyCarsPoints = storageElement.SafetyCarsPoints,
+            FirstPlaceLeadPoints = storageElement.FirstPlaceLeadPoints,
+            TeamMatesPoints = storageElement.TeamMatesPoints,
         };
     }
 
