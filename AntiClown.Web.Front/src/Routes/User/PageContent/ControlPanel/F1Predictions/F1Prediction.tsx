@@ -26,7 +26,6 @@ import {
 } from "../../../../../Dto/F1Predictions/F1SafetyCarsPredictionDto";
 import { F1RaceDto } from "../../../../../Dto/F1Predictions/F1RaceDto";
 import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
-import { F1PredictionDto } from "../../../../../Dto/F1Predictions/F1PredictionDto";
 import { LoadingButton } from "@mui/lab";
 
 const DRIVER_PAIRS = [

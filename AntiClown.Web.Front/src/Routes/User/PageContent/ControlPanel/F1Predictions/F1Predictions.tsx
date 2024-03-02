@@ -1,37 +1,20 @@
-import { useParams } from "react-router-dom";
-import React, { useEffect, useMemo, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
-  Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
-  InputAdornment,
   MenuItem,
-  OutlinedInput,
-  Radio,
-  RadioGroup,
   Select,
-  SelectChangeEvent,
   Stack,
   Typography,
 } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
-import { F1DriverDto } from "../../../../../Dto/F1Predictions/F1DriverDto";
-import {
-  F1SafetyCarPredictionDto,
-  F1SafetyCarsPredictionDto,
-  F1SafetyCarsPredictionObject,
-} from "../../../../../Dto/F1Predictions/F1SafetyCarsPredictionDto";
 import F1Prediction from "./F1Prediction";
 import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
-import { F1RaceDto } from "../../../../../Dto/F1Predictions/F1RaceDto";
-import { Loader } from "../../../../../Components/Loader/Loader";
+import {F1RaceDto} from "../../../../../Dto/F1Predictions/F1RaceDto";
+import {Loader} from "../../../../../Components/Loader/Loader";
 
 export default function F1Predictions() {
-  const { userId } = useParams<"userId">();
-
   const [f1Races, setF1Races] = useState<F1RaceDto[] | undefined>();
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto | undefined>();
+  const [selectedRace, setSelectedRace] = useState("")
 
   useEffect(() => {
     async function load() {
@@ -39,6 +22,7 @@ export default function F1Predictions() {
 
       setF1Races(result);
       setCurrentF1Race(result[0]);
+      setSelectedRace(result[0]?.name)
     }
 
     load();
@@ -46,10 +30,40 @@ export default function F1Predictions() {
 
   return (
     <Stack spacing={3} direction={"column"}>
-      {f1Races ? null /* здесь будет селект по гонкам*/: (
-        <Loader />
-      )}
-      {currentF1Race ? <F1Prediction f1Race={currentF1Race} /> : null}
+      {
+        f1Races && f1Races.length > 0 ?
+          <FormControl fullWidth>
+            <Select
+              labelId="race-select"
+              id="race-select"
+              value={selectedRace}
+              onChange={(event) => {
+                const value = event.target.value;
+                setSelectedRace(value)
+                const race = f1Races?.find(x => x.name === value)
+                setCurrentF1Race(race)
+              }}
+            >
+              {f1Races.map((race) => (
+                <MenuItem key={race.id} value={race.name}>
+                  {race.name}{" "}{race.season}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          :
+          f1Races && f1Races.length === 0 ?
+            (
+              <Typography variant={"h5"}>На данный момент нет активных предсказаний</Typography>
+            ) : (
+              <Loader/>
+            )
+      }
+      {
+        currentF1Race
+          ? <F1Prediction f1Race={currentF1Race}/>
+          : null
+      }
     </Stack>
   );
 }
