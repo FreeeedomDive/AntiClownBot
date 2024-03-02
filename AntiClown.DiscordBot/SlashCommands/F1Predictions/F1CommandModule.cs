@@ -141,7 +141,11 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                                            {
                                                UserId = kv.Key,
                                                Predictions = kv.Value,
-                                               TotalPoints = kv.Value.Select(p => p is null ? 0 : p.TenthPlacePoints + p.FirstDnfPoints).Sum(),
+                                               TotalPoints = kv.Value.Select(
+                                                   p => p is null
+                                                       ? 0
+                                                       : SumPoints(p)
+                                               ).Sum(),
                                            }
                                        )
                                        .OrderByDescending(x => x.TotalPoints);
@@ -156,7 +160,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                             string.Join(
                                 " ", userPredictions
                                      .Predictions
-                                     .Select(p => p is null ? "  " : (p.TenthPlacePoints + p.FirstDnfPoints).ToString().AddSpaces(2))
+                                     .Select(p => p is null ? "  " : (SumPoints(p)).ToString().AddSpaces(2))
                             )
                         )
                         .Append($" | {userPredictions.TotalPoints.AddSpaces(3)}")
@@ -168,6 +172,15 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                 await RespondToInteractionAsync(interactionContext, stringBuilder.ToString());
             }
         );
+    }
+
+    private static int SumPoints(F1PredictionUserResultDto predictionUserResult)
+    {
+        return predictionUserResult.TenthPlacePoints
+               + predictionUserResult.DnfsPoints
+               + predictionUserResult.SafetyCarsPoints
+               + predictionUserResult.FirstPlaceLeadPoints
+               + predictionUserResult.TeamMatesPoints;
     }
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;

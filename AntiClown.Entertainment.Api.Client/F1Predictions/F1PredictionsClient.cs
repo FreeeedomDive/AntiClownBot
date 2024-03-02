@@ -32,6 +32,41 @@ public class F1PredictionsClient : IF1PredictionsClient
         response.ThrowIfNotSuccessful();
     }
 
+    public async Task AddClassificationsResultAsync(Guid raceId, F1DriverDto[] f1Drivers)
+    {
+        var request = new RestRequest($"f1Predictions/{raceId}/addClassification").AddJsonBody(f1Drivers);
+        var response = await restClient.ExecutePostAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
+    public async Task AddDnfDriverAsync(Guid raceId, F1DriverDto driver)
+    {
+        var request = new RestRequest($"f1Predictions/{raceId}/addDnf").AddQueryParameter("dnfDriver", driver);
+        var response = await restClient.ExecutePostAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
+    public async Task AddSafetyCarAsync(Guid raceId)
+    {
+        var request = new RestRequest($"f1Predictions/{raceId}/addSafetyCar");
+        var response = await restClient.ExecutePostAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
+    public async Task AddFirstPlaceLeadAsync(Guid raceId, decimal firstPlaceLead)
+    {
+        var request = new RestRequest($"f1Predictions/{raceId}/addFirstPlaceLead").AddQueryParameter("firstPlaceLead", firstPlaceLead);
+        var response = await restClient.ExecutePostAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
+    public async Task<F1PredictionUserResultDto[]> FinishAsync(Guid raceId)
+    {
+        var request = new RestRequest($"f1Predictions/{raceId}/finish");
+        var response = await restClient.ExecutePostAsync(request);
+        return response.TryDeserialize<F1PredictionUserResultDto[]>();
+    }
+
     public async Task<Dictionary<Guid, F1PredictionUserResultDto?[]>> ReadStandingsAsync(int? season = null)
     {
         var request = new RestRequest("f1Predictions/standings");
