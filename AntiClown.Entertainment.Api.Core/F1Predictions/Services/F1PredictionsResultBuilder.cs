@@ -74,7 +74,7 @@ public static class F1PredictionsResultBuilder
             1 => F1SafetyCars.One,
             2 => F1SafetyCars.Two,
             >= 3 => F1SafetyCars.ThreePlus,
-            _ => throw new ArgumentOutOfRangeException(nameof(safetyCarsCount), safetyCarsCount, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(safetyCarsCount), safetyCarsCount, null),
         };
     }
 
