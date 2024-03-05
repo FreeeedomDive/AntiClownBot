@@ -85,6 +85,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.WebApi", "AntiClo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.DiscordApi.Client", "AntiClown.DiscordApi.Client\AntiClown.DiscordApi.Client.csproj", "{5F92911B-CFA8-419A-BB69-6CE54890B376}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.DiscordApi.Dto", "AntiClown.DiscordApi.Dto\AntiClown.DiscordApi.Dto.csproj", "{D4A6AA16-C4A3-40F2-9098-7DD26D47CCCE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -219,6 +221,10 @@ Global
 		{5F92911B-CFA8-419A-BB69-6CE54890B376}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F92911B-CFA8-419A-BB69-6CE54890B376}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F92911B-CFA8-419A-BB69-6CE54890B376}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4A6AA16-C4A3-40F2-9098-7DD26D47CCCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4A6AA16-C4A3-40F2-9098-7DD26D47CCCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4A6AA16-C4A3-40F2-9098-7DD26D47CCCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4A6AA16-C4A3-40F2-9098-7DD26D47CCCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -260,5 +266,6 @@ Global
 		{609A458F-1168-4B79-8B0E-5D546CABC3F9} = {FD8C2265-D1BC-4808-B209-8D794440BEDE}
 		{CA02EBB8-153E-4AA4-9D11-F52602AA688D} = {4453D483-C837-49E7-A447-D9CF95F7CA9E}
 		{5F92911B-CFA8-419A-BB69-6CE54890B376} = {FD8C2265-D1BC-4808-B209-8D794440BEDE}
+		{D4A6AA16-C4A3-40F2-9098-7DD26D47CCCE} = {FD8C2265-D1BC-4808-B209-8D794440BEDE}
 	EndGlobalSection
 EndGlobal

@@ -53,6 +53,7 @@ using Medallion.Threading;
 using Medallion.Threading.Postgres;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using SqlRepositoryBase.Configuration.Extensions;
 using SqlRepositoryBase.Core.Options;
 using TelemetryApp.Utilities.Extensions;
@@ -89,7 +90,12 @@ internal class Program
         BuildMassTransit(builder);
         BuildSlashCommands(builder);
 
-        builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.TypeNameHandling = TypeNameHandling.All);
+        builder.Services.AddControllers().AddNewtonsoftJson(
+            options =>
+            {
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
+            });
 
         var app = builder.Build();
 

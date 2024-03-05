@@ -1,15 +1,17 @@
-﻿namespace AntiClown.DiscordApi.Client.Configuration;
+﻿using RestSharp;
+
+namespace AntiClown.DiscordApi.Client.Configuration;
 
 public static class AntiClownDiscordApiClientProvider
 {
-    /*public static IAntiClownEntertainmentApiClient Build(string? baseApiUrl = "https://localhost:7088")
+    public static IAntiClownDiscordApiClient Build(string? baseApiUrl = "https://localhost:6325")
     {
         var restClientOptions = new RestClientOptions
         {
-            BaseUrl = new Uri($"{baseApiUrl}/entertainmentApi"),
+            BaseUrl = new Uri($"{baseApiUrl}/discordApi"),
             RemoteCertificateValidationCallback = (_, _, _, _) => true,
         };
         var restClient = new RestClient(restClientOptions);
-        return new AntiClownEntertainmentApiClient(restClient);
-    }*/
+        return new AntiClownDiscordApiClient(restClient);
+    }
 }

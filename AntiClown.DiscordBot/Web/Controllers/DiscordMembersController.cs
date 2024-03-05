@@ -1,6 +1,4 @@
 ﻿using AntiClown.DiscordBot.Cache.Users;
-using AntiClown.DiscordBot.DiscordClientWrapper;
-using AntiClown.DiscordBot.Extensions;
 using AntiClown.DiscordBot.Web.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +9,9 @@ namespace AntiClown.DiscordBot.Web.Controllers;
 public class DiscordMembersController : Controller
 {
     public DiscordMembersController(
-        IDiscordClientWrapper discordClientWrapper,
         IUsersCache usersCache
     )
     {
-        this.discordClientWrapper = discordClientWrapper;
         this.usersCache = usersCache;
     }
 
@@ -36,6 +32,5 @@ public class DiscordMembersController : Controller
         };
     }
 
-    private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IUsersCache usersCache;
 }
