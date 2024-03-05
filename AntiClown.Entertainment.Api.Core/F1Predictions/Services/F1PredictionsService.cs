@@ -1,4 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 
@@ -8,16 +10,28 @@ public class F1PredictionsService : IF1PredictionsService
 {
     public F1PredictionsService(
         IF1RacesRepository f1RacesRepository,
-        IF1PredictionResultsRepository f1PredictionResultsRepository
+        IF1PredictionResultsRepository f1PredictionResultsRepository,
+        IF1PredictionsMessageProducer f1PredictionsMessageProducer
     )
     {
         this.f1RacesRepository = f1RacesRepository;
         this.f1PredictionResultsRepository = f1PredictionResultsRepository;
+        this.f1PredictionsMessageProducer = f1PredictionsMessageProducer;
     }
 
     public async Task<F1Race> ReadAsync(Guid raceId)
     {
         return await f1RacesRepository.ReadAsync(raceId);
+    }
+
+    public async Task<F1Race[]> ReadActiveAsync()
+    {
+        return await f1RacesRepository.FindAsync(
+            new F1RaceFilter
+            {
+                IsActive = true,
+            }
+        );
     }
 
     public async Task<Guid> StartNewRaceAsync(string name)
@@ -34,7 +48,9 @@ public class F1PredictionsService : IF1PredictionsService
             {
                 RaceId = raceId,
                 Classification = Array.Empty<F1Driver>(),
-                FirstDnf = null,
+                DnfDrivers = Array.Empty<F1Driver>(),
+                SafetyCars = 0,
+                FirstPlaceLead = 0,
             },
             Predictions = new List<F1Prediction>(),
         };
@@ -43,7 +59,7 @@ public class F1PredictionsService : IF1PredictionsService
         return raceId;
     }
 
-    public async Task AddPredictionAsync(Guid raceId, Guid userId, F1Driver tenthPlaceDriver, F1Driver firstDnfDriver)
+    public async Task AddPredictionAsync(Guid raceId, Guid userId, F1Prediction prediction)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
         if (!race.IsOpened)
@@ -51,26 +67,11 @@ public class F1PredictionsService : IF1PredictionsService
             throw new PredictionsAlreadyClosedException(raceId);
         }
 
-        var userPrediction = race.Predictions.FirstOrDefault(x => x.UserId == userId);
-        if (userPrediction is null)
-        {
-            race.Predictions.Add(
-                new F1Prediction
-                {
-                    RaceId = raceId,
-                    UserId = userId,
-                    TenthPlacePickedDriver = tenthPlaceDriver,
-                    FirstDnfPickedDriver = firstDnfDriver,
-                }
-            );
-        }
-        else
-        {
-            userPrediction.TenthPlacePickedDriver = tenthPlaceDriver;
-            userPrediction.FirstDnfPickedDriver = firstDnfDriver;
-        }
-
+        prediction.RaceId = raceId;
+        var deletedCount = race.Predictions.RemoveAll(x => x.UserId == userId);
+        race.Predictions.Add(prediction);
         await f1RacesRepository.UpdateAsync(race);
+        await f1PredictionsMessageProducer.ProducePredictionUpdatedAsync(userId, raceId, deletedCount == 0);
     }
 
     public async Task ClosePredictionsAsync(Guid raceId)
@@ -80,10 +81,10 @@ public class F1PredictionsService : IF1PredictionsService
         await f1RacesRepository.UpdateAsync(race);
     }
 
-    public async Task AddFirstDnfResultAsync(Guid raceId, F1Driver firstDnfDriver)
+    public async Task AddRaceResultAsync(Guid raceId, F1PredictionRaceResult raceResult)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
-        race.Result.FirstDnf = firstDnfDriver;
+        race.Result = raceResult;
         await f1RacesRepository.UpdateAsync(race);
     }
 
@@ -94,38 +95,42 @@ public class F1PredictionsService : IF1PredictionsService
         await f1RacesRepository.UpdateAsync(race);
     }
 
+    public async Task AddDnfDriverAsync(Guid raceId, F1Driver dnfDriver)
+    {
+        var race = await f1RacesRepository.ReadAsync(raceId);
+        var dnfs = race.Result.DnfDrivers.ToList();
+        dnfs.Add(dnfDriver);
+        race.Result.DnfDrivers = dnfs.ToArray();
+        await f1RacesRepository.UpdateAsync(race);
+    }
+
+    public async Task AddSafetyCarAsync(Guid raceId)
+    {
+        var race = await f1RacesRepository.ReadAsync(raceId);
+        race.Result.SafetyCars++;
+        await f1RacesRepository.UpdateAsync(race);
+    }
+
+    public async Task AddFirstPlaceLeadAsync(Guid raceId, decimal firstPlaceLead)
+    {
+        var race = await f1RacesRepository.ReadAsync(raceId);
+        race.Result.FirstPlaceLead = firstPlaceLead;
+        await f1RacesRepository.UpdateAsync(race);
+    }
+
     public async Task<F1PredictionResult[]> FinishRaceAsync(Guid raceId)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
-        var position = 1;
-        var driverToPosition = race.Result.Classification.ToDictionary(
-            x => x, _ =>
-            {
-                var pos = position++;
-                return pos;
-            }
-        );
-        var participantsResults = race.Predictions.Select(
-            x => new F1PredictionResult
-            {
-                RaceId = raceId,
-                UserId = x.UserId,
-                FirstDnfPoints = x.FirstDnfPickedDriver == race.Result.FirstDnf ? F1PredictionsPointsHelper.PointsForCorrectFirstDnfPrediction : 0,
-                TenthPlacePoints = F1PredictionsPointsHelper.PointsDistribution.TryGetValue(
-                    driverToPosition.TryGetValue(x.TenthPlacePickedDriver, out var driverPosition) ? driverPosition : 0,
-                    out var points
-                )
-                    ? points
-                    : 0,
-            }
-        ).ToArray();
-        await f1PredictionResultsRepository.CreateAsync(participantsResults);
+
+        var results = F1PredictionsResultBuilder.Build(race);
+
+        await f1PredictionResultsRepository.CreateAsync(results);
 
         race.IsOpened = false;
         race.IsActive = false;
         await f1RacesRepository.UpdateAsync(race);
-        
-        return participantsResults;
+
+        return results;
     }
 
     public async Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync(int? season = null)
@@ -162,11 +167,7 @@ public class F1PredictionsService : IF1PredictionsService
         return result;
     }
 
-    public Task Convert()
-    {
-        return f1RacesRepository.Convert();
-    }
-
     private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
+    private readonly IF1PredictionsMessageProducer f1PredictionsMessageProducer;
     private readonly IF1RacesRepository f1RacesRepository;
 }

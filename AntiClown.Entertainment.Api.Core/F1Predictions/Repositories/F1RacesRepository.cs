@@ -1,4 +1,6 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Core.Extensions;
@@ -58,34 +60,6 @@ public class F1RacesRepository : IF1RacesRepository
                 x.SerializedResults = storageElement.SerializedResults;
             }
         );
-    }
-
-    public async Task Convert()
-    {
-        var races = await sqlRepository.ReadAllAsync();
-        foreach (var storedRace in races)
-        {
-            var race = ToModel(storedRace);
-            race.Predictions.ForEach(
-                x =>
-                {
-                    x.DnfPrediction = new F1DnfPrediction
-                    {
-                        NoDnfPredicted = false,
-                        DnfPickedDrivers = new[] { x.FirstDnfPickedDriver },
-                    };
-                }
-            );
-            race.Result.DnfDrivers = race.Result.FirstDnf is null ? Array.Empty<F1Driver>() : new[] { race.Result.FirstDnf.Value };
-            var updatedStoredRace = ToStorageElement(race);
-            await sqlRepository.ConcurrentUpdateAsync(
-                storedRace.Id, x =>
-                {
-                    x.SerializedPredictions = updatedStoredRace.SerializedPredictions;
-                    x.SerializedResults = updatedStoredRace.SerializedResults;
-                }
-            );
-        }
     }
 
     private static F1RaceStorageElement ToStorageElement(F1Race race)

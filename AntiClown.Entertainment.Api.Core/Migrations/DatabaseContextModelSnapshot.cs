@@ -173,11 +173,20 @@ namespace AntiClown.Entertainment.Api.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("FirstDnfPoints")
+                    b.Property<int>("DnfPoints")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FirstPlaceLeadPoints")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("RaceId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("SafetyCarsPoints")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TeamMatesPoints")
+                        .HasColumnType("integer");
 
                     b.Property<int>("TenthPlacePoints")
                         .HasColumnType("integer");

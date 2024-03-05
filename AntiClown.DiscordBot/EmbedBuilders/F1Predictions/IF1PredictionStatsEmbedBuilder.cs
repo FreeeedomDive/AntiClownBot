@@ -1,7 +1,7 @@
 ﻿using AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics;
 using DSharpPlus.Entities;
 
-namespace AntiClown.DiscordBot.EmbedBuilders.F1PredictionsStats;
+namespace AntiClown.DiscordBot.EmbedBuilders.F1Predictions;
 
 public interface IF1PredictionStatsEmbedBuilder
 {

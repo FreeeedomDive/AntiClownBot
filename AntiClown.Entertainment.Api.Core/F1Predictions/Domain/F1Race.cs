@@ -1,4 +1,7 @@
-﻿namespace AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
+
+namespace AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 
 public class F1Race
 {

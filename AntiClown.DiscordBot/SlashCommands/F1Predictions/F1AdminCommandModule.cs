@@ -6,7 +6,6 @@ using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
-using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AntiClown.Tools.Utility.Extensions;
 using DSharpPlus;
@@ -82,7 +81,8 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
+                await RespondToInteractionAsync(interactionContext, "Теперь предсказания на гонки можно делать только через веб-приложение, используй команду /web");
+                /*var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
                 if (currentRace is null)
                 {
                     await RespondToInteractionAsync(interactionContext, "На данный момент нет активных предсказаний на гонку");
@@ -98,7 +98,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                 catch (PredictionsAlreadyClosedException)
                 {
                     await RespondToInteractionAsync(interactionContext, "Предсказания на текущую гонку уже закрыты");
-                }
+                }*/
             }
         );
     }
@@ -152,10 +152,10 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         );
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.F1Admin_Dnf, "Внести результаты первого выбывшего гонщика")]
-    public async Task MakeFirstDnfResults(
+    [SlashCommand(InteractionsIds.CommandsNames.F1Admin_Dnf, "Добавить выбывшего гонщика")]
+    public async Task AddDnf(
         InteractionContext interactionContext,
-        [Option("driver", "Первый выбывший гонщик")]
+        [Option("driver", "Выбывший гонщик")]
         F1DriverDto dnfDriver
     )
     {
@@ -169,8 +169,55 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                     return;
                 }
 
-                currentRace.Details!.FirstDnf = dnfDriver;
-                await interactivityRepository.UpdateAsync(currentRace);
+                await antiClownEntertainmentApiClient.F1Predictions.AddDnfDriverAsync(currentRace.Id, dnfDriver);
+                await RespondToInteractionAsync(interactionContext, "Принято");
+            }
+        );
+    }
+
+    [SlashCommand(InteractionsIds.CommandsNames.F1Admin_Sc, "Добавить машину безопасности")]
+    public async Task AddSc(
+        InteractionContext interactionContext
+    )
+    {
+        await ExecuteAsync(
+            interactionContext, async () =>
+            {
+                var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
+                if (currentRace is null)
+                {
+                    await RespondToInteractionAsync(interactionContext, "На данный момент нет активных предсказаний на гонку");
+                    return;
+                }
+
+                await antiClownEntertainmentApiClient.F1Predictions.AddSafetyCarAsync(currentRace.Id);
+                await RespondToInteractionAsync(interactionContext, "Принято");
+            }
+        );
+    }
+
+    [SlashCommand(InteractionsIds.CommandsNames.F1Admin_FirstPlaceLead, "Добавить результат лидирования победителя")]
+    public async Task AddFirstPlaceLead(
+        InteractionContext interactionContext,
+        [Option("lead", "Лидирование в формате x.xxx")] string lead
+    )
+    {
+        await ExecuteAsync(
+            interactionContext, async () =>
+            {
+                var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
+                if (currentRace is null)
+                {
+                    await RespondToInteractionAsync(interactionContext, "На данный момент нет активных предсказаний на гонку");
+                    return;
+                }
+
+                if (!decimal.TryParse(lead, out var decimalLead))
+                {
+                    await RespondToInteractionAsync(interactionContext, "Неверный формат");
+                    return;
+                }
+                await antiClownEntertainmentApiClient.F1Predictions.AddFirstPlaceLeadAsync(currentRace.Id, decimalLead);
                 await RespondToInteractionAsync(interactionContext, "Принято");
             }
         );
@@ -189,21 +236,9 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                     return;
                 }
 
-                var raceDetails = currentRace.Details!;
                 var raceId = currentRace.Details!.RaceId;
-                if (raceDetails.Classification.Count != 20)
-                {
-                    await RespondToInteractionAsync(interactionContext, "В финальной таблице внесено менее 20 гонщиков");
-                    return;
-                }
 
-                await antiClownEntertainmentApiClient.F1Predictions.AddClassificationsResultAsync(raceId, raceDetails.Classification.ToArray());
-                if (raceDetails.FirstDnf is not null)
-                {
-                    await antiClownEntertainmentApiClient.F1Predictions.AddFirstDnfResultAsync(raceId, raceDetails.FirstDnf!.Value);
-                }
-
-                var raceResults = await antiClownEntertainmentApiClient.F1Predictions.FinishRaceAsync(raceId);
+                var raceResults = await antiClownEntertainmentApiClient.F1Predictions.FinishAsync(raceId);
                 var embedBuilder = new DiscordEmbedBuilder()
                     .WithTitle("Результаты предсказаний");
                 await raceResults.ForEachAsync(
@@ -213,7 +248,10 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                         embedBuilder.AddField(
                             member.ServerOrUserName(),
                             $"{x.TenthPlacePoints.ToPluralizedString("очко", "очка", "очков")} за предсказание 10 места\n"
-                            + $"{x.FirstDnfPoints.ToPluralizedString("очко", "очка", "очков")} за предсказание первого DNF"
+                            + $"{x.DnfsPoints.ToPluralizedString("очко", "очка", "очков")} за предсказание DNF\n"
+                            + $"{x.SafetyCarsPoints.ToPluralizedString("очко", "очка", "очков")} за предсказание SC\n"
+                            + $"{x.FirstPlaceLeadPoints.ToPluralizedString("очко", "очка", "очков")} за предсказание отрыва лидера\n"
+                            + $"{x.TeamMatesPoints.ToPluralizedString("очко", "очка", "очков")} за предсказание победителя внутри команд\n"
                         );
                     }
                 );

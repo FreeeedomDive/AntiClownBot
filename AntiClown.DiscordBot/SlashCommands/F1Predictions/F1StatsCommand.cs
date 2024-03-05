@@ -1,5 +1,5 @@
 ﻿using AntiClown.DiscordBot.Cache.Users;
-using AntiClown.DiscordBot.EmbedBuilders.F1PredictionsStats;
+using AntiClown.DiscordBot.EmbedBuilders.F1Predictions;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;

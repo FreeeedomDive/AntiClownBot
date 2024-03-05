@@ -7,7 +7,6 @@ using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
-using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
@@ -40,7 +39,8 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
+                await RespondToInteractionAsync(interactionContext, "Внести свои предсказания на гонку теперь можно только через веб-приложение, используй команду /web");
+                /*var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
                 if (currentRace is null)
                 {
                     await RespondToInteractionAsync(interactionContext, "На данный момент нет активных предсказаний на гонку");
@@ -56,7 +56,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                 catch (PredictionsAlreadyClosedException)
                 {
                     await RespondToInteractionAsync(interactionContext, "Предсказания на текущую гонку уже закрыты");
-                }
+                }*/
             }
         );
     }
@@ -102,10 +102,10 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                                 ), true
                             )
                             .AddField(
-                                "Первый DNF",
+                                "DNF",
                                 string.Join(
                                     "\n",
-                                    race.Predictions.Select(p => p.FirstDnfPickedDriver.ToString())
+                                    race.Predictions.Select(p => p.DnfPrediction.NoDnfPredicted ? "Никто" : string.Join(" ", p.DnfPrediction.DnfPickedDrivers!))
                                 ), true
                             ).Build();
                 await RespondToInteractionAsync(interactionContext, embed);
@@ -123,7 +123,9 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season is null ? null : (int)season);
+                var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(
+                    season is null ? DateTime.UtcNow.Year : (int)season
+                );
                 if (standings.Count == 0)
                 {
                     await RespondToInteractionAsync(interactionContext, $"В сезоне {season} еще не было ни одной гонки");
@@ -139,7 +141,11 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                                            {
                                                UserId = kv.Key,
                                                Predictions = kv.Value,
-                                               TotalPoints = kv.Value.Select(p => p is null ? 0 : p.TenthPlacePoints + p.FirstDnfPoints).Sum(),
+                                               TotalPoints = kv.Value.Select(
+                                                   p => p is null
+                                                       ? 0
+                                                       : SumPoints(p)
+                                               ).Sum(),
                                            }
                                        )
                                        .OrderByDescending(x => x.TotalPoints);
@@ -154,12 +160,11 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                             string.Join(
                                 " ", userPredictions
                                      .Predictions
-                                     .Select(p => p is null ? "  " : (p.TenthPlacePoints + p.FirstDnfPoints).ToString().AddSpaces(2))
+                                     .Select(p => p is null ? "  " : (SumPoints(p)).ToString().AddSpaces(2))
                             )
                         )
                         .Append($" | {userPredictions.TotalPoints.AddSpaces(3)}")
                         .Append($" | {userPredictions.Predictions.Count(x => x?.TenthPlacePoints == 25)}x25")
-                        .Append($" {userPredictions.Predictions.Count(x => x?.FirstDnfPoints > 0)}xDNF")
                         .AppendLine();
                 }
 
@@ -167,6 +172,15 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                 await RespondToInteractionAsync(interactionContext, stringBuilder.ToString());
             }
         );
+    }
+
+    private static int SumPoints(F1PredictionUserResultDto predictionUserResult)
+    {
+        return predictionUserResult.TenthPlacePoints
+               + predictionUserResult.DnfsPoints
+               + predictionUserResult.SafetyCarsPoints
+               + predictionUserResult.FirstPlaceLeadPoints
+               + predictionUserResult.TeamMatesPoints;
     }
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;

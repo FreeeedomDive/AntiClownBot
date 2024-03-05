@@ -14,10 +14,10 @@ export default class UsersApi {
     });
   }
 
-  static get = async (userId: string): Promise<UserDto | undefined> => {
+  static get = async (userId: string): Promise<UserDto | null> => {
     const result = await UsersApi.init().get<UserDto>(`/${userId}`);
     if (result.status === 404) {
-      return undefined;
+      return null;
     }
     return result.data;
   }

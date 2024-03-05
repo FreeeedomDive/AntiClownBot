@@ -36,6 +36,7 @@ using Hangfire.PostgreSql;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using SqlRepositoryBase.Configuration.Extensions;
 using SqlRepositoryBase.Core.Options;
 using TelemetryApp.Utilities.Extensions;
@@ -130,6 +131,7 @@ public class Startup
         services.AddTransient<IPaymentsAndResetsService, PaymentsAndResetsService>();
         services.AddTransient<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
         services.AddTransient<IPartiesService, PartiesService>();
+        services.AddTransient<IF1PredictionsMessageProducer, F1PredictionsMessageProducer>();
         services.AddTransient<IF1PredictionsService, F1PredictionsService>();
         services.AddTransient<IF1PredictionsStatisticsService, F1PredictionsStatisticsService>();
         services.AddTransient<IMinecraftAuthService, MinecraftAuthService>();
@@ -143,7 +145,12 @@ public class Startup
         );
         services.AddHangfireServer();
 
-        services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.TypeNameHandling = TypeNameHandling.All);
+        services.AddControllers().AddNewtonsoftJson(
+            options =>
+            {
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
+            });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

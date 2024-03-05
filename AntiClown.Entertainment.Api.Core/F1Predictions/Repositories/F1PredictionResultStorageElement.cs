@@ -10,5 +10,8 @@ public class F1PredictionResultStorageElement : SqlStorageElement
     public Guid RaceId { get; set; }
     public Guid UserId { get; set; }
     public int TenthPlacePoints { get; set; }
-    public int FirstDnfPoints { get; set; }
+    public int DnfPoints { get; set; }
+    public int SafetyCarsPoints { get; set; }
+    public int FirstPlaceLeadPoints { get; set; }
+    public int TeamMatesPoints { get; set; }
 }
