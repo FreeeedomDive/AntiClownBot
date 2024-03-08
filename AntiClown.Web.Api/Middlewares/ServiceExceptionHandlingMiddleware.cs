@@ -1,7 +1,7 @@
 ﻿using AntiClown.Core.Dto.Exceptions;
 using Newtonsoft.Json;
 
-namespace AntiClown.WebApi.Middlewares;
+namespace AntiClown.Web.Api.Middlewares;
 
 public class ServiceExceptionHandlingMiddleware
 {

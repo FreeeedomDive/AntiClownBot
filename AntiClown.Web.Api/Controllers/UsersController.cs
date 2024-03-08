@@ -3,7 +3,7 @@ using AntiClown.Api.Dto.Users;
 using AntiClown.Core.Dto.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AntiClown.WebApi.Controllers;
+namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/users")]
 public class UsersController : Controller

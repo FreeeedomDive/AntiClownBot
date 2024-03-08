@@ -1,4 +1,4 @@
-﻿namespace AntiClown.WebApi.Dto;
+﻿namespace AntiClown.Web.Api.Dto;
 
 public enum AddPredictionResultDto
 {

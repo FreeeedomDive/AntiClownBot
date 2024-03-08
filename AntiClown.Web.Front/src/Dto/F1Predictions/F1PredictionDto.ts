@@ -7,7 +7,7 @@ export interface F1PredictionDto {
   userId: string;
   tenthPlacePickedDriver: F1DriverDto;
   safetyCarsPrediction: F1SafetyCarPredictionDto;
-  teamsPickedDrivers: { $values: F1DriverDto[] } | F1DriverDto[];
+  teamsPickedDrivers: F1DriverDto[];
   firstPlaceLeadPrediction: number;
   dnfPrediction: F1DnfPredictionDto;
 }

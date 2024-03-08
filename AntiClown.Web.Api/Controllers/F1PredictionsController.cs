@@ -1,10 +1,10 @@
 ﻿using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
-using AntiClown.WebApi.Dto;
+using AntiClown.Web.Api.Dto;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AntiClown.WebApi.Controllers;
+namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/f1Predictions")]
 public class F1PredictionsController : Controller

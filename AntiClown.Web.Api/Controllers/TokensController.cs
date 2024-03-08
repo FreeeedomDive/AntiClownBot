@@ -1,7 +1,7 @@
 ﻿using AntiClown.Data.Api.Client;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AntiClown.WebApi.Controllers;
+namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/tokens/{userId:guid}")]
 public class TokensController : Controller

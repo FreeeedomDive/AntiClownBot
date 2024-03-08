@@ -4,7 +4,7 @@ import {UserDto} from "../Dto/Users/UserDto";
 export default class UsersApi {
   static init = () => {
     return axios.create({
-      baseURL: `/api/users`, timeout: 10000, headers: {
+      baseURL: `/webApi/users`, timeout: 10000, headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       },

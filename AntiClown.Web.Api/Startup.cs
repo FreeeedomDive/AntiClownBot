@@ -6,13 +6,13 @@ using AntiClown.DiscordApi.Client;
 using AntiClown.DiscordApi.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
-using AntiClown.WebApi.Middlewares;
+using AntiClown.Web.Api.Middlewares;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
 using TelemetryApp.Utilities.Extensions;
 using TelemetryApp.Utilities.Middlewares;
 
-namespace AntiClown.WebApi;
+namespace AntiClown.Web.Api;
 
 public class Startup
 {

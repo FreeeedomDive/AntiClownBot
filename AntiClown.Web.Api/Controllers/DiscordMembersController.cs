@@ -2,7 +2,7 @@
 using AntiClown.DiscordApi.Dto.Members;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AntiClown.WebApi.Controllers;
+namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/discordMembers")]
 public class DiscordMembersController : Controller
