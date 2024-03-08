@@ -1,4 +1,4 @@
-﻿using AntiClown.Entertainment.Api.Client.Extensions;
+﻿using AntiClown.Core.Dto.Extensions;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using RestSharp;
 
@@ -9,6 +9,13 @@ public class F1PredictionsClient : IF1PredictionsClient
     public F1PredictionsClient(RestClient restClient)
     {
         this.restClient = restClient;
+    }
+
+    public async Task<F1RaceDto[]> ReadActiveAsync()
+    {
+        var request = new RestRequest("f1Predictions/active");
+        var response = await restClient.ExecuteGetAsync(request);
+        return response.TryDeserialize<F1RaceDto[]>();
     }
 
     public async Task<F1RaceDto> ReadAsync(Guid raceId)
@@ -28,6 +35,13 @@ public class F1PredictionsClient : IF1PredictionsClient
     public async Task ClosePredictionsAsync(Guid raceId)
     {
         var request = new RestRequest($"f1Predictions/{raceId}/close");
+        var response = await restClient.ExecutePostAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
+    public async Task AddPredictionAsync(Guid raceId, F1PredictionDto f1Prediction)
+    {
+        var request = new RestRequest($"f1Predictions/{raceId}/addPrediction").AddJsonBody(f1Prediction);
         var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }

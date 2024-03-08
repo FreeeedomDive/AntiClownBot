@@ -1,6 +1,6 @@
-using AntiClown.Api.Client.Extensions;
 using AntiClown.Api.Dto.Inventories;
 using AntiClown.Api.Dto.Shops;
+using AntiClown.Core.Dto.Extensions;
 using RestSharp;
 
 namespace AntiClown.Api.Client.Shop;

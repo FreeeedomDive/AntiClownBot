@@ -4,7 +4,7 @@ import {DiscordMemberDto} from "../Dto/Users/DiscordMemberDto";
 export default class DiscordMembersApi {
   static init = () => {
     return axios.create({
-      baseURL: `/discordApi/members/`, timeout: 10000, headers: {
+      baseURL: `/webApi/discordMembers/`, timeout: 10000, headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       },

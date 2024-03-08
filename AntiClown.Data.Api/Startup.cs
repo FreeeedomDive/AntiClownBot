@@ -5,6 +5,7 @@ using AntiClown.Data.Api.Core.Tokens.Repositories;
 using AntiClown.Data.Api.Core.Tokens.Services;
 using AntiClown.Data.Api.Middlewares;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using SqlRepositoryBase.Configuration.Extensions;
 using TelemetryApp.Utilities.Extensions;
 using TelemetryApp.Utilities.Middlewares;
@@ -47,7 +48,12 @@ public class Startup
         services.AddTransient<ITokenGenerator, GuidTokenGenerator>();
         services.AddTransient<ITokensService, TokensService>();
 
-        services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.TypeNameHandling = TypeNameHandling.All);
+        services.AddControllers().AddNewtonsoftJson(
+            options =>
+            {
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
+            });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

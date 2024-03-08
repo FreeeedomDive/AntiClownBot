@@ -22,4 +22,5 @@ public enum F1DriverDto
     Tsunoda,
     Albon,
     Sargeant,
+    Bearman,
 }

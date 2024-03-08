@@ -11,7 +11,7 @@
         <PackageReference Include="DSharpPlus.SlashCommands" Version="4.4.2"/>
         <PackageReference Include="MassTransit" Version="8.0.15"/>
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.15"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.16" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4"/>
         <PackageReference Include="Xdd.SqlRepositoryBase.Configuration" Version="1.0.17" />
@@ -23,6 +23,7 @@
     <ItemGroup>
         <ProjectReference Include="..\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
         <ProjectReference Include="..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj"/>
+        <ProjectReference Include="..\AntiClown.DiscordApi.Dto\AntiClown.DiscordApi.Dto.csproj" />
         <ProjectReference Include="..\AntiClown.Entertainment.Api.Client\AntiClown.Entertainment.Api.Client.csproj"/>
         <ProjectReference Include="..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj"/>
         <ProjectReference Include="..\Utility\Utility.csproj"/>

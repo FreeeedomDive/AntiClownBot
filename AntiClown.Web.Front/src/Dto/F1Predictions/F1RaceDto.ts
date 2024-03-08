@@ -6,9 +6,5 @@ export interface F1RaceDto {
   name: string;
   isActive: boolean;
   isOpened: boolean;
-  predictions:
-    | {
-        $values: F1PredictionDto[];
-      }
-    | F1PredictionDto[];
+  predictions: F1PredictionDto[];
 }

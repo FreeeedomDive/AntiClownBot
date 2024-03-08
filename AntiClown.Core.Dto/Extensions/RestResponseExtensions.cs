@@ -2,9 +2,9 @@
 using Newtonsoft.Json;
 using RestSharp;
 
-namespace AntiClown.Entertainment.Api.Client.Extensions;
+namespace AntiClown.Core.Dto.Extensions;
 
-internal static class RestResponseExtensions
+public static class RestResponseExtensions
 {
     public static void ThrowIfNotSuccessful(this RestResponse restResponse)
     {
@@ -18,18 +18,16 @@ internal static class RestResponseExtensions
             throw new Exception("Content is null");
         }
 
-        var knownApiException = JsonConvert.DeserializeObject<AntiClownBaseException>(
-            restResponse.Content, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All,
-            }
-        );
+        var knownApiException = JsonConvert.DeserializeObject<AntiClownBaseException>(restResponse.Content, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All,
+        });
         throw knownApiException ?? new Exception("Unknown API error");
     }
 
     public static T TryDeserialize<T>(this RestResponse restResponse)
     {
-        restResponse.ThrowIfNotSuccessful();
+        ThrowIfNotSuccessful(restResponse);
         if (restResponse.Content == null)
         {
             throw new Exception("Content is null");

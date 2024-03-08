@@ -18,5 +18,6 @@ export enum F1DriverDto {
   Ricciardo = "Ricciardo",
   Tsunoda = "Tsunoda",
   Albon = "Albon",
-  Sargeant = "Sargeant"
+  Sargeant = "Sargeant",
+  Bearman = "Bearman",
 }

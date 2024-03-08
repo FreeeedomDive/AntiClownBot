@@ -1,0 +1,30 @@
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+
+WORKDIR /certificate
+RUN dotnet dev-certs https --clean
+RUN dotnet dev-certs https -ep ./https/certificate.pfx -p aspnet
+RUN dotnet dev-certs https --trust
+
+WORKDIR /src
+COPY ["AntiClown.Core.Dto/AntiClown.Core.Dto.csproj", "AntiClown.Api.Core/"]
+COPY ["AntiClown.Api.Dto/AntiClown.Api.Dto.csproj", "AntiClown.Api.Dto/"]
+COPY ["AntiClown.Api.Client/AntiClown.Api.Client.csproj", "AntiClown.Api.Client/"]
+COPY ["AntiClown.Entertainment.Api.Dto/AntiClown.Entertainment.Api.Dto.csproj", "AntiClown.Entertainment.Api.Dto/"]
+COPY ["AntiClown.Entertainment.Api.Client/AntiClown.Entertainment.Api.Client.csproj", "AntiClown.Entertainment.Api.Client/"]
+COPY ["AntiClown.Data.Api.Dto/AntiClown.Data.Api.Dto.csproj", "AntiClown.Data.Api.Dto/"]
+COPY ["AntiClown.Data.Api.Client/AntiClown.Data.Api.Client.csproj", "AntiClown.Data.Api.Client/"]
+COPY ["AntiClown.DiscordApi.Dto/AntiClown.DiscordApi.Dto.csproj", "AntiClown.DiscordApi.Dto/"]
+COPY ["AntiClown.DiscordApi.Client/AntiClown.DiscordApi.Client.csproj", "AntiClown.DiscordApi.Client/"]
+COPY ["AntiClown.Web.Api/AntiClown.Web.Api.csproj", "AntiClown.Web.Api/"]
+RUN dotnet restore "AntiClown.Web.Api/AntiClown.Web.Api.csproj"
+COPY . .
+
+FROM build AS publish
+WORKDIR "/src/AntiClown.Web.Api"
+RUN dotnet publish "AntiClown.Web.Api.csproj" -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS final
+WORKDIR /app
+COPY --from=build /certificate /certificate
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "AntiClown.Web.Api.dll"]

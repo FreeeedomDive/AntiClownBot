@@ -1,4 +1,4 @@
-﻿namespace AntiClown.DiscordBot.Web.Dto;
+﻿namespace AntiClown.DiscordApi.Dto.Members;
 
 public class DiscordMemberDto
 {

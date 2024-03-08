@@ -1,4 +1,4 @@
-using AntiClown.Entertainment.Api.Client.Extensions;
+using AntiClown.Core.Dto.Extensions;
 using RestSharp;
 
 namespace AntiClown.Entertainment.Api.Client.CommonEvents.Bedge
@@ -21,8 +21,4 @@ namespace AntiClown.Entertainment.Api.Client.CommonEvents.Bedge
 
         private const string ControllerUrl = "events/common/bedge";
     }
-}
-
-namespace AntiClown.Entertainment.Api.Client.CommonEvents.Bedge
-{
 }

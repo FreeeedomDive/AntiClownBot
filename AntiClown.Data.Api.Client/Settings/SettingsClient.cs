@@ -1,4 +1,4 @@
-﻿using AntiClown.Data.Api.Client.Extensions;
+﻿using AntiClown.Core.Dto.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
 using RestSharp;
 
