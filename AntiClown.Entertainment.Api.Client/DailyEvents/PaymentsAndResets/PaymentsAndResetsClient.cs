@@ -1,4 +1,4 @@
-﻿using AntiClown.Entertainment.Api.Client.Extensions;
+﻿using AntiClown.Core.Dto.Extensions;
 using RestSharp;
 
 namespace AntiClown.Entertainment.Api.Client.DailyEvents.PaymentsAndResets;

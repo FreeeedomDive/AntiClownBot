@@ -1,4 +1,4 @@
-using AntiClown.DiscordApi.Client.Extensions;
+using AntiClown.Core.Dto.Extensions;
 using AntiClown.DiscordApi.Dto.Members;
 using RestSharp;
 

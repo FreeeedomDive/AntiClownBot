@@ -1,4 +1,4 @@
-﻿using AntiClown.Entertainment.Api.Client.Extensions;
+﻿using AntiClown.Core.Dto.Extensions;
 using AntiClown.Entertainment.Api.Dto.DailyEvents;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.ActiveEventsIndex;
 using RestSharp;

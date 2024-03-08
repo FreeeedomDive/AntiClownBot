@@ -1,5 +1,5 @@
-using AntiClown.Api.Client.Extensions;
 using AntiClown.Api.Dto.Economies;
+using AntiClown.Core.Dto.Extensions;
 using RestSharp;
 
 namespace AntiClown.Api.Client.Economy;
