@@ -1,5 +1,5 @@
-﻿using AntiClown.DiscordBot.Cache.Users;
-using AntiClown.DiscordBot.Web.Dto;
+﻿using AntiClown.DiscordApi.Dto.Members;
+using AntiClown.DiscordBot.Cache.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.DiscordBot.Web.Controllers;

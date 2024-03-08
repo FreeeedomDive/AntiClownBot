@@ -35,7 +35,6 @@ internal static class RestResponseExtensions
 
         try
         {
-            Console.WriteLine(restResponse.Content);
             var response = JsonConvert.DeserializeObject<T>(restResponse.Content, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All,
