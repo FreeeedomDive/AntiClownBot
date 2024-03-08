@@ -21,5 +21,6 @@ public enum F1Driver
     Ricciardo,
     Tsunoda,
     Albon,
-    Sargeant
+    Sargeant,
+    Bearman,
 }

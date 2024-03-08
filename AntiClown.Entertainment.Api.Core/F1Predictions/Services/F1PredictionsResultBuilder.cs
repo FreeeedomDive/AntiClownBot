@@ -24,7 +24,7 @@ public static class F1PredictionsResultBuilder
         var teamMatesWinners = new[]
         {
             SelectHighestTeamMate(driverToPosition, F1Driver.Verstappen, F1Driver.Perez),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Leclerc, F1Driver.Sainz),
+            SelectHighestTeamMate(driverToPosition, F1Driver.Leclerc, F1Driver.Bearman),
             SelectHighestTeamMate(driverToPosition, F1Driver.Hamilton, F1Driver.Russell),
             SelectHighestTeamMate(driverToPosition, F1Driver.Ocon, F1Driver.Gasly),
             SelectHighestTeamMate(driverToPosition, F1Driver.Piastri, F1Driver.Norris),
