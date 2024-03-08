@@ -9,9 +9,10 @@ public class CurrentReleaseProvider : ICurrentReleaseProvider
         return new ReleaseVersion
         {
             Major = 3,
-            Minor = 3,
-            Patch = 2,
-            Description = "Обновлен список предсказаний на текущую гонку",
+            Minor = 4,
+            Patch = 1,
+            Description = "На фронте добавлен выбор гонки, на которую делается предсказание. "
+                          + "В боте добавлены админские команды, чтобы вносить результаты по новым предсказаниям",
             CreatedAt = DateTime.UtcNow,
         };
     }

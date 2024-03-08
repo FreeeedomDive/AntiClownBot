@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {DiscordMemberDto} from "../../../../Dto/Users/DiscordMemberDto";
 import DiscordMembersApi from "../../../../Api/DiscordMembersApi";
 import {Avatar, CircularProgress, Stack, Typography} from "@mui/material";
-import "./UserOverview.css";
+import { Loader } from "../../../../Components/Loader/Loader";
 
 export default function UserOverview() {
   const {userId = ""} = useParams<"userId">();
@@ -22,9 +22,7 @@ export default function UserOverview() {
   return <div>
     {
       loading && (
-        <div className={"loadingContainer"}>
-          <CircularProgress color="inherit" size={64}/>
-        </div>
+        <Loader />
       )
     }
     {

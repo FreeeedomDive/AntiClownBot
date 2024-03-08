@@ -140,6 +140,8 @@ public static class InteractionsIds
         public const string F1Admin_Results = "results";
         public const string F1Admin_Close = "close";
         public const string F1Admin_Dnf = "dnf";
+        public const string F1Admin_Sc = "sc";
+        public const string F1Admin_FirstPlaceLead = "firstPlaceLead";
         public const string F1Admin_Finish = "finish";
 
         public const string F1_Group = "f1";

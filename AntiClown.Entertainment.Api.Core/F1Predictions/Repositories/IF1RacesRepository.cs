@@ -9,5 +9,4 @@ public interface IF1RacesRepository
     Task<F1Race[]> ReadAllAsync();
     Task<F1Race[]> FindAsync(F1RaceFilter filter);
     Task UpdateAsync(F1Race race);
-    Task Convert();
 }

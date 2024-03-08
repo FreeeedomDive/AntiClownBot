@@ -29,6 +29,7 @@ using AntiClown.DiscordBot.SlashCommands.Random;
 using AntiClown.DiscordBot.SlashCommands.Roles;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
 using AntiClown.DiscordBot.SlashCommands.Web;
+using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AntiClown.Tools.Utility.Extensions;
@@ -49,6 +50,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IDiscordClientWrapper discordClientWrapper,
         IEmotesCache emotesCache,
         IAntiClownDataApiClient antiClownDataApiClient,
+        IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IInventoryService inventoryService,
         IShopService shopService,
         IGuessNumberEventService guessNumberEventService,
@@ -64,6 +66,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.discordClientWrapper = discordClientWrapper;
         this.emotesCache = emotesCache;
         this.antiClownDataApiClient = antiClownDataApiClient;
+        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.inventoryService = inventoryService;
         this.shopService = shopService;
         this.guessNumberEventService = guessNumberEventService;
@@ -570,6 +573,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                     e.Interaction,
                     new DiscordWebhookBuilder().WithContent($"Итоговая таблица:\n{string.Join("\n", currentRace.Details!.Classification)}")
                 );
+                await antiClownEntertainmentApiClient.F1Predictions.AddClassificationsResultAsync(currentRace.Id, currentRace.Details!.Classification.ToArray());
                 return;
             }
         }
@@ -729,6 +733,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IEmotesCache emotesCache;
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
+    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IGuessNumberEventService guessNumberEventService;
     private readonly IInteractivityRepository interactivityRepository;
     private readonly IInventoryService inventoryService;
