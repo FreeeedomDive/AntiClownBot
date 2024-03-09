@@ -20,7 +20,7 @@ public class TokensClient : ITokensClient
 
     public async Task ValidateAsync(Guid userId, string token)
     {
-        var request = new RestRequest($"tokens/{userId}").AddJsonBody(token);
+        var request = new RestRequest($"tokens/{userId}/validate").AddJsonBody(token);
         var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }
