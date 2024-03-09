@@ -1,4 +1,5 @@
 ﻿using AntiClown.Core.Dto.Extensions;
+using AntiClown.Data.Api.Dto.Tokens;
 using RestSharpClient.Extensions;
 using RestSharp;
 
@@ -20,7 +21,7 @@ public class TokensClient : ITokensClient
 
     public async Task ValidateAsync(Guid userId, string token)
     {
-        var request = new RestRequest($"tokens/{userId}/validate").AddJsonBody(token);
+        var request = new RestRequest($"tokens/{userId}/validate").AddJsonBody(new TokenDto { Token = token });
         var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }

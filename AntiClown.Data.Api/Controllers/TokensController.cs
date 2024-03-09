@@ -1,4 +1,5 @@
 ﻿using AntiClown.Data.Api.Core.Tokens.Services;
+using AntiClown.Data.Api.Dto.Tokens;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Data.Api.Controllers;
@@ -19,9 +20,9 @@ public class TokensController : Controller
     }
 
     [HttpPost("validate")]
-    public async Task<ActionResult> ValidateAsync([FromRoute] Guid userId, [FromBody] string token)
+    public async Task<ActionResult> ValidateAsync([FromRoute] Guid userId, [FromBody] TokenDto token)
     {
-        await tokensService.ValidateAsync(userId, token);
+        await tokensService.ValidateAsync(userId, token.Token);
         return NoContent();
     }
 

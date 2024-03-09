@@ -14,7 +14,6 @@ public class TokensController : Controller
     [HttpPost("validate")]
     public async Task<ActionResult> ValidateAsync([FromRoute] Guid userId, [FromBody] string token)
     {
-        Console.WriteLine(token);
         await antiClownDataApiClient.Tokens.ValidateAsync(userId, token);
         return NoContent();
     }
