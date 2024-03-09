@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Data.Api.Controllers;
 
-[Route("dataApi/rights/{userId:guid}")]
+[Route("dataApi/rights")]
 public class RightsController : Controller
 {
     public RightsController(
@@ -18,24 +18,32 @@ public class RightsController : Controller
         this.mapper = mapper;
     }
 
-    [HttpGet("")]
+    [HttpGet]
+    public async Task<ActionResult<Dictionary<RightsDto, Guid[]>>> ReadAll()
+    {
+        var result = await rightsService.ReadAllAsync();
+        return mapper.Map<Dictionary<RightsDto, Guid[]>>(result);
+    }
+
+    [HttpGet("{userId:guid}")]
     public async Task<ActionResult<RightsDto[]>> FindAllUserRights([FromRoute] Guid userId)
     {
-        var result = rightsService.FindAllUserRights(userId);
+        var result = await rightsService.FindAllUserRightsAsync(userId);
         return mapper.Map<RightsDto[]>(result);
     }
 
-    [HttpPost("grant")]
-    public async Task<ActionResult> GrantAsync([FromRoute] Guid userId, [FromQuery] RightsDto right)
+    [HttpPost("{userId:guid}/grant")]
+    public async Task<ActionResult> Grant([FromRoute] Guid userId, [FromQuery] RightsDto right)
     {
         await rightsService.GrantAsync(userId, mapper.Map<Rights>(right));
         return NoContent();
     }
 
-    [HttpDelete("revoke")]
-    public async Task<ActionResult> RevokeAsync(Guid userId, RightsDto right)
+    [HttpDelete("{userId:guid}/revoke")]
+    public async Task<ActionResult> Revoke([FromRoute] Guid userId, [FromQuery] RightsDto right)
     {
         await rightsService.RevokeAsync(userId, mapper.Map<Rights>(right));
+        return NoContent();
     }
 
     private readonly IRightsService rightsService;

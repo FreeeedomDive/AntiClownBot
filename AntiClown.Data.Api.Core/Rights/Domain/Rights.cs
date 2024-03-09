@@ -4,5 +4,6 @@ public enum Rights
 {
     EditRights,
     EditSettings,
+    F1Predictions,
     F1PredictionsAdmin,
 }

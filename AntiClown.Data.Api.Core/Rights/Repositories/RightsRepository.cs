@@ -9,6 +9,11 @@ public class RightsRepository : IRightsRepository
         this.sqlRepository = sqlRepository;
     }
 
+    public async Task<RightsStorageElement[]> ReadAllAsync()
+    {
+        return await sqlRepository.ReadAllAsync();
+    }
+
     public async Task<Domain.Rights[]> FindAsync(Guid userId)
     {
         var result = await sqlRepository.FindAsync(x => x.UserId == userId);

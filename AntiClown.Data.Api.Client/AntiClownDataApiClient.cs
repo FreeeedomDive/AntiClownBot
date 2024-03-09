@@ -1,4 +1,5 @@
-﻿using AntiClown.Data.Api.Client.Settings;
+﻿using AntiClown.Data.Api.Client.Rights;
+using AntiClown.Data.Api.Client.Settings;
 using AntiClown.Data.Api.Client.Tokens;
 using RestSharp;
 
@@ -10,8 +11,10 @@ public class AntiClownDataApiClient : IAntiClownDataApiClient
     {
         Settings = new SettingsClient(restClient);
         Tokens = new TokensClient(restClient);
+        Rights = new RightsClient(restClient);
     }
     
-    public ISettingsClient Settings { get; set; }
-    public ITokensClient Tokens { get; set; }
+    public ISettingsClient Settings { get; }
+    public ITokensClient Tokens { get; }
+    public IRightsClient Rights { get; }
 }

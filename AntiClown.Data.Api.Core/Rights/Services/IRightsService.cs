@@ -2,7 +2,8 @@
 
 public interface IRightsService
 {
-    Task<Domain.Rights[]> FindAllUserRights(Guid userId);
+    Task<Dictionary<Domain.Rights, Guid[]>> ReadAllAsync();
+    Task<Domain.Rights[]> FindAllUserRightsAsync(Guid userId);
     Task GrantAsync(Guid userId, Domain.Rights right);
     Task RevokeAsync(Guid userId, Domain.Rights right);
 }

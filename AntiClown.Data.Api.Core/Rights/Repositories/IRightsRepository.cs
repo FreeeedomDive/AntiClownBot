@@ -2,6 +2,7 @@
 
 public interface IRightsRepository
 {
+    Task<RightsStorageElement[]> ReadAllAsync();
     Task<Domain.Rights[]> FindAsync(Guid userId);
     Task<bool> ExistsAsync(Guid userId, Domain.Rights right);
     Task CreateAsync(Guid userId, Domain.Rights right);

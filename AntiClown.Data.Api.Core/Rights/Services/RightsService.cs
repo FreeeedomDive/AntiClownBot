@@ -9,7 +9,17 @@ public class RightsService : IRightsService
         this.rightsRepository = rightsRepository;
     }
 
-    public async Task<Domain.Rights[]> FindAllUserRights(Guid userId)
+    public async Task<Dictionary<Domain.Rights, Guid[]>> ReadAllAsync()
+    {
+        var allRights = await rightsRepository.ReadAllAsync();
+        return allRights
+               .Select(x => new { x.UserId, Right = Enum.TryParse<Domain.Rights>(x.Name, out var rightName) ? rightName : (Domain.Rights?)null })
+               .Where(x => x.Right is not null)
+               .GroupBy(x => x.Right, x => x.UserId)
+               .ToDictionary(x => x.Key!.Value, x => x.ToArray());
+    }
+
+    public async Task<Domain.Rights[]> FindAllUserRightsAsync(Guid userId)
     {
         return await rightsRepository.FindAsync(userId);
     }
