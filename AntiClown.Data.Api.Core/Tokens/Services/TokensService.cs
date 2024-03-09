@@ -21,6 +21,7 @@ public class TokensService : ITokensService
 
     public async Task ValidateAsync(Guid userId, string token)
     {
+        Console.WriteLine(token);
         var existingToken = await tokensRepository.TryReadAsync(userId);
         if (existingToken is null || existingToken != token)
         {
