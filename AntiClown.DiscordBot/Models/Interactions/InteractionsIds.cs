@@ -114,6 +114,12 @@ public static class InteractionsIds
         public const string Dev_EventsEditor_Start = "start";
         public const string Dev_EventsEditor_Finish = "finish";
 
+        public const string Dev_Rights_Group = "rights";
+        public const string Dev_Rights_All = "all";
+        public const string Dev_Rights_Show = "show";
+        public const string Dev_Rights_Grant = "grant";
+        public const string Dev_Rights_Revoke = "revoke";
+
         public const string Party_Group = "party";
         public const string Party_CreateWithOldPrefix = "-g";
         public const string Party_Create = "-c";

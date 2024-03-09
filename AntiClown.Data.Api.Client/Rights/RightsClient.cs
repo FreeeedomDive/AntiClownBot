@@ -26,16 +26,16 @@ public class RightsClient : IRightsClient
         return response.TryDeserialize<RightsDto[]>();
     }
 
-    public async Task GrantAsync(Guid userId)
+    public async Task GrantAsync(Guid userId, RightsDto right)
     {
-        var request = new RestRequest($"rights/{userId}/grant");
+        var request = new RestRequest($"rights/{userId}/grant").AddQueryParameter(nameof(right), right);
         var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }
 
-    public async Task RevokeAsync(Guid userId)
+    public async Task RevokeAsync(Guid userId, RightsDto right)
     {
-        var request = new RestRequest($"rights/{userId}/revoke");
+        var request = new RestRequest($"rights/{userId}/revoke").AddQueryParameter(nameof(right), right);
         var response = await restClient.ExecuteDeleteAsync(request);
         response.ThrowIfNotSuccessful();
     }
