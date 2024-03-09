@@ -64,6 +64,7 @@ public class RightsCommandModule : SlashCommandModuleWithMiddlewares
             {
                 var apiUserId = await usersCache.GetApiIdByMemberIdAsync(user.Id);
                 await antiClownDataApiClient.Rights.GrantAsync(apiUserId, rightsDto);
+                await RespondToInteractionAsync(context, "Готово");
             },
             RightsDto.EditRights
         );
@@ -80,7 +81,8 @@ public class RightsCommandModule : SlashCommandModuleWithMiddlewares
             context, async () =>
             {
                 var apiUserId = await usersCache.GetApiIdByMemberIdAsync(user.Id);
-                await antiClownDataApiClient.Rights.GrantAsync(apiUserId, rightsDto);
+                await antiClownDataApiClient.Rights.RevokeAsync(apiUserId, rightsDto);
+                await RespondToInteractionAsync(context, "Готово");
             },
             RightsDto.EditRights
         );
