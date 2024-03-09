@@ -1,4 +1,6 @@
 ﻿using AntiClown.Data.Api.Core.Database;
+using AntiClown.Data.Api.Core.Rights.Repositories;
+using AntiClown.Data.Api.Core.Rights.Services;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
 using AntiClown.Data.Api.Core.SettingsStoring.Services;
 using AntiClown.Data.Api.Core.Tokens.Repositories;
@@ -42,11 +44,13 @@ public class Startup
         // configure repositories
         services.AddTransient<ISettingsRepository, SettingsRepository>();
         services.AddTransient<ITokensRepository, TokensRepository>();
+        services.AddTransient<IRightsRepository, RightsRepository>();
 
         // configure services
         services.AddTransient<ISettingsService, SettingsService>();
         services.AddTransient<ITokenGenerator, GuidTokenGenerator>();
         services.AddTransient<ITokensService, TokensService>();
+        services.AddTransient<IRightsService, RightsService>();
 
         services.AddControllers().AddNewtonsoftJson(
             options =>
