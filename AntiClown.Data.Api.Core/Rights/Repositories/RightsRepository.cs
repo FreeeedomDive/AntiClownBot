@@ -4,7 +4,7 @@ namespace AntiClown.Data.Api.Core.Rights.Repositories;
 
 public class RightsRepository : IRightsRepository
 {
-    public RightsRepository(SqlRepository<RightsStorageElement> sqlRepository)
+    public RightsRepository(ISqlRepository<RightsStorageElement> sqlRepository)
     {
         this.sqlRepository = sqlRepository;
     }
@@ -51,5 +51,5 @@ public class RightsRepository : IRightsRepository
         await sqlRepository.DeleteAsync(existing);
     }
 
-    private readonly SqlRepository<RightsStorageElement> sqlRepository;
+    private readonly ISqlRepository<RightsStorageElement> sqlRepository;
 }

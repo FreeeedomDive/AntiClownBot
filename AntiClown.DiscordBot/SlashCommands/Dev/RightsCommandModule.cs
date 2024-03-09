@@ -69,7 +69,7 @@ public class RightsCommandModule : SlashCommandModuleWithMiddlewares
         );
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.Roles_Revoke, "Отобрать права у пользователя")]
+    [SlashCommand(InteractionsIds.CommandsNames.Dev_Rights_Revoke, "Отобрать права у пользователя")]
     public async Task RevokeRights(
         InteractionContext context,
         [Option("user", "Пользователь")] DiscordUser user,
