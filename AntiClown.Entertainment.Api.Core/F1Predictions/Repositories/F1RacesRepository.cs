@@ -44,6 +44,7 @@ public class F1RacesRepository : IF1RacesRepository
                            .WhereIf(filter.Name is not null, x => x.Name == filter.Name)
                            .WhereIf(filter.Season is not null, x => x.Season == filter.Season!.Value)
                            .WhereIf(filter.IsActive is not null, x => x.IsActive == filter.IsActive!.Value)
+                           .OrderBy(x => x.CreatedAt)
                            .ToArrayAsync();
         return result.Select(ToModel).ToArray();
     }

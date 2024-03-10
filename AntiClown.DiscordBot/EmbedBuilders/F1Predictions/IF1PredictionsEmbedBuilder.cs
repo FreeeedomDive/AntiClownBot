@@ -6,5 +6,6 @@ namespace AntiClown.DiscordBot.EmbedBuilders.F1Predictions;
 
 public interface IF1PredictionsEmbedBuilder
 {
-    Task<DiscordEmbed> BuildAsync(F1UserPredictionUpdatedMessageDto message, F1RaceDto race, F1PredictionDto prediction);
+    Task<DiscordEmbed> BuildPredictionUpdatedAsync(F1UserPredictionUpdatedMessageDto message, F1RaceDto race, F1PredictionDto prediction);
+    DiscordEmbed BuildPredictionsList(F1RaceDto race);
 }

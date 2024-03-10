@@ -14,7 +14,7 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
         this.usersCache = usersCache;
     }
 
-    public async Task<DiscordEmbed> BuildAsync(F1UserPredictionUpdatedMessageDto message, F1RaceDto race, F1PredictionDto prediction)
+    public async Task<DiscordEmbed> BuildPredictionUpdatedAsync(F1UserPredictionUpdatedMessageDto message, F1RaceDto race, F1PredictionDto prediction)
     {
         var member = await usersCache.GetMemberByApiIdAsync(prediction.UserId);
         var embedBuilder = new DiscordEmbedBuilder()
@@ -26,6 +26,51 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
                            .AddField("Отрыв 1 места", prediction.FirstPlaceLeadPrediction.ToString(CultureInfo.InvariantCulture))
                            .AddField("Кто из команды окажется впереди", string.Join(" ", prediction.TeamsPickedDrivers));
         return embedBuilder.Build();
+    }
+
+    public DiscordEmbed BuildPredictionsList(F1RaceDto race)
+    {
+        var apiIdToMember = race.Predictions.ToDictionary(
+            x => x.UserId,
+            x => usersCache.GetMemberByApiIdAsync(x.UserId).GetAwaiter().GetResult()
+        );
+        return new DiscordEmbedBuilder()
+               .WithTitle($"Предсказания на гонку {race.Name} {race.Season}")
+               .AddField(
+                   "Предсказатель",
+                   string.Join(
+                       "\n",
+                       race.Predictions.Select(p => apiIdToMember[p.UserId].ServerOrUserName())
+                   ), true
+               )
+               .AddField(
+                   "10 место",
+                   string.Join(
+                       "\n",
+                       race.Predictions.Select(p => p.TenthPlacePickedDriver.ToString())
+                   ), true
+               )
+               .AddField(
+                   "DNF",
+                   string.Join(
+                       "\n",
+                       race.Predictions.Select(p => p.DnfPrediction.NoDnfPredicted ? "Никто" : string.Join(" ", p.DnfPrediction.DnfPickedDrivers!))
+                   ), true
+               )
+               .AddField(
+                   "SC",
+                   string.Join(
+                       "\n",
+                       race.Predictions.Select(p => p.SafetyCarsPrediction.ToNumberedString())
+                   ), true
+               )
+               .AddField(
+                   "Отрыв лидера",
+                   string.Join(
+                       "\n",
+                       race.Predictions.Select(p => p.FirstPlaceLeadPrediction.ToString(CultureInfo.InvariantCulture))
+                   ), true
+               ).Build();
     }
 
     private readonly IUsersCache usersCache;

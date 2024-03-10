@@ -34,7 +34,7 @@ public class F1PredictionsConsumer : IConsumer<F1UserPredictionUpdatedMessageDto
             return;
         }
 
-        var embed = await f1PredictionsEmbedBuilder.BuildAsync(message, race, prediction);
+        var embed = await f1PredictionsEmbedBuilder.BuildPredictionUpdatedAsync(message, race, prediction);
         var f1PredictionsChatId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "F1PredictionsChatId");
         await discordClientWrapper.Messages.SendAsync(f1PredictionsChatId, embed);
     }

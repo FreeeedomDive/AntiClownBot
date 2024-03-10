@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using AntiClown.DiscordBot.Cache.Users;
+using AntiClown.DiscordBot.EmbedBuilders.F1Predictions;
 using AntiClown.DiscordBot.Extensions;
 using AntiClown.DiscordBot.Interactivity.Domain;
 using AntiClown.DiscordBot.Interactivity.Domain.F1Predictions;
@@ -8,7 +9,6 @@ using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
-using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClown.DiscordBot.SlashCommands.F1Predictions;
@@ -20,45 +20,14 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
         ICommandExecutor commandExecutor,
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IInteractivityRepository interactivityRepository,
+        IF1PredictionsEmbedBuilder f1PredictionsEmbedBuilder,
         IUsersCache usersCache
     ) : base(commandExecutor)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.interactivityRepository = interactivityRepository;
+        this.f1PredictionsEmbedBuilder = f1PredictionsEmbedBuilder;
         this.usersCache = usersCache;
-    }
-
-    [SlashCommand(InteractionsIds.CommandsNames.F1_Predict, "Добавить или изменить свое текущее предсказание")]
-    public async Task Predict(
-        InteractionContext interactionContext,
-        [Option("tenthPlace", "10 место в гонке")]
-        F1DriverDto tenthPlaceDriver,
-        [Option("dnf", "Первый DNF в гонке")] F1DriverDto dnfDriver
-    )
-    {
-        await ExecuteAsync(
-            interactionContext, async () =>
-            {
-                await RespondToInteractionAsync(interactionContext, "Внести свои предсказания на гонку теперь можно только через веб-приложение, используй команду /web");
-                /*var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
-                if (currentRace is null)
-                {
-                    await RespondToInteractionAsync(interactionContext, "На данный момент нет активных предсказаний на гонку");
-                    return;
-                }
-
-                var userId = await usersCache.GetApiIdByMemberIdAsync(interactionContext.Member.Id);
-                try
-                {
-                    await antiClownEntertainmentApiClient.F1Predictions.AddPredictionAsync(currentRace.Details!.RaceId, userId, tenthPlaceDriver, dnfDriver);
-                    await RespondToInteractionAsync(interactionContext, "Принято");
-                }
-                catch (PredictionsAlreadyClosedException)
-                {
-                    await RespondToInteractionAsync(interactionContext, "Предсказания на текущую гонку уже закрыты");
-                }*/
-            }
-        );
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.F1_List, "Показать текущие предсказания")]
@@ -81,33 +50,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                     return;
                 }
 
-                var apiIdToMember = race.Predictions.ToDictionary(
-                    x => x.UserId,
-                    x => usersCache.GetMemberByApiIdAsync(x.UserId).GetAwaiter().GetResult()
-                );
-                var embed = new DiscordEmbedBuilder()
-                            .WithTitle($"Предсказания на гонку {race.Name} {race.Season}")
-                            .AddField(
-                                "Предсказатель",
-                                string.Join(
-                                    "\n",
-                                    race.Predictions.Select(p => apiIdToMember[p.UserId].ServerOrUserName())
-                                ), true
-                            )
-                            .AddField(
-                                "10 место",
-                                string.Join(
-                                    "\n",
-                                    race.Predictions.Select(p => p.TenthPlacePickedDriver.ToString())
-                                ), true
-                            )
-                            .AddField(
-                                "DNF",
-                                string.Join(
-                                    "\n",
-                                    race.Predictions.Select(p => p.DnfPrediction.NoDnfPredicted ? "Никто" : string.Join(" ", p.DnfPrediction.DnfPickedDrivers!))
-                                ), true
-                            ).Build();
+                var embed = f1PredictionsEmbedBuilder.BuildPredictionsList(race);
                 await RespondToInteractionAsync(interactionContext, embed);
             }
         );
@@ -186,5 +129,6 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 
     private readonly IInteractivityRepository interactivityRepository;
+    private readonly IF1PredictionsEmbedBuilder f1PredictionsEmbedBuilder;
     private readonly IUsersCache usersCache;
 }
