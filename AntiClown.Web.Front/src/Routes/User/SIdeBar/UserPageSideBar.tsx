@@ -1,15 +1,10 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import React from "react";
-import {
-  Divider,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Stack,
-} from "@mui/material";
-import { useStore } from "../../../Stores";
-import { UserDto } from "../../../Dto/Users/UserDto";
+import {Divider, List, ListItem, ListItemButton, ListItemText, Stack,} from "@mui/material";
+import {useStore} from "../../../Stores";
+import {UserDto} from "../../../Dto/Users/UserDto";
+import {RightsWrapper} from "../../../Components/RIghts/RightsWrapper";
+import {RightsDto} from "../../../Dto/Rights/RightsDto";
 
 const buildLink = (userId: string, subLink?: string): string => {
   return `/user/${userId}` + (subLink ? `/${subLink}` : "");
@@ -72,16 +67,21 @@ const UserPageSideBar = ({ user }: Props) => {
                 <ListItemText primary={"Магазин"} />
               </ListItemButton>
             </ListItem>
-            <ListItem key={"F1Predictions"} disablePadding>
-              <ListItemButton
-                onClick={() => navigate(buildLink(userId, "f1Predictions"))}
-                selected={
-                  location.pathname === buildLink(userId, "f1Predictions")
-                }
-              >
-                <ListItemText primary={"Предсказания F1"} />
-              </ListItemButton>
-            </ListItem>
+            <RightsWrapper
+              requiredRights={[RightsDto.F1Predictions]}
+              children={
+                <ListItem key={"F1Predictions"} disablePadding>
+                  <ListItemButton
+                    onClick={() => navigate(buildLink(userId, "f1Predictions"))}
+                    selected={
+                      location.pathname === buildLink(userId, "f1Predictions")
+                    }
+                  >
+                    <ListItemText primary={"Предсказания F1"} />
+                  </ListItemButton>
+                </ListItem>
+              }
+            />
           </List>
         </>
       )}

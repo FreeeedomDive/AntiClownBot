@@ -1,15 +1,17 @@
-import { Route, Routes, useParams } from "react-router-dom";
+import {Route, Routes, useParams} from "react-router-dom";
 import React from "react";
-import { useStore } from "../../../Stores";
+import {useStore} from "../../../Stores";
 import UserOverview from "./UserOverview/UserOverview";
 import UserInventory from "./ControlPanel/UserInventory";
 import UserShop from "./ControlPanel/UserShop";
 import UserEconomy from "./ControlPanel/UserEconomy";
 import ItemsTrade from "./Interaction/ItemsTrade";
-import { UserDto } from "../../../Dto/Users/UserDto";
-import { Typography } from "@mui/material";
+import {UserDto} from "../../../Dto/Users/UserDto";
+import {Typography} from "@mui/material";
+import {Loader} from "../../../Components/Loader/Loader";
+import {RightsWrapper} from "../../../Components/RIghts/RightsWrapper";
+import {RightsDto} from "../../../Dto/Rights/RightsDto";
 import F1Predictions from "./ControlPanel/F1Predictions/F1Predictions";
-import { Loader } from "../../../Components/Loader/Loader";
 
 interface Props {
   user: UserDto | null | undefined;
@@ -40,7 +42,10 @@ const UserPageContent = ({ user }: Props) => {
           <Route path="/economy" element={<UserEconomy />} />
           <Route path="/inventory" element={<UserInventory />} />
           <Route path="/shop" element={<UserShop />} />
-          <Route path="/f1Predictions" element={<F1Predictions />} />
+          <RightsWrapper
+            requiredRights={[RightsDto.F1Predictions]}
+            children={<Route path="/f1Predictions" element={<F1Predictions />} />}
+          />
         </Routes>
       )}
       {Boolean(!isMyPage && currentLoggedInUserId && user) && (

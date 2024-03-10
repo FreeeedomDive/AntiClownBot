@@ -11,7 +11,6 @@ export class RightsStore {
 
   setRights(rights: RightsDto[]) {
     this.userRights = rights;
-    console.log(this.userRights);
   }
 }
 
