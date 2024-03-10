@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import UserMainPage from "./Routes/User/MainPage/UserMainPage";
 import LoginPage from "./Routes/Auth/LoginPage";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
-import React from "react";
+import React, {useEffect} from "react";
 
 const darkTheme = createTheme({
   palette: {
@@ -15,6 +15,9 @@ const darkTheme = createTheme({
 });
 
 function App() {
+  useEffect(() => {
+    document.title = 'AntiClown Web';
+  }, []);
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
