@@ -1,6 +1,7 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Rights;
 using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
@@ -133,6 +134,12 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
             await discordClientWrapper.Roles.GrantRoleAsync(context.User.Id, role);
             await RespondToInteractionAsync(context, $"Выдал роль {role.Name}");
             await antiClownApiClient.Economy.UpdateScamCoinsAsync(userId, -joinRolePrice, $"Получение роли {role.Name}");
+
+            var f1RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "F1RoleId");
+            if (role.Id == f1RoleId)
+            {
+                await antiClownDataApiClient.Rights.GrantAsync(userId, RightsDto.F1Predictions);
+            }
         });
     }
 

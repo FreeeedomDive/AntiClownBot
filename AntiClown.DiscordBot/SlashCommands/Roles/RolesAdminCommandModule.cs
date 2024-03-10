@@ -20,7 +20,7 @@ public class RolesAdminCommandModule : SlashCommandModuleWithMiddlewares
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.RolesAdmin_Add, "Добавить роль")]
-    public async Task ListRolesAsync(
+    public async Task AddRoleToListAsync(
         InteractionContext context,
         [Option("role", "Роль")] DiscordRole role
     )
