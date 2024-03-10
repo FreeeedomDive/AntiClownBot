@@ -5,8 +5,11 @@ import UserPageContent from "../PageContent/UserPageContent";
 import UsersApi from "../../../Api/UsersApi";
 import { UserDto } from "../../../Dto/Users/UserDto";
 import { useParams } from "react-router-dom";
+import RightsApi from "../../../Api/RightsApi";
+import {useStore} from "../../../Stores";
 
 const UserMainPage = () => {
+  const { rightsStore } = useStore();
   const { userId = "" } = useParams<"userId">();
   const sideBarWidth = 250;
   const [user, setUser] = useState<UserDto | null | undefined>(undefined);
@@ -17,8 +20,14 @@ const UserMainPage = () => {
       setUser(user);
     }
 
+    async function getUserRights(userId: string): Promise<void> {
+      const rights = await RightsApi.getUserRights(userId);
+      rightsStore.setRights(rights);
+    }
+
     updateUser(userId).catch(console.error);
-  }, [userId]);
+    getUserRights(userId).catch(console.error);
+  }, [rightsStore, userId]);
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
