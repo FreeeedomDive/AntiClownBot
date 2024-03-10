@@ -16,7 +16,7 @@ const darkTheme = createTheme({
 
 function App() {
   useEffect(() => {
-    document.title = 'AntiClown Web';
+    document.title = 'Clown City Web';
   }, []);
   return (
     <ThemeProvider theme={darkTheme}>

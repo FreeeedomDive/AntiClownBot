@@ -59,7 +59,7 @@ public class RightsCommandModule : SlashCommandModuleWithMiddlewares
         [Option("rights", "Права")] RightsDto rightsDto
     )
     {
-        await ExecuteWithRightsAsync(
+        await ExecuteEphemeralWithRightsAsync(
             context, async () =>
             {
                 var apiUserId = await usersCache.GetApiIdByMemberIdAsync(user.Id);
@@ -77,7 +77,7 @@ public class RightsCommandModule : SlashCommandModuleWithMiddlewares
         [Option("rights", "Права")] RightsDto rightsDto
     )
     {
-        await ExecuteWithRightsAsync(
+        await ExecuteEphemeralWithRightsAsync(
             context, async () =>
             {
                 var apiUserId = await usersCache.GetApiIdByMemberIdAsync(user.Id);

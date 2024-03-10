@@ -28,21 +28,7 @@ import {F1RaceDto} from "../../../../../Dto/F1Predictions/F1RaceDto";
 import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
 import {LoadingButton} from "@mui/lab";
 import {AddPredictionResultDto} from "../../../../../Dto/F1Predictions/AddPredictionResultDto";
-
-const DRIVER_PAIRS = [
-  [F1DriverDto.Verstappen, F1DriverDto.Perez],
-  [F1DriverDto.Leclerc, F1DriverDto.Bearman],
-  [F1DriverDto.Hamilton, F1DriverDto.Russell],
-  [F1DriverDto.Ocon, F1DriverDto.Gasly],
-  [F1DriverDto.Piastri, F1DriverDto.Norris],
-  [F1DriverDto.Bottas, F1DriverDto.Zhou],
-  [F1DriverDto.Stroll, F1DriverDto.Alonso],
-  [F1DriverDto.Magnussen, F1DriverDto.Hulkenberg],
-  [F1DriverDto.Ricciardo, F1DriverDto.Tsunoda],
-  [F1DriverDto.Albon, F1DriverDto.Sargeant],
-] as const;
-
-const DRIVERS = DRIVER_PAIRS.flatMap((pair) => pair);
+import {DRIVER_PAIRS, DRIVERS} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
 
 const isDriver = (driver: string): driver is F1DriverDto => {
   return driver in F1DriverDto;
@@ -66,7 +52,11 @@ type DNFList = [
   F1DriverDto,
 ];
 
-export default function F1Prediction({f1Race}: { f1Race: F1RaceDto }) {
+interface Props {
+  f1Race: F1RaceDto;
+}
+
+export default function F1Prediction({f1Race}: Props) {
   const {userId} = useParams<"userId">();
 
   const userPrediction = useMemo(() => {

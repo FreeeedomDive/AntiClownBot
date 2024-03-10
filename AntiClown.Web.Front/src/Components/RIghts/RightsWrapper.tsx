@@ -9,6 +9,6 @@ interface Props {
 
 export function RightsWrapper({requiredRights, children}: Props): React.ReactElement | null {
   const {rightsStore} = useStore();
-  const hasRights = rightsStore.userRights.filter(x => requiredRights.includes(x)).length > 0;
+  const hasRights = requiredRights.some(x => rightsStore.userRights.includes(x));
   return hasRights ? children : null;
 }

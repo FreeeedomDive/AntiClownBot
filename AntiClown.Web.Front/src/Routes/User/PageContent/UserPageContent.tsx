@@ -11,7 +11,8 @@ import {Typography} from "@mui/material";
 import {Loader} from "../../../Components/Loader/Loader";
 import {RightsWrapper} from "../../../Components/RIghts/RightsWrapper";
 import {RightsDto} from "../../../Dto/Rights/RightsDto";
-import F1Predictions from "./ControlPanel/F1Predictions/F1Predictions";
+import F1PredictionsList from "./ControlPanel/F1Predictions/F1PredictionsList";
+import F1PredictionsAdminList from "./Admin/F1PredictionsAdminList";
 
 interface Props {
   user: UserDto | null | undefined;
@@ -42,10 +43,8 @@ const UserPageContent = ({ user }: Props) => {
           <Route path="/economy" element={<UserEconomy />} />
           <Route path="/inventory" element={<UserInventory />} />
           <Route path="/shop" element={<UserShop />} />
-          <RightsWrapper
-            requiredRights={[RightsDto.F1Predictions]}
-            children={<Route path="/f1Predictions" element={<F1Predictions />} />}
-          />
+          <Route path="/f1Predictions" element={<F1PredictionsList />} />
+          <Route path="/f1PredictionsAdmin" element={<F1PredictionsAdminList />} />
         </Routes>
       )}
       {Boolean(!isMyPage && currentLoggedInUserId && user) && (
