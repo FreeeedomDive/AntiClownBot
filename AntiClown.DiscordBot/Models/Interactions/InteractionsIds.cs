@@ -114,6 +114,12 @@ public static class InteractionsIds
         public const string Dev_EventsEditor_Start = "start";
         public const string Dev_EventsEditor_Finish = "finish";
 
+        public const string Dev_Rights_Group = "rights";
+        public const string Dev_Rights_All = "all";
+        public const string Dev_Rights_Show = "show";
+        public const string Dev_Rights_Grant = "grant";
+        public const string Dev_Rights_Revoke = "revoke";
+
         public const string Party_Group = "party";
         public const string Party_CreateWithOldPrefix = "-g";
         public const string Party_Create = "-c";
@@ -136,7 +142,6 @@ public static class InteractionsIds
 
         public const string F1Admin_Group = "f1admin";
         public const string F1Admin_Start = "start";
-        public const string F1Admin_Predict = "predict";
         public const string F1Admin_Results = "results";
         public const string F1Admin_Close = "close";
         public const string F1Admin_Dnf = "dnf";

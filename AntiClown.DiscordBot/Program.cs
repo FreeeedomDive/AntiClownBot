@@ -107,6 +107,7 @@ internal class Program
         slashCommandsExecutor.AddMiddleware<ActualizeUsersCacheMiddleware>();
         slashCommandsExecutor.AddMiddleware<DeferredMessageMiddleware>();
         slashCommandsExecutor.AddMiddleware<CorrectChatCommandUsageMiddleware>();
+        slashCommandsExecutor.AddMiddleware<CheckRightsMiddleware>();
 
         var discordClientWrapper = app.Services.GetRequiredService<IDiscordClientWrapper>();
 
