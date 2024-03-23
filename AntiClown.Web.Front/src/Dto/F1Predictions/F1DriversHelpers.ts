@@ -2,7 +2,7 @@ import {F1DriverDto} from "./F1DriverDto";
 
 export const DRIVER_PAIRS = [
   [F1DriverDto.Verstappen, F1DriverDto.Perez],
-  [F1DriverDto.Leclerc, F1DriverDto.Bearman],
+  [F1DriverDto.Leclerc, F1DriverDto.Sainz],
   [F1DriverDto.Hamilton, F1DriverDto.Russell],
   [F1DriverDto.Ocon, F1DriverDto.Gasly],
   [F1DriverDto.Piastri, F1DriverDto.Norris],
