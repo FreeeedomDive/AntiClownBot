@@ -558,6 +558,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             return;
         }
 
+        const int maxDriversCount = 20;
         if (!start)
         {
             var driverName = e.Values.First()[InteractionsIds.F1PredictionsButtons.DriversSelectDropdownItemPrefix.Length..];
@@ -566,8 +567,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 : throw new ArgumentException($"Unexpected driver {driverName}");
             currentRace.Details!.Classification.Add(driver);
             await interactivityRepository.UpdateAsync(currentRace);
-            var allPossibleDrivers = Enum.GetValues<F1DriverDto>();
-            if (currentRace.Details!.Classification.Count == allPossibleDrivers.Length)
+            if (currentRace.Details!.Classification.Count == maxDriversCount)
             {
                 await discordClientWrapper.Messages.EditOriginalResponseAsync(
                     e.Interaction,
@@ -578,17 +578,19 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
             }
         }
 
-        var updatedDrivers = Enum.GetValues<F1DriverDto>().Except(currentRace.Details!.Classification).ToArray();
-        var options = updatedDrivers.Select(
+        var classification = currentRace.Details!.Classification;
+        var driversToInput = Enum.GetValues<F1DriverDto>().Except(classification).ToArray();
+        var options = driversToInput.Select(
             x => new DiscordSelectComponentOption(
                 x.ToString(),
                 $"{InteractionsIds.F1PredictionsButtons.DriversSelectDropdownItemPrefix}{x.ToString()}"
             )
         );
-        var currentPlaceToEnter = 20 - updatedDrivers.Length + 1;
+        var currentPlaceToEnter = classification.Count + 1;
         var dropdown = new DiscordSelectComponent(
             InteractionsIds.F1PredictionsButtons.DriversSelectDropdown,
-            $"Гонщик на {currentPlaceToEnter} месте", options
+            $"Гонщик на {currentPlaceToEnter} месте",
+            options
         );
         var builder = new DiscordWebhookBuilder()
                       .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
