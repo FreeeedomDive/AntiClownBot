@@ -1,62 +1,80 @@
-import {F1DriverDto} from "../../../../Dto/F1Predictions/F1DriverDto";
 import React, {useState} from "react";
-import {Checkbox, FormControlLabel, Stack, Typography} from "@mui/material";
-import {useDrag, useDrop} from "react-dnd";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel, Stack,
+  TableCell, TableRow,
+  Typography
+} from "@mui/material";
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import {F1DriverDto} from "../../../../Dto/F1Predictions/F1DriverDto";
 
 interface Props {
   f1Driver: F1DriverDto;
-  position: number;
+  index: number;
   onAddDnfDriver: () => void;
-  onRemoveDnfDriver: () => void
-  moveItem: (dragIndex: number, hoverIndex: number) => void;
+  onRemoveDnfDriver: () => void;
+  moveUp: () => void;
+  moveDown: () => void;
 }
 
-interface DriverItem {
-  f1Driver: F1DriverDto;
-  position: number;
-}
-
-export default function F1RaceClassificationsElement({f1Driver, position, onAddDnfDriver, onRemoveDnfDriver, moveItem}: Props) {
+export default function F1RaceClassificationsElement(
+  {
+    f1Driver,
+    index,
+    onAddDnfDriver,
+    onRemoveDnfDriver,
+    moveUp,
+    moveDown
+  }: Props
+) {
   const [isChecked, setIsChecked] = useState(false);
-  const [, ref] = useDrag({
-    type: 'ITEM',
-    item: { f1Driver, position },
-  });
-
-  const [, drop] = useDrop({
-    accept: 'ITEM',
-    hover(item: DriverItem, _) {
-      if (!ref) {
-        return;
-      }
-
-      const dragIndex = item.position;
-      const hoverIndex = position;
-      moveItem(dragIndex, hoverIndex);
-      item.position = hoverIndex;
-    },
-  });
+  const position = index + 1;
 
   return (
-    <Stack
-      ref={(node) => ref(drop(node))}
-      direction="row"
-      alignItems={"center"}
-      justifyContent={"space-between"}
-    >
-      <Typography>{f1Driver}</Typography>
-      <FormControlLabel
-        control={<Checkbox checked={isChecked} onChange={x => {
-          const isDnf = x.target.checked;
-          if (isDnf) {
-            onAddDnfDriver();
-          } else {
-            onRemoveDnfDriver();
-          }
-          setIsChecked(x.target.checked)
-        }}/>}
-        label={"DNF"}
-      />
-    </Stack>
-  );
+    <TableRow>
+      <TableCell sx={{ padding: '1px'}}>
+        <Typography>{position}</Typography>
+      </TableCell>
+      <TableCell sx={{ padding: '1px'}}>
+        <Button
+          variant="contained"
+          color="success"
+          disabled={position === 1}
+          onClick={() => moveUp()}
+        >
+          <ArrowUpwardIcon/>
+        </Button>
+      </TableCell>
+      <TableCell sx={{ padding: '1px'}}>
+        <Button
+          variant="contained"
+          color="error"
+          disabled={position === 20}
+          sx={{marginLeft: '4px'}}
+          onClick={() => moveDown()}
+        >
+          <ArrowDownwardIcon/>
+        </Button>
+      </TableCell>
+      <TableCell sx={{ padding: '1px'}}>
+        <Typography>{f1Driver}</Typography>
+      </TableCell>
+      <TableCell sx={{ padding: '1px'}}>
+        <FormControlLabel
+          control={<Checkbox checked={isChecked} onChange={x => {
+            const isDnf = x.target.checked;
+            if (isDnf) {
+              onAddDnfDriver();
+            } else {
+              onRemoveDnfDriver();
+            }
+            setIsChecked(x.target.checked)
+          }}/>}
+          label={"DNF"}
+        />
+      </TableCell>
+    </TableRow>
+  )
 }
