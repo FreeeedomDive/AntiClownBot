@@ -19,12 +19,12 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
         var member = await usersCache.GetMemberByApiIdAsync(prediction.UserId);
         var embedBuilder = new DiscordEmbedBuilder()
                            .WithTitle($"{member.ServerOrUserName()} {(message.IsNew ? "добавил" : "обновил")} свое предсказание на гонку {race.Name}")
-                           .WithColor(DiscordColor.Gold)
-                           .AddField("10 место", prediction.TenthPlacePickedDriver.ToString())
-                           .AddField("DNF", prediction.DnfPrediction.NoDnfPredicted ? "Никто" : string.Join(" ", prediction.DnfPrediction.DnfPickedDrivers!))
-                           .AddField("Количество машин безопасности", prediction.SafetyCarsPrediction.ToNumberedString())
-                           .AddField("Отрыв 1 места", prediction.FirstPlaceLeadPrediction.ToString(CultureInfo.InvariantCulture))
-                           .AddField("Кто из команды окажется впереди", string.Join(" ", prediction.TeamsPickedDrivers));
+                           .WithColor(DiscordColor.Gold);
+                           //.AddField("10 место", prediction.TenthPlacePickedDriver.ToString())
+                           //.AddField("DNF", prediction.DnfPrediction.NoDnfPredicted ? "Никто" : string.Join(" ", prediction.DnfPrediction.DnfPickedDrivers!))
+                           //.AddField("Количество машин безопасности", prediction.SafetyCarsPrediction.ToNumberedString())
+                           //.AddField("Отрыв 1 места", prediction.FirstPlaceLeadPrediction.ToString(CultureInfo.InvariantCulture))
+                           //.AddField("Кто из команды окажется впереди", string.Join(" ", prediction.TeamsPickedDrivers));
         return embedBuilder.Build();
     }
 

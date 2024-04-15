@@ -30,7 +30,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
         this.usersCache = usersCache;
     }
 
-    [SlashCommand(InteractionsIds.CommandsNames.F1_List, "Показать текущие предсказания")]
+    //[SlashCommand(InteractionsIds.CommandsNames.F1_List, "Показать текущие предсказания")]
     public async Task ListPredictions(InteractionContext interactionContext)
     {
         await ExecuteAsync(
