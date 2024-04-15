@@ -1,34 +1,62 @@
 import {F1DriverDto} from "../../../../Dto/F1Predictions/F1DriverDto";
-import {Box, Typography} from "@mui/material";
-import React from "react";
-import {useDrag} from "react-dnd";
+import React, {useState} from "react";
+import {Checkbox, FormControlLabel, Stack, Typography} from "@mui/material";
+import {useDrag, useDrop} from "react-dnd";
 
 interface Props {
-  f1Driver: F1DriverDto
+  f1Driver: F1DriverDto;
+  position: number;
+  onAddDnfDriver: () => void;
+  onRemoveDnfDriver: () => void
+  moveItem: (dragIndex: number, hoverIndex: number) => void;
 }
 
-export default function F1RaceClassificationsElement({f1Driver}: Props) {
-  const [{ opacity }, dragRef] = useDrag(
-    () => ({
-      type: "card",
-      item: { f1Driver },
-      collect: (monitor) => ({
-        opacity: monitor.isDragging() ? 0.5 : 1
-      })
-    }),
-    []
-  )
+interface DriverItem {
+  f1Driver: F1DriverDto;
+  position: number;
+}
+
+export default function F1RaceClassificationsElement({f1Driver, position, onAddDnfDriver, onRemoveDnfDriver, moveItem}: Props) {
+  const [isChecked, setIsChecked] = useState(false);
+  const [, ref] = useDrag({
+    type: 'ITEM',
+    item: { f1Driver, position },
+  });
+
+  const [, drop] = useDrop({
+    accept: 'ITEM',
+    hover(item: DriverItem, _) {
+      if (!ref) {
+        return;
+      }
+
+      const dragIndex = item.position;
+      const hoverIndex = position;
+      moveItem(dragIndex, hoverIndex);
+      item.position = hoverIndex;
+    },
+  });
+
   return (
-    <Box
-      ref={dragRef}
-      style={{ opacity }}
-      component="nav"
-      sx={{
-        border: 1,
-        borderColor: "primary.main",
-      }}
+    <Stack
+      ref={(node) => ref(drop(node))}
+      direction="row"
+      alignItems={"center"}
+      justifyContent={"space-between"}
     >
       <Typography>{f1Driver}</Typography>
-    </Box>
-  )
+      <FormControlLabel
+        control={<Checkbox checked={isChecked} onChange={x => {
+          const isDnf = x.target.checked;
+          if (isDnf) {
+            onAddDnfDriver();
+          } else {
+            onRemoveDnfDriver();
+          }
+          setIsChecked(x.target.checked)
+        }}/>}
+        label={"DNF"}
+      />
+    </Stack>
+  );
 }

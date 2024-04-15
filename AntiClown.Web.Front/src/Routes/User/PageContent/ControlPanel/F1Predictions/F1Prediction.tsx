@@ -70,13 +70,7 @@ export default function F1Prediction({f1Race}: Props) {
   );
 
   const [isDNFNobody, setIsDNFNobody] = useState(() => {
-    console.log("dnfPrediction", userPrediction?.dnfPrediction);
-
     return userPrediction?.dnfPrediction?.noDnfPredicted ?? false;
-  });
-
-  console.log({
-    isDNFNobody,
   });
 
   const [dnfList, setDnfList] = useState<DNFList>(() => {
