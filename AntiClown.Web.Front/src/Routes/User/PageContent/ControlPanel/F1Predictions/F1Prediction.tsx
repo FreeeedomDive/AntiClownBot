@@ -255,7 +255,7 @@ export default function F1Prediction({f1Race}: Props) {
           justifyContent={"space-between"}
         >
           <Typography variant="h6" flexShrink={0} width={firstColumnWidth}>
-            Количество машин безопасности
+            Количество инцидентов (VSC, SC, Red)
           </Typography>
           <FormControl fullWidth>
             <RadioGroup
