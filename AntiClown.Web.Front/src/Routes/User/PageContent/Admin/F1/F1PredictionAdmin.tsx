@@ -13,7 +13,7 @@ interface Props {
 
 export default function F1PredictionAdmin({f1Race}: Props) {
   const [drivers, setDrivers] = useState(
-    !f1Race.result?.classification ? DRIVERS : f1Race.result.classification
+    f1Race.result.classification.length === 0 ? DRIVERS : f1Race.result.classification
   );
   const [dnfDrivers, setDnfDrivers] = useState(new Set(f1Race.result?.dnfDrivers ?? []));
   const [incidents, setIncidents] = useState(f1Race.result?.safetyCars ?? 0)
