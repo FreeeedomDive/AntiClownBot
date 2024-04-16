@@ -9,6 +9,7 @@ public interface IF1PredictionsClient
     Task<Guid> StartNewRaceAsync(string name);
     Task ClosePredictionsAsync(Guid raceId);
     Task AddPredictionAsync(Guid raceId, F1PredictionDto f1Prediction);
+    Task AddResultAsync(Guid raceId, F1PredictionRaceResultDto result);
     Task AddClassificationsResultAsync(Guid raceId, F1DriverDto[] f1Drivers);
     Task AddDnfDriverAsync(Guid raceId, F1DriverDto driver);
     Task AddSafetyCarAsync(Guid raceId);

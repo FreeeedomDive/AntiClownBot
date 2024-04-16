@@ -2,6 +2,7 @@ import axios from "axios";
 import { F1PredictionDto } from "../Dto/F1Predictions/F1PredictionDto";
 import { F1RaceDto } from "../Dto/F1Predictions/F1RaceDto";
 import {AddPredictionResultDto} from "../Dto/F1Predictions/AddPredictionResultDto";
+import {F1PredictionRaceResultDto} from "../Dto/F1Predictions/F1PredictionRaceResultDto";
 
 export default class F1PredictionsApi {
   static init = () => {
@@ -34,5 +35,23 @@ export default class F1PredictionsApi {
       prediction
     );
     return result.data;
+  };
+
+  static addResult = async (
+    raceId: string,
+    result: F1PredictionRaceResultDto
+  ): Promise<void> => {
+    await F1PredictionsApi.init().post(
+      `/${raceId}/addResult`,
+      result
+    );
+  };
+
+  static finish = async (
+    raceId: string
+  ): Promise<void> => {
+    await F1PredictionsApi.init().post(
+      `/${raceId}/finish`
+    );
   };
 }

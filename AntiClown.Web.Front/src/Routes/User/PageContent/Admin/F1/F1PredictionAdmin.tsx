@@ -5,12 +5,17 @@ import F1RaceClassifications from "./F1RaceClassifications";
 import SendIcon from "@mui/icons-material/Send";
 import {LoadingButton} from "@mui/lab";
 import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
+import {DRIVERS} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
 
 interface Props {
   f1Race: F1RaceDto;
 }
 
 export default function F1PredictionAdmin({f1Race}: Props) {
+  const [drivers, setDrivers] = useState(
+    !f1Race.result?.classification ? DRIVERS : f1Race.result.classification
+  );
+  const [dnfDrivers, setDnfDrivers] = useState(new Set(f1Race.result?.dnfDrivers ?? []));
   const [incidents, setIncidents] = useState(f1Race.result?.safetyCars ?? 0)
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>(
     String(f1Race.result?.firstPlaceLead ?? "0")
@@ -20,19 +25,30 @@ export default function F1PredictionAdmin({f1Race}: Props) {
 
   const saveRaceResults = useCallback(async () => {
     setIsSaving(true);
-
+    await F1PredictionsApi.addResult(f1Race.id, {
+      raceId: f1Race.id,
+      firstPlaceLead: Number(firstPlaceLead),
+      safetyCars: incidents,
+      dnfDrivers: Array.from(dnfDrivers.values()),
+      classification: drivers
+    })
     setIsSaving(false);
-  }, []);
+  }, [dnfDrivers, drivers, f1Race.id, firstPlaceLead, incidents]);
 
   const finishRace = useCallback(async () => {
     setIsFinishing(true);
-
+    await F1PredictionsApi.finish(f1Race.id)
     setIsFinishing(false);
-  }, []);
+  }, [f1Race.id]);
 
   return (
     <Stack direction={"row"} spacing={16}>
-      <F1RaceClassifications f1Race={f1Race}/>
+      <F1RaceClassifications
+        drivers={drivers}
+        setDrivers={setDrivers}
+        dnfDrivers={dnfDrivers}
+        setDnfDrivers={setDnfDrivers}
+      />
       <Stack direction={"column"} spacing={4}>
         <Stack direction={"row"} spacing={4} height={"45px"}>
           <Button
@@ -90,6 +106,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
         <LoadingButton
           loading={isSaving}
           disabled={isSaving}
+          color="success"
           size="large"
           variant="contained"
           endIcon={<SendIcon/>}
@@ -100,6 +117,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
         <LoadingButton
           loading={isFinishing}
           disabled={isFinishing}
+          color="primary"
           size="large"
           variant="contained"
           endIcon={<SendIcon/>}

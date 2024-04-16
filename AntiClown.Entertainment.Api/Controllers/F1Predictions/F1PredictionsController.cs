@@ -47,10 +47,7 @@ public class F1PredictionsController : Controller
     [HttpPost("{raceId:guid}/addPrediction")]
     public async Task<ActionResult> AddPredictionAsync([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction)
     {
-        var dtoJson = JsonConvert.SerializeObject(prediction, Formatting.Indented);
         var model = mapper.Map<F1Prediction>(prediction);
-        var modelJson = JsonConvert.SerializeObject(prediction, Formatting.Indented);
-        await loggerClient.InfoAsync("Json from front: {front}, json from businessModel: {businessModel}", dtoJson, modelJson);
         await f1PredictionsService.AddPredictionAsync(raceId, prediction.UserId, model);
         return NoContent();
     }

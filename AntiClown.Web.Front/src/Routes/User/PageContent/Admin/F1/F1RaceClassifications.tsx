@@ -1,19 +1,15 @@
-import {DRIVERS} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
 import F1RaceClassificationsElement from "./F1RaceClassificationsElement";
 import {Stack, Table, TableBody, TableContainer} from "@mui/material";
-import React, {useState} from "react";
-import {F1RaceDto} from "../../../../../Dto/F1Predictions/F1RaceDto";
+import {F1DriverDto} from "../../../../../Dto/F1Predictions/F1DriverDto";
 
 interface Props {
-  f1Race: F1RaceDto;
+  drivers: F1DriverDto[];
+  setDrivers: (x: F1DriverDto[]) => void;
+  dnfDrivers: Set<F1DriverDto>;
+  setDnfDrivers: (x: Set<F1DriverDto>) => void;
 }
 
-export default function F1RaceClassifications({f1Race}: Props) {
-  const [drivers, setDrivers] = useState(
-    !f1Race.result?.classification ? DRIVERS : f1Race.result.classification
-  );
-  const [dnfDrivers, setDnfDrivers] = useState(new Set(f1Race.result?.dnfDrivers ?? []));
-
+export default function F1RaceClassifications({drivers, setDrivers, dnfDrivers, setDnfDrivers}: Props) {
   const swapDrivers = (firstDriverIndex: number, secondDriverIndex: number) => {
     const updatedDrivers = [...drivers];
     const firstDriver = updatedDrivers[firstDriverIndex];

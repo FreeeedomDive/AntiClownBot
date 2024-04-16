@@ -46,6 +46,13 @@ public class F1PredictionsClient : IF1PredictionsClient
         response.ThrowIfNotSuccessful();
     }
 
+    public async Task AddResultAsync(Guid raceId, F1PredictionRaceResultDto result)
+    {
+        var request = new RestRequest($"f1Predictions/{raceId}/addResult").AddJsonBody(result);
+        var response = await restClient.ExecutePostAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
     public async Task AddClassificationsResultAsync(Guid raceId, F1DriverDto[] f1Drivers)
     {
         var request = new RestRequest($"f1Predictions/{raceId}/addClassification").AddJsonBody(f1Drivers);
