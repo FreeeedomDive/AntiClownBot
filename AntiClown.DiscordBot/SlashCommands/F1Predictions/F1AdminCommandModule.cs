@@ -42,14 +42,6 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteWithRightsAsync(
             interactionContext, async () =>
             {
-                var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
-                if (currentRace is not null)
-                {
-                    var currentRacePredictions = await antiClownEntertainmentApiClient.F1Predictions.ReadAsync(currentRace.Details!.RaceId);
-                    await RespondToInteractionAsync(interactionContext, $"На данный момент уже запущены предсказания на гонку {currentRacePredictions.Name}");
-                    return;
-                }
-
                 var newRaceId = await antiClownEntertainmentApiClient.F1Predictions.StartNewRaceAsync(trackName);
                 var newRaceInteraction = new Interactivity<F1PredictionDetails>
                 {
