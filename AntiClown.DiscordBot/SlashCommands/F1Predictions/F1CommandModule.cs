@@ -1,14 +1,11 @@
 ﻿using System.Text;
 using AntiClown.DiscordBot.Cache.Users;
-using AntiClown.DiscordBot.EmbedBuilders.F1Predictions;
 using AntiClown.DiscordBot.Extensions;
-using AntiClown.DiscordBot.Interactivity.Domain;
-using AntiClown.DiscordBot.Interactivity.Domain.F1Predictions;
-using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
+using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 
 namespace AntiClown.DiscordBot.SlashCommands.F1Predictions;
@@ -19,39 +16,42 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
     public F1CommandModule(
         ICommandExecutor commandExecutor,
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-        IInteractivityRepository interactivityRepository,
-        IF1PredictionsEmbedBuilder f1PredictionsEmbedBuilder,
         IUsersCache usersCache
     ) : base(commandExecutor)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
-        this.interactivityRepository = interactivityRepository;
-        this.f1PredictionsEmbedBuilder = f1PredictionsEmbedBuilder;
         this.usersCache = usersCache;
     }
 
-    //[SlashCommand(InteractionsIds.CommandsNames.F1_List, "Показать текущие предсказания")]
+    [SlashCommand(InteractionsIds.CommandsNames.F1_List, "Показать текущие предсказания")]
     public async Task ListPredictions(InteractionContext interactionContext)
     {
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
-                if (currentRace is null)
+                var races = await antiClownEntertainmentApiClient.F1Predictions.ReadActiveAsync();
+                if (races.Length == 0)
                 {
                     await RespondToInteractionAsync(interactionContext, "На данный момент нет активных предсказаний на гонку");
                     return;
                 }
 
-                var race = await antiClownEntertainmentApiClient.F1Predictions.ReadAsync(currentRace.Details!.RaceId);
-                if (race.Predictions.Count == 0)
+                var embedBuilder = new DiscordEmbedBuilder();
+                foreach (var race in races)
                 {
-                    await RespondToInteractionAsync(interactionContext, "Никто не вносил свои предсказания");
-                    return;
+                    var apiIdToMember = race.Predictions.ToDictionary(
+                        x => x.UserId,
+                        x => usersCache.GetMemberByApiIdAsync(x.UserId).GetAwaiter().GetResult()
+                    );
+                    embedBuilder.AddField(
+                        $"Участники предсказания в гонке {race.Name} {race.Season}",
+                        race.Predictions.Count == 0
+                            ? "Еще никто не делал предсказания на эту гонку"
+                            : string.Join("\n", race.Predictions.Select(x => apiIdToMember[x.UserId].ServerOrUserName()))
+                    );
                 }
 
-                var embed = f1PredictionsEmbedBuilder.BuildPredictionsList(race);
-                await RespondToInteractionAsync(interactionContext, embed);
+                await RespondToInteractionAsync(interactionContext, embedBuilder.Build());
             }
         );
     }
@@ -103,7 +103,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                             string.Join(
                                 " ", userPredictions
                                      .Predictions
-                                     .Select(p => p is null ? "  " : (SumPoints(p)).ToString().AddSpaces(2))
+                                     .Select(p => p is null ? "  " : SumPoints(p).ToString().AddSpaces(2))
                             )
                         )
                         .Append($" | {userPredictions.TotalPoints.AddSpaces(3)}")
@@ -127,8 +127,5 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
     }
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-
-    private readonly IInteractivityRepository interactivityRepository;
-    private readonly IF1PredictionsEmbedBuilder f1PredictionsEmbedBuilder;
     private readonly IUsersCache usersCache;
 }

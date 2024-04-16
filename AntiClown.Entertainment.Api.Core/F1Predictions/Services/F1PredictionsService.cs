@@ -133,6 +133,16 @@ public class F1PredictionsService : IF1PredictionsService
         return results;
     }
 
+    public async Task<F1PredictionResult[]> ReadRaceResultsAsync(Guid raceId)
+    {
+        return await f1PredictionResultsRepository.FindAsync(
+            new F1PredictionResultsFilter
+            {
+                RaceId = raceId,
+            }
+        );
+    }
+
     public async Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync(int? season = null)
     {
         var finishedRacesOfThisSeason = await f1RacesRepository.FindAsync(

@@ -1,5 +1,6 @@
 ﻿using AntiClown.Data.Api.Dto.Rights;
 using AntiClown.DiscordBot.Cache.Users;
+using AntiClown.DiscordBot.EmbedBuilders.F1Predictions;
 using AntiClown.DiscordBot.Extensions;
 using AntiClown.DiscordBot.Interactivity.Domain;
 using AntiClown.DiscordBot.Interactivity.Domain.F1Predictions;
@@ -22,12 +23,13 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         ICommandExecutor commandExecutor,
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IInteractivityRepository interactivityRepository,
-        IUsersCache usersCache
+        IUsersCache usersCache,
+        IF1PredictionsEmbedBuilder f1PredictionsEmbedBuilder
     ) : base(commandExecutor)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.interactivityRepository = interactivityRepository;
-        this.usersCache = usersCache;
+        this.f1PredictionsEmbedBuilder = f1PredictionsEmbedBuilder;
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.F1Admin_Start, "Начать предсказания на новую гонку")]
@@ -206,24 +208,9 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                 var raceId = currentRace.Details!.RaceId;
 
                 var raceResults = await antiClownEntertainmentApiClient.F1Predictions.FinishAsync(raceId);
-                var embedBuilder = new DiscordEmbedBuilder()
-                    .WithTitle("Результаты предсказаний");
-                await raceResults.ForEachAsync(
-                    async x =>
-                    {
-                        var member = await usersCache.GetMemberByApiIdAsync(x.UserId);
-                        embedBuilder.AddField(
-                            member.ServerOrUserName(),
-                            $"{x.TenthPlacePoints.ToPluralizedString("очко", "очка", "очков")} за 10 место\n"
-                            + $"{x.DnfsPoints.ToPluralizedString("очко", "очка", "очков")} за DNF\n"
-                            + $"{x.SafetyCarsPoints.ToPluralizedString("очко", "очка", "очков")} за SC\n"
-                            + $"{x.FirstPlaceLeadPoints.ToPluralizedString("очко", "очка", "очков")} за отрыв лидера\n"
-                            + $"{x.TeamMatesPoints.ToPluralizedString("очко", "очка", "очков")} за победителей внутри команд\n"
-                        );
-                    }
-                );
+                var embed = f1PredictionsEmbedBuilder.BuildRaceFinished(raceResults);
 
-                await RespondToInteractionAsync(interactionContext, embedBuilder.Build());
+                await RespondToInteractionAsync(interactionContext, embed);
                 currentRace.Type = InteractivityType.F1PredictionsFinished;
                 await interactivityRepository.UpdateAsync(currentRace);
             }, RightsDto.F1PredictionsAdmin
@@ -232,5 +219,5 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IInteractivityRepository interactivityRepository;
-    private readonly IUsersCache usersCache;
+    private readonly IF1PredictionsEmbedBuilder f1PredictionsEmbedBuilder;
 }

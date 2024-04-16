@@ -9,9 +9,9 @@ using MassTransit;
 
 namespace AntiClown.DiscordBot.Consumers.F1Predictions;
 
-public class F1PredictionsConsumer : IConsumer<F1UserPredictionUpdatedMessageDto>
+public class F1UserPredictionUpdatedConsumer : IConsumer<F1UserPredictionUpdatedMessageDto>
 {
-    public F1PredictionsConsumer(
+    public F1UserPredictionUpdatedConsumer(
         IAntiClownDataApiClient antiClownDataApiClient,
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IDiscordClientWrapper discordClientWrapper,

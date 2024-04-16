@@ -101,6 +101,13 @@ public class F1PredictionsController : Controller
         return mapper.Map<F1PredictionUserResultDto[]>(result);
     }
 
+    [HttpGet("{raceId:guid}/results")]
+    public async Task<ActionResult<F1PredictionUserResultDto[]>> ReadResults([FromRoute] Guid raceId)
+    {
+        var result = await f1PredictionsService.ReadRaceResultsAsync(raceId);
+        return mapper.Map<F1PredictionUserResultDto[]>(result);
+    }
+
     [HttpGet("standings")]
     public async Task<ActionResult<Dictionary<Guid, F1PredictionUserResultDto?[]>>> ReadStandingsAsync([FromQuery] int? season = null)
     {

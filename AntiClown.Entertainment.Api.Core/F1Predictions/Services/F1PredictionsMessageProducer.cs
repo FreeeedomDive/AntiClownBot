@@ -20,5 +20,21 @@ public class F1PredictionsMessageProducer : IF1PredictionsMessageProducer
         });
     }
 
+    public async Task ProduceRaceResultUpdatedAsync(Guid raceId)
+    {
+        await bus.Publish(new F1RaceResultUpdatedMessageDto()
+        {
+            RaceId = raceId,
+        });
+    }
+
+    public async Task ProduceRaceFinishedAsync(Guid raceId)
+    {
+        await bus.Publish(new F1RaceFinishedMessageDto
+        {
+            RaceId = raceId,
+        });
+    }
+
     private readonly IBus bus;
 }

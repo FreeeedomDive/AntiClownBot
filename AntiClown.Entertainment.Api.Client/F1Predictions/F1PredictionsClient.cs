@@ -88,6 +88,13 @@ public class F1PredictionsClient : IF1PredictionsClient
         return response.TryDeserialize<F1PredictionUserResultDto[]>();
     }
 
+    public async Task<F1PredictionUserResultDto[]> ReadResultsAsync(Guid raceId)
+    {
+        var request = new RestRequest($"f1Predictions/{raceId}/results");
+        var response = await restClient.ExecuteGetAsync(request);
+        return response.TryDeserialize<F1PredictionUserResultDto[]>();
+    }
+
     public async Task<Dictionary<Guid, F1PredictionUserResultDto?[]>> ReadStandingsAsync(int? season = null)
     {
         var request = new RestRequest("f1Predictions/standings");

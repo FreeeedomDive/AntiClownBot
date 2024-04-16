@@ -15,5 +15,6 @@ public interface IF1PredictionsClient
     Task AddSafetyCarAsync(Guid raceId);
     Task AddFirstPlaceLeadAsync(Guid raceId, decimal firstPlaceLead);
     Task<F1PredictionUserResultDto[]> FinishAsync(Guid raceId);
+    Task<F1PredictionUserResultDto[]> ReadResultsAsync(Guid raceId);
     Task<Dictionary<Guid, F1PredictionUserResultDto?[]>> ReadStandingsAsync(int? season = null);
 }
