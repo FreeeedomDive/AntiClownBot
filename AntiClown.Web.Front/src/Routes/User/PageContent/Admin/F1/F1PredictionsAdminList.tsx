@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {F1RaceDto} from "../../../../Dto/F1Predictions/F1RaceDto";
-import F1PredictionsApi from "../../../../Api/F1PredictionsApi";
-import {RightsWrapper} from "../../../../Components/RIghts/RightsWrapper";
-import {RightsDto} from "../../../../Dto/Rights/RightsDto";
+import {F1RaceDto} from "../../../../../Dto/F1Predictions/F1RaceDto";
+import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
+import {RightsWrapper} from "../../../../../Components/RIghts/RightsWrapper";
+import {RightsDto} from "../../../../../Dto/Rights/RightsDto";
 import {FormControl, MenuItem, Select, Stack, Typography} from "@mui/material";
-import {Loader} from "../../../../Components/Loader/Loader";
+import {Loader} from "../../../../../Components/Loader/Loader";
 import F1PredictionAdmin from "./F1PredictionAdmin";
 
 export default function F1PredictionsAdminList() {

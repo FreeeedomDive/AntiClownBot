@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import {F1DriverDto} from "../../../../Dto/F1Predictions/F1DriverDto";
+import {F1DriverDto} from "../../../../../Dto/F1Predictions/F1DriverDto";
 
 interface Props {
   f1Driver: F1DriverDto;
