@@ -1,5 +1,5 @@
 import {useParams} from "react-router-dom";
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {
   Alert,
   Button,
@@ -58,12 +58,22 @@ interface Props {
 
 export default function F1Prediction({f1Race}: Props) {
   const {userId} = useParams<"userId">();
+  const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto>(f1Race);
+
+  useEffect(() => {
+    async function load() {
+      const result = await F1PredictionsApi.read(f1Race.id);
+      setCurrentF1Race(result);
+    }
+
+    load();
+  }, []);
 
   const userPrediction = useMemo(() => {
-    return f1Race.predictions.find(
+    return currentF1Race.predictions.find(
       (prediction) => prediction.userId === userId
     );
-  }, [f1Race, userId]);
+  }, [currentF1Race, userId]);
 
   const [selected10Position, setSelected10Position] = useState<F1DriverDto>(
     userPrediction?.tenthPlacePickedDriver ?? F1DriverDto.Verstappen

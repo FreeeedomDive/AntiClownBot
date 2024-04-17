@@ -26,12 +26,19 @@ export default class F1PredictionsApi {
     return result.data;
   };
 
+  static read = async (raceId: string): Promise<F1RaceDto> => {
+    const result = await F1PredictionsApi.init().get<F1RaceDto>(
+      raceId
+    );
+    return result.data;
+  };
+
   static addPrediction = async (
     raceId: string,
     prediction: F1PredictionDto
   ): Promise<AddPredictionResultDto> => {
     const result = await F1PredictionsApi.init().post(
-      `/${raceId}/addPrediction`,
+      `${raceId}/addPrediction`,
       prediction
     );
     return result.data;
@@ -42,7 +49,7 @@ export default class F1PredictionsApi {
     result: F1PredictionRaceResultDto
   ): Promise<void> => {
     await F1PredictionsApi.init().post(
-      `/${raceId}/addResult`,
+      `${raceId}/addResult`,
       result
     );
   };
@@ -51,7 +58,7 @@ export default class F1PredictionsApi {
     raceId: string
   ): Promise<void> => {
     await F1PredictionsApi.init().post(
-      `/${raceId}/finish`
+      `${raceId}/finish`
     );
   };
 }
