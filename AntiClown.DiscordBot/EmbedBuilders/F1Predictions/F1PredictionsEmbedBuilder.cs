@@ -19,8 +19,8 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
     {
         var member = await usersCache.GetMemberByApiIdAsync(prediction.UserId);
         var embedBuilder = new DiscordEmbedBuilder()
-                           .WithTitle($"{member.ServerOrUserName()} {(message.IsNew ? "добавил" : "обновил")} свое предсказание на гонку {race.Name} {race.Season}")
-                           .WithColor(DiscordColor.Gold);
+                           .WithColor(DiscordColor.MidnightBlue)
+                           .WithTitle($"{member.ServerOrUserName()} {(message.IsNew ? "добавил" : "обновил")} свое предсказание на гонку {race.Name} {race.Season}");
         return embedBuilder.Build();
     }
 
@@ -42,24 +42,31 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
                .Build();
     }
 
-    public DiscordEmbed BuildRaceFinished(F1PredictionUserResultDto[] results)
+    public DiscordEmbed BuildRaceFinished(F1RaceDto race, F1PredictionUserResultDto[] results)
     {
         var apiIdToMember = results.ToDictionary(
             x => x.UserId,
             x => usersCache.GetMemberByApiIdAsync(x.UserId).GetAwaiter().GetResult()
         );
         var embedBuilder = new DiscordEmbedBuilder()
-            .WithTitle("Результаты предсказаний");
+                           .WithColor(DiscordColor.Gold)
+                           .WithTitle($"Результаты предсказаний на гонку {race.Name} {race.Season}");
         results.ForEach(
-            x =>
+            userResult =>
             {
+                var userPrediction = race.Predictions.First(x => x.UserId == userResult.UserId);
                 embedBuilder.AddField(
-                    apiIdToMember[x.UserId].ServerOrUserName(),
-                    $"{x.TenthPlacePoints.ToPluralizedString("очко", "очка", "очков")} за 10 место\n"
-                    + $"{x.DnfsPoints.ToPluralizedString("очко", "очка", "очков")} за DNF\n"
-                    + $"{x.SafetyCarsPoints.ToPluralizedString("очко", "очка", "очков")} за SC\n"
-                    + $"{x.FirstPlaceLeadPoints.ToPluralizedString("очко", "очка", "очков")} за отрыв лидера\n"
-                    + $"{x.TeamMatesPoints.ToPluralizedString("очко", "очка", "очков")} за победителей внутри команд\n"
+                    apiIdToMember[userResult.UserId].ServerOrUserName(),
+                    $"10 место: {userPrediction.TenthPlacePickedDriver.Trigram()} - "
+                    + $"{userResult.TenthPlacePoints.ToPluralizedString("очко", "очка", "очков")}\n"
+                    + $"DNF: {(userPrediction.DnfPrediction.NoDnfPredicted ? "Никто" : string.Join(" ", userPrediction.DnfPrediction.DnfPickedDrivers!.Select(x => x.Trigram())))} - "
+                    + $"{userResult.DnfsPoints.ToPluralizedString("очко", "очка", "очков")}\n"
+                    + $"Инциденты: {userPrediction.SafetyCarsPrediction} - "
+                    + $"{userResult.SafetyCarsPoints.ToPluralizedString("очко", "очка", "очков")}\n"
+                    + $"Отрыв лидера: {userPrediction.FirstPlaceLeadPrediction} - "
+                    + $"{userResult.FirstPlaceLeadPoints.ToPluralizedString("очко", "очка", "очков")}\n"
+                    + $"Победители внутри команд: {string.Join(" ", userPrediction.TeamsPickedDrivers.Select(x => x.Trigram()))} - "
+                    + $"{userResult.TeamMatesPoints.ToPluralizedString("очко", "очка", "очков")}\n"
                 );
             }
         );

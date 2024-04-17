@@ -31,8 +31,9 @@ public class F1RaceFinishedConsumer : IConsumer<F1RaceFinishedMessageDto>
     {
         try
         {
+            var race = await antiClownEntertainmentApiClient.F1Predictions.ReadAsync(context.Message.RaceId);
             var results = await antiClownEntertainmentApiClient.F1Predictions.ReadResultsAsync(context.Message.RaceId);
-            var embed = f1PredictionsEmbedBuilder.BuildRaceFinished(results);
+            var embed = f1PredictionsEmbedBuilder.BuildRaceFinished(race, results);
             var f1PredictionsChatId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "F1PredictionsChatId");
             await discordClientWrapper.Messages.SendAsync(f1PredictionsChatId, embed);
         }

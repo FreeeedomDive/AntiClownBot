@@ -1,7 +1,5 @@
 ﻿using AntiClown.Data.Api.Dto.Rights;
-using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.EmbedBuilders.F1Predictions;
-using AntiClown.DiscordBot.Extensions;
 using AntiClown.DiscordBot.Interactivity.Domain;
 using AntiClown.DiscordBot.Interactivity.Domain.F1Predictions;
 using AntiClown.DiscordBot.Interactivity.Repository;
@@ -9,7 +7,6 @@ using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
-using AntiClown.Tools.Utility.Extensions;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
@@ -23,7 +20,6 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         ICommandExecutor commandExecutor,
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IInteractivityRepository interactivityRepository,
-        IUsersCache usersCache,
         IF1PredictionsEmbedBuilder f1PredictionsEmbedBuilder
     ) : base(commandExecutor)
     {
@@ -116,8 +112,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
     [SlashCommand(InteractionsIds.CommandsNames.F1Admin_Dnf, "Добавить выбывшего гонщика")]
     public async Task AddDnf(
         InteractionContext interactionContext,
-        [Option("driver", "Выбывший гонщик")]
-        F1DriverDto dnfDriver
+        [Option("driver", "Выбывший гонщик")] F1DriverDto dnfDriver
     )
     {
         await ExecuteWithRightsAsync(
@@ -160,7 +155,8 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
     [SlashCommand(InteractionsIds.CommandsNames.F1Admin_FirstPlaceLead, "Добавить результат лидирования победителя")]
     public async Task AddFirstPlaceLead(
         InteractionContext interactionContext,
-        [Option("lead", "Лидирование в формате x.xxx")] string lead
+        [Option("lead", "Лидирование в формате x.xxx")]
+        string lead
     )
     {
         await ExecuteWithRightsAsync(
@@ -178,6 +174,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                     await RespondToInteractionAsync(interactionContext, "Неверный формат");
                     return;
                 }
+
                 await antiClownEntertainmentApiClient.F1Predictions.AddFirstPlaceLeadAsync(currentRace.Id, decimalLead);
                 await RespondToInteractionAsync(interactionContext, "Принято");
             }, RightsDto.F1PredictionsAdmin
@@ -200,7 +197,8 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
                 var raceId = currentRace.Details!.RaceId;
 
                 var raceResults = await antiClownEntertainmentApiClient.F1Predictions.FinishAsync(raceId);
-                var embed = f1PredictionsEmbedBuilder.BuildRaceFinished(raceResults);
+                var race = await antiClownEntertainmentApiClient.F1Predictions.ReadAsync(raceId);
+                var embed = f1PredictionsEmbedBuilder.BuildRaceFinished(race, raceResults);
 
                 await RespondToInteractionAsync(interactionContext, embed);
                 currentRace.Type = InteractivityType.F1PredictionsFinished;
@@ -210,6 +208,6 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
     }
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-    private readonly IInteractivityRepository interactivityRepository;
     private readonly IF1PredictionsEmbedBuilder f1PredictionsEmbedBuilder;
+    private readonly IInteractivityRepository interactivityRepository;
 }
