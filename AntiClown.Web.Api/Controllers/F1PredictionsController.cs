@@ -20,6 +20,12 @@ public class F1PredictionsController : Controller
         return await antiClownEntertainmentApiClient.F1Predictions.ReadActiveAsync();
     }
 
+    [HttpGet("{raceId:guid}")]
+    public async Task<ActionResult<F1RaceDto>> Read([FromRoute] Guid raceId)
+    {
+        return await antiClownEntertainmentApiClient.F1Predictions.ReadAsync(raceId);
+    }
+
     [HttpPost("{raceId:guid}/addPrediction")]
     public async Task<ActionResult<AddPredictionResultDto>> AddPrediction([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction)
     {
