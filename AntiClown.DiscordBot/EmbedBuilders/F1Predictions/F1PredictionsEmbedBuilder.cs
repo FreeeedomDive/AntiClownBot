@@ -36,7 +36,7 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
                        race.Result.Classification.Batch(10).Select(x => string.Join(" ", x.Select(driver => driver.Trigram())))
                    )
                )
-               .AddField("DNF", string.Join(" ", race.Result.DnfDrivers.Select(driver => driver.Trigram())))
+               .AddField("DNF", race.Result.DnfDrivers.Length == 0 ? "Никто" : string.Join(" ", race.Result.DnfDrivers.Select(driver => driver.Trigram())))
                .AddField("Количество инцидентов", race.Result.SafetyCars.ToString())
                .AddField("Отрыв лидера", race.Result.FirstPlaceLead.ToString(CultureInfo.InvariantCulture))
                .Build();

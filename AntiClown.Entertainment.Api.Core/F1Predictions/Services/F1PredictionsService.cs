@@ -130,7 +130,7 @@ public class F1PredictionsService : IF1PredictionsService
         race.IsOpened = false;
         race.IsActive = false;
         await f1RacesRepository.UpdateAsync(race);
-        await f1PredictionsMessageProducer.ProduceRaceResultUpdatedAsync(raceId);
+        await f1PredictionsMessageProducer.ProduceRaceFinishedAsync(raceId);
 
         return results;
     }
