@@ -86,6 +86,7 @@ public class F1PredictionsService : IF1PredictionsService
         var race = await f1RacesRepository.ReadAsync(raceId);
         race.Result = raceResult;
         await f1RacesRepository.UpdateAsync(race);
+        await f1PredictionsMessageProducer.ProduceRaceResultUpdatedAsync(raceId);
     }
 
     public async Task AddClassificationsResultAsync(Guid raceId, F1Driver[] f1Drivers)
@@ -129,6 +130,7 @@ public class F1PredictionsService : IF1PredictionsService
         race.IsOpened = false;
         race.IsActive = false;
         await f1RacesRepository.UpdateAsync(race);
+        await f1PredictionsMessageProducer.ProduceRaceResultUpdatedAsync(raceId);
 
         return results;
     }
