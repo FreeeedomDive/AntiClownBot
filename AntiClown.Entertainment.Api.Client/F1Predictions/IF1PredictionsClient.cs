@@ -5,6 +5,7 @@ namespace AntiClown.Entertainment.Api.Client.F1Predictions;
 public interface IF1PredictionsClient
 {
     Task<F1RaceDto[]> ReadActiveAsync();
+    Task<F1RaceDto[]> FindAsync(F1RaceFilterDto filter);
     Task<F1RaceDto> ReadAsync(Guid raceId);
     Task<Guid> StartNewRaceAsync(string name);
     Task ClosePredictionsAsync(Guid raceId);

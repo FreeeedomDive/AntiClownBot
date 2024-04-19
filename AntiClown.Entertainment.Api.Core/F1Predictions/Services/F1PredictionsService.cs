@@ -34,6 +34,11 @@ public class F1PredictionsService : IF1PredictionsService
         );
     }
 
+    public async Task<F1Race[]> FindAsync(F1RaceFilter filter)
+    {
+        return await f1RacesRepository.FindAsync(filter);
+    }
+
     public async Task<Guid> StartNewRaceAsync(string name)
     {
         var raceId = Guid.NewGuid();
@@ -125,7 +130,7 @@ public class F1PredictionsService : IF1PredictionsService
 
         var results = F1PredictionsResultBuilder.Build(race);
 
-        await f1PredictionResultsRepository.CreateAsync(results);
+        await f1PredictionResultsRepository.CreateOrUpdateAsync(results);
 
         race.IsOpened = false;
         race.IsActive = false;

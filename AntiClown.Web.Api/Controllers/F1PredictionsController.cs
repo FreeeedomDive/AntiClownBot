@@ -20,6 +20,12 @@ public class F1PredictionsController : Controller
         return await antiClownEntertainmentApiClient.F1Predictions.ReadActiveAsync();
     }
 
+    [HttpPost("find")]
+    public async Task<ActionResult<F1RaceDto[]>> Find([FromBody] F1RaceFilterDto filter)
+    {
+        return await antiClownEntertainmentApiClient.F1Predictions.FindAsync(filter);
+    }
+
     [HttpGet("{raceId:guid}")]
     public async Task<ActionResult<F1RaceDto>> Read([FromRoute] Guid raceId)
     {

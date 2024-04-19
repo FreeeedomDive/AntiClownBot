@@ -12,20 +12,49 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
         this.sqlRepository = sqlRepository;
     }
 
-    public async Task CreateAsync(F1PredictionResult[] results)
+    public async Task CreateOrUpdateAsync(F1PredictionResult[] results)
     {
         var f1PredictionResultStorageElements = results.Select(ToStorageElement).ToArray();
-        await sqlRepository.CreateAsync(f1PredictionResultStorageElements);
+        foreach (var storageElement in f1PredictionResultStorageElements)
+        {
+            var existing = (await InnerFindAsync(
+                new F1PredictionResultsFilter
+                {
+                    RaceId = storageElement.RaceId,
+                    UserId = storageElement.UserId,
+                }
+            )).FirstOrDefault();
+            await (
+                existing is not null
+                    ? sqlRepository.UpdateAsync(
+                        existing.Id,
+                        x =>
+                        {
+                            x.TenthPlacePoints = storageElement.TenthPlacePoints;
+                            x.DnfPoints = storageElement.DnfPoints;
+                            x.SafetyCarsPoints = storageElement.SafetyCarsPoints;
+                            x.FirstPlaceLeadPoints = storageElement.FirstPlaceLeadPoints;
+                            x.TeamMatesPoints = storageElement.TeamMatesPoints;
+                        }
+                    )
+                    : sqlRepository.CreateAsync(storageElement)
+            );
+        }
     }
 
     public async Task<F1PredictionResult[]> FindAsync(F1PredictionResultsFilter filter)
     {
-        var result = await sqlRepository
-                           .BuildCustomQuery()
-                           .WhereIf(filter.UserId is not null, x => x.UserId == filter.UserId!.Value)
-                           .WhereIf(filter.RaceId is not null, x => x.RaceId == filter.RaceId!.Value)
-                           .ToArrayAsync();
+        var result = await InnerFindAsync(filter);
         return result.Select(ToModel).ToArray();
+    }
+
+    private async Task<F1PredictionResultStorageElement[]> InnerFindAsync(F1PredictionResultsFilter filter)
+    {
+        return await sqlRepository
+                     .BuildCustomQuery()
+                     .WhereIf(filter.UserId is not null, x => x.UserId == filter.UserId!.Value)
+                     .WhereIf(filter.RaceId is not null, x => x.RaceId == filter.RaceId!.Value)
+                     .ToArrayAsync();
     }
 
     private static F1PredictionResultStorageElement ToStorageElement(F1PredictionResult predictionResult)

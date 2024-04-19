@@ -29,7 +29,12 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var races = await antiClownEntertainmentApiClient.F1Predictions.ReadActiveAsync();
+                var races = await antiClownEntertainmentApiClient.F1Predictions.FindAsync(
+                    new F1RaceFilterDto
+                    {
+                        IsActive = true,
+                    }
+                );
                 if (races.Length == 0)
                 {
                     await RespondToInteractionAsync(interactionContext, "На данный момент нет активных предсказаний на гонку");
