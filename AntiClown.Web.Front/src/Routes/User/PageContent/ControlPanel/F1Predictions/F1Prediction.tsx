@@ -17,7 +17,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
 import {F1DriverDto} from "../../../../../Dto/F1Predictions/F1DriverDto";
 import {
   F1SafetyCarPredictionDto,
@@ -396,7 +395,7 @@ export default function F1Prediction({f1Race}: Props) {
           disabled={!isValid || isSaving}
           size="large"
           variant="contained"
-          endIcon={<Save/>}
+          startIcon={<Save/>}
           style={{margin: "auto", marginBottom: "0", width: "50%"}}
           onClick={saveF1Prediction}
         >

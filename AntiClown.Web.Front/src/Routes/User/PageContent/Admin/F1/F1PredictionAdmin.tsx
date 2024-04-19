@@ -127,7 +127,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           color="error"
           size="large"
           variant="contained"
-          endIcon={<Block/>}
+          startIcon={<Block/>}
           onClick={closePredictions}
         >
           Закрыть предсказания
@@ -138,7 +138,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           color="success"
           size="large"
           variant="contained"
-          endIcon={<Save/>}
+          startIcon={<Save/>}
           onClick={saveRaceResults}
         >
           Сохранить
@@ -149,7 +149,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           color="primary"
           size="large"
           variant="contained"
-          endIcon={<Done/>}
+          startIcon={<Done/>}
           onClick={finishRace}
         >
           Завершить гонку и рассчитать результаты
