@@ -2,10 +2,10 @@ import {F1RaceDto} from "../../../../../Dto/F1Predictions/F1RaceDto";
 import React, {useCallback, useEffect, useState} from "react";
 import {Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography} from "@mui/material";
 import F1RaceClassifications from "./F1RaceClassifications";
-import SendIcon from "@mui/icons-material/Send";
 import {LoadingButton} from "@mui/lab";
 import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
 import {DRIVERS} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
+import {Block, Done, Save} from "@mui/icons-material";
 
 interface Props {
   f1Race: F1RaceDto;
@@ -31,6 +31,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>(
     String(currentF1Race.result?.firstPlaceLead ?? "0")
   );
+  const [isClosing, setIsClosing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isFinishing, setIsFinishing] = useState(false);
 
@@ -46,6 +47,12 @@ export default function F1PredictionAdmin({f1Race}: Props) {
     setIsSaving(false);
   }, [currentF1Race.id, dnfDrivers, drivers, firstPlaceLead, incidents]);
 
+  const closePredictions = useCallback(async () => {
+    setIsClosing(true)
+    await F1PredictionsApi.close(currentF1Race.id)
+    setIsClosing(false)
+  }, [currentF1Race.id]);
+
   const finishRace = useCallback(async () => {
     setIsFinishing(true);
     await F1PredictionsApi.finish(currentF1Race.id)
@@ -60,7 +67,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
         dnfDrivers={dnfDrivers}
         setDnfDrivers={setDnfDrivers}
       />
-      <Stack direction={"column"} spacing={4}>
+      <Stack direction={"column"} spacing={2}>
         <Stack direction={"row"} spacing={4} height={"45px"}>
           <Button
             variant="contained"
@@ -70,7 +77,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           >
             <Typography variant="h4">-</Typography>
           </Button>
-          <Typography variant="h6">Инциденты (VSC, SC, RedFlag): {incidents}</Typography>
+          <Typography variant="h6">Инциденты (VSC, SC, Red Flag): {incidents}</Typography>
           <Button
             variant="contained"
             color="success"
@@ -115,12 +122,23 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           </FormControl>
         </Stack>
         <LoadingButton
+          loading={isClosing}
+          disabled={isClosing}
+          color="error"
+          size="large"
+          variant="contained"
+          endIcon={<Block/>}
+          onClick={closePredictions}
+        >
+          Закрыть предсказания
+        </LoadingButton>
+        <LoadingButton
           loading={isSaving}
           disabled={isSaving}
           color="success"
           size="large"
           variant="contained"
-          endIcon={<SendIcon/>}
+          endIcon={<Save/>}
           onClick={saveRaceResults}
         >
           Сохранить
@@ -131,7 +149,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           color="primary"
           size="large"
           variant="contained"
-          endIcon={<SendIcon/>}
+          endIcon={<Done/>}
           onClick={finishRace}
         >
           Завершить гонку и рассчитать результаты

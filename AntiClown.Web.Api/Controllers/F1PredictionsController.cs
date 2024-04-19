@@ -14,12 +14,6 @@ public class F1PredictionsController : Controller
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
     }
 
-    [HttpGet("active")]
-    public async Task<ActionResult<F1RaceDto[]>> ReadActive()
-    {
-        return await antiClownEntertainmentApiClient.F1Predictions.ReadActiveAsync();
-    }
-
     [HttpPost("find")]
     public async Task<ActionResult<F1RaceDto[]>> Find([FromBody] F1RaceFilterDto filter)
     {
@@ -44,6 +38,13 @@ public class F1PredictionsController : Controller
         {
             return AddPredictionResultDto.PredictionsClosed;
         }
+    }
+
+    [HttpPost("{raceId:guid}/close")]
+    public async Task<ActionResult> Close([FromRoute] Guid raceId)
+    {
+        await antiClownEntertainmentApiClient.F1Predictions.ClosePredictionsAsync(raceId);
+        return NoContent();
     }
 
     [HttpPost("{raceId:guid}/addResult")]

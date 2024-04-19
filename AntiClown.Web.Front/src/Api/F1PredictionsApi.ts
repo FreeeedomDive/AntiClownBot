@@ -27,13 +27,6 @@ export default class F1PredictionsApi {
     return result.data;
   }
 
-  static readAllActive = async (): Promise<F1RaceDto[]> => {
-    const result = await F1PredictionsApi.init().get<F1RaceDto[]>(
-      `active`
-    );
-    return result.data;
-  };
-
   static read = async (raceId: string): Promise<F1RaceDto> => {
     const result = await F1PredictionsApi.init().get<F1RaceDto>(
       raceId
@@ -50,6 +43,14 @@ export default class F1PredictionsApi {
       prediction
     );
     return result.data;
+  };
+
+  static close = async (
+    raceId: string
+  ): Promise<void> => {
+    await F1PredictionsApi.init().post(
+      `${raceId}/close`
+    );
   };
 
   static addResult = async (

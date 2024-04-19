@@ -29,6 +29,7 @@ import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
 import {LoadingButton} from "@mui/lab";
 import {AddPredictionResultDto} from "../../../../../Dto/F1Predictions/AddPredictionResultDto";
 import {DRIVER_PAIRS, DRIVERS} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
+import {Save} from "@mui/icons-material";
 
 const isDriver = (driver: string): driver is F1DriverDto => {
   return driver in F1DriverDto;
@@ -395,7 +396,7 @@ export default function F1Prediction({f1Race}: Props) {
           disabled={!isValid || isSaving}
           size="large"
           variant="contained"
-          endIcon={<SendIcon/>}
+          endIcon={<Save/>}
           style={{margin: "auto", marginBottom: "0", width: "50%"}}
           onClick={saveF1Prediction}
         >

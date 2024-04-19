@@ -20,13 +20,6 @@ public class F1PredictionsController : Controller
         this.mapper = mapper;
     }
 
-    [HttpGet("active")]
-    public async Task<ActionResult<F1RaceDto[]>> ReadActive()
-    {
-        var result = await f1PredictionsService.ReadActiveAsync();
-        return mapper.Map<F1RaceDto[]>(result);
-    }
-
     [HttpPost("find")]
     public async Task<ActionResult<F1RaceDto[]>> Find([FromBody] F1RaceFilterDto filter)
     {

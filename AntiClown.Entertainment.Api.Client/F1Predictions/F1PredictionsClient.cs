@@ -11,13 +11,6 @@ public class F1PredictionsClient : IF1PredictionsClient
         this.restClient = restClient;
     }
 
-    public async Task<F1RaceDto[]> ReadActiveAsync()
-    {
-        var request = new RestRequest("f1Predictions/active");
-        var response = await restClient.ExecuteGetAsync(request);
-        return response.TryDeserialize<F1RaceDto[]>();
-    }
-
     public async Task<F1RaceDto[]> FindAsync(F1RaceFilterDto filter)
     {
         var request = new RestRequest("f1Predictions/find").AddJsonBody(filter);

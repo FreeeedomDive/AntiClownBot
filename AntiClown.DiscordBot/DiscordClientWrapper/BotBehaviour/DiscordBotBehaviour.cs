@@ -3,8 +3,6 @@ using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.Cache.Emotes;
-using AntiClown.DiscordBot.Interactivity.Domain;
-using AntiClown.DiscordBot.Interactivity.Domain.F1Predictions;
 using AntiClown.DiscordBot.Interactivity.Domain.Inventory;
 using AntiClown.DiscordBot.Interactivity.Domain.Shop;
 using AntiClown.DiscordBot.Interactivity.Repository;
@@ -31,7 +29,6 @@ using AntiClown.DiscordBot.SlashCommands.SocialRating;
 using AntiClown.DiscordBot.SlashCommands.Web;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
-using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
 using DSharpPlus;
@@ -322,18 +319,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 return;
             }
 
-            if (eventArgs.Id.StartsWith(InteractionsIds.F1PredictionsButtons.StartRaceResultInputButton))
-            {
-                await HandleRaceResultInput(eventArgs, true);
-                return;
-            }
-
-            if (eventArgs.Id.StartsWith(InteractionsIds.F1PredictionsButtons.DriversSelectDropdown))
-            {
-                await HandleRaceResultInput(eventArgs);
-                return;
-            }
-
             if (eventArgs.Id.StartsWith(InteractionsIds.EventsButtons.GuessNumber.Prefix))
             {
                 await HandleGuessNumberInteractionAsync(eventArgs);
@@ -540,63 +525,6 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 await partiesService.PingReadyPlayersAsync(eventId, e.User.Id);
                 break;
         }
-    }
-
-    private async Task HandleRaceResultInput(ComponentInteractionCreateEventArgs e, bool start = false)
-    {
-        await discordClientWrapper.Messages.RespondAsync(
-            e.Interaction, InteractionResponseType.DeferredMessageUpdate,
-            null
-        );
-        var currentRace = (await interactivityRepository.FindByTypeAsync<F1PredictionDetails>(InteractivityType.F1Predictions)).FirstOrDefault();
-        if (currentRace is null)
-        {
-            await discordClientWrapper.Messages.EditOriginalResponseAsync(
-                e.Interaction,
-                new DiscordWebhookBuilder().WithContent("На данный момент нет активных предсказаний на гонку")
-            );
-            return;
-        }
-
-        const int maxDriversCount = 20;
-        if (!start)
-        {
-            var driverName = e.Values.First()[InteractionsIds.F1PredictionsButtons.DriversSelectDropdownItemPrefix.Length..];
-            var driver = Enum.TryParse(typeof(F1DriverDto), driverName, out var result)
-                ? (F1DriverDto)result
-                : throw new ArgumentException($"Unexpected driver {driverName}");
-            currentRace.Details!.Classification.Add(driver);
-            await interactivityRepository.UpdateAsync(currentRace);
-            if (currentRace.Details!.Classification.Count == maxDriversCount)
-            {
-                await discordClientWrapper.Messages.EditOriginalResponseAsync(
-                    e.Interaction,
-                    new DiscordWebhookBuilder().WithContent($"Итоговая таблица:\n{string.Join("\n", currentRace.Details!.Classification)}")
-                );
-                await antiClownEntertainmentApiClient.F1Predictions.AddClassificationsResultAsync(currentRace.Id, currentRace.Details!.Classification.ToArray());
-                return;
-            }
-        }
-
-        var classification = currentRace.Details!.Classification;
-        var driversToInput = Enum.GetValues<F1DriverDto>().Except(classification).ToArray();
-        var options = driversToInput.Select(
-            x => new DiscordSelectComponentOption(
-                x.ToString(),
-                $"{InteractionsIds.F1PredictionsButtons.DriversSelectDropdownItemPrefix}{x.ToString()}"
-            )
-        );
-        var currentPlaceToEnter = classification.Count + 1;
-        var dropdown = new DiscordSelectComponent(
-            InteractionsIds.F1PredictionsButtons.DriversSelectDropdown,
-            $"Гонщик на {currentPlaceToEnter} месте",
-            options
-        );
-        var builder = new DiscordWebhookBuilder()
-                      .WithContent($"Результаты гонки, {currentPlaceToEnter} место")
-                      .AddComponents(dropdown);
-
-        await discordClientWrapper.Messages.EditOriginalResponseAsync(e.Interaction, builder);
     }
 
     private async Task RegisterSlashCommandsAsync(DiscordClient client)
