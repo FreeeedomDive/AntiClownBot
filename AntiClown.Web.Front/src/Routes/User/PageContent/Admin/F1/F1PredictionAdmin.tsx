@@ -1,5 +1,5 @@
 import {F1RaceDto} from "../../../../../Dto/F1Predictions/F1RaceDto";
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography} from "@mui/material";
 import F1RaceClassifications from "./F1RaceClassifications";
 import SendIcon from "@mui/icons-material/Send";
@@ -12,34 +12,45 @@ interface Props {
 }
 
 export default function F1PredictionAdmin({f1Race}: Props) {
+  const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto>(f1Race);
+
+  useEffect(() => {
+    async function load() {
+      const result = await F1PredictionsApi.read(f1Race.id);
+      setCurrentF1Race(result);
+    }
+
+    load();
+  }, [f1Race.id]);
+
   const [drivers, setDrivers] = useState(
-    f1Race.result.classification.length === 0 ? DRIVERS : f1Race.result.classification
+    currentF1Race.result.classification.length === 0 ? DRIVERS : currentF1Race.result.classification
   );
-  const [dnfDrivers, setDnfDrivers] = useState(new Set(f1Race.result?.dnfDrivers ?? []));
-  const [incidents, setIncidents] = useState(f1Race.result?.safetyCars ?? 0)
+  const [dnfDrivers, setDnfDrivers] = useState(new Set(currentF1Race.result?.dnfDrivers ?? []));
+  const [incidents, setIncidents] = useState(currentF1Race.result?.safetyCars ?? 0)
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>(
-    String(f1Race.result?.firstPlaceLead ?? "0")
+    String(currentF1Race.result?.firstPlaceLead ?? "0")
   );
   const [isSaving, setIsSaving] = useState(false);
   const [isFinishing, setIsFinishing] = useState(false);
 
   const saveRaceResults = useCallback(async () => {
     setIsSaving(true);
-    await F1PredictionsApi.addResult(f1Race.id, {
-      raceId: f1Race.id,
+    await F1PredictionsApi.addResult(currentF1Race.id, {
+      raceId: currentF1Race.id,
       firstPlaceLead: Number(firstPlaceLead),
       safetyCars: incidents,
       dnfDrivers: Array.from(dnfDrivers.values()),
       classification: drivers
     })
     setIsSaving(false);
-  }, [dnfDrivers, drivers, f1Race.id, firstPlaceLead, incidents]);
+  }, [currentF1Race.id, dnfDrivers, drivers, firstPlaceLead, incidents]);
 
   const finishRace = useCallback(async () => {
     setIsFinishing(true);
-    await F1PredictionsApi.finish(f1Race.id)
+    await F1PredictionsApi.finish(currentF1Race.id)
     setIsFinishing(false);
-  }, [f1Race.id]);
+  }, [currentF1Race.id]);
 
   return (
     <Stack direction={"row"} spacing={16}>

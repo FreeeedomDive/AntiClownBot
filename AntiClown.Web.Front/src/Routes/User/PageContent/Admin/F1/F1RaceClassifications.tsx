@@ -27,6 +27,7 @@ export default function F1RaceClassifications({drivers, setDrivers, dnfDrivers, 
               <F1RaceClassificationsElement
                 f1Driver={x}
                 index={i}
+                isDnf={dnfDrivers.has(x)}
                 onAddDnfDriver={() => {
                   dnfDrivers.add(x);
                   setDnfDrivers(new Set(dnfDrivers));

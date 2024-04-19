@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {
   Button,
   Checkbox,
-  FormControlLabel, Stack,
+  FormControlLabel,
   TableCell, TableRow,
   Typography
 } from "@mui/material";
@@ -13,6 +13,7 @@ import {F1DriverDto} from "../../../../../Dto/F1Predictions/F1DriverDto";
 interface Props {
   f1Driver: F1DriverDto;
   index: number;
+  isDnf: boolean;
   onAddDnfDriver: () => void;
   onRemoveDnfDriver: () => void;
   moveUp: () => void;
@@ -23,13 +24,14 @@ export default function F1RaceClassificationsElement(
   {
     f1Driver,
     index,
+    isDnf,
     onAddDnfDriver,
     onRemoveDnfDriver,
     moveUp,
     moveDown
   }: Props
 ) {
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(isDnf);
   const position = index + 1;
 
   return (

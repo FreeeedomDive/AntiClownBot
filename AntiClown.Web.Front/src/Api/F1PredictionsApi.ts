@@ -3,6 +3,7 @@ import { F1PredictionDto } from "../Dto/F1Predictions/F1PredictionDto";
 import { F1RaceDto } from "../Dto/F1Predictions/F1RaceDto";
 import {AddPredictionResultDto} from "../Dto/F1Predictions/AddPredictionResultDto";
 import {F1PredictionRaceResultDto} from "../Dto/F1Predictions/F1PredictionRaceResultDto";
+import {F1RaceFilterDto} from "../Dto/F1Predictions/F1RaceFilterDto";
 
 export default class F1PredictionsApi {
   static init = () => {
@@ -18,6 +19,13 @@ export default class F1PredictionsApi {
       },
     });
   };
+
+  static find = async (filter: F1RaceFilterDto): Promise<F1RaceDto[]> => {
+    const result = await F1PredictionsApi.init().post<F1RaceDto[]>(
+      `find`, filter
+    );
+    return result.data;
+  }
 
   static readAllActive = async (): Promise<F1RaceDto[]> => {
     const result = await F1PredictionsApi.init().get<F1RaceDto[]>(

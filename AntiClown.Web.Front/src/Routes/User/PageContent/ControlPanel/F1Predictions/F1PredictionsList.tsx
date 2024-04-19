@@ -58,7 +58,7 @@ export default function F1PredictionsList() {
         }
         {
           currentF1Race
-            ? <F1Prediction f1Race={currentF1Race}/>
+            ? <F1Prediction key={currentF1Race.id} f1Race={currentF1Race}/>
             : null
         }
       </Stack>

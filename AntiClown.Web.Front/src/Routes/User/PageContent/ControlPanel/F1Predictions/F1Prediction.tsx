@@ -67,7 +67,7 @@ export default function F1Prediction({f1Race}: Props) {
     }
 
     load();
-  }, []);
+  }, [f1Race.id]);
 
   const userPrediction = useMemo(() => {
     return currentF1Race.predictions.find(
