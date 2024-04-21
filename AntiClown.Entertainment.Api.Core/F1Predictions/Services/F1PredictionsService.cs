@@ -34,6 +34,11 @@ public class F1PredictionsService : IF1PredictionsService
         );
     }
 
+    public async Task<F1Race[]> FindAsync(F1RaceFilter filter)
+    {
+        return await f1RacesRepository.FindAsync(filter);
+    }
+
     public async Task<Guid> StartNewRaceAsync(string name)
     {
         var raceId = Guid.NewGuid();
@@ -86,6 +91,7 @@ public class F1PredictionsService : IF1PredictionsService
         var race = await f1RacesRepository.ReadAsync(raceId);
         race.Result = raceResult;
         await f1RacesRepository.UpdateAsync(race);
+        await f1PredictionsMessageProducer.ProduceRaceResultUpdatedAsync(raceId);
     }
 
     public async Task AddClassificationsResultAsync(Guid raceId, F1Driver[] f1Drivers)
@@ -124,13 +130,24 @@ public class F1PredictionsService : IF1PredictionsService
 
         var results = F1PredictionsResultBuilder.Build(race);
 
-        await f1PredictionResultsRepository.CreateAsync(results);
+        await f1PredictionResultsRepository.CreateOrUpdateAsync(results);
 
         race.IsOpened = false;
         race.IsActive = false;
         await f1RacesRepository.UpdateAsync(race);
+        await f1PredictionsMessageProducer.ProduceRaceFinishedAsync(raceId);
 
         return results;
+    }
+
+    public async Task<F1PredictionResult[]> ReadRaceResultsAsync(Guid raceId)
+    {
+        return await f1PredictionResultsRepository.FindAsync(
+            new F1PredictionResultsFilter
+            {
+                RaceId = raceId,
+            }
+        );
     }
 
     public async Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync(int? season = null)

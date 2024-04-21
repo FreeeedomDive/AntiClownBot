@@ -12,7 +12,7 @@ import {Loader} from "../../../Components/Loader/Loader";
 import {RightsWrapper} from "../../../Components/RIghts/RightsWrapper";
 import {RightsDto} from "../../../Dto/Rights/RightsDto";
 import F1PredictionsList from "./ControlPanel/F1Predictions/F1PredictionsList";
-import F1PredictionsAdminList from "./Admin/F1PredictionsAdminList";
+import F1PredictionsAdminList from "./Admin/F1/F1PredictionsAdminList";
 
 interface Props {
   user: UserDto | null | undefined;

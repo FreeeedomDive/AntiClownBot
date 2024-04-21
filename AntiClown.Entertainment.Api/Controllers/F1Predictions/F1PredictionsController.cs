@@ -5,8 +5,6 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.Entertainment.Api.Controllers.F1Predictions;
 
@@ -15,42 +13,37 @@ public class F1PredictionsController : Controller
 {
     public F1PredictionsController(
         IF1PredictionsService f1PredictionsService,
-        IMapper mapper,
-        ILoggerClient loggerClient
+        IMapper mapper
     )
     {
         this.f1PredictionsService = f1PredictionsService;
         this.mapper = mapper;
-        this.loggerClient = loggerClient;
     }
 
-    [HttpGet("active")]
-    public async Task<ActionResult<F1RaceDto[]>> ReadActiveAsync()
+    [HttpPost("find")]
+    public async Task<ActionResult<F1RaceDto[]>> Find([FromBody] F1RaceFilterDto filter)
     {
-        var result = await f1PredictionsService.ReadActiveAsync();
+        var result = await f1PredictionsService.FindAsync(mapper.Map<F1RaceFilter>(filter));
         return mapper.Map<F1RaceDto[]>(result);
     }
 
     [HttpGet("{raceId:guid}")]
-    public async Task<ActionResult<F1RaceDto>> ReadAsync(Guid raceId)
+    public async Task<ActionResult<F1RaceDto>> Read(Guid raceId)
     {
         var result = await f1PredictionsService.ReadAsync(raceId);
         return mapper.Map<F1RaceDto>(result);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> StartNewRaceAsync([FromQuery] string name)
+    public async Task<ActionResult<Guid>> StartNewRace([FromQuery] string name)
     {
         return await f1PredictionsService.StartNewRaceAsync(name);
     }
 
     [HttpPost("{raceId:guid}/addPrediction")]
-    public async Task<ActionResult> AddPredictionAsync([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction)
+    public async Task<ActionResult> AddPrediction([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction)
     {
-        var dtoJson = JsonConvert.SerializeObject(prediction, Formatting.Indented);
         var model = mapper.Map<F1Prediction>(prediction);
-        var modelJson = JsonConvert.SerializeObject(prediction, Formatting.Indented);
-        await loggerClient.InfoAsync("Json from front: {front}, json from businessModel: {businessModel}", dtoJson, modelJson);
         await f1PredictionsService.AddPredictionAsync(raceId, prediction.UserId, model);
         return NoContent();
     }
@@ -98,14 +91,21 @@ public class F1PredictionsController : Controller
     }
 
     [HttpPost("{raceId:guid}/finish")]
-    public async Task<ActionResult<F1PredictionUserResultDto[]>> FinishRaceAsync([FromRoute] Guid raceId)
+    public async Task<ActionResult<F1PredictionUserResultDto[]>> FinishRace([FromRoute] Guid raceId)
     {
         var result = await f1PredictionsService.FinishRaceAsync(raceId);
         return mapper.Map<F1PredictionUserResultDto[]>(result);
     }
 
+    [HttpGet("{raceId:guid}/results")]
+    public async Task<ActionResult<F1PredictionUserResultDto[]>> ReadResults([FromRoute] Guid raceId)
+    {
+        var result = await f1PredictionsService.ReadRaceResultsAsync(raceId);
+        return mapper.Map<F1PredictionUserResultDto[]>(result);
+    }
+
     [HttpGet("standings")]
-    public async Task<ActionResult<Dictionary<Guid, F1PredictionUserResultDto?[]>>> ReadStandingsAsync([FromQuery] int? season = null)
+    public async Task<ActionResult<Dictionary<Guid, F1PredictionUserResultDto?[]>>> ReadStandings([FromQuery] int? season = null)
     {
         var result = await f1PredictionsService.ReadStandingsAsync(season);
         return mapper.Map<Dictionary<Guid, F1PredictionUserResultDto?[]>>(result);
@@ -113,5 +113,4 @@ public class F1PredictionsController : Controller
 
     private readonly IF1PredictionsService f1PredictionsService;
     private readonly IMapper mapper;
-    private readonly ILoggerClient loggerClient;
 }

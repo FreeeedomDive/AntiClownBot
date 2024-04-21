@@ -8,6 +8,7 @@ public interface IF1PredictionsService
 {
     Task<F1Race> ReadAsync(Guid raceId);
     Task<F1Race[]> ReadActiveAsync();
+    Task<F1Race[]> FindAsync(F1RaceFilter filter);
     Task<Guid> StartNewRaceAsync(string name);
     Task AddPredictionAsync(Guid raceId, Guid userId, F1Prediction prediction);
     Task ClosePredictionsAsync(Guid raceId);
@@ -17,5 +18,6 @@ public interface IF1PredictionsService
     Task AddClassificationsResultAsync(Guid raceId, F1Driver[] f1Drivers);
     Task AddRaceResultAsync(Guid raceId, F1PredictionRaceResult raceResult);
     Task<F1PredictionResult[]> FinishRaceAsync(Guid raceId);
+    Task<F1PredictionResult[]> ReadRaceResultsAsync(Guid raceId);
     Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync(int? season = null);
 }

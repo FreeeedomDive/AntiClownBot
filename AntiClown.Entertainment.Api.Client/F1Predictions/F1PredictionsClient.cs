@@ -11,10 +11,10 @@ public class F1PredictionsClient : IF1PredictionsClient
         this.restClient = restClient;
     }
 
-    public async Task<F1RaceDto[]> ReadActiveAsync()
+    public async Task<F1RaceDto[]> FindAsync(F1RaceFilterDto filter)
     {
-        var request = new RestRequest("f1Predictions/active");
-        var response = await restClient.ExecuteGetAsync(request);
+        var request = new RestRequest("f1Predictions/find").AddJsonBody(filter);
+        var response = await restClient.ExecutePostAsync(request);
         return response.TryDeserialize<F1RaceDto[]>();
     }
 
@@ -42,6 +42,13 @@ public class F1PredictionsClient : IF1PredictionsClient
     public async Task AddPredictionAsync(Guid raceId, F1PredictionDto f1Prediction)
     {
         var request = new RestRequest($"f1Predictions/{raceId}/addPrediction").AddJsonBody(f1Prediction);
+        var response = await restClient.ExecutePostAsync(request);
+        response.ThrowIfNotSuccessful();
+    }
+
+    public async Task AddResultAsync(Guid raceId, F1PredictionRaceResultDto result)
+    {
+        var request = new RestRequest($"f1Predictions/{raceId}/addResult").AddJsonBody(result);
         var response = await restClient.ExecutePostAsync(request);
         response.ThrowIfNotSuccessful();
     }
@@ -78,6 +85,13 @@ public class F1PredictionsClient : IF1PredictionsClient
     {
         var request = new RestRequest($"f1Predictions/{raceId}/finish");
         var response = await restClient.ExecutePostAsync(request);
+        return response.TryDeserialize<F1PredictionUserResultDto[]>();
+    }
+
+    public async Task<F1PredictionUserResultDto[]> ReadResultsAsync(Guid raceId)
+    {
+        var request = new RestRequest($"f1Predictions/{raceId}/results");
+        var response = await restClient.ExecuteGetAsync(request);
         return response.TryDeserialize<F1PredictionUserResultDto[]>();
     }
 

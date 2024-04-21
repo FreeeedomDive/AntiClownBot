@@ -1,5 +1,5 @@
 import {useParams} from "react-router-dom";
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {
   Alert,
   Button,
@@ -17,7 +17,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
 import {F1DriverDto} from "../../../../../Dto/F1Predictions/F1DriverDto";
 import {
   F1SafetyCarPredictionDto,
@@ -29,6 +28,7 @@ import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
 import {LoadingButton} from "@mui/lab";
 import {AddPredictionResultDto} from "../../../../../Dto/F1Predictions/AddPredictionResultDto";
 import {DRIVER_PAIRS, DRIVERS} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
+import {Save} from "@mui/icons-material";
 
 const isDriver = (driver: string): driver is F1DriverDto => {
   return driver in F1DriverDto;
@@ -58,25 +58,29 @@ interface Props {
 
 export default function F1Prediction({f1Race}: Props) {
   const {userId} = useParams<"userId">();
+  const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto>(f1Race);
+
+  useEffect(() => {
+    async function load() {
+      const result = await F1PredictionsApi.read(f1Race.id);
+      setCurrentF1Race(result);
+    }
+
+    load();
+  }, [f1Race.id]);
 
   const userPrediction = useMemo(() => {
-    return f1Race.predictions.find(
+    return currentF1Race.predictions.find(
       (prediction) => prediction.userId === userId
     );
-  }, [f1Race, userId]);
+  }, [currentF1Race, userId]);
 
   const [selected10Position, setSelected10Position] = useState<F1DriverDto>(
     userPrediction?.tenthPlacePickedDriver ?? F1DriverDto.Verstappen
   );
 
   const [isDNFNobody, setIsDNFNobody] = useState(() => {
-    console.log("dnfPrediction", userPrediction?.dnfPrediction);
-
     return userPrediction?.dnfPrediction?.noDnfPredicted ?? false;
-  });
-
-  console.log({
-    isDNFNobody,
   });
 
   const [dnfList, setDnfList] = useState<DNFList>(() => {
@@ -261,7 +265,7 @@ export default function F1Prediction({f1Race}: Props) {
           justifyContent={"space-between"}
         >
           <Typography variant="h6" flexShrink={0} width={firstColumnWidth}>
-            Количество машин безопасности
+            Количество инцидентов (VSC, SC, Red)
           </Typography>
           <FormControl fullWidth>
             <RadioGroup
@@ -391,7 +395,7 @@ export default function F1Prediction({f1Race}: Props) {
           disabled={!isValid || isSaving}
           size="large"
           variant="contained"
-          endIcon={<SendIcon/>}
+          startIcon={<Save/>}
           style={{margin: "auto", marginBottom: "0", width: "50%"}}
           onClick={saveF1Prediction}
         >

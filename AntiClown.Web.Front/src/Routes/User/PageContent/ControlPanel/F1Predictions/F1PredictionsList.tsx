@@ -14,7 +14,10 @@ export default function F1PredictionsList() {
 
   useEffect(() => {
     async function load() {
-      const result = await F1PredictionsApi.readAllActive();
+      const result = await F1PredictionsApi.find({
+        season: new Date().getFullYear(),
+        isActive: true
+      });
 
       setF1Races(result);
       setCurrentF1Race(result[0]);
@@ -58,7 +61,7 @@ export default function F1PredictionsList() {
         }
         {
           currentF1Race
-            ? <F1Prediction f1Race={currentF1Race}/>
+            ? <F1Prediction key={currentF1Race.id} f1Race={currentF1Race}/>
             : null
         }
       </Stack>
