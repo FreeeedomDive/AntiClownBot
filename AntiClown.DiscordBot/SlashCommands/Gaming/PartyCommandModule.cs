@@ -48,7 +48,7 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
             context, async () =>
             {
                 var response = await emotesCache.GetEmoteAsTextAsync("Okayge");
-                await RespondToInteractionAsync(context, $"{response}\n(Пати теперь создается асинхронно и появится в течение нескольких секунд)");
+                await RespondToInteractionAsync(context, response);
                 var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
                 switch (prefix)
                 {
