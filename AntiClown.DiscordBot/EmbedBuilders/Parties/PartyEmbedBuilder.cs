@@ -1,4 +1,5 @@
-﻿using AntiClown.Data.Api.Client;
+﻿using System.Text;
+using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.Cache.Emotes;
@@ -60,7 +61,12 @@ public class PartyEmbedBuilder : IPartyEmbedBuilder
             embedBuilder.AddField("Очередь", string.Join("\n", playersQueueList));
         }
 
-        embedBuilder.WithFooter(partyDto.IsOpened ? $"PartyId: {partyDto.Id}" : "СБОР ЗАКРЫТ");
+        var creator = await usersCache.GetMemberByApiIdAsync(partyDto.CreatorId);
+        var footer = new StringBuilder()
+                     .AppendLine($"ID: {partyDto.Id}")
+                     .AppendLine($"Создатель: {creator.ServerOrUserName()}")
+                     .AppendLine(partyDto.IsOpened ? string.Empty : "СБОР ЗАКРЫТ");
+        embedBuilder.WithFooter(footer.ToString().TrimEnd());
 
         return embedBuilder.Build();
     }
@@ -69,9 +75,9 @@ public class PartyEmbedBuilder : IPartyEmbedBuilder
     {
         var embedBuilder = new DiscordEmbedBuilder();
         var partyMessagesById = parties.Select(x => interactivityRepository.TryReadAsync<PartyDetails>(x.Id).GetAwaiter().GetResult())
-                                .Where(x => x is not null)
-                                .OrderBy(x => x!.CreatedAt)
-                                .ToDictionary(x => x!.Id, x => x!.MessageId);
+                                       .Where(x => x is not null)
+                                       .OrderBy(x => x!.CreatedAt)
+                                       .ToDictionary(x => x!.Id, x => x!.MessageId);
         var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
         var partyChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "PartyChannelId");
         var partiesLinks = parties
