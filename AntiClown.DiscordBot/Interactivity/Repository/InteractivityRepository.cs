@@ -1,6 +1,5 @@
 ﻿using AntiClown.DiscordBot.Interactivity.Domain;
 using AntiClown.DiscordBot.Utility.Locks;
-using Medallion.Threading;
 using Newtonsoft.Json;
 using SqlRepositoryBase.Core.Repository;
 
