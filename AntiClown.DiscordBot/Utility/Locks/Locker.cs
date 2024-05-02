@@ -1,12 +1,14 @@
-﻿using SqlRepositoryBase.Core.Repository;
+﻿using AntiClown.Tools.Utility.Random;
+using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.DiscordBot.Utility.Locks;
 
 public class Locker : ILocker
 {
-    public Locker(ISqlRepository<LockStorageElement> sqlRepository)
+    public Locker(ISqlRepository<LockStorageElement> sqlRepository, ILogger<Locker> logger)
     {
         this.sqlRepository = sqlRepository;
+        this.logger = logger;
     }
 
     public async Task AcquireAsync(string key)
@@ -16,6 +18,14 @@ public class Locker : ILocker
         {
             var @lock = await FindAsync(key);
             lockExists = @lock is not null;
+            if (!lockExists)
+            {
+                continue;
+            }
+
+            var sleepTime = Randomizer.GetRandomNumberBetween(100, 1000);
+            logger.LogInformation("Lock {key} is acquired, waiting for {ms}ms", key, sleepTime);
+            await Task.Delay(sleepTime);
         }
 
         await sqlRepository.CreateAsync(
@@ -44,4 +54,5 @@ public class Locker : ILocker
     }
 
     private readonly ISqlRepository<LockStorageElement> sqlRepository;
+    private readonly ILogger<Locker> logger;
 }

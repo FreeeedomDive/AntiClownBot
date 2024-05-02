@@ -10,6 +10,7 @@ using AntiClown.DiscordBot.Interactivity.Domain;
 using AntiClown.DiscordBot.Interactivity.Domain.Parties;
 using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Models.Interactions;
+using AntiClown.DiscordBot.Utility.Locks;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.Parties;
 using DSharpPlus;
@@ -26,7 +27,8 @@ public class PartiesService : IPartiesService
         IPartyEmbedBuilder partyEmbedBuilder,
         IEmotesCache emotesCache,
         IUsersCache usersCache,
-        IAntiClownDataApiClient antiClownDataApiClient
+        IAntiClownDataApiClient antiClownDataApiClient,
+        ILocker locker
     )
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
@@ -36,6 +38,7 @@ public class PartiesService : IPartiesService
         this.emotesCache = emotesCache;
         this.usersCache = usersCache;
         this.antiClownDataApiClient = antiClownDataApiClient;
+        this.locker = locker;
     }
 
     public async Task AddPlayerAsync(Guid partyId, ulong memberId)
@@ -64,47 +67,52 @@ public class PartiesService : IPartiesService
 
     public async Task CreateOrUpdateAsync(Guid partyId)
     {
-        var party = await antiClownEntertainmentApiClient.Parties.ReadAsync(partyId);
-        var interactivity = await interactivityRepository.TryReadAsync<PartyDetails>(partyId);
-        var messageBuilder = await BuildMessageAsync(party);
-        var partyChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "PartyChannelId");
-        DiscordMessage message;
-        if (interactivity is null)
-        {
-            message = await discordClientWrapper.Messages.SendAsync(partyChannelId, messageBuilder);
-            var thread = await discordClientWrapper.Messages.CreateThreadAsync(message, $"{party.Name} {party.Description}");
-            var author = await usersCache.GetMemberByApiIdAsync(party.CreatorId);
-            interactivity = new Interactivity<PartyDetails>
+        await locker.DoInLockAsync(
+            $"Party {partyId}", async () =>
             {
-                Id = partyId,
-                CreatedAt = party.CreatedAt,
-                Type = InteractivityType.Party,
-                AuthorId = author!.Id,
-                MessageId = message.Id,
-                Details = new PartyDetails
+                var party = await antiClownEntertainmentApiClient.Parties.ReadAsync(partyId);
+                var interactivity = await interactivityRepository.TryReadAsync<PartyDetails>(partyId);
+                var messageBuilder = await BuildMessageAsync(party);
+                var partyChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "PartyChannelId");
+                DiscordMessage message;
+                if (interactivity is null)
                 {
-                    LastPing = null,
-                    ThreadId = thread.Id,
-                },
-            };
-            await interactivityRepository.CreateAsync(interactivity);
-        }
-        else
-        {
-            message = await discordClientWrapper.Messages.FindMessageAsync(partyChannelId, interactivity.MessageId);
-            await discordClientWrapper.Messages.ModifyAsync(message, messageBuilder);
-        }
+                    message = await discordClientWrapper.Messages.SendAsync(partyChannelId, messageBuilder);
+                    var thread = await discordClientWrapper.Messages.CreateThreadAsync(message, $"{party.Name} {party.Description}");
+                    var author = await usersCache.GetMemberByApiIdAsync(party.CreatorId);
+                    interactivity = new Interactivity<PartyDetails>
+                    {
+                        Id = partyId,
+                        CreatedAt = party.CreatedAt,
+                        Type = InteractivityType.Party,
+                        AuthorId = author!.Id,
+                        MessageId = message.Id,
+                        Details = new PartyDetails
+                        {
+                            LastPing = null,
+                            ThreadId = thread.Id,
+                        },
+                    };
+                    await interactivityRepository.CreateAsync(interactivity);
+                }
+                else
+                {
+                    message = await discordClientWrapper.Messages.FindMessageAsync(partyChannelId, interactivity.MessageId);
+                    await discordClientWrapper.Messages.ModifyAsync(message, messageBuilder);
+                }
 
-        // даем пинговать о полном пати только когда пати полностью собирается первый раз
-        if (party.IsOpened && party.Participants.Count == party.MaxPlayers && interactivity.Details!.LastPing is null)
-        {
-            var readyPlayersMentions = await BuildReadyPlayersMentionsStringAsync(party);
-            var fullPartyContent =
-                $"{(party.FirstFullPartyAt ?? DateTime.UtcNow).GetDifferenceTimeSpan(party.CreatedAt).ToTimeDiffString()}\n{readyPlayersMentions}";
-            await SendMessageToThreadAsync(interactivity.Details.ThreadId, $"Набрано полное пати за {fullPartyContent}");
-            interactivity.Details.LastPing = DateTime.UtcNow;
-            await interactivityRepository.UpdateAsync(interactivity);
-        }
+                // даем пинговать о полном пати только когда пати полностью собирается первый раз
+                if (party.IsOpened && party.Participants.Count == party.MaxPlayers && interactivity.Details!.LastPing is null)
+                {
+                    var readyPlayersMentions = await BuildReadyPlayersMentionsStringAsync(party);
+                    var fullPartyContent =
+                        $"{(party.FirstFullPartyAt ?? DateTime.UtcNow).GetDifferenceTimeSpan(party.CreatedAt).ToTimeDiffString()}\n{readyPlayersMentions}";
+                    await SendMessageToThreadAsync(interactivity.Details.ThreadId, $"Набрано полное пати за {fullPartyContent}");
+                    interactivity.Details.LastPing = DateTime.UtcNow;
+                    await interactivityRepository.UpdateAsync(interactivity);
+                }
+            }
+        );
     }
 
     public async Task PingReadyPlayersAsync(Guid partyId, ulong memberId)
@@ -191,4 +199,5 @@ public class PartiesService : IPartiesService
     private readonly IPartyEmbedBuilder partyEmbedBuilder;
     private readonly IUsersCache usersCache;
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
+    private readonly ILocker locker;
 }
