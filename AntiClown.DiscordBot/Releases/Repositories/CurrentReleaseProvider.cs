@@ -10,9 +10,8 @@ public class CurrentReleaseProvider : ICurrentReleaseProvider
         {
             Major = 3,
             Minor = 4,
-            Patch = 1,
-            Description = "На фронте добавлен выбор гонки, на которую делается предсказание. "
-                          + "В боте добавлены админские команды, чтобы вносить результаты по новым предсказаниям",
+            Patch = 2,
+            Description = "Исправлена проблема с дублированием пати, если после его создания слишком быстро была нажата кнопка Присоединиться",
             CreatedAt = DateTime.UtcNow,
         };
     }
