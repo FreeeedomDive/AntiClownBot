@@ -5,7 +5,6 @@ using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Interactivity.Domain.Inventory;
 using AntiClown.DiscordBot.Interactivity.Domain.Shop;
-using AntiClown.DiscordBot.Interactivity.Repository;
 using AntiClown.DiscordBot.Interactivity.Services.GuessNumber;
 using AntiClown.DiscordBot.Interactivity.Services.Inventory;
 using AntiClown.DiscordBot.Interactivity.Services.Lottery;
@@ -27,7 +26,6 @@ using AntiClown.DiscordBot.SlashCommands.Random;
 using AntiClown.DiscordBot.SlashCommands.Roles;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
 using AntiClown.DiscordBot.SlashCommands.Web;
-using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
@@ -47,13 +45,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IDiscordClientWrapper discordClientWrapper,
         IEmotesCache emotesCache,
         IAntiClownDataApiClient antiClownDataApiClient,
-        IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IInventoryService inventoryService,
         IShopService shopService,
         IGuessNumberEventService guessNumberEventService,
         ILotteryService lotteryService,
         IPartiesService partiesService,
-        IInteractivityRepository interactivityRepository,
         ILoggerClient loggerClient,
         IRaceService raceService
     )
@@ -63,13 +59,11 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.discordClientWrapper = discordClientWrapper;
         this.emotesCache = emotesCache;
         this.antiClownDataApiClient = antiClownDataApiClient;
-        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.inventoryService = inventoryService;
         this.shopService = shopService;
         this.guessNumberEventService = guessNumberEventService;
         this.lotteryService = lotteryService;
         this.partiesService = partiesService;
-        this.interactivityRepository = interactivityRepository;
         this.loggerClient = loggerClient;
         this.raceService = raceService;
     }
@@ -561,6 +555,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<DailyResetCommandModule>(guildId);
         slash.RegisterCommands<RefreshUsersCacheCommandModule>(guildId);
         slash.RegisterCommands<RightsCommandModule>(guildId);
+        slash.RegisterCommands<TestCommandModule>(guildId);
         slash.RegisterCommands<CreateMessageCommandModule>(guildId);
         slash.RegisterCommands<EventsCommandModule>(guildId);
         slash.RegisterCommands<F1AdminCommandModule>(guildId);
@@ -660,18 +655,17 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         return result.Contains("anime");
     }
 
+    private readonly IAntiClownDataApiClient antiClownDataApiClient;
+
     private readonly DiscordClient discordClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IEmotesCache emotesCache;
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IGuessNumberEventService guessNumberEventService;
-    private readonly IInteractivityRepository interactivityRepository;
     private readonly IInventoryService inventoryService;
     private readonly ILoggerClient loggerClient;
-    private readonly IRaceService raceService;
     private readonly ILotteryService lotteryService;
     private readonly IPartiesService partiesService;
+    private readonly IRaceService raceService;
     private readonly IServiceProvider serviceProvider;
     private readonly IShopService shopService;
 }
