@@ -37,6 +37,7 @@ using AntiClown.DiscordBot.Releases.Services;
 using AntiClown.DiscordBot.Roles.Repositories;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.DiscordBot.SlashCommands.Base.Middlewares;
+using AntiClown.DiscordBot.Utility.Locks;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Bedge;
@@ -49,13 +50,10 @@ using AntiClown.Entertainment.Api.Dto.DailyEvents.Announce;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.ResetsAndPayments;
 using DSharpPlus;
 using MassTransit;
-using Medallion.Threading;
-using Medallion.Threading.Postgres;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using SqlRepositoryBase.Configuration.Extensions;
-using SqlRepositoryBase.Core.Options;
 using TelemetryApp.Utilities.Extensions;
 using TelemetryApp.Utilities.Middlewares;
 
@@ -95,7 +93,8 @@ internal class Program
             {
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 options.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
-            });
+            }
+        );
 
         var app = builder.Build();
 
@@ -147,14 +146,7 @@ internal class Program
                .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
                .ConfigurePostgreSql();
 
-        builder.Services.AddSingleton<IDistributedLockProvider>(
-            serviceProvider =>
-            {
-                var databaseOptions = serviceProvider.GetRequiredService<IOptions<AppSettingsDatabaseOptions>>();
-                return new PostgresDistributedSynchronizationProvider(databaseOptions.Value.ConnectionString);
-            }
-        );
-
+        builder.Services.AddTransient<ILocker, Locker>();
         builder.Services.AddTransient<IInteractivityRepository, InteractivityRepository>();
         builder.Services.AddTransient<IReleasesRepository, ReleasesRepository>();
         builder.Services.AddTransient<IRolesRepository, RolesRepository>();
