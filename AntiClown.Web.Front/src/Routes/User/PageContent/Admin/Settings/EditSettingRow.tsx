@@ -13,7 +13,7 @@ const EditSettingRow = ({setting}: Props) => {
     const [settingValue, setSettingValue] = React.useState<string>(setting.value);
     const [isSaving, setIsSaving] = React.useState(false);
 
-    const closePredictions = useCallback(async () => {
+    const saveSettings = useCallback(async () => {
         setIsSaving(true)
         await SettingsApi.save({
             category: setting.category,
@@ -25,10 +25,10 @@ const EditSettingRow = ({setting}: Props) => {
 
     return (
         <TableRow>
-            <TableCell sx={{padding: '1px', margin: '1px'}}>
+            <TableCell sx={{padding: '1px'}}>
                 <Typography>{setting.name}</Typography>
             </TableCell>
-            <TableCell sx={{padding: '1px', margin: '1px'}}>
+            <TableCell sx={{padding: '1px'}}>
                 <FormControl>
                     <OutlinedInput
                         id="outlined-adornment-weight"
@@ -40,18 +40,16 @@ const EditSettingRow = ({setting}: Props) => {
                     />
                 </FormControl>
             </TableCell>
-            <TableCell sx={{padding: '1px', margin: '1px'}}>
+            <TableCell sx={{padding: '1px'}}>
                 <LoadingButton
                     loading={isSaving}
                     disabled={isSaving}
                     color="primary"
                     size="large"
-                    variant="contained"
+                    variant="text"
                     startIcon={<Save/>}
-                    onClick={closePredictions}
-                >
-                    Сохранить
-                </LoadingButton>
+                    onClick={saveSettings}
+                />
             </TableCell>
         </TableRow>
     )
