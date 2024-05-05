@@ -93,6 +93,18 @@ const UserPageSideBar = ({user}: Props) => {
                 </ListItemButton>
               </ListItem>
             </RightsWrapper>
+            <RightsWrapper requiredRights={[RightsDto.EditSettings]}>
+              <ListItem key={"Settings"} disablePadding>
+                <ListItemButton
+                    onClick={() => navigate(buildLink(userId, "settings"))}
+                    selected={
+                        location.pathname === buildLink(userId, "settings")
+                    }
+                >
+                  <ListItemText primary={"Настройки"}/>
+                </ListItemButton>
+              </ListItem>
+            </RightsWrapper>
           </List>
         </>
       )}
