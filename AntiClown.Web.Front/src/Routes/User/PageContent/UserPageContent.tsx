@@ -9,10 +9,9 @@ import ItemsTrade from "./Interaction/ItemsTrade";
 import {UserDto} from "../../../Dto/Users/UserDto";
 import {Typography} from "@mui/material";
 import {Loader} from "../../../Components/Loader/Loader";
-import {RightsWrapper} from "../../../Components/RIghts/RightsWrapper";
-import {RightsDto} from "../../../Dto/Rights/RightsDto";
 import F1PredictionsList from "./ControlPanel/F1Predictions/F1PredictionsList";
 import F1PredictionsAdminList from "./Admin/F1/F1PredictionsAdminList";
+import EditSettings from "./Admin/Settings/EditSettings";
 
 interface Props {
   user: UserDto | null | undefined;
@@ -45,6 +44,7 @@ const UserPageContent = ({ user }: Props) => {
           <Route path="/shop" element={<UserShop />} />
           <Route path="/f1Predictions" element={<F1PredictionsList />} />
           <Route path="/f1PredictionsAdmin" element={<F1PredictionsAdminList />} />
+          <Route path="/settings" element={<EditSettings />} />
         </Routes>
       )}
       {Boolean(!isMyPage && currentLoggedInUserId && user) && (
