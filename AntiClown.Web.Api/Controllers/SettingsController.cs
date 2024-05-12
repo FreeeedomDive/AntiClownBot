@@ -1,10 +1,12 @@
 ﻿using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.Web.Api.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/settings")]
+[RequireUserToken]
 public class SettingsController : Controller
 {
     public SettingsController(IAntiClownDataApiClient antiClownDataApiClient)

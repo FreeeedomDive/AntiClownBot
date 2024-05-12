@@ -73,6 +73,7 @@ public class Startup
 
         app.UseMiddleware<RequestLoggingMiddleware>();
         app.UseMiddleware<ServiceExceptionHandlingMiddleware>();
+        app.UseMiddleware<TokenAuthenticationMiddleware>();
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 

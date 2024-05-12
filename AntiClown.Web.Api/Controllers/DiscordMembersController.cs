@@ -1,10 +1,12 @@
 ﻿using AntiClown.DiscordApi.Client;
 using AntiClown.DiscordApi.Dto.Members;
+using AntiClown.Web.Api.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/discordMembers")]
+[RequireUserToken]
 public class DiscordMembersController : Controller
 {
     public DiscordMembersController(IAntiClownDiscordApiClient antiClownDiscordApiClient)
