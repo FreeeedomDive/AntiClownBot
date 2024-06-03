@@ -1,8 +1,8 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Api.Dto.Exceptions.Tribute;
 
-public class AutoTributeWasCancelledByEarlierTributeException : AntiClownConflictException
+public class AutoTributeWasCancelledByEarlierTributeException : ConflictException
 {
     public AutoTributeWasCancelledByEarlierTributeException(Guid userId)
         : base($"Auto tribute for user {userId} was cancelled by earlier tribute")

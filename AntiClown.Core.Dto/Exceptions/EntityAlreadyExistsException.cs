@@ -1,6 +1,8 @@
-﻿namespace AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
-public class EntityAlreadyExistsException : AntiClownConflictException
+namespace AntiClown.Core.Dto.Exceptions;
+
+public class EntityAlreadyExistsException : ConflictException
 {
     public EntityAlreadyExistsException(string entityName) : base($"Entity with name {entityName} already exists")
     {

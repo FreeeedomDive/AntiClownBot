@@ -1,8 +1,8 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 
-public class PredictionsAlreadyClosedException : AntiClownConflictException
+public class PredictionsAlreadyClosedException : ConflictException
 {
     public PredictionsAlreadyClosedException(Guid raceId) : base($"Predictions are already closed for race {raceId}")
     {

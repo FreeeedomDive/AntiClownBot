@@ -1,8 +1,8 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Api.Dto.Exceptions.Shops;
 
-public class ShopItemAlreadyBoughtException : AntiClownConflictException
+public class ShopItemAlreadyBoughtException : ConflictException
 {
     public ShopItemAlreadyBoughtException(Guid shopId, Guid itemId)
         : base($"Item {itemId} is already bought in shop {shopId}")

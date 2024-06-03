@@ -1,6 +1,8 @@
-﻿namespace AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
-public class EntityNotFoundException : AntiClownNotFoundException
+namespace AntiClown.Core.Dto.Exceptions;
+
+public class EntityNotFoundException : NotFoundException
 {
     public EntityNotFoundException(string entityName) : base($"Entity with name {entityName} does not exist")
     {

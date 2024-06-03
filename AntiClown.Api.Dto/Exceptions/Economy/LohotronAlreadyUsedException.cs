@@ -1,8 +1,8 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Api.Dto.Exceptions.Economy;
 
-public class LohotronAlreadyUsedException : AntiClownConflictException
+public class LohotronAlreadyUsedException : ConflictException
 {
     public LohotronAlreadyUsedException(Guid userId) : base($"User {userId} already used lohotron")
     {

@@ -6,19 +6,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-
-
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2"/>
+        <PackageReference Include="Xdd.HttpHelpers.Models" Version="1.2.0" />
     </ItemGroup>
 
-
-
-
-
-
     <ItemGroup>
-      <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj" />
+        <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj"/>
     </ItemGroup>
 
 </Project>

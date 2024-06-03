@@ -1,8 +1,8 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Entertainment.Api.Dto.Exceptions.CommonEvents;
 
-public class EventAlreadyFinishedException : AntiClownConflictException
+public class EventAlreadyFinishedException : ConflictException
 {
     public EventAlreadyFinishedException(Guid eventId) : base($"Event {eventId} is already finished")
     {

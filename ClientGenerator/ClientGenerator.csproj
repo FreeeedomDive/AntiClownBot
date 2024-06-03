@@ -1,15 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
+        <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj"/>
+      <PackageReference Include="Xdd.HttpHelpers.HttpClientGenerator" Version="1.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Xdd.HttpHelpers.Models" Version="1.2.0" />
+      <ProjectReference Include="..\AntiClown.Api\AntiClown.Api.csproj" />
     </ItemGroup>
+
 </Project>

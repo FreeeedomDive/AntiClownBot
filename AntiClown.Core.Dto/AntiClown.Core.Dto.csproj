@@ -7,5 +7,10 @@
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
       <PackageReference Include="RestSharp" Version="108.0.3" />
+      <PackageReference Include="Xdd.HttpHelpers.Models" Version="1.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Xdd.HttpHelpers.Models" Version="1.2.0" />
     </ItemGroup>
 </Project>
