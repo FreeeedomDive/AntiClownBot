@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Client;
+using AntiClown.Api.Dto.Economies;
 using AntiClown.Core.Schedules;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
@@ -76,7 +77,11 @@ public class GuessNumberEventService : IGuessNumberEventService
         var winners = @event.NumberToUsers.TryGetValue(@event.Result, out var result) ? result : new List<Guid>();
         foreach (var winnerUserId in winners)
         {
-            await antiClownApiClient.Economy.UpdateLootBoxesAsync(winnerUserId, 1);
+            await antiClownApiClient.Economy.UpdateLootBoxesAsync(winnerUserId, new UpdateLootBoxesDto
+            {
+                UserId = winnerUserId,
+                LootBoxesDiff = 1,
+            });
         }
 
         await commonEventsMessageProducer.ProduceAsync(@event);

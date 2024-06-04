@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Client;
+using AntiClown.Api.Dto.Economies;
 using AntiClown.Core.Schedules;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
@@ -91,12 +92,17 @@ public class RaceService : IRaceService
 
         foreach (var t in finishSectorPositions)
         {
-            var points = RaceHelper.PositionToPoints.TryGetValue(t.Position, out var x) ? x : 0;
+            var points = RaceHelper.PositionToPoints.GetValueOrDefault(t.Position, 0);
             var driver = driversByName[t.Name];
             if (driver.UserId is not null && points > 0)
             {
                 var scamCoins = points * RaceHelper.PointsToScamCoinsMultiplier;
-                await antiClownApiClient.Economy.UpdateScamCoinsAsync(driver.UserId.Value, scamCoins, $"Гонка {eventId}");
+                await antiClownApiClient.Economy.UpdateScamCoinsAsync(driver.UserId.Value, new UpdateScamCoinsDto
+                {
+                    UserId = driver.UserId.Value,
+                    ScamCoinsDiff = scamCoins, 
+                    Reason = $"Гонка {eventId}",
+                });
             }
 
             var diff = t.Position - startSectorPositions[t.Name];

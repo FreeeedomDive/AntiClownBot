@@ -1,11 +1,10 @@
-﻿using AntiClown.Api.Dto.Users;
-
+/* Generated file */
 namespace AntiClown.Api.Client.Users;
 
 public interface IUsersClient
 {
-    Task<UserDto[]> ReadAllAsync();
-    Task<UserDto> ReadAsync(Guid userId);
-    Task<UserDto[]> FindAsync(UserFilterDto filter);
-    Task<Guid> CreateAsync(NewUserDto newUserDto);
+    System.Threading.Tasks.Task<AntiClown.Api.Dto.Users.UserDto[]> ReadAllAsync();
+    System.Threading.Tasks.Task<AntiClown.Api.Dto.Users.UserDto> ReadAsync(System.Guid userId);
+    System.Threading.Tasks.Task<AntiClown.Api.Dto.Users.UserDto[]> FindAsync(AntiClown.Api.Dto.Users.UserFilterDto filter);
+    System.Threading.Tasks.Task<System.Guid> CreateAsync(AntiClown.Api.Dto.Users.NewUserDto newUser);
 }

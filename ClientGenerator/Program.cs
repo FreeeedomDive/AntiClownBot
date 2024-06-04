@@ -1,5 +1,4 @@
 ﻿using AntiClown.Api.Controllers;
-using AntiClown.Api.Core.Inventory.Domain.Items;
-using HttpClientGenerator;
+using Xdd.HttpHelpers.HttpClientGenerator;
 
-Console.WriteLine();
+ApiClientGenerator.Generate<UsersController>(Path.Join("..", "..", "..", "..", "AntiClown.Api.Client"));

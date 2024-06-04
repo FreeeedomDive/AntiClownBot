@@ -36,7 +36,7 @@ public class AnnounceEventService : IAnnounceEventService
     {
         // на момент 00:01 по UTC будет еще 19:01 предыдущего дня, поэтому вычитываем транзакции за этот период
         var now = DateTime.UtcNow;
-        var transactionsOfTheDay = await antiClownApiClient.Transactions.FindAsync(
+        var transactionsOfTheDay = await antiClownApiClient.Transactions.FindTransactionsAsync(
             new TransactionsFilterDto
             {
                 DateTimeRange = new DateTimeRangeDto

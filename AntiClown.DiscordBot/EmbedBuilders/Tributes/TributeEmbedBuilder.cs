@@ -75,7 +75,7 @@ public class TributeEmbedBuilder : ITributeEmbedBuilder
                                      async kv =>
                                      {
                                          var (itemId, count) = kv;
-                                         var item = await antiClownApiClient.Inventories.ReadItemAsync(tribute.UserId, itemId);
+                                         var item = await antiClownApiClient.Inventory.ReadAsync(tribute.UserId, itemId);
                                          var percent = item switch
                                          {
                                              CatWifeDto => throw new UnreachableException($"{nameof(CatWifeDto)} can not be cooldown modifier"),

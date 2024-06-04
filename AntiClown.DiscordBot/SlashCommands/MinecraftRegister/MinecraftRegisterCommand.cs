@@ -89,8 +89,12 @@ public class MinecraftRegisterCommand : SlashCommandModuleWithMiddlewares
             var totalPrice = (skinUrl is null ? 0 : SkinPrice) + (capeUrl is null ? 0 : CapePrice);
             await antiClownApiClient.Economy.UpdateScamCoinsAsync(
                 discordUserId,
-                -totalPrice,
-                "Установка скина или плаща");
+                new UpdateScamCoinsDto
+                {
+                    UserId = discordUserId,
+                    Reason = "Установка скина или плаща",
+                    ScamCoinsDiff = -totalPrice,
+                });
 
             await RespondToInteractionAsync(context, "Скины успешно установлены");
         });

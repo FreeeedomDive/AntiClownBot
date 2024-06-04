@@ -31,7 +31,7 @@ public class TributeCommandModule : SlashCommandModuleWithMiddlewares
                 try
                 {
                     var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-                    var tributeResult = await antiClownApiClient.Tribute.TributeAsync(userId);
+                    var tributeResult = await antiClownApiClient.Tributes.TributeAsync(userId);
                     var tributeEmbed = await tributeEmbedBuilder.BuildForSuccessfulTributeAsync(tributeResult);
                     await RespondToInteractionAsync(context, tributeEmbed);
                 }

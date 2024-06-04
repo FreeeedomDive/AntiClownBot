@@ -46,7 +46,7 @@ public class RatingCommandModule : SlashCommandModuleWithMiddlewares
             {
                 var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
                 var economy = await antiClownApiClient.Economy.ReadAsync(userId);
-                var inventory = await antiClownApiClient.Inventories.ReadInventoryAsync(userId);
+                var inventory = await antiClownApiClient.Inventory.ReadAllAsync(userId);
                 var embed = await ratingEmbedBuilder.BuildAsync(economy, inventory);
 
                 await RespondToInteractionAsync(context, embed);

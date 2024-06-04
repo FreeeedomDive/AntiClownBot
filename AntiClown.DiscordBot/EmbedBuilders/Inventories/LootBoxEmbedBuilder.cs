@@ -30,7 +30,7 @@ public class LootBoxEmbedBuilder : ILootBoxEmbedBuilder
 
         for (var i = 0; i < lootBoxReward.Items.Length; i++)
         {
-            var item = await antiClownApiClient.Inventories.ReadItemAsync(userId, lootBoxReward.Items[i]);
+            var item = await antiClownApiClient.Inventory.ReadAsync(userId, lootBoxReward.Items[i]);
             embedBuilder.AddField(
                 $"{i + 1} предмет", $"Ты получил {item.Rarity} {item.ItemName.Localize()}\n" +
                                     string.Join(

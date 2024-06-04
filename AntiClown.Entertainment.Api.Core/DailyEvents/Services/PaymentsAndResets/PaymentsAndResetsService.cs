@@ -30,8 +30,8 @@ public class PaymentsAndResetsService : IPaymentsAndResetsService
         };
 
         await antiClownApiClient.Economy.UpdateScamCoinsForAllAsync(250, "Ежедневные выплаты");
-        await antiClownApiClient.Lohotron.ResetLohotronForAllUsersAsync();
-        await antiClownApiClient.Shops.ResetAllAsync();
+        await antiClownApiClient.Lohotron.ResetAsync();
+        await antiClownApiClient.Shop.ResetAllAsync();
 
         await dailyEventsMessageProducer.ProduceAsync(@event);
 

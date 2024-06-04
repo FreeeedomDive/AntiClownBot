@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Client;
+using AntiClown.Api.Dto.Economies;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
@@ -34,7 +35,12 @@ public class UserSocialRatingEditorCommandModule : SlashCommandModuleWithMiddlew
             context, async () =>
             {
                 var userId = await usersCache.GetApiIdByMemberIdAsync(user.Id);
-                await antiClownApiClient.Economy.UpdateScamCoinsAsync(userId, (int)diff, reason!);
+                await antiClownApiClient.Economy.UpdateScamCoinsAsync(userId, new UpdateScamCoinsDto
+                {
+                    UserId = userId,
+                    Reason = reason!,
+                    ScamCoinsDiff = (int)diff,
+                });
                 await RespondToInteractionAsync(context, "done");
             }
         );
@@ -55,10 +61,18 @@ public class UserSocialRatingEditorCommandModule : SlashCommandModuleWithMiddlew
                 switch (operation)
                 {
                     case LootboxOperation.Give:
-                        await antiClownApiClient.Economy.UpdateLootBoxesAsync(userId, 1);
+                        await antiClownApiClient.Economy.UpdateLootBoxesAsync(userId, new UpdateLootBoxesDto
+                        {
+                            UserId = userId,
+                            LootBoxesDiff = 1,
+                        });
                         break;
                     case LootboxOperation.Remove:
-                        await antiClownApiClient.Economy.UpdateLootBoxesAsync(userId, -1);
+                        await antiClownApiClient.Economy.UpdateLootBoxesAsync(userId, new UpdateLootBoxesDto
+                        {
+                            UserId = userId,
+                            LootBoxesDiff = -1,
+                        });
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(operation), operation, null);
