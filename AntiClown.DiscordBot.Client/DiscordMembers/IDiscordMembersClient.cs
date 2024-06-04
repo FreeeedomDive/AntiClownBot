@@ -3,5 +3,5 @@ namespace AntiClown.DiscordBot.Client.DiscordMembers;
 
 public interface IDiscordMembersClient
 {
-    System.Threading.Tasks.Task<AntiClown.DiscordApi.Dto.Members.DiscordMemberDto> GetDiscordMemberAsync(System.Guid userId);
+    System.Threading.Tasks.Task<Dto.Members.DiscordMemberDto> GetDiscordMemberAsync(System.Guid userId);
 }

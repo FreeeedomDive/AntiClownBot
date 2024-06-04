@@ -85,7 +85,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Web.Api", "AntiCl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.DiscordBot.Client", "AntiClown.DiscordBot.Client\AntiClown.DiscordBot.Client.csproj", "{5F92911B-CFA8-419A-BB69-6CE54890B376}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.DiscordApi.Dto", "AntiClown.DiscordApi.Dto\AntiClown.DiscordApi.Dto.csproj", "{D4A6AA16-C4A3-40F2-9098-7DD26D47CCCE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.DiscordBot.Dto", "AntiClown.DiscordBot.Dto\AntiClown.DiscordBot.Dto.csproj", "{D4A6AA16-C4A3-40F2-9098-7DD26D47CCCE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientGenerator", "ClientGenerator\ClientGenerator.csproj", "{45E2C1CB-ED4D-43A4-AF35-37DE7B19829E}"
 EndProject

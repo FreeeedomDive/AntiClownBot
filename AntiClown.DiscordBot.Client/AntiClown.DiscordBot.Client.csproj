@@ -13,7 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj" />
-      <ProjectReference Include="..\AntiClown.DiscordApi.Dto\AntiClown.DiscordApi.Dto.csproj" />
+      <ProjectReference Include="..\AntiClown.DiscordBot.Dto\AntiClown.DiscordBot.Dto.csproj" />
     </ItemGroup>
 
 </Project>

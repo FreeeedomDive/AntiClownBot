@@ -1,4 +1,4 @@
-﻿using AntiClown.DiscordApi.Dto.Members;
+﻿using AntiClown.DiscordBot.Dto.Members;
 using AntiClown.DiscordBot.Cache.Users;
 using Microsoft.AspNetCore.Mvc;
 
