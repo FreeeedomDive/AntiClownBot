@@ -18,7 +18,7 @@ public class CheckRaceSectorsCountTool : ToolBase
     protected override async Task RunAsync()
     {
         var raceId = argsProvider.GetArgument<Guid>("-raceId");
-        var race = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(raceId);
+        var race = await antiClownEntertainmentApiClient.RaceEvent.ReadAsync(raceId);
         Logger.LogInformation("Sectors in race: {x}", race.Sectors.Length);
     }
 

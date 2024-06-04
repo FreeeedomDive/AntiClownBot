@@ -15,8 +15,8 @@ public class StartTransfusionTool : ToolBase
 
     protected override async Task RunAsync()
     {
-        var eventId = await antiClownEntertainmentApiClient.CommonEvents.Transfusion.StartNewAsync();
-        var transfusionEvent = await antiClownEntertainmentApiClient.CommonEvents.Transfusion.ReadAsync(eventId);
+        var eventId = await antiClownEntertainmentApiClient.TransfusionEvent.StartNewAsync();
+        var transfusionEvent = await antiClownEntertainmentApiClient.TransfusionEvent.ReadAsync(eventId);
         Logger.LogInformation(JsonConvert.SerializeObject(transfusionEvent, Formatting.Indented));
     }
 

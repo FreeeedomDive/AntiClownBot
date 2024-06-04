@@ -38,7 +38,7 @@ public class AnnounceEventConsumer : IDailyEventConsumer<AnnounceEventDto>
             ConsumerName,
             eventId
         );
-        var @event = await antiClownEntertainmentApiClient.DailyEvents.Announce.ReadAsync(eventId);
+        var @event = await antiClownEntertainmentApiClient.AnnounceEvent.ReadAsync(eventId);
         var totalEarnings = @event.Earnings.Values.Sum();
         var embedBuilder = new DiscordEmbedBuilder()
                            .WithTitle("Подошел к концу очередной день в Clown-City")

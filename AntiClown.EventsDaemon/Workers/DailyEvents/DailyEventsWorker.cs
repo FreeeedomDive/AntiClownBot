@@ -39,7 +39,7 @@ public class DailyEventsWorker : PeriodicJobWorker
 
     protected override async Task ExecuteIterationAsync()
     {
-        var activeEvents = await antiClownEntertainmentApiClient.DailyEvents.ActiveDailyEventsIndex.ReadActiveEventsAsync();
+        var activeEvents = await antiClownEntertainmentApiClient.ActiveDailyEventsIndex.ReadActiveEventsAsync();
         if (activeEvents.Length == 0)
         {
             return;
@@ -50,10 +50,10 @@ public class DailyEventsWorker : PeriodicJobWorker
             switch (activeEventType)
             {
                 case DailyEventTypeDto.Announce:
-                    await antiClownEntertainmentApiClient.DailyEvents.Announce.StartNewAsync();
+                    await antiClownEntertainmentApiClient.AnnounceEvent.StartNewAsync();
                     break;
                 case DailyEventTypeDto.PaymentsAndResets:
-                    await antiClownEntertainmentApiClient.DailyEvents.PaymentsAndResets.StartNewAsync();
+                    await antiClownEntertainmentApiClient.PaymentsAndResetsEvent.StartNewAsync();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(

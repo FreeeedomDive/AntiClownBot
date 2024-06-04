@@ -50,7 +50,7 @@ public class CreateDriversTool : ToolBase
             }
         );
 
-        await Task.WhenAll(drivers.Select(x => antiClownEntertainmentApiClient.CommonEvents.Race.Drivers.CreateAsync(x)));
+        await Task.WhenAll(drivers.Select(x => antiClownEntertainmentApiClient.RaceDrivers.CreateAsync(x)));
     }
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;

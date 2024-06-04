@@ -23,7 +23,7 @@ public class StartRemoveCoolDownsTool : ToolBase
         var userEconomy = await antiClownApiClient.Economy.ReadAsync(user.Id);
         Logger.LogInformation(JsonConvert.SerializeObject(userEconomy, Formatting.Indented));
 
-        await antiClownEntertainmentApiClient.CommonEvents.RemoveCoolDowns.StartNewAsync();
+        await antiClownEntertainmentApiClient.RemoveCoolDownsEvent.StartNewAsync();
         userEconomy = await antiClownApiClient.Economy.ReadAsync(user.Id);
         Logger.LogInformation(JsonConvert.SerializeObject(userEconomy, Formatting.Indented));
     }

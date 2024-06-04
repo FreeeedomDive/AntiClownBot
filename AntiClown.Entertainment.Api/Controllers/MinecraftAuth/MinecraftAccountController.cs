@@ -19,12 +19,12 @@ public class MinecraftAccountController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<RegisterResponse>> RegisterAsync([FromBody] RegisterRequest request)
+    public async Task<ActionResult<RegisterResponse>> RegisterAsync([FromBody] RegisterRequest registerRequest)
     {
         var authStatus = await minecraftAccountService.CreateOrChangeAccountAsync(
-            request.DiscordId,
-            request.Username,
-            request.Password
+            registerRequest.DiscordId,
+            registerRequest.Username,
+            registerRequest.Password
         );
 
         return new RegisterResponse
@@ -34,10 +34,10 @@ public class MinecraftAccountController : ControllerBase
     }
 
     [HttpPost("setSkin")]
-    public async Task<ActionResult<ChangeSkinResponse>> SetSkin([FromBody] ChangeSkinRequest request)
+    public async Task<ActionResult<ChangeSkinResponse>> SetSkin([FromBody] ChangeSkinRequest changeSkinRequest)
     {
         var result =
-            await minecraftAccountService.SetSkinAsync(request.DiscordUserId, request.SkinUrl, request.CapeUrl);
+            await minecraftAccountService.SetSkinAsync(changeSkinRequest.DiscordUserId, changeSkinRequest.SkinUrl, changeSkinRequest.CapeUrl);
 
         return new ChangeSkinResponse
         {

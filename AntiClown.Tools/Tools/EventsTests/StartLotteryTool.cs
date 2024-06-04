@@ -23,11 +23,11 @@ public class StartLotteryTool : ToolBase
         var userEconomy = await antiClownApiClient.Economy.ReadAsync(user.Id);
         Logger.LogInformation(JsonConvert.SerializeObject(userEconomy, Formatting.Indented));
 
-        var eventId = await antiClownEntertainmentApiClient.CommonEvents.Lottery.StartNewAsync();
-        await antiClownEntertainmentApiClient.CommonEvents.Lottery.AddParticipantAsync(eventId, user.Id);
-        var lotteryEvent = await antiClownEntertainmentApiClient.CommonEvents.Lottery.ReadAsync(eventId);
+        var eventId = await antiClownEntertainmentApiClient.LotteryEvent.StartNewAsync();
+        await antiClownEntertainmentApiClient.LotteryEvent.AddParticipantAsync(eventId, user.Id);
+        var lotteryEvent = await antiClownEntertainmentApiClient.LotteryEvent.ReadAsync(eventId);
         Logger.LogInformation(JsonConvert.SerializeObject(lotteryEvent, Formatting.Indented));
-        await antiClownEntertainmentApiClient.CommonEvents.Lottery.FinishAsync(eventId);
+        await antiClownEntertainmentApiClient.LotteryEvent.FinishAsync(eventId);
 
         userEconomy = await antiClownApiClient.Economy.ReadAsync(user.Id);
         Logger.LogInformation(JsonConvert.SerializeObject(userEconomy, Formatting.Indented));

@@ -37,14 +37,14 @@ public class MinecraftRegisterCommand : SlashCommandModuleWithMiddlewares
                 return;
             }
 
-            var result = await antiClownEntertainmentApiClient.MinecraftAccountClient.Register(new RegisterRequest
+            var result = await antiClownEntertainmentApiClient.MinecraftAccount.RegisterAsync(new RegisterRequest
             {
                 DiscordId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id),
                 Username = login,
-                Password = password
+                Password = password,
             });
 
-            var registrationMessage = GetMessageByRegistrationStatus(result);
+            var registrationMessage = GetMessageByRegistrationStatus(result.SuccessfulStatus);
             await RespondToInteractionAsync(context, registrationMessage);
         });
     }
@@ -71,19 +71,18 @@ public class MinecraftRegisterCommand : SlashCommandModuleWithMiddlewares
             if (await IsPlayerBeggar(context, skinUrl, capeUrl, economy))
                 return;
 
-            var hasAccount = await antiClownEntertainmentApiClient.MinecraftAccountClient
-                .HasRegistrationByDiscordUser(discordUserId);
-            if (!hasAccount)
+            var hasAccount = await antiClownEntertainmentApiClient.MinecraftAccount.HasRegistrationByDiscordUserAsync(discordUserId);
+            if (!hasAccount.HasRegistration)
             {
                 await RespondToInteractionAsync(context, "Сначала зарегайся лол");
                 return;
             }
 
-            await antiClownEntertainmentApiClient.MinecraftAccountClient.SetSkinAsync(new ChangeSkinRequest
+            await antiClownEntertainmentApiClient.MinecraftAccount.SetSkinAsync(new ChangeSkinRequest
             {
                 DiscordUserId = discordUserId,
                 SkinUrl = skinUrl,
-                CapeUrl = capeUrl
+                CapeUrl = capeUrl,
             });
 
             var totalPrice = (skinUrl is null ? 0 : SkinPrice) + (capeUrl is null ? 0 : CapePrice);
@@ -107,7 +106,7 @@ public class MinecraftRegisterCommand : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(
             context, async () =>
             {
-                var usernames = await antiClownEntertainmentApiClient.MinecraftAccountClient.GetAllNicknames();
+                var usernames = await antiClownEntertainmentApiClient.MinecraftAccount.GetAllNicknamesAsync();
                 await RespondToInteractionAsync(context,
                     $"Никнеймы зареганных игроков:\n{string.Join('\n', usernames)}");
             }

@@ -8,11 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Xdd.HttpHelpers.HttpClientGenerator" Version="1.4.0" />
+      <PackageReference Include="Xdd.HttpHelpers.HttpClientGenerator" Version="1.8.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\AntiClown.Api\AntiClown.Api.csproj" />
+      <ProjectReference Include="..\AntiClown.Entertainment.Api\AntiClown.Entertainment.Api.csproj" />
     </ItemGroup>
 
 </Project>

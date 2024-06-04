@@ -6,6 +6,7 @@ using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.ActiveEventsIndex;
 using DSharpPlus;
 using DSharpPlus.SlashCommands;
 
@@ -46,24 +47,24 @@ public class EventsCommandModule : SlashCommandModuleWithMiddlewares
                     switch (commonEventTypeDto)
                     {
                         case CommonEventTypeDto.GuessNumber:
-                            var guessNumberEvent = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.ReadAsync(eventId);
+                            var guessNumberEvent = await antiClownEntertainmentApiClient.GuessNumberEvent.ReadAsync(eventId);
                             var guessNumberEmbed = await guessNumberEmbedBuilder.BuildAsync(guessNumberEvent);
                             await RespondToInteractionAsync(context, guessNumberEmbed);
                             break;
                         case CommonEventTypeDto.Lottery:
-                            var lotteryEvent = await antiClownEntertainmentApiClient.CommonEvents.Lottery.ReadAsync(eventId);
+                            var lotteryEvent = await antiClownEntertainmentApiClient.LotteryEvent.ReadAsync(eventId);
                             var lotteryEmbed = await lotteryEmbedBuilder.BuildAsync(lotteryEvent);
                             await RespondToInteractionAsync(context, lotteryEmbed);
                             break;
                         case CommonEventTypeDto.Race:
                             throw new NotSupportedException("Отображение гонок пока недоступно");
                         case CommonEventTypeDto.RemoveCoolDowns:
-                            var removeCoolDownsEvent = await antiClownEntertainmentApiClient.CommonEvents.RemoveCoolDowns.ReadAsync(eventId);
+                            var removeCoolDownsEvent = await antiClownEntertainmentApiClient.RemoveCoolDownsEvent.ReadAsync(eventId);
                             var removeCoolDownsEmbed = await removeCoolDownsEmbedBuilder.BuildAsync(removeCoolDownsEvent);
                             await RespondToInteractionAsync(context, removeCoolDownsEmbed);
                             break;
                         case CommonEventTypeDto.Transfusion:
-                            var transfusionEvent = await antiClownEntertainmentApiClient.CommonEvents.Transfusion.ReadAsync(eventId);
+                            var transfusionEvent = await antiClownEntertainmentApiClient.TransfusionEvent.ReadAsync(eventId);
                             var transfusionEmbed = await transfusionEmbedBuilder.BuildAsync(transfusionEvent);
                             await RespondToInteractionAsync(context, transfusionEmbed);
                             break;
@@ -92,8 +93,12 @@ public class EventsCommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(
             context, async () =>
             {
-                await antiClownEntertainmentApiClient.CommonEvents.ActiveCommonEventsIndex.UpdateAsync(commonEventTypeDto, operation == EventOperation.Enable);
-                var allEventTypes = await antiClownEntertainmentApiClient.CommonEvents.ActiveCommonEventsIndex.ReadAllEventTypesAsync();
+                await antiClownEntertainmentApiClient.ActiveEventsIndex.UpdateAsync(new ActiveCommonEventIndexDto
+                {
+                    EventType = commonEventTypeDto, 
+                    IsActive = operation == EventOperation.Enable,
+                });
+                var allEventTypes = await antiClownEntertainmentApiClient.ActiveEventsIndex.ReadAllEventTypesAsync();
                 var isEventPresent = allEventTypes.TryGetValue(commonEventTypeDto, out var isEnabled);
                 var eventResult = isEventPresent ? isEnabled ? "enabled" : "disabled" : "not presented in list";
                 await RespondToInteractionAsync(context, $"{commonEventTypeDto} is {eventResult}");
@@ -112,12 +117,12 @@ public class EventsCommandModule : SlashCommandModuleWithMiddlewares
             {
                 var newEventId = commonEventTypeDto switch
                 {
-                    CommonEventTypeDto.GuessNumber => await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.StartNewAsync(),
-                    CommonEventTypeDto.Lottery => await antiClownEntertainmentApiClient.CommonEvents.Lottery.StartNewAsync(),
-                    CommonEventTypeDto.Race => await antiClownEntertainmentApiClient.CommonEvents.Race.StartNewAsync(),
-                    CommonEventTypeDto.RemoveCoolDowns => await antiClownEntertainmentApiClient.CommonEvents.RemoveCoolDowns.StartNewAsync(),
-                    CommonEventTypeDto.Transfusion => await antiClownEntertainmentApiClient.CommonEvents.Transfusion.StartNewAsync(),
-                    CommonEventTypeDto.Bedge => await antiClownEntertainmentApiClient.CommonEvents.Bedge.StartNewAsync(),
+                    CommonEventTypeDto.GuessNumber => await antiClownEntertainmentApiClient.GuessNumberEvent.StartNewAsync(),
+                    CommonEventTypeDto.Lottery => await antiClownEntertainmentApiClient.LotteryEvent.StartNewAsync(),
+                    CommonEventTypeDto.Race => await antiClownEntertainmentApiClient.RaceEvent.StartNewAsync(),
+                    CommonEventTypeDto.RemoveCoolDowns => await antiClownEntertainmentApiClient.RemoveCoolDownsEvent.StartNewAsync(),
+                    CommonEventTypeDto.Transfusion => await antiClownEntertainmentApiClient.TransfusionEvent.StartNewAsync(),
+                    CommonEventTypeDto.Bedge => await antiClownEntertainmentApiClient.BedgeEvent.StartNewAsync(),
                     _ => throw new ArgumentOutOfRangeException(nameof(commonEventTypeDto), commonEventTypeDto, null),
                 };
                 await RespondToInteractionAsync(context, newEventId.ToString());
@@ -139,15 +144,15 @@ public class EventsCommandModule : SlashCommandModuleWithMiddlewares
                 switch(commonEventTypeDto)
                 {
                     case CommonEventTypeDto.GuessNumber:
-                        await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.FinishAsync(eventId);
+                        await antiClownEntertainmentApiClient.GuessNumberEvent.FinishAsync(eventId);
                         break;
                     case CommonEventTypeDto.Lottery: 
-                        await antiClownEntertainmentApiClient.CommonEvents.Lottery.FinishAsync(eventId);
+                        await antiClownEntertainmentApiClient.LotteryEvent.FinishAsync(eventId);
                         break;
                     case CommonEventTypeDto.Race: 
-                        await antiClownEntertainmentApiClient.CommonEvents.Race.FinishAsync(eventId);
+                        await antiClownEntertainmentApiClient.RaceEvent.FinishAsync(eventId);
                         break;
-                };
+                }
                 await RespondToInteractionAsync(context, $"Event {eventId} is finished");
             }
         );

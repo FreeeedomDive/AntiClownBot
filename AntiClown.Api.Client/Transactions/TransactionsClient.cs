@@ -11,7 +11,7 @@ public class TransactionsClient : ITransactionsClient
         this.restClient = restClient;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Economies.TransactionDto[]> ReadTransactionsAsync(System.Guid userId, System.Int32 skip, System.Int32 take)
+    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Economies.TransactionDto[]> ReadTransactionsAsync(System.Guid userId, System.Int32 skip = 0, System.Int32 take = 10)
     {
         var request = new RestRequest("api/economy/{userId}/transactions", Method.Get);
         request.AddUrlSegment("userId", userId);

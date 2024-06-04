@@ -30,7 +30,7 @@ public class TransactionsCommandModule : SlashCommandModuleWithMiddlewares
             context, async () =>
             {
                 var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-                var transactions = await antiClownApiClient.Transactions.ReadTransactionsAsync(userId, 0, 10);
+                var transactions = await antiClownApiClient.Transactions.ReadTransactionsAsync(userId);
                 var embed = await transactionsEmbedBuilder.Build(userId, transactions);
                 await RespondToInteractionAsync(context, embed);
             }
