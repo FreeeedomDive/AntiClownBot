@@ -1,37 +1,40 @@
-﻿using AntiClown.Core.Dto.Extensions;
-using AntiClown.Data.Api.Dto.Tokens;
-using RestSharpClient.Extensions;
+/* Generated file */
 using RestSharp;
+using AntiClown.Data.Api.Client.Extensions;
 
 namespace AntiClown.Data.Api.Client.Tokens;
 
 public class TokensClient : ITokensClient
 {
-    public TokensClient(RestClient restClient)
+    public TokensClient(RestSharp.RestClient restClient)
     {
         this.restClient = restClient;
     }
 
-    public async Task InvalidateAsync(Guid userId)
+    public async System.Threading.Tasks.Task InvalidateAsync(System.Guid userId)
     {
-        var request = new RestRequest($"tokens/{userId}");
-        var response = await restClient.ExecuteDeleteAsync(request);
+        var request = new RestRequest("dataApi/tokens/{userId}/", Method.Delete);
+        request.AddUrlSegment("userId", userId);
+        var response = await restClient.ExecuteAsync(request);
         response.ThrowIfNotSuccessful();
     }
 
-    public async Task ValidateAsync(Guid userId, string token)
+    public async System.Threading.Tasks.Task ValidateAsync(System.Guid userId, AntiClown.Data.Api.Dto.Tokens.TokenDto token)
     {
-        var request = new RestRequest($"tokens/{userId}/validate").AddJsonBody(new TokenDto { Token = token });
-        var response = await restClient.ExecutePostAsync(request);
+        var request = new RestRequest("dataApi/tokens/{userId}/validate", Method.Post);
+        request.AddUrlSegment("userId", userId);
+        request.AddJsonBody(token);
+        var response = await restClient.ExecuteAsync(request);
         response.ThrowIfNotSuccessful();
     }
 
-    public async Task<string> GetAsync(Guid userId)
+    public async System.Threading.Tasks.Task<System.String> GetAsync(System.Guid userId)
     {
-        var request = new RestRequest($"tokens/{userId}");
-        var response = await restClient.ExecuteGetAsync(request);
-        return response.TryDeserialize<string>();
+        var request = new RestRequest("dataApi/tokens/{userId}/", Method.Get);
+        request.AddUrlSegment("userId", userId);
+        var response = await restClient.ExecuteAsync(request);
+        return response.TryDeserialize<System.String>();
     }
 
-    private readonly RestClient restClient;
+    private readonly RestSharp.RestClient restClient;
 }

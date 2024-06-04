@@ -1,4 +1,4 @@
-﻿namespace AntiClown.DiscordApi.Client.Configuration;
+﻿namespace AntiClown.DiscordBot.Client.Configuration;
 
 public class AntiClownDiscordApiConnectionOptions
 {

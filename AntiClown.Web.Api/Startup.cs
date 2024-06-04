@@ -2,8 +2,8 @@
 using AntiClown.Api.Client.Configuration;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
-using AntiClown.DiscordApi.Client;
-using AntiClown.DiscordApi.Client.Configuration;
+using AntiClown.DiscordBot.Client;
+using AntiClown.DiscordBot.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
 using AntiClown.Web.Api.Middlewares;
@@ -51,7 +51,7 @@ public class Startup
                 serviceProvider.GetRequiredService<IOptions<AntiClownEntertainmentApiConnectionOptions>>().Value.ServiceUrl
             )
         );
-        services.AddTransient<IAntiClownDiscordApiClient>(
+        services.AddTransient<IAntiClownDiscordBotClient>(
             serviceProvider => AntiClownDiscordApiClientProvider.Build(
                 serviceProvider.GetRequiredService<IOptions<AntiClownDiscordApiConnectionOptions>>().Value.ServiceUrl
             )
