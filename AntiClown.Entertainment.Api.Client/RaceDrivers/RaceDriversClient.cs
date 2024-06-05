@@ -1,6 +1,6 @@
 /* Generated file */
 using RestSharp;
-using AntiClown.Entertainment.Api.Client.Extensions;
+using Xdd.HttpHelpers.Models.Extensions;
 
 namespace AntiClown.Entertainment.Api.Client.RaceDrivers;
 

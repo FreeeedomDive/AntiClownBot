@@ -1,6 +1,6 @@
 /* Generated file */
 using RestSharp;
-using AntiClown.Data.Api.Client.Extensions;
+using Xdd.HttpHelpers.Models.Extensions;
 
 namespace AntiClown.Data.Api.Client.Rights;
 

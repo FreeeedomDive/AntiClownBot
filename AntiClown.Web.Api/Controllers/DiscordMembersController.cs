@@ -1,5 +1,5 @@
 ﻿using AntiClown.DiscordBot.Client;
-using AntiClown.DiscordApi.Dto.Members;
+using AntiClown.DiscordBot.Dto.Members;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Web.Api.Controllers;

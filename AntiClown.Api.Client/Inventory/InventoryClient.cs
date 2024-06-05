@@ -1,6 +1,6 @@
 /* Generated file */
 using RestSharp;
-using AntiClown.Api.Client.Extensions;
+using Xdd.HttpHelpers.Models.Extensions;
 
 namespace AntiClown.Api.Client.Inventory;
 
