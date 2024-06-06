@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Xdd.HttpHelpers.HttpClientGenerator" Version="1.9.0" />
+      <PackageReference Include="Xdd.HttpHelpers.HttpClientGenerator" Version="1.13.0" />
     </ItemGroup>
 
     <ItemGroup>

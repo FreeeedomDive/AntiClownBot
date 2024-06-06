@@ -112,7 +112,7 @@ public class F1PredictionsClient : IF1PredictionsClient
         return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]>();
     }
 
-    public async System.Threading.Tasks.Task<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]>> ReadStandingsAsync(Nullable<System.Int32> season)
+    public async System.Threading.Tasks.Task<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]>> ReadStandingsAsync(System.Int32? season = null)
     {
         var request = new RestRequest("entertainmentApi/f1Predictions/standings", Method.Get);
         request.AddQueryParameter("season", season.ToString());

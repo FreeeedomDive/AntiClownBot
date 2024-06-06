@@ -13,8 +13,8 @@ COPY ["AntiClown.Entertainment.Api.Dto/AntiClown.Entertainment.Api.Dto.csproj", 
 COPY ["AntiClown.Entertainment.Api.Client/AntiClown.Entertainment.Api.Client.csproj", "AntiClown.Entertainment.Api.Client/"]
 COPY ["AntiClown.Data.Api.Dto/AntiClown.Data.Api.Dto.csproj", "AntiClown.Data.Api.Dto/"]
 COPY ["AntiClown.Data.Api.Client/AntiClown.Data.Api.Client.csproj", "AntiClown.Data.Api.Client/"]
-COPY ["AntiClown.DiscordApi.Dto/AntiClown.DiscordApi.Dto.csproj", "AntiClown.DiscordApi.Dto/"]
-COPY ["AntiClown.DiscordApi.Client/AntiClown.DiscordApi.Client.csproj", "AntiClown.DiscordApi.Client/"]
+COPY ["AntiClown.DiscordBot.Dto/AntiClown.DiscordBot.Dto.csproj", "AntiClown.DiscordBot.Dto/"]
+COPY ["AntiClown.DiscordBot.Client/AntiClown.DiscordBot.Client.csproj", "AntiClown.DiscordBot.Client/"]
 COPY ["AntiClown.Web.Api/AntiClown.Web.Api.csproj", "AntiClown.Web.Api/"]
 RUN dotnet restore "AntiClown.Web.Api/AntiClown.Web.Api.csproj"
 COPY . .
