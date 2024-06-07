@@ -1,10 +1,12 @@
 ﻿using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Dto.Rights;
+using AntiClown.Web.Api.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/rights")]
+[RequireUserToken]
 public class RightsController : Controller
 {
     public RightsController(IAntiClownDataApiClient antiClownDataApiClient)

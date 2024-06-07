@@ -1,11 +1,13 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Api.Dto.Users;
 using AntiClown.Core.Dto.Exceptions;
+using AntiClown.Web.Api.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/users")]
+[RequireUserToken]
 public class UsersController : Controller
 {
     public UsersController(IAntiClownApiClient antiClownApiClient)

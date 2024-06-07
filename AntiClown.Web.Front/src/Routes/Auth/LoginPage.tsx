@@ -14,6 +14,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const currentLoggedInUserId = authStore.loggedInUserId;
+  const hasToken = !!authStore.userToken;
   return (
     <div className="background">
       <Snackbar open={!!error} autoHideDuration={5000} onClose={() => setError("")}>
@@ -21,7 +22,7 @@ const LoginPage = () => {
           {error}
         </Alert>
       </Snackbar>
-      {currentLoggedInUserId && <Navigate to={`/user/${currentLoggedInUserId}`}/>}
+      {currentLoggedInUserId && hasToken && <Navigate to={`/user/${currentLoggedInUserId}`}/>}
       <Stack alignItems="center" className="auth" spacing="8px">
         <TextField
           className="input"
@@ -61,7 +62,7 @@ const LoginPage = () => {
               setError(`Невалидный токен`)
               return;
             }
-            authStore.logIn(userId);
+            authStore.logIn(userId, token);
             navigate(`/user/${userId}`);
           }}
         >
