@@ -1,4 +1,5 @@
 ﻿using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Dto.Tokens;
 using AntiClown.Web.Api.Attributes;
 
 namespace AntiClown.Web.Api.Middlewares;
@@ -22,7 +23,13 @@ public class TokenAuthenticationMiddleware
 
         context.Request.Cookies.TryGetValue("userId", out var userId);
         context.Request.Cookies.TryGetValue("token", out var token);
-        await antiClownDataApiClient.Tokens.ValidateAsync(Guid.TryParse(userId, out var x) ? x : Guid.Empty, token!);
+        await antiClownDataApiClient.Tokens.ValidateAsync(
+            Guid.TryParse(userId, out var x) ? x : Guid.Empty,
+            new TokenDto
+            {
+                Token = token!,
+            }
+        );
         await next(context);
     }
 
