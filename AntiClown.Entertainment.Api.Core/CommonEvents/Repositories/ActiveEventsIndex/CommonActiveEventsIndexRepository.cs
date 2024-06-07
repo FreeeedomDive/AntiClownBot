@@ -1,4 +1,5 @@
 ﻿using AntiClown.Core.Dto.Exceptions;
+using Xdd.HttpHelpers.Models.Exceptions;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Domain;
 using SqlRepositoryBase.Core.Repository;
 

@@ -1,8 +1,8 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Api.Dto.Exceptions.Items;
 
-public class ForbiddenInactiveStatusForNegativeItemException : AntiClownBadRequestException
+public class ForbiddenInactiveStatusForNegativeItemException : BadRequestException
 {
     public ForbiddenInactiveStatusForNegativeItemException(Guid itemId)
         : base($"Negative item {itemId} can't be inactive")

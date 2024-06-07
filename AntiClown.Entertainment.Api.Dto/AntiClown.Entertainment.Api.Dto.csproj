@@ -8,4 +8,8 @@
     <ItemGroup>
         <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Xdd.HttpHelpers.Models" Version="1.4.0" />
+    </ItemGroup>
 </Project>

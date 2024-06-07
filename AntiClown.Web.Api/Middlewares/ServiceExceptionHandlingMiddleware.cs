@@ -1,4 +1,5 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using System.Net;
+using Xdd.HttpHelpers.Models.Exceptions;
 using Newtonsoft.Json;
 
 namespace AntiClown.Web.Api.Middlewares;
@@ -16,24 +17,24 @@ public class ServiceExceptionHandlingMiddleware
         {
             await next(context);
         }
-        catch (AntiClownBaseException antiClownApiBaseException)
+        catch (HttpResponseExceptionBase httpResponseExceptionBase)
         {
-            await WriteExceptionAsync(context, antiClownApiBaseException, antiClownApiBaseException.StatusCode);
+            await WriteExceptionAsync(context, httpResponseExceptionBase, httpResponseExceptionBase.StatusCode);
         }
         catch (Exception exception)
         {
-            var wrappedException = new AntiClownInternalServerException(exception.Message);
+            var wrappedException = new InternalServerErrorException(exception.Message);
             await WriteExceptionAsync(context, wrappedException, wrappedException.StatusCode);
             throw;
         }
     }
 
-    private static async Task WriteExceptionAsync(HttpContext context, Exception ex, int statusCode)
+    private static async Task WriteExceptionAsync(HttpContext context, Exception ex, HttpStatusCode statusCode)
     {
         var result = JsonConvert.SerializeObject(ex, Formatting.Indented);
 
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = statusCode;
+        context.Response.StatusCode = (int)statusCode;
         await context.Response.WriteAsync(result);
     }
 

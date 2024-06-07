@@ -39,7 +39,7 @@ public class LotteryService : ILotteryService
 
     public async Task StartAsync(Guid eventId)
     {
-        var lotteryEvent = await antiClownEntertainmentApiClient.CommonEvents.Lottery.ReadAsync(eventId);
+        var lotteryEvent = await antiClownEntertainmentApiClient.LotteryEvent.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(lotteryEvent);
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         var message = await discordClientWrapper.Messages.SendAsync(botChannelId, messageBuilder);
@@ -56,8 +56,8 @@ public class LotteryService : ILotteryService
     public async Task AddParticipantAsync(Guid eventId, ulong memberId)
     {
         var userId = await usersCache.GetApiIdByMemberIdAsync(memberId);
-        await antiClownEntertainmentApiClient.CommonEvents.Lottery.AddParticipantAsync(eventId, userId);
-        var lotteryEvent = await antiClownEntertainmentApiClient.CommonEvents.Lottery.ReadAsync(eventId);
+        await antiClownEntertainmentApiClient.LotteryEvent.AddParticipantAsync(eventId, userId);
+        var lotteryEvent = await antiClownEntertainmentApiClient.LotteryEvent.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(lotteryEvent);
         var interactivity = await interactivityRepository.TryReadAsync<object>(eventId);
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
@@ -68,7 +68,7 @@ public class LotteryService : ILotteryService
     public async Task FinishAsync(Guid eventId)
     {
         var interactivity = await interactivityRepository.TryReadAsync<object>(eventId);
-        var lotteryEvent = await antiClownEntertainmentApiClient.CommonEvents.Lottery.ReadAsync(eventId);
+        var lotteryEvent = await antiClownEntertainmentApiClient.LotteryEvent.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(lotteryEvent);
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         var oldMessage = await discordClientWrapper.Messages.FindMessageAsync(botChannelId, interactivity!.MessageId);

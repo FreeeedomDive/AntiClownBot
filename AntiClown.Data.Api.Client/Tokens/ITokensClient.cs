@@ -1,8 +1,9 @@
-﻿namespace AntiClown.Data.Api.Client.Tokens;
+/* Generated file */
+namespace AntiClown.Data.Api.Client.Tokens;
 
 public interface ITokensClient
 {
-    Task InvalidateAsync(Guid userId);
-    Task ValidateAsync(Guid userId, string token);
-    Task<string> GetAsync(Guid userId);
+    System.Threading.Tasks.Task InvalidateAsync(System.Guid userId);
+    System.Threading.Tasks.Task ValidateAsync(System.Guid userId, AntiClown.Data.Api.Dto.Tokens.TokenDto token);
+    System.Threading.Tasks.Task<System.String> GetAsync(System.Guid userId);
 }

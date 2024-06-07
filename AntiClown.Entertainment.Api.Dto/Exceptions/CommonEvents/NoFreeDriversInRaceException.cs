@@ -1,8 +1,8 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Entertainment.Api.Dto.Exceptions.CommonEvents;
 
-public class NoFreeDriversInRaceException : AntiClownConflictException
+public class NoFreeDriversInRaceException : ConflictException
 {
     public NoFreeDriversInRaceException(Guid raceId) : base($"No free drivers left in race {raceId}")
     {

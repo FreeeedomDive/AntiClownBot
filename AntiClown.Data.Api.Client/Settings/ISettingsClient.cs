@@ -1,11 +1,10 @@
-﻿using AntiClown.Data.Api.Dto.Settings;
-
+/* Generated file */
 namespace AntiClown.Data.Api.Client.Settings;
 
 public interface ISettingsClient
 {
-    Task<SettingDto[]> ReadAllAsync();
-    Task<SettingDto> ReadAsync(string category, string key);
-    Task<SettingDto[]> FindAsync(string category);
-    Task CreateOrUpdateAsync(string category, string key, string value);
+    System.Threading.Tasks.Task<AntiClown.Data.Api.Dto.Settings.SettingDto[]> ReadAllAsync();
+    System.Threading.Tasks.Task<AntiClown.Data.Api.Dto.Settings.SettingDto> ReadAsync(System.String category, System.String key);
+    System.Threading.Tasks.Task<AntiClown.Data.Api.Dto.Settings.SettingDto[]> FindAsync(System.String category);
+    System.Threading.Tasks.Task CreateOrUpdateAsync(AntiClown.Data.Api.Dto.Settings.SettingDto settingDto);
 }

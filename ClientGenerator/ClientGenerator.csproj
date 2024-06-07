@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Xdd.HttpHelpers.HttpClientGenerator" Version="1.13.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AntiClown.Api\AntiClown.Api.csproj" />
+      <ProjectReference Include="..\AntiClown.Data.Api\AntiClown.Data.Api.csproj" />
+      <ProjectReference Include="..\AntiClown.DiscordBot\AntiClown.DiscordBot.csproj" />
+      <ProjectReference Include="..\AntiClown.Entertainment.Api\AntiClown.Entertainment.Api.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -35,7 +35,7 @@ public class WhenCommandModule : SlashCommandModuleWithMiddlewares
                 embedBuilder.WithTitle("А когда же подношение???");
 
                 var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-                var result = await antiClownApiClient.Tribute.ReadNextTributeInfoAsync(userId);
+                var result = await antiClownApiClient.Tributes.WhenNextTributeAsync(userId);
                 var now = DateTime.UtcNow;
                 var cooldownHasPassed = now > result.NextTributeDateTime;
 

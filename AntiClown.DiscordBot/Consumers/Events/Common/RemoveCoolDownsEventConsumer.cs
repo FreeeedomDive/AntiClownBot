@@ -31,7 +31,7 @@ public class RemoveCoolDownsEventConsumer : ICommonEventConsumer<RemoveCoolDowns
     public async Task ConsumeAsync(ConsumeContext<CommonEventMessageDto> context)
     {
         var eventId = context.Message.EventId;
-        var @event = await antiClownEntertainmentApiClient.CommonEvents.RemoveCoolDowns.ReadAsync(eventId);
+        var @event = await antiClownEntertainmentApiClient.RemoveCoolDownsEvent.ReadAsync(eventId);
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         await discordClientWrapper.Messages.SendAsync(botChannelId, await removeCoolDownsEmbedBuilder.BuildAsync(@event));
 

@@ -203,7 +203,7 @@ public class CreateTracksTool : ToolBase
             },
         };
 
-        await Task.WhenAll(tracks.Select(x => antiClownEntertainmentApiClient.CommonEvents.Race.Tracks.CreateAsync(x)));
+        await Task.WhenAll(tracks.Select(x => antiClownEntertainmentApiClient.RaceTracks.CreateAsync(x)));
     }
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;

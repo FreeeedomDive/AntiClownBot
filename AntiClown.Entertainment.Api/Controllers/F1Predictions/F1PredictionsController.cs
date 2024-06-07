@@ -28,7 +28,7 @@ public class F1PredictionsController : Controller
     }
 
     [HttpGet("{raceId:guid}")]
-    public async Task<ActionResult<F1RaceDto>> Read(Guid raceId)
+    public async Task<ActionResult<F1RaceDto>> Read([FromRoute] Guid raceId)
     {
         var result = await f1PredictionsService.ReadAsync(raceId);
         return mapper.Map<F1RaceDto>(result);

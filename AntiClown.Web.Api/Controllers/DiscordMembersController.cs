@@ -1,5 +1,5 @@
-﻿using AntiClown.DiscordApi.Client;
-using AntiClown.DiscordApi.Dto.Members;
+﻿using AntiClown.DiscordBot.Client;
+using AntiClown.DiscordBot.Dto.Members;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Web.Api.Controllers;
@@ -7,16 +7,16 @@ namespace AntiClown.Web.Api.Controllers;
 [Route("webApi/discordMembers")]
 public class DiscordMembersController : Controller
 {
-    public DiscordMembersController(IAntiClownDiscordApiClient antiClownDiscordApiClient)
+    public DiscordMembersController(IAntiClownDiscordBotClient antiClownDiscordBotClient)
     {
-        this.antiClownDiscordApiClient = antiClownDiscordApiClient;
+        this.antiClownDiscordBotClient = antiClownDiscordBotClient;
     }
 
     [HttpGet("{userId:guid}")]
     public async Task<ActionResult<DiscordMemberDto?>> GetDiscordMember(Guid userId)
     {
-        return await antiClownDiscordApiClient.MembersClient.GetDiscordMemberAsync(userId);
+        return await antiClownDiscordBotClient.DiscordMembers.GetDiscordMemberAsync(userId);
     }
 
-    private readonly IAntiClownDiscordApiClient antiClownDiscordApiClient;
+    private readonly IAntiClownDiscordBotClient antiClownDiscordBotClient;
 }

@@ -35,7 +35,7 @@ public class LootBoxCommandModule : SlashCommandModuleWithMiddlewares
                 {
                     var member = context.Member;
                     var userId = await usersCache.GetApiIdByMemberIdAsync(member.Id);
-                    var lootBoxReward = await antiClownApiClient.Inventories.OpenLootBoxAsync(userId);
+                    var lootBoxReward = await antiClownApiClient.Inventory.OpenLootBoxAsync(userId);
 
                     var embed = await lootBoxEmbedBuilder.BuildAsync(userId, lootBoxReward);
 

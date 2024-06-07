@@ -1,8 +1,8 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Api.Dto.Exceptions.Tribute;
 
-public class TributeIsOnCooldownException : AntiClownConflictException
+public class TributeIsOnCooldownException : ConflictException
 {
     public TributeIsOnCooldownException(Guid userId)
         : base($"Tribute for user {userId} is still on cooldown")

@@ -38,7 +38,7 @@ public class ShopEmbedBuilder : IShopEmbedBuilder
         foreach (var shopItem in shopDetails.Shop.Items)
         {
             var boughtItem = shopItem.IsOwned && shopDetails.BoughtItems.TryGetValue(itemIndex - 1, out var itemId)
-                ? await antiClownApiClient.Inventories.ReadItemAsync(shopDetails.UserId, itemId)
+                ? await antiClownApiClient.Inventory.ReadAsync(shopDetails.UserId, itemId)
                 : null;
             var itemContent = boughtItem is not null
                 ? $"КУПЛЕН\n{boughtItem.Description().ToStatsString()}"

@@ -1,4 +1,4 @@
-﻿using AntiClown.DiscordApi.Dto.Members;
+﻿using AntiClown.DiscordBot.Dto.Members;
 using AntiClown.DiscordBot.Cache.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +16,7 @@ public class DiscordMembersController : Controller
     }
 
     [HttpGet("{userId:guid}")]
-    public async Task<DiscordMemberDto?> GetDiscordMember(Guid userId)
+    public async Task<DiscordMemberDto?> GetDiscordMember([FromRoute] Guid userId)
     {
         var discordMember = await usersCache.GetMemberByApiIdAsync(userId);
         if (discordMember is null)

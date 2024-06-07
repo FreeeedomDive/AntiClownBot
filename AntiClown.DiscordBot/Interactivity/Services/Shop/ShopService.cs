@@ -35,7 +35,7 @@ public class ShopService : IShopService
     public async Task CreateAsync(InteractionContext context, Func<InteractionContext, DiscordWebhookBuilder, Task<DiscordMessage>> createMessage)
     {
         var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-        var shop = await antiClownApiClient.Shops.ReadAsync(userId);
+        var shop = await antiClownApiClient.Shop.ReadAsync(userId);
 
         var id = Guid.NewGuid();
         var shopDetails = new ShopDetails
@@ -81,7 +81,7 @@ public class ShopService : IShopService
             ShopTool.Revealing => await RevealAsync(shopDetails.UserId, shopItemId),
             _ => throw new ArgumentOutOfRangeException(),
         };
-        var updatedShop = await antiClownApiClient.Shops.ReadAsync(shopDetails.UserId);
+        var updatedShop = await antiClownApiClient.Shop.ReadAsync(shopDetails.UserId);
         shopDetails.Shop = updatedShop;
         await interactivityRepository.UpdateAsync(interactivity);
         var embed = await shopEmbedBuilder.BuildAsync(shopDetails);
@@ -114,8 +114,8 @@ public class ShopService : IShopService
         var shopDetails = interactivity.Details!;
         try
         {
-            await antiClownApiClient.Shops.ReRollShopAsync(shopDetails.UserId);
-            var updatedShop = await antiClownApiClient.Shops.ReadAsync(shopDetails.UserId);
+            await antiClownApiClient.Shop.ReRollAsync(shopDetails.UserId);
+            var updatedShop = await antiClownApiClient.Shop.ReadAsync(shopDetails.UserId);
             shopDetails.Shop = updatedShop;
             shopDetails.BoughtItems = new Dictionary<int, Guid>();
             await interactivityRepository.UpdateAsync(interactivity);
@@ -133,7 +133,7 @@ public class ShopService : IShopService
     {
         try
         {
-            var shopItem = await antiClownApiClient.Shops.BuyItemAsync(userId, itemId);
+            var shopItem = await antiClownApiClient.Shop.BuyAsync(userId, itemId);
             shopDetails.BoughtItems[slot] = shopItem.Id;
             return null;
         }
@@ -155,7 +155,7 @@ public class ShopService : IShopService
     {
         try
         {
-            await antiClownApiClient.Shops.RevealItemAsync(userId, itemId);
+            await antiClownApiClient.Shop.RevealAsync(userId, itemId);
             return null;
         }
         catch (ShopItemNotFoundException)

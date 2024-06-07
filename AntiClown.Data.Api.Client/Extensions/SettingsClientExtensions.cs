@@ -43,7 +43,12 @@ public static class SettingsClientExtensions
 
     public static Task CreateOrUpdateAsync<T>(this ISettingsClient settingsClient, string category, string key, T value) where T : notnull
     {
-        return settingsClient.CreateOrUpdateAsync(category, key, value.ToString()!);
+        return settingsClient.CreateOrUpdateAsync(new SettingDto
+        {
+            Category = category, 
+            Name = key,
+            Value = value.ToString()!,
+        });
     }
 
     public static Task CreateOrUpdateAsync<T>(this ISettingsClient settingsClient, SettingsCategory category, string key, T value) where T : notnull

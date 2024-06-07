@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Client;
+using AntiClown.Api.Dto.Economies;
 using AntiClown.Core.Schedules;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
@@ -75,7 +76,12 @@ public class LotteryService : ILotteryService
 
         var tasks = @event.Participants
                           .Select(x => x.Value)
-                          .Select(x => antiClownApiClient.Economy.UpdateScamCoinsAsync(x.UserId, x.Prize, $"Лотерея {eventId}"));
+                          .Select(x => antiClownApiClient.Economy.UpdateScamCoinsAsync(x.UserId, new UpdateScamCoinsDto
+                          {
+                              UserId = x.UserId,
+                              ScamCoinsDiff = x.Prize, 
+                              Reason = $"Лотерея {eventId}",
+                          }));
         await Task.WhenAll(tasks);
 
         await commonEventsMessageProducer.ProduceAsync(@event);

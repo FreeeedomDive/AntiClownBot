@@ -36,7 +36,7 @@ public class InventoryService : IInventoryService
     public async Task CreateAsync(InteractionContext context, Func<InteractionContext, DiscordWebhookBuilder, Task<DiscordMessage>> createMessage)
     {
         var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-        var inventory = await antiClownApiClient.Inventories.ReadInventoryAsync(userId);
+        var inventory = await antiClownApiClient.Inventory.ReadAllAsync(userId);
         var items = CollectItems(inventory);
 
         var id = Guid.NewGuid();
@@ -89,7 +89,7 @@ public class InventoryService : IInventoryService
             InventoryTool.ChangeActiveStatus => await ChangeActiveStatusOfItemAsync(inventoryDetails.UserId, itemId),
             _ => throw new ArgumentOutOfRangeException(),
         };
-        var updatedInventory = await antiClownApiClient.Inventories.ReadInventoryAsync(inventoryDetails.UserId);
+        var updatedInventory = await antiClownApiClient.Inventory.ReadAllAsync(inventoryDetails.UserId);
         var items = CollectItems(updatedInventory);
         inventoryDetails.Pages = BuildPages(items);
         inventoryDetails.CurrentPage = Math.Min(inventoryDetails.CurrentPage, inventoryDetails.Pages.Length - 1);
@@ -108,7 +108,7 @@ public class InventoryService : IInventoryService
 
         interactivity.Details!.Tool = tool;
         await interactivityRepository.UpdateAsync(interactivity);
-        var inventory = await antiClownApiClient.Inventories.ReadInventoryAsync(interactivity.Details.UserId);
+        var inventory = await antiClownApiClient.Inventory.ReadAllAsync(interactivity.Details.UserId);
         var items = CollectItems(inventory);
         var embed = await inventoryEmbedBuilder.BuildAsync(interactivity.Details, items);
         await updateMessage(await BuildWebhookBuilderAsync(inventoryId, embed, interactivity.Details.Tool, addButtons: interactivity.Details.Pages.Length > 0));
@@ -126,7 +126,7 @@ public class InventoryService : IInventoryService
         var nextPage = interactivity.Details!.CurrentPage + pageDiff;
         interactivity.Details!.CurrentPage = (nextPage < 0 ? pagesCount + nextPage : nextPage) % pagesCount;
         await interactivityRepository.UpdateAsync(interactivity);
-        var inventory = await antiClownApiClient.Inventories.ReadInventoryAsync(interactivity.Details.UserId);
+        var inventory = await antiClownApiClient.Inventory.ReadAllAsync(interactivity.Details.UserId);
         var items = CollectItems(inventory);
         var embed = await inventoryEmbedBuilder.BuildAsync(interactivity.Details, items);
         await updateMessage(await BuildWebhookBuilderAsync(inventoryId, embed, interactivity.Details.Tool, addButtons: interactivity.Details.Pages.Length > 0));
@@ -221,8 +221,8 @@ public class InventoryService : IInventoryService
     {
         try
         {
-            var item = await antiClownApiClient.Inventories.ReadItemAsync(ownerId, itemId);
-            await antiClownApiClient.Inventories.ChangeItemActiveStatusAsync(ownerId, itemId, !item.IsActive);
+            var item = await antiClownApiClient.Inventory.ReadAsync(ownerId, itemId);
+            await antiClownApiClient.Inventory.ChangeItemActiveStatusAsync(ownerId, itemId, !item.IsActive);
             return null;
         }
         catch (ForbiddenInactiveStatusForNegativeItemException)
@@ -239,7 +239,7 @@ public class InventoryService : IInventoryService
     {
         try
         {
-            await antiClownApiClient.Inventories.SellAsync(ownerId, itemId);
+            await antiClownApiClient.Inventory.SellAsync(ownerId, itemId);
             return null;
         }
         catch (NotEnoughBalanceException)

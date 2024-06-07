@@ -1,8 +1,8 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Api.Dto.Exceptions.Economy;
 
-public class NotEnoughBalanceException : AntiClownConflictException
+public class NotEnoughBalanceException : ConflictException
 {
     public NotEnoughBalanceException(Guid userId, int userBalance, int operationCost)
         : base($"User {userId} had {userBalance} balance, but required {operationCost}")

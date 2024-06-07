@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Client;
+using AntiClown.Api.Dto.Economies;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
@@ -53,7 +54,12 @@ public class ChangeNicknameCommandModule : SlashCommandModuleWithMiddlewares
                 {
                     var member = await discordClientWrapper.Members.GetAsync(userToEdit.Id);
                     await discordClientWrapper.Members.ModifyAsync(member, model => { model.Nickname = newName; });
-                    await antiClownApiClient.Economy.UpdateScamCoinsAsync(apiUserId, cost, $"Изменение никнейма пользователю {newName}");
+                    await antiClownApiClient.Economy.UpdateScamCoinsAsync(apiUserId, new UpdateScamCoinsDto
+                        {
+                            UserId = apiUserId,
+                            Reason = $"Изменение никнейма пользователю {newName}",
+                            ScamCoinsDiff = cost,
+                        });
                     await RespondToInteractionAsync(
                         context,
                         await emotesCache.GetEmoteAsTextAsync("YEP")

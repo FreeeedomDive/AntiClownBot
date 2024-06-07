@@ -28,7 +28,7 @@ public class TributesController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<TributeDto>> Tribute(Guid userId)
+    public async Task<ActionResult<TributeDto>> Tribute([FromRoute] Guid userId)
     {
         var tribute = await tributeService.MakeTributeAsync(userId);
         return mapper.Map<TributeDto>(tribute);

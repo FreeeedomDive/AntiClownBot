@@ -39,7 +39,7 @@ public class GuessNumberEventService : IGuessNumberEventService
     public async Task CreateAsync(Guid eventId)
     {
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
-        var guessNumberEvent = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.ReadAsync(eventId);
+        var guessNumberEvent = await antiClownEntertainmentApiClient.GuessNumberEvent.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(guessNumberEvent);
         var message = await discordClientWrapper.Messages.SendAsync(botChannelId, messageBuilder);
         var interactivity = new Interactivity<object>
@@ -55,8 +55,12 @@ public class GuessNumberEventService : IGuessNumberEventService
     public async Task AddUserPickAsync(Guid eventId, ulong memberId, GuessNumberPickDto pick)
     {
         var userId = await usersCache.GetApiIdByMemberIdAsync(memberId);
-        await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.AddPickAsync(eventId, userId, pick);
-        var guessNumberEvent = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.ReadAsync(eventId);
+        await antiClownEntertainmentApiClient.GuessNumberEvent.AddPickAsync(eventId, new GuessNumberUserPickDto
+        {
+            UserId = userId, 
+            Pick = pick,
+        });
+        var guessNumberEvent = await antiClownEntertainmentApiClient.GuessNumberEvent.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(guessNumberEvent);
         var interactivity = await interactivityRepository.TryReadAsync<object>(eventId);
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
@@ -67,7 +71,7 @@ public class GuessNumberEventService : IGuessNumberEventService
     public async Task FinishAsync(Guid eventId)
     {
         var interactivity = await interactivityRepository.TryReadAsync<object>(eventId);
-        var guessNumberEvent = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.ReadAsync(eventId);
+        var guessNumberEvent = await antiClownEntertainmentApiClient.GuessNumberEvent.ReadAsync(eventId);
         var messageBuilder = await BuildEventMessageAsync(guessNumberEvent);
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         var oldMessage = await discordClientWrapper.Messages.FindMessageAsync(botChannelId, interactivity!.MessageId);

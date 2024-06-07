@@ -23,7 +23,7 @@ public class RaceCommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var drivers = await antiClownEntertainmentApiClient.CommonEvents.Race.Drivers.ReadAllAsync();
+                var drivers = await antiClownEntertainmentApiClient.RaceDrivers.ReadAllAsync();
                 var longestNameLength = drivers.MaxBy(x => x.DriverName.Length)!.DriverName.Length;
                 var driversStats = drivers
                                    .OrderByDescending(x => x.AccelerationSkill + x.BreakingSkill + x.CorneringSkill)
@@ -43,7 +43,7 @@ public class RaceCommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var drivers = await antiClownEntertainmentApiClient.CommonEvents.Race.Drivers.ReadAllAsync();
+                var drivers = await antiClownEntertainmentApiClient.RaceDrivers.ReadAllAsync();
                 var longestNameLength = drivers.MaxBy(x => x.DriverName.Length)!.DriverName.Length;
                 var driversStats = drivers
                                    .OrderByDescending(x => x.Points)

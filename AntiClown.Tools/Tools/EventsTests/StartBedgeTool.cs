@@ -14,7 +14,7 @@ public class StartBedgeTool : ToolBase
 
     protected override async Task RunAsync()
     {
-        await antiClownEntertainmentApiClient.CommonEvents.Bedge.StartNewAsync();
+        await antiClownEntertainmentApiClient.BedgeEvent.StartNewAsync();
     }
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;

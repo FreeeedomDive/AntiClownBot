@@ -41,7 +41,7 @@ public class CommonEventsWorker : PeriodicJobWorker
 
     protected override async Task ExecuteIterationAsync()
     {
-        var activeEvents = await antiClownEntertainmentApiClient.CommonEvents.ActiveCommonEventsIndex.ReadActiveEventsAsync();
+        var activeEvents = await antiClownEntertainmentApiClient.ActiveEventsIndex.ReadActiveEventsAsync();
         if (activeEvents.Length == 0)
         {
             return;
@@ -50,12 +50,12 @@ public class CommonEventsWorker : PeriodicJobWorker
         var eventToExecute = activeEvents.SelectRandomItem();
         var eventId = eventToExecute switch
         {
-            CommonEventTypeDto.GuessNumber => await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.StartNewAsync(),
-            CommonEventTypeDto.Lottery => await antiClownEntertainmentApiClient.CommonEvents.Lottery.StartNewAsync(),
-            CommonEventTypeDto.Race => await antiClownEntertainmentApiClient.CommonEvents.Race.StartNewAsync(),
-            CommonEventTypeDto.RemoveCoolDowns => await antiClownEntertainmentApiClient.CommonEvents.RemoveCoolDowns.StartNewAsync(),
-            CommonEventTypeDto.Transfusion => await antiClownEntertainmentApiClient.CommonEvents.Transfusion.StartNewAsync(),
-            CommonEventTypeDto.Bedge => await antiClownEntertainmentApiClient.CommonEvents.Bedge.StartNewAsync(),
+            CommonEventTypeDto.GuessNumber => await antiClownEntertainmentApiClient.GuessNumberEvent.StartNewAsync(),
+            CommonEventTypeDto.Lottery => await antiClownEntertainmentApiClient.LotteryEvent.StartNewAsync(),
+            CommonEventTypeDto.Race => await antiClownEntertainmentApiClient.RaceEvent.StartNewAsync(),
+            CommonEventTypeDto.RemoveCoolDowns => await antiClownEntertainmentApiClient.RemoveCoolDownsEvent.StartNewAsync(),
+            CommonEventTypeDto.Transfusion => await antiClownEntertainmentApiClient.TransfusionEvent.StartNewAsync(),
+            CommonEventTypeDto.Bedge => await antiClownEntertainmentApiClient.BedgeEvent.StartNewAsync(),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(eventToExecute),
                 $"Found unknown for {WorkerName} type of event. Consider adding an execution path for this type of event."

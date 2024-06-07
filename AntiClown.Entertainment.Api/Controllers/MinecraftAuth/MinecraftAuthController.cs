@@ -22,9 +22,9 @@ public class MinecraftAuthController : ControllerBase
     }
 
     [HttpPost("auth")]
-    public async Task<ActionResult<AuthResponseDto>> Auth([FromBody] AuthRequest request)
+    public async Task<ActionResult<AuthResponseDto>> Auth([FromBody] AuthRequest authRequest)
     {
-        var authResponse = await minecraftAuthService.Auth(request.Username, request.Password);
+        var authResponse = await minecraftAuthService.Auth(authRequest.Username, authRequest.Password);
         if (authResponse is null)
             return Ok(new MinecraftErrorResponse
             {
@@ -39,15 +39,15 @@ public class MinecraftAuthController : ControllerBase
     }
 
     [HttpPost("join")]
-    public async Task<ActionResult<bool>> Join([FromBody] JoinRequest request)
+    public async Task<ActionResult<bool>> Join([FromBody] JoinRequest joinRequest)
     {
-        return await minecraftAuthService.Join(request.AccessToken, request.UserUUID, request.ServerID);
+        return await minecraftAuthService.Join(joinRequest.AccessToken, joinRequest.UserUUID, joinRequest.ServerID);
     }
 
     [HttpPost("hasJoin")]
-    public async Task<ActionResult<HasJoinedResponseDto>> HasJoin([FromBody] HasJoinRequest request)
+    public async Task<ActionResult<HasJoinedResponseDto>> HasJoin([FromBody] HasJoinRequest hasJoinRequest)
     {
-        var hasJoinedResponse = await minecraftAuthService.HasJoined(request.Username, request.ServerID);
+        var hasJoinedResponse = await minecraftAuthService.HasJoined(hasJoinRequest.Username, hasJoinRequest.ServerID);
         if (hasJoinedResponse == null)
             throw new ArgumentException();
 
@@ -55,15 +55,15 @@ public class MinecraftAuthController : ControllerBase
     }
 
     [HttpPost("profile")]
-    public async Task<ActionResult<ProfileResponseDto>> Profile([FromBody] ProfileRequest request)
+    public async Task<ActionResult<ProfileResponseDto>> Profile([FromBody] ProfileRequest profileRequest)
     {
-        return mapper.Map<ProfileResponseDto>(await minecraftAuthService.Profile(request.UserUUID));
+        return mapper.Map<ProfileResponseDto>(await minecraftAuthService.Profile(profileRequest.UserUUID));
     }
 
     [HttpPost("profiles")]
-    public async Task<ActionResult<IEnumerable<ProfilesResponseDto>>> Profiles([FromBody] ProfilesRequest request)
+    public async Task<ActionResult<IEnumerable<ProfilesResponseDto>>> Profiles([FromBody] ProfilesRequest profilesRequest)
     {
-        var profiles = await minecraftAuthService.Profiles(request.Usernames);
+        var profiles = await minecraftAuthService.Profiles(profilesRequest.Usernames);
         return Ok(profiles);
     }
 }

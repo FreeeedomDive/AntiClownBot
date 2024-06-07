@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Client;
+using AntiClown.Api.Dto.Economies;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Rights;
@@ -37,14 +38,16 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
         InteractionContext context
     )
     {
-        await ExecuteAsync(context, async () =>
-        {
-            var joinableRoles = await GetAllRolesToJoinAsync();
-            await RespondToInteractionAsync(
-                context,
-                $"Доступные роли:\n```\n{string.Join("\n", joinableRoles.Select(role => $"{role.Name}"))}\n```"
-            );
-        });
+        await ExecuteAsync(
+            context, async () =>
+            {
+                var joinableRoles = await GetAllRolesToJoinAsync();
+                await RespondToInteractionAsync(
+                    context,
+                    $"Доступные роли:\n```\n{string.Join("\n", joinableRoles.Select(role => $"{role.Name}"))}\n```"
+                );
+            }
+        );
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.Roles_New, "Создать новую роль и получить ее себе")]
@@ -54,40 +57,47 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
         string name
     )
     {
-        await ExecuteAsync(context, async () =>
-        {
-            var joinableRoles = await GetAllRolesToJoinAsync();
-            if (joinableRoles.Any(x => x.Name == name))
+        await ExecuteAsync(
+            context, async () =>
             {
-                await RespondToInteractionAsync(
-                    context,
-                    $"На сервере уже есть роль с названием {name}"
+                var joinableRoles = await GetAllRolesToJoinAsync();
+                if (joinableRoles.Any(x => x.Name == name))
+                {
+                    await RespondToInteractionAsync(
+                        context,
+                        $"На сервере уже есть роль с названием {name}"
+                    );
+                    return;
+                }
+
+                var createRolePrice = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.DiscordGuild, "CreateRolePrice");
+                var userId = await usersCache.GetApiIdByMemberIdAsync(context.User.Id);
+                var economy = await antiClownApiClient.Economy.ReadAsync(userId);
+
+                if (economy.ScamCoins < createRolePrice)
+                {
+                    await RespondToInteractionAsync(
+                        context,
+                        $"Для создания новой роли нужно отдать {createRolePrice} скамкойнов, тебе не хватает {createRolePrice - economy.ScamCoins}"
+                    );
+                    return;
+                }
+
+                var newRole = await discordClientWrapper.Roles.CreateNewRoleAsync(name);
+                await discordClientWrapper.Roles.GrantRoleAsync(context.User.Id, newRole);
+                await RespondToInteractionAsync(context, $"Создал роль {newRole.Name} и добавил ее тебе");
+                await antiClownApiClient.Economy.UpdateScamCoinsAsync(
+                    userId,
+                    new UpdateScamCoinsDto
+                    {
+                        UserId = userId,
+                        Reason = $"Создание роли {name}",
+                        ScamCoinsDiff = -createRolePrice,
+                    }
                 );
-                return;
+                await rolesRepository.CreateAsync(newRole.Id);
             }
-
-            var createRolePrice = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.DiscordGuild, "CreateRolePrice");
-            var userId = await usersCache.GetApiIdByMemberIdAsync(context.User.Id);
-            var economy = await antiClownApiClient.Economy.ReadAsync(userId);
-
-            if (economy.ScamCoins < createRolePrice)
-            {
-                await RespondToInteractionAsync(
-                    context,
-                    $"Для создания новой роли нужно отдать {createRolePrice} скамкойнов, тебе не хватает {createRolePrice - economy.ScamCoins}"
-                );
-                return;
-            }
-
-            var newRole = await discordClientWrapper.Roles.CreateNewRoleAsync(name);
-            await discordClientWrapper.Roles.GrantRoleAsync(context.User.Id, newRole);
-            await RespondToInteractionAsync(context, $"Создал роль {newRole.Name} и добавил ее тебе");
-            await antiClownApiClient.Economy.UpdateScamCoinsAsync(
-                userId,
-                -createRolePrice,
-                $"Создание роли {name}");
-            await rolesRepository.CreateAsync(newRole.Id);
-        });
+        );
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.Roles_Grant, "Получить роль")]
@@ -96,51 +106,60 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
         [Option("role", "Роль")] DiscordRole role
     )
     {
-        await ExecuteAsync(context, async () =>
-        {
-            var joinableRoles = await GetAllRolesToJoinAsync();
-            if (joinableRoles.All(x => x.Id != role.Id))
+        await ExecuteAsync(
+            context, async () =>
             {
-                await RespondToInteractionAsync(
-                    context,
-                    $"Невозможно получить роль {role.Name}\n{JoinOrLeaveRoleHelp()}"
+                var joinableRoles = await GetAllRolesToJoinAsync();
+                if (joinableRoles.All(x => x.Id != role.Id))
+                {
+                    await RespondToInteractionAsync(
+                        context,
+                        $"Невозможно получить роль {role.Name}\n{JoinOrLeaveRoleHelp()}"
+                    );
+                    return;
+                }
+
+                var joinRolePrice = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.DiscordGuild, "JoinRolePrice");
+                var userId = await usersCache.GetApiIdByMemberIdAsync(context.User.Id);
+                var economy = await antiClownApiClient.Economy.ReadAsync(userId);
+                var serverMember = await discordClientWrapper.Members.GetAsync(context.User.Id);
+
+                if (serverMember.Roles.Any(x => x.Id == role.Id))
+                {
+                    await RespondToInteractionAsync(
+                        context,
+                        $"У тебя уже есть роль {role.Name}"
+                    );
+                    return;
+                }
+
+                if (economy.ScamCoins < joinRolePrice)
+                {
+                    await RespondToInteractionAsync(
+                        context,
+                        $"Для получения роли нужно отдать {joinRolePrice} скамкойнов, тебе не хватает {joinRolePrice - economy.ScamCoins}"
+                    );
+                    return;
+                }
+
+                await discordClientWrapper.Roles.GrantRoleAsync(context.User.Id, role);
+                await RespondToInteractionAsync(context, $"Выдал роль {role.Name}");
+                await antiClownApiClient.Economy.UpdateScamCoinsAsync(
+                    userId, new UpdateScamCoinsDto
+                    {
+                        UserId = userId,
+                        ScamCoinsDiff = -joinRolePrice,
+                        Reason = $"Получение роли {role.Name}",
+                    }
                 );
-                return;
-            }
 
-            var joinRolePrice = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.DiscordGuild, "JoinRolePrice");
-            var userId = await usersCache.GetApiIdByMemberIdAsync(context.User.Id);
-            var economy = await antiClownApiClient.Economy.ReadAsync(userId);
-            var serverMember = await discordClientWrapper.Members.GetAsync(context.User.Id);
-
-            if (serverMember.Roles.Any(x => x.Id == role.Id))
-            {
-                await RespondToInteractionAsync(
-                    context,
-                    $"У тебя уже есть роль {role.Name}"
-                );
-                return;
+                var f1RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "F1RoleId");
+                if (role.Id == f1RoleId)
+                {
+                    await antiClownDataApiClient.Rights.GrantAsync(userId, RightsDto.F1Predictions);
+                }
             }
-        
-            if (economy.ScamCoins < joinRolePrice)
-            {
-                await RespondToInteractionAsync(
-                    context,
-                    $"Для получения роли нужно отдать {joinRolePrice} скамкойнов, тебе не хватает {joinRolePrice - economy.ScamCoins}"
-                );
-                return;
-            }
-
-            await discordClientWrapper.Roles.GrantRoleAsync(context.User.Id, role);
-            await RespondToInteractionAsync(context, $"Выдал роль {role.Name}");
-            await antiClownApiClient.Economy.UpdateScamCoinsAsync(userId, -joinRolePrice, $"Получение роли {role.Name}");
-
-            var f1RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "F1RoleId");
-            if (role.Id == f1RoleId)
-            {
-                await antiClownDataApiClient.Rights.GrantAsync(userId, RightsDto.F1Predictions);
-            }
-        });
+        );
     }
 
     [SlashCommand(InteractionsIds.CommandsNames.Roles_Revoke, "Убрать роль")]
@@ -149,33 +168,35 @@ public class RolesCommandModule : SlashCommandModuleWithMiddlewares
         [Option("role", "Роль")] DiscordRole role
     )
     {
-        await ExecuteAsync(context, async () =>
-        {
-            var joinableRoles = await GetAllRolesToJoinAsync();
-            if (joinableRoles.All(x => x.Id != role.Id))
+        await ExecuteAsync(
+            context, async () =>
             {
-                await RespondToInteractionAsync(
-                    context,
-                    $"Невозможно убрать роль {role.Name}\n{JoinOrLeaveRoleHelp()}"
-                );
-                return;
+                var joinableRoles = await GetAllRolesToJoinAsync();
+                if (joinableRoles.All(x => x.Id != role.Id))
+                {
+                    await RespondToInteractionAsync(
+                        context,
+                        $"Невозможно убрать роль {role.Name}\n{JoinOrLeaveRoleHelp()}"
+                    );
+                    return;
+                }
+
+                var userId = context.User.Id;
+                var serverMember = await discordClientWrapper.Members.GetAsync(userId);
+
+                if (serverMember.Roles.All(x => x.Id != role.Id))
+                {
+                    await RespondToInteractionAsync(
+                        context,
+                        $"У тебя и так нет роли {role.Name}"
+                    );
+                    return;
+                }
+
+                await discordClientWrapper.Roles.RevokeRoleAsync(userId, role);
+                await RespondToInteractionAsync(context, $"Убрал роль {role.Name}");
             }
-
-            var userId = context.User.Id;
-            var serverMember = await discordClientWrapper.Members.GetAsync(userId);
-
-            if (serverMember.Roles.All(x => x.Id != role.Id))
-            {
-                await RespondToInteractionAsync(
-                    context,
-                    $"У тебя и так нет роли {role.Name}"
-                );
-                return;
-            }
-
-            await discordClientWrapper.Roles.RevokeRoleAsync(userId, role);
-            await RespondToInteractionAsync(context, $"Убрал роль {role.Name}");
-        });
+        );
     }
 
     private async Task<DiscordRole[]> GetAllRolesToJoinAsync()

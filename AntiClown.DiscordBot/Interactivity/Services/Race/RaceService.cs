@@ -41,8 +41,8 @@ public class RaceService : IRaceService
         var botDiscordId = await discordClientWrapper.Members.GetBotIdAsync();
         var botId = await usersCache.GetApiIdByMemberIdAsync(botDiscordId);
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
-        await antiClownEntertainmentApiClient.CommonEvents.Race.AddParticipantAsync(eventId, botId);
-        var raceEvent = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(eventId);
+        await antiClownEntertainmentApiClient.RaceEvent.AddParticipantAsync(eventId, botId);
+        var raceEvent = await antiClownEntertainmentApiClient.RaceEvent.ReadAsync(eventId);
         var welcomeMessageBuilder = await BuildEventMessageAsync(raceEvent);
         var welcomeMessage = await discordClientWrapper.Messages.SendAsync(botChannelId, welcomeMessageBuilder);
         var gridMessageContent = await BuildStartingGridMessageAsync(raceEvent);
@@ -71,8 +71,8 @@ public class RaceService : IRaceService
 
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         var userId = await usersCache.GetApiIdByMemberIdAsync(memberId);
-        await antiClownEntertainmentApiClient.CommonEvents.Race.AddParticipantAsync(eventId, userId);
-        var raceEvent = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(eventId);
+        await antiClownEntertainmentApiClient.RaceEvent.AddParticipantAsync(eventId, userId);
+        var raceEvent = await antiClownEntertainmentApiClient.RaceEvent.ReadAsync(eventId);
 
         var welcomeMessageBuilder = await BuildEventMessageAsync(raceEvent);
         var welcomeMessage = await discordClientWrapper.Messages.FindMessageAsync(botChannelId, interactivity.MessageId);
@@ -92,7 +92,7 @@ public class RaceService : IRaceService
         }
 
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
-        var raceEvent = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(eventId);
+        var raceEvent = await antiClownEntertainmentApiClient.RaceEvent.ReadAsync(eventId);
 
         var welcomeMessageBuilder = await BuildEventMessageAsync(raceEvent);
         var welcomeMessage = await discordClientWrapper.Messages.FindMessageAsync(botChannelId, interactivity.MessageId);

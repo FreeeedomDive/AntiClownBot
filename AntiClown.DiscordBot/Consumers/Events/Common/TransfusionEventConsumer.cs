@@ -31,7 +31,7 @@ public class TransfusionEventConsumer : ICommonEventConsumer<TransfusionEventDto
     public async Task ConsumeAsync(ConsumeContext<CommonEventMessageDto> context)
     {
         var eventId = context.Message.EventId;
-        var transfusionEvent = await antiClownEntertainmentApiClient.CommonEvents.Transfusion.ReadAsync(eventId);
+        var transfusionEvent = await antiClownEntertainmentApiClient.TransfusionEvent.ReadAsync(eventId);
         var embed = await transfusionEmbedBuilder.BuildAsync(transfusionEvent);
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         await discordClientWrapper.Messages.SendAsync(botChannelId, embed);

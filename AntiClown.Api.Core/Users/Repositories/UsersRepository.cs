@@ -1,5 +1,6 @@
 ﻿using AntiClown.Api.Core.Users.Domain;
 using AntiClown.Core.Dto.Exceptions;
+using Xdd.HttpHelpers.Models.Exceptions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SqlRepositoryBase.Core.Exceptions;

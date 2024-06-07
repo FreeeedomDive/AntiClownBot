@@ -1,4 +1,4 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 using AntiClown.Data.Api.Core.SettingsStoring.Domain;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
 using AntiClown.Data.Api.Dto.Exceptions;

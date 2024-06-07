@@ -26,7 +26,7 @@ public class DailyResetCommandModule : SlashCommandModuleWithMiddlewares
     {
         await ExecuteAsync(context, async () =>
         {
-            await antiClownEntertainmentApiClient.DailyEvents.PaymentsAndResets.StartNewAsync();
+            await antiClownEntertainmentApiClient.PaymentsAndResetsEvent.StartNewAsync();
             await RespondToInteractionAsync(context, await emotesCache.GetEmoteAsTextAsync("YEP"));
         });
     }

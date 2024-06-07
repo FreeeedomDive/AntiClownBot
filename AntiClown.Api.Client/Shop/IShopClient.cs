@@ -1,15 +1,13 @@
-﻿using AntiClown.Api.Dto.Inventories;
-using AntiClown.Api.Dto.Shops;
-
+/* Generated file */
 namespace AntiClown.Api.Client.Shop;
 
 public interface IShopClient
 {
-    Task<CurrentShopInfoDto> ReadAsync(Guid shopId);
-    Task<ShopItemDto> RevealItemAsync(Guid shopId, Guid itemId);
-    Task<BaseItemDto> BuyItemAsync(Guid shopId, Guid itemId);
-    Task ReRollShopAsync(Guid shopId);
-    Task ResetShopAsync(Guid shopId);
-    Task<ShopStatsDto> ReadStatsAsync(Guid shopId);
-    Task ResetAllAsync();
+    System.Threading.Tasks.Task<AntiClown.Api.Dto.Shops.CurrentShopInfoDto> ReadAsync(System.Guid shopId);
+    System.Threading.Tasks.Task<AntiClown.Api.Dto.Shops.ShopItemDto> RevealAsync(System.Guid shopId, System.Guid itemId);
+    System.Threading.Tasks.Task<AntiClown.Api.Dto.Inventories.BaseItemDto> BuyAsync(System.Guid shopId, System.Guid itemId);
+    System.Threading.Tasks.Task ReRollAsync(System.Guid shopId);
+    System.Threading.Tasks.Task ResetAsync(System.Guid shopId);
+    System.Threading.Tasks.Task<AntiClown.Api.Dto.Shops.ShopStatsDto> ReadStatsAsync(System.Guid shopId);
+    System.Threading.Tasks.Task ResetAllAsync();
 }

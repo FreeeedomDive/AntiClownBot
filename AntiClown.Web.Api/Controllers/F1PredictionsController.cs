@@ -57,7 +57,7 @@ public class F1PredictionsController : Controller
     [HttpPost("{raceId:guid}/finish")]
     public async Task<ActionResult> Finish([FromRoute] Guid raceId)
     {
-        await antiClownEntertainmentApiClient.F1Predictions.FinishAsync(raceId);
+        await antiClownEntertainmentApiClient.F1Predictions.FinishRaceAsync(raceId);
         return NoContent();
     }
 

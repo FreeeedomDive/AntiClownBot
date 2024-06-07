@@ -69,7 +69,7 @@ public class F1StatsCommand : SlashCommandModuleWithMiddlewares
             interactionContext, async () =>
             {
                 var apiUserId = await usersCache.GetApiIdByMemberIdAsync(interactionContext.Member.Id);
-                var userPointsStats = await antiClownEntertainmentApiClient.F1PredictionsStats.GetUserPointsStats(apiUserId);
+                var userPointsStats = await antiClownEntertainmentApiClient.F1PredictionsStats.GetUserPointsStatsAsync(apiUserId);
                 var embed = f1PredictionStatsEmbedBuilder.Build(userPointsStats);
                 await RespondToInteractionAsync(interactionContext, embed);
             }

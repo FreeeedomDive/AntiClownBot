@@ -1,63 +1,57 @@
-using AntiClown.Api.Dto.Economies;
-using AntiClown.Core.Dto.Extensions;
+/* Generated file */
 using RestSharp;
+using Xdd.HttpHelpers.Models.Extensions;
 
 namespace AntiClown.Api.Client.Economy;
 
 public class EconomyClient : IEconomyClient
 {
-    public EconomyClient(RestClient restClient)
+    public EconomyClient(RestSharp.RestClient restClient)
     {
         this.restClient = restClient;
     }
 
-    public async Task<EconomyDto> ReadAsync(Guid userId)
+    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Economies.EconomyDto> ReadAsync(System.Guid userId)
     {
-        var request = new RestRequest($"economy/{userId}");
-        var response = await restClient.ExecuteGetAsync(request);
-        return response.TryDeserialize<EconomyDto>();
+        var request = new RestRequest("api/economy/{userId}", Method.Get);
+        request.AddUrlSegment("userId", userId);
+        var response = await restClient.ExecuteAsync(request);
+        return response.TryDeserialize<AntiClown.Api.Dto.Economies.EconomyDto>();
     }
 
-    public async Task UpdateScamCoinsAsync(Guid userId, int scamCoinsDiff, string reason)
+    public async System.Threading.Tasks.Task UpdateScamCoinsAsync(System.Guid userId, AntiClown.Api.Dto.Economies.UpdateScamCoinsDto updateScamCoinsDto)
     {
-        var request = new RestRequest($"economy/{userId}/scamCoins");
-        request.AddJsonBody(new UpdateScamCoinsDto
-        {
-            UserId = userId,
-            ScamCoinsDiff = scamCoinsDiff,
-            Reason = reason,
-        });
-        var response = await restClient.ExecutePostAsync(request);
+        var request = new RestRequest("api/economy/{userId}/scamCoins", Method.Post);
+        request.AddUrlSegment("userId", userId);
+        request.AddJsonBody(updateScamCoinsDto);
+        var response = await restClient.ExecuteAsync(request);
         response.ThrowIfNotSuccessful();
     }
 
-    public async Task UpdateScamCoinsForAllAsync(int scamCoinsDiff, string reason)
+    public async System.Threading.Tasks.Task UpdateScamCoinsForAllAsync(System.Int32 scamCoinsDiff, System.String reason)
     {
-        var request = new RestRequest($"economy/scamCoins/updateForAll")
-            .AddQueryParameter("scamCoinsDiff", scamCoinsDiff)
-            .AddQueryParameter("reason", reason);
-        var response = await restClient.ExecutePostAsync(request);
+        var request = new RestRequest("api/economy/scamCoins/updateForAll", Method.Post);
+        request.AddQueryParameter("scamCoinsDiff", scamCoinsDiff.ToString());
+        request.AddQueryParameter("reason", reason.ToString());
+        var response = await restClient.ExecuteAsync(request);
         response.ThrowIfNotSuccessful();
     }
 
-    public async Task UpdateLootBoxesAsync(Guid userId, int lootBoxesDiff)
+    public async System.Threading.Tasks.Task UpdateLootBoxesAsync(System.Guid userId, AntiClown.Api.Dto.Economies.UpdateLootBoxesDto lootBoxesDto)
     {
-        var request = new RestRequest($"economy/{userId}/lootBoxes");
-        request.AddJsonBody(new UpdateLootBoxesDto
-        {
-            UserId = userId,
-            LootBoxesDiff = lootBoxesDiff,
-        });
-        var response = await restClient.ExecutePostAsync(request);
+        var request = new RestRequest("api/economy/{userId}/lootBoxes", Method.Post);
+        request.AddUrlSegment("userId", userId);
+        request.AddJsonBody(lootBoxesDto);
+        var response = await restClient.ExecuteAsync(request);
         response.ThrowIfNotSuccessful();
     }
 
-    public async Task ResetAllCoolDownsAsync()
+    public async System.Threading.Tasks.Task ResetAllCoolDownsAsync()
     {
-        var request = new RestRequest($"economy/resetAllCoolDowns");
-        var response = await restClient.ExecutePostAsync(request);
+        var request = new RestRequest("api/economy/resetAllCoolDowns", Method.Post);
+        var response = await restClient.ExecuteAsync(request);
         response.ThrowIfNotSuccessful();
     }
 
-    private readonly RestClient restClient;
+    private readonly RestSharp.RestClient restClient;
 }

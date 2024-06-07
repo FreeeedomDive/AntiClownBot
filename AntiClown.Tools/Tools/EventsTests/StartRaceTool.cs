@@ -19,21 +19,21 @@ public class StartRaceTool : ToolBase
 
     protected override async Task RunAsync()
     {
-        var raceId = await antiClownEntertainmentApiClient.CommonEvents.Race.StartNewAsync();
+        var raceId = await antiClownEntertainmentApiClient.RaceEvent.StartNewAsync();
         Logger.LogInformation("RaceId {id}", raceId);
         var users = await antiClownApiClient.Users.ReadAllAsync();
-        await antiClownEntertainmentApiClient.CommonEvents.Race.AddParticipantAsync(raceId, users.SelectRandomItem().Id);
-        await antiClownEntertainmentApiClient.CommonEvents.Race.FinishAsync(raceId);
+        await antiClownEntertainmentApiClient.RaceEvent.AddParticipantAsync(raceId, users.SelectRandomItem().Id);
+        await antiClownEntertainmentApiClient.RaceEvent.FinishAsync(raceId);
         try
         {
-            await antiClownEntertainmentApiClient.CommonEvents.Race.FinishAsync(raceId);
+            await antiClownEntertainmentApiClient.RaceEvent.FinishAsync(raceId);
         }
         catch (EventAlreadyFinishedException e)
         {
             Logger.LogInformation("Event was already finished\n{Exception}", e);
         }
 
-        var race = await antiClownEntertainmentApiClient.CommonEvents.Race.ReadAsync(raceId);
+        var race = await antiClownEntertainmentApiClient.RaceEvent.ReadAsync(raceId);
         var lastSector = race.Sectors.Last().DriversOnSector.OrderBy(x => x.TotalTime).ToArray();
         Logger.LogInformation("Last sector info:\n{info}", string.Join("\n", lastSector.Select(x => $"{x.DriverName}   {x.TotalTime}")));
     }

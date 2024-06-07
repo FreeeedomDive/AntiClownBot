@@ -1,4 +1,5 @@
 ﻿using AntiClown.Api.Client;
+using AntiClown.Api.Dto.Economies;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
@@ -54,8 +55,18 @@ public class TransfusionEventService : ITransfusionEventService
         newEvent.Exchange = exchange;
         await commonEventsRepository.CreateAsync(newEvent);
 
-        await antiClownApiClient.Economy.UpdateScamCoinsAsync(donor.Id, -exchange, $"Событие перекачки {newEvent.Id}");
-        await antiClownApiClient.Economy.UpdateScamCoinsAsync(recipient.Id, exchange, $"Событие перекачки {newEvent.Id}");
+        await antiClownApiClient.Economy.UpdateScamCoinsAsync(donor.Id, new UpdateScamCoinsDto
+        {
+            UserId = donor.Id,
+            ScamCoinsDiff = -exchange, 
+            Reason = $"Событие перекачки {newEvent.Id}",
+        });
+        await antiClownApiClient.Economy.UpdateScamCoinsAsync(recipient.Id, new UpdateScamCoinsDto
+        {
+            UserId = recipient.Id,
+            ScamCoinsDiff = exchange, 
+            Reason = $"Событие перекачки {newEvent.Id}",
+        });
 
         await commonEventsMessageProducer.ProduceAsync(newEvent);
 

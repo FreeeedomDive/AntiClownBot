@@ -1,5 +1,6 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Entertainment.Api.Client;
+using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Tools.Utility.Extensions;
 using Newtonsoft.Json;
 
@@ -23,10 +24,14 @@ public class StartGuessNumberTool : ToolBase
         var userEconomy = await antiClownApiClient.Economy.ReadAsync(user.Id);
         Logger.LogInformation(JsonConvert.SerializeObject(userEconomy, Formatting.Indented));
 
-        var eventId = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.StartNewAsync();
-        var guessNumberEvent = await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.ReadAsync(eventId);
-        await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.AddPickAsync(eventId, user.Id, guessNumberEvent.Result);
-        await antiClownEntertainmentApiClient.CommonEvents.GuessNumber.FinishAsync(eventId);
+        var eventId = await antiClownEntertainmentApiClient.GuessNumberEvent.StartNewAsync();
+        var guessNumberEvent = await antiClownEntertainmentApiClient.GuessNumberEvent.ReadAsync(eventId);
+        await antiClownEntertainmentApiClient.GuessNumberEvent.AddPickAsync(eventId, new GuessNumberUserPickDto
+        {
+            UserId = user.Id,
+            Pick = guessNumberEvent.Result,
+        });
+        await antiClownEntertainmentApiClient.GuessNumberEvent.FinishAsync(eventId);
 
         userEconomy = await antiClownApiClient.Economy.ReadAsync(user.Id);
         Logger.LogInformation(JsonConvert.SerializeObject(userEconomy, Formatting.Indented));

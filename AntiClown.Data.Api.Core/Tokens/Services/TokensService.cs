@@ -1,4 +1,4 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 using AntiClown.Data.Api.Core.Tokens.Repositories;
 
 namespace AntiClown.Data.Api.Core.Tokens.Services;
@@ -25,7 +25,7 @@ public class TokensService : ITokensService
         var existingToken = await tokensRepository.TryReadAsync(userId);
         if (existingToken is null || existingToken != token)
         {
-            throw new AntiClownUnauthorizedException($"Wrong token was provided for user {userId}");
+            throw new UnauthorizedException($"Wrong token was provided for user {userId}");
         }
     }
 

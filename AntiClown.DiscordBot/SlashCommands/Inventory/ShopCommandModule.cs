@@ -37,7 +37,7 @@ public class ShopCommandModule : SlashCommandModuleWithMiddlewares
             context, async () =>
             {
                 var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-                var shopStats = await antiClownApiClient.Shops.ReadStatsAsync(userId);
+                var shopStats = await antiClownApiClient.Shop.ReadStatsAsync(userId);
                 var embed = new DiscordEmbedBuilder()
                             .WithTitle($"Статистика магазина {context.Member.ServerOrUserName()}")
                             .WithColor(context.Member.Color)

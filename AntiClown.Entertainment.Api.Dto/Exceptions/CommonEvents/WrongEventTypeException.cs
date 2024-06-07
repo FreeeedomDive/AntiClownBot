@@ -1,8 +1,8 @@
-﻿using AntiClown.Core.Dto.Exceptions;
+﻿using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Entertainment.Api.Dto.Exceptions.CommonEvents;
 
-public class WrongEventTypeException : AntiClownBadRequestException
+public class WrongEventTypeException : BadRequestException
 {
     public WrongEventTypeException(string message) : base(message)
     {
