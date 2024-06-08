@@ -15,6 +15,14 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
         this.usersCache = usersCache;
     }
 
+    public DiscordEmbed BuildPredictionStarted(string raceName)
+    {
+        return new DiscordEmbedBuilder()
+               .WithColor(DiscordColor.Violet)
+               .AddField("Открыто новое предсказание", $"Начались сборы предсказаний на гонку {raceName}")
+               .Build();
+    }
+
     public async Task<DiscordEmbed> BuildPredictionUpdatedAsync(F1UserPredictionUpdatedMessageDto message, F1RaceDto race, F1PredictionDto prediction)
     {
         var member = await usersCache.GetMemberByApiIdAsync(prediction.UserId);
