@@ -60,6 +60,7 @@ public class F1PredictionsService : IF1PredictionsService
             Predictions = new List<F1Prediction>(),
         };
         await f1RacesRepository.CreateAsync(newRace);
+        await f1PredictionsMessageProducer.ProducePredictionStartedAsync(raceId, name);
 
         return raceId;
     }
