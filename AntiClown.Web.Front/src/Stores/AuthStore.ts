@@ -16,6 +16,9 @@ export class AuthStore {
     this.loggedInUserId = cookies.get("userId", {
       doNotParse: true,
     });
+    this.userToken = cookies.get("token", {
+      doNotParse: true,
+    });
   }
 
   logIn(userId: string, token: string) {
