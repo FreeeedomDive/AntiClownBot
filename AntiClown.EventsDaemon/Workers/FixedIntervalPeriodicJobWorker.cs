@@ -2,9 +2,9 @@ using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.EventsDaemon.Workers;
 
-public abstract class PeriodicJobWorker
+public abstract class FixedIntervalPeriodicJobWorker : IWorker
 {
-    protected PeriodicJobWorker(
+    protected FixedIntervalPeriodicJobWorker(
         ILoggerClient logger
     )
     {
@@ -13,7 +13,7 @@ public abstract class PeriodicJobWorker
 
     public async Task StartAsync()
     {
-        var delay = await CalculateTimeBeforeStartAsync();
+        var delay = await GetMillisecondsBeforeStartAsync();
         await Logger.InfoAsync("{WorkerName} will start in {delay}", WorkerName, TimeSpan.FromMilliseconds(delay));
         await Task.Delay(delay);
 
@@ -58,7 +58,7 @@ public abstract class PeriodicJobWorker
         }
     }
 
-    protected abstract Task<int> CalculateTimeBeforeStartAsync();
+    protected abstract Task<int> GetMillisecondsBeforeStartAsync();
     protected abstract Task ExecuteIterationAsync();
 
     protected ILoggerClient Logger { get; }

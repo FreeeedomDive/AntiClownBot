@@ -8,7 +8,7 @@ using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.EventsDaemon.Workers.CommonEvents;
 
-public class CommonEventsWorker : PeriodicJobWorker
+public class CommonEventsWorker : FixedIntervalPeriodicJobWorker
 {
     public CommonEventsWorker(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
@@ -21,7 +21,7 @@ public class CommonEventsWorker : PeriodicJobWorker
         IterationTime = antiClownDataApiClient.Settings.ReadAsync<TimeSpan>(SettingsCategory.CommonEvents, "CommonEventsWorker.IterationTime").GetAwaiter().GetResult();
     }
 
-    protected override async Task<int> CalculateTimeBeforeStartAsync()
+    protected override async Task<int> GetMillisecondsBeforeStartAsync()
     {
         var eventStartHour = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "CommonEventsWorker.StartHour");
         var eventStartMinute = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "CommonEventsWorker.StartMinute");

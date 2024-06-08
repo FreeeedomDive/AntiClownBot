@@ -3,6 +3,7 @@ using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
 using AntiClown.EventsDaemon.Workers;
+using AntiClown.EventsDaemon.Workers.F1Predictions;
 using Microsoft.Extensions.Options;
 using TelemetryApp.Utilities.Extensions;
 
@@ -27,16 +28,18 @@ builder.Services.AddTransient<IAntiClownDataApiClient>(
     serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
 );
 
-var toolsTypes = AppDomain.CurrentDomain.GetAssemblies()
+builder.Services.AddTransient<IF1RacesProvider, F1RacesProvider>();
+
+var workersTypes = AppDomain.CurrentDomain.GetAssemblies()
                           .SelectMany(x => x.GetTypes())
-                          .Where(x => typeof(PeriodicJobWorker).IsAssignableFrom(x) && !x.IsAbstract)
+                          .Where(x => typeof(IWorker).IsAssignableFrom(x) && !x.IsAbstract)
                           .ToArray();
 
-foreach (var toolType in toolsTypes)
+foreach (var workerType in workersTypes)
 {
-    builder.Services.AddSingleton(typeof(PeriodicJobWorker), toolType);
+    builder.Services.AddSingleton(typeof(IWorker), workerType);
 }
 
 var app = builder.Build();
-var workers = app.Services.GetServices<PeriodicJobWorker>();
+var workers = app.Services.GetServices<IWorker>();
 await Task.WhenAll(workers.Select(x => x.StartAsync()));
