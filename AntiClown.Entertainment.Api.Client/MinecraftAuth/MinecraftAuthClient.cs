@@ -1,55 +1,52 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Entertainment.Api.Client.MinecraftAuth;
 
 public class MinecraftAuthClient : IMinecraftAuthClient
 {
-    public MinecraftAuthClient(RestSharp.RestClient restClient)
+    public MinecraftAuthClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.AuthResponseDto> AuthAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.AuthRequest authRequest)
+    public async Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.AuthResponseDto> AuthAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.AuthRequest authRequest)
     {
-        var request = new RestRequest("entertainmentApi/minecraftAuth/auth", Method.Post);
-        request.AddJsonBody(authRequest);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.MinecraftAuth.AuthResponseDto>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/minecraftAuth/auth", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(authRequest);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.MinecraftAuth.AuthResponseDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<System.Boolean> JoinAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.JoinRequest joinRequest)
+    public async Task<bool> JoinAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.JoinRequest joinRequest)
     {
-        var request = new RestRequest("entertainmentApi/minecraftAuth/join", Method.Post);
-        request.AddJsonBody(joinRequest);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<System.Boolean>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/minecraftAuth/join", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(joinRequest);
+        return await client.MakeRequestAsync<bool>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.HasJoinedResponseDto> HasJoinAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.HasJoinRequest hasJoinRequest)
+    public async Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.HasJoinedResponseDto> HasJoinAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.HasJoinRequest hasJoinRequest)
     {
-        var request = new RestRequest("entertainmentApi/minecraftAuth/hasJoin", Method.Post);
-        request.AddJsonBody(hasJoinRequest);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.MinecraftAuth.HasJoinedResponseDto>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/minecraftAuth/hasJoin", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(hasJoinRequest);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.MinecraftAuth.HasJoinedResponseDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfileResponseDto> ProfileAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfileRequest profileRequest)
+    public async Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfileResponseDto> ProfileAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfileRequest profileRequest)
     {
-        var request = new RestRequest("entertainmentApi/minecraftAuth/profile", Method.Post);
-        request.AddJsonBody(profileRequest);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfileResponseDto>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/minecraftAuth/profile", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(profileRequest);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfileResponseDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<IEnumerable<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfilesResponseDto>> ProfilesAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfilesRequest profilesRequest)
+    public async Task<IEnumerable<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfilesResponseDto>> ProfilesAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfilesRequest profilesRequest)
     {
-        var request = new RestRequest("entertainmentApi/minecraftAuth/profiles", Method.Post);
-        request.AddJsonBody(profilesRequest);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<IEnumerable<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfilesResponseDto>>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/minecraftAuth/profiles", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(profilesRequest);
+        return await client.MakeRequestAsync<IEnumerable<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ProfilesResponseDto>>(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

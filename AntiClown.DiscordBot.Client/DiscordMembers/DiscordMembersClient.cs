@@ -1,23 +1,23 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.DiscordBot.Client.DiscordMembers;
 
 public class DiscordMembersClient : IDiscordMembersClient
 {
-    public DiscordMembersClient(RestSharp.RestClient restClient)
+    public DiscordMembersClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto> GetDiscordMemberAsync(System.Guid userId)
+    public async Task<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto> GetDiscordMemberAsync(System.Guid userId)
     {
-        var request = new RestRequest("discordApi/members/{userId}", Method.Get);
-        request.AddUrlSegment("userId", userId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto>();
+        var requestBuilder = new RequestBuilder($"discordApi/members/{userId}", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto>(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

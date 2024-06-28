@@ -1,52 +1,49 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Entertainment.Api.Client.ActiveDailyEventsIndex;
 
 public class ActiveDailyEventsIndexClient : IActiveDailyEventsIndexClient
 {
-    public ActiveDailyEventsIndexClient(RestSharp.RestClient restClient)
+    public ActiveDailyEventsIndexClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<Dictionary<AntiClown.Entertainment.Api.Dto.DailyEvents.DailyEventTypeDto, System.Boolean>> ReadAllEventTypesAsync()
+    public async Task<Dictionary<AntiClown.Entertainment.Api.Dto.DailyEvents.DailyEventTypeDto, bool>> ReadAllEventTypesAsync()
     {
-        var request = new RestRequest("entertainmentApi/events/daily/index/", Method.Get);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<Dictionary<AntiClown.Entertainment.Api.Dto.DailyEvents.DailyEventTypeDto, System.Boolean>>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/daily/index/", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<Dictionary<AntiClown.Entertainment.Api.Dto.DailyEvents.DailyEventTypeDto, bool>>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.DailyEvents.DailyEventTypeDto[]> ReadActiveEventsAsync()
+    public async Task<AntiClown.Entertainment.Api.Dto.DailyEvents.DailyEventTypeDto[]> ReadActiveEventsAsync()
     {
-        var request = new RestRequest("entertainmentApi/events/daily/index/active", Method.Get);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.DailyEvents.DailyEventTypeDto[]>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/daily/index/active", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.DailyEvents.DailyEventTypeDto[]>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task CreateAsync(AntiClown.Entertainment.Api.Dto.DailyEvents.ActiveEventsIndex.ActiveDailyEventIndexDto activeDailyEventIndexDto)
+    public async Task CreateAsync(AntiClown.Entertainment.Api.Dto.DailyEvents.ActiveEventsIndex.ActiveDailyEventIndexDto activeDailyEventIndexDto)
     {
-        var request = new RestRequest("entertainmentApi/events/daily/index/", Method.Post);
-        request.AddJsonBody(activeDailyEventIndexDto);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/daily/index/", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(activeDailyEventIndexDto);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task UpdateAsync(AntiClown.Entertainment.Api.Dto.DailyEvents.ActiveEventsIndex.ActiveDailyEventIndexDto activeDailyEventIndexDto)
+    public async Task UpdateAsync(AntiClown.Entertainment.Api.Dto.DailyEvents.ActiveEventsIndex.ActiveDailyEventIndexDto activeDailyEventIndexDto)
     {
-        var request = new RestRequest("entertainmentApi/events/daily/index/", Method.Put);
-        request.AddJsonBody(activeDailyEventIndexDto);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/daily/index/", HttpRequestMethod.PUT);
+        requestBuilder.WithJsonBody(activeDailyEventIndexDto);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task ActualizeIndexAsync()
+    public async Task ActualizeIndexAsync()
     {
-        var request = new RestRequest("entertainmentApi/events/daily/index/actualize", Method.Post);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/daily/index/actualize", HttpRequestMethod.POST);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

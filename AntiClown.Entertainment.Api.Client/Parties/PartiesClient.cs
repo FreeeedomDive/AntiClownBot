@@ -1,71 +1,60 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Entertainment.Api.Client.Parties;
 
 public class PartiesClient : IPartiesClient
 {
-    public PartiesClient(RestSharp.RestClient restClient)
+    public PartiesClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.Parties.PartyDto> ReadAsync(System.Guid id)
+    public async Task<AntiClown.Entertainment.Api.Dto.Parties.PartyDto> ReadAsync(System.Guid id)
     {
-        var request = new RestRequest("entertainmentApi/parties/{id}", Method.Get);
-        request.AddUrlSegment("id", id);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.Parties.PartyDto>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/parties/{id}", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.Parties.PartyDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.Parties.PartyDto[]> ReadOpenedAsync()
+    public async Task<AntiClown.Entertainment.Api.Dto.Parties.PartyDto[]> ReadOpenedAsync()
     {
-        var request = new RestRequest("entertainmentApi/parties/opened", Method.Get);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.Parties.PartyDto[]>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/parties/opened", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.Parties.PartyDto[]>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.Parties.PartyDto[]> ReadFullAsync()
+    public async Task<AntiClown.Entertainment.Api.Dto.Parties.PartyDto[]> ReadFullAsync()
     {
-        var request = new RestRequest("entertainmentApi/parties/full", Method.Get);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.Parties.PartyDto[]>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/parties/full", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.Parties.PartyDto[]>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<System.Guid> CreateAsync(AntiClown.Entertainment.Api.Dto.Parties.CreatePartyDto newParty)
+    public async Task<System.Guid> CreateAsync(AntiClown.Entertainment.Api.Dto.Parties.CreatePartyDto newParty)
     {
-        var request = new RestRequest("entertainmentApi/parties/", Method.Post);
-        request.AddJsonBody(newParty);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<System.Guid>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/parties/", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(newParty);
+        return await client.MakeRequestAsync<System.Guid>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task JoinAsync(System.Guid id, System.Guid userId)
+    public async Task JoinAsync(System.Guid id, System.Guid userId)
     {
-        var request = new RestRequest("entertainmentApi/parties/{id}/players/{userId}/join", Method.Put);
-        request.AddUrlSegment("id", id);
-        request.AddUrlSegment("userId", userId);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/parties/{id}/players/{userId}/join", HttpRequestMethod.PUT);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task LeaveAsync(System.Guid id, System.Guid userId)
+    public async Task LeaveAsync(System.Guid id, System.Guid userId)
     {
-        var request = new RestRequest("entertainmentApi/parties/{id}/players/{userId}/leave", Method.Put);
-        request.AddUrlSegment("id", id);
-        request.AddUrlSegment("userId", userId);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/parties/{id}/players/{userId}/leave", HttpRequestMethod.PUT);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task CloseAsync(System.Guid id)
+    public async Task CloseAsync(System.Guid id)
     {
-        var request = new RestRequest("entertainmentApi/parties/{id}/close", Method.Put);
-        request.AddUrlSegment("id", id);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/parties/{id}/close", HttpRequestMethod.PUT);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

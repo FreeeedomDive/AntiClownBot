@@ -1,30 +1,29 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Entertainment.Api.Client.TransfusionEvent;
 
 public class TransfusionEventClient : ITransfusionEventClient
 {
-    public TransfusionEventClient(RestSharp.RestClient restClient)
+    public TransfusionEventClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion.TransfusionEventDto> ReadAsync(System.Guid eventId)
+    public async Task<AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion.TransfusionEventDto> ReadAsync(System.Guid eventId)
     {
-        var request = new RestRequest("entertainmentApi/events/common/transfusion/{eventId}", Method.Get);
-        request.AddUrlSegment("eventId", eventId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion.TransfusionEventDto>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/common/transfusion/{eventId}", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion.TransfusionEventDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<System.Guid> StartNewAsync()
+    public async Task<System.Guid> StartNewAsync()
     {
-        var request = new RestRequest("entertainmentApi/events/common/transfusion/start", Method.Post);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<System.Guid>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/common/transfusion/start", HttpRequestMethod.POST);
+        return await client.MakeRequestAsync<System.Guid>(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

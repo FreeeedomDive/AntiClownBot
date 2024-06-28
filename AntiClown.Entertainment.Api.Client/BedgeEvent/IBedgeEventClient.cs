@@ -1,7 +1,9 @@
 /* Generated file */
+using System.Threading.Tasks;
+
 namespace AntiClown.Entertainment.Api.Client.BedgeEvent;
 
 public interface IBedgeEventClient
 {
-    System.Threading.Tasks.Task<System.Guid> StartNewAsync();
+    Task<System.Guid> StartNewAsync();
 }

@@ -1,31 +1,29 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Api.Client.Tributes;
 
 public class TributesClient : ITributesClient
 {
-    public TributesClient(RestSharp.RestClient restClient)
+    public TributesClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Economies.NextTributeDto> WhenNextTributeAsync(System.Guid userId)
+    public async Task<AntiClown.Api.Dto.Economies.NextTributeDto> WhenNextTributeAsync(System.Guid userId)
     {
-        var request = new RestRequest("api/economy/{userId}/tributes/when", Method.Get);
-        request.AddUrlSegment("userId", userId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Economies.NextTributeDto>();
+        var requestBuilder = new RequestBuilder($"api/economy/{userId}/tributes/when", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Economies.NextTributeDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Economies.TributeDto> TributeAsync(System.Guid userId)
+    public async Task<AntiClown.Api.Dto.Economies.TributeDto> TributeAsync(System.Guid userId)
     {
-        var request = new RestRequest("api/economy/{userId}/tributes/", Method.Post);
-        request.AddUrlSegment("userId", userId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Economies.TributeDto>();
+        var requestBuilder = new RequestBuilder($"api/economy/{userId}/tributes/", HttpRequestMethod.POST);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Economies.TributeDto>(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

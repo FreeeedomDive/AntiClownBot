@@ -1,52 +1,49 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Entertainment.Api.Client.ActiveEventsIndex;
 
 public class ActiveEventsIndexClient : IActiveEventsIndexClient
 {
-    public ActiveEventsIndexClient(RestSharp.RestClient restClient)
+    public ActiveEventsIndexClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<Dictionary<AntiClown.Entertainment.Api.Dto.CommonEvents.CommonEventTypeDto, System.Boolean>> ReadAllEventTypesAsync()
+    public async Task<Dictionary<AntiClown.Entertainment.Api.Dto.CommonEvents.CommonEventTypeDto, bool>> ReadAllEventTypesAsync()
     {
-        var request = new RestRequest("entertainmentApi/events/common/index/", Method.Get);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<Dictionary<AntiClown.Entertainment.Api.Dto.CommonEvents.CommonEventTypeDto, System.Boolean>>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/common/index/", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<Dictionary<AntiClown.Entertainment.Api.Dto.CommonEvents.CommonEventTypeDto, bool>>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.CommonEvents.CommonEventTypeDto[]> ReadActiveEventsAsync()
+    public async Task<AntiClown.Entertainment.Api.Dto.CommonEvents.CommonEventTypeDto[]> ReadActiveEventsAsync()
     {
-        var request = new RestRequest("entertainmentApi/events/common/index/active", Method.Get);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.CommonEvents.CommonEventTypeDto[]>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/common/index/active", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.CommonEvents.CommonEventTypeDto[]>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task CreateAsync(AntiClown.Entertainment.Api.Dto.CommonEvents.ActiveEventsIndex.ActiveCommonEventIndexDto activeCommonEventIndexDto)
+    public async Task CreateAsync(AntiClown.Entertainment.Api.Dto.CommonEvents.ActiveEventsIndex.ActiveCommonEventIndexDto activeCommonEventIndexDto)
     {
-        var request = new RestRequest("entertainmentApi/events/common/index/", Method.Post);
-        request.AddJsonBody(activeCommonEventIndexDto);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/common/index/", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(activeCommonEventIndexDto);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task UpdateAsync(AntiClown.Entertainment.Api.Dto.CommonEvents.ActiveEventsIndex.ActiveCommonEventIndexDto activeCommonEventIndexDto)
+    public async Task UpdateAsync(AntiClown.Entertainment.Api.Dto.CommonEvents.ActiveEventsIndex.ActiveCommonEventIndexDto activeCommonEventIndexDto)
     {
-        var request = new RestRequest("entertainmentApi/events/common/index/", Method.Put);
-        request.AddJsonBody(activeCommonEventIndexDto);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/common/index/", HttpRequestMethod.PUT);
+        requestBuilder.WithJsonBody(activeCommonEventIndexDto);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task ActualizeIndexAsync()
+    public async Task ActualizeIndexAsync()
     {
-        var request = new RestRequest("entertainmentApi/events/common/index/actualize", Method.Post);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/common/index/actualize", HttpRequestMethod.POST);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

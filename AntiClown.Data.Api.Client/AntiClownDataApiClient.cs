@@ -8,11 +8,11 @@ namespace AntiClown.Data.Api.Client;
 
 public class AntiClownDataApiClient : IAntiClownDataApiClient
 {
-    public AntiClownDataApiClient(RestSharp.RestClient restClient)
+    public AntiClownDataApiClient(RestSharp.RestClient client)
     {
-        Rights = new RightsClient(restClient);
-        Settings = new SettingsClient(restClient);
-        Tokens = new TokensClient(restClient);
+        Rights = new RightsClient(client);
+        Settings = new SettingsClient(client);
+        Tokens = new TokensClient(client);
     }
 
     public IRightsClient Rights { get; }

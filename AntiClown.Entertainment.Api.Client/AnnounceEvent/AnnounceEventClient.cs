@@ -1,30 +1,29 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Entertainment.Api.Client.AnnounceEvent;
 
 public class AnnounceEventClient : IAnnounceEventClient
 {
-    public AnnounceEventClient(RestSharp.RestClient restClient)
+    public AnnounceEventClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.DailyEvents.Announce.AnnounceEventDto> ReadAsync(System.Guid eventId)
+    public async Task<AntiClown.Entertainment.Api.Dto.DailyEvents.Announce.AnnounceEventDto> ReadAsync(System.Guid eventId)
     {
-        var request = new RestRequest("entertainmentApi/events/daily/announce/{eventId}", Method.Get);
-        request.AddUrlSegment("eventId", eventId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.DailyEvents.Announce.AnnounceEventDto>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/daily/announce/{eventId}", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.DailyEvents.Announce.AnnounceEventDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<System.Guid> StartNewAsync()
+    public async Task<System.Guid> StartNewAsync()
     {
-        var request = new RestRequest("entertainmentApi/events/daily/announce/start", Method.Post);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<System.Guid>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/daily/announce/start", HttpRequestMethod.POST);
+        return await client.MakeRequestAsync<System.Guid>(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

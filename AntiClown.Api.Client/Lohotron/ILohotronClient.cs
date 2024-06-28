@@ -1,8 +1,10 @@
 /* Generated file */
+using System.Threading.Tasks;
+
 namespace AntiClown.Api.Client.Lohotron;
 
 public interface ILohotronClient
 {
-    System.Threading.Tasks.Task<AntiClown.Api.Dto.Economies.LohotronRewardDto> UseLohotronAsync(System.Guid userId);
-    System.Threading.Tasks.Task ResetAsync();
+    Task<AntiClown.Api.Dto.Economies.LohotronRewardDto> UseLohotronAsync(System.Guid userId);
+    Task ResetAsync();
 }

@@ -1,59 +1,47 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Api.Client.Inventory;
 
 public class InventoryClient : IInventoryClient
 {
-    public InventoryClient(RestSharp.RestClient restClient)
+    public InventoryClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Inventories.InventoryDto> ReadAllAsync(System.Guid userId)
+    public async Task<AntiClown.Api.Dto.Inventories.InventoryDto> ReadAllAsync(System.Guid userId)
     {
-        var request = new RestRequest("api/inventories/{userId}/items", Method.Get);
-        request.AddUrlSegment("userId", userId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Inventories.InventoryDto>();
+        var requestBuilder = new RequestBuilder($"api/inventories/{userId}/items", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Inventories.InventoryDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Inventories.BaseItemDto> ReadAsync(System.Guid userId, System.Guid itemId)
+    public async Task<AntiClown.Api.Dto.Inventories.BaseItemDto> ReadAsync(System.Guid userId, System.Guid itemId)
     {
-        var request = new RestRequest("api/inventories/{userId}/items/{itemId}", Method.Get);
-        request.AddUrlSegment("userId", userId);
-        request.AddUrlSegment("itemId", itemId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Inventories.BaseItemDto>();
+        var requestBuilder = new RequestBuilder($"api/inventories/{userId}/items/{itemId}", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Inventories.BaseItemDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Inventories.LootBoxRewardDto> OpenLootBoxAsync(System.Guid userId)
+    public async Task<AntiClown.Api.Dto.Inventories.LootBoxRewardDto> OpenLootBoxAsync(System.Guid userId)
     {
-        var request = new RestRequest("api/inventories/{userId}/lootBoxes/open", Method.Post);
-        request.AddUrlSegment("userId", userId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Inventories.LootBoxRewardDto>();
+        var requestBuilder = new RequestBuilder($"api/inventories/{userId}/lootBoxes/open", HttpRequestMethod.POST);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Inventories.LootBoxRewardDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task ChangeItemActiveStatusAsync(System.Guid userId, System.Guid itemId, System.Boolean isActive)
+    public async Task ChangeItemActiveStatusAsync(System.Guid userId, System.Guid itemId, bool isActive)
     {
-        var request = new RestRequest("api/inventories/{userId}/items/{itemId}/active/{isActive}", Method.Post);
-        request.AddUrlSegment("userId", userId);
-        request.AddUrlSegment("itemId", itemId);
-        request.AddUrlSegment("isActive", isActive);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"api/inventories/{userId}/items/{itemId}/active/{isActive}", HttpRequestMethod.POST);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task SellAsync(System.Guid userId, System.Guid itemId)
+    public async Task SellAsync(System.Guid userId, System.Guid itemId)
     {
-        var request = new RestRequest("api/inventories/{userId}/items/{itemId}/sell", Method.Post);
-        request.AddUrlSegment("userId", userId);
-        request.AddUrlSegment("itemId", itemId);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"api/inventories/{userId}/items/{itemId}/sell", HttpRequestMethod.POST);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

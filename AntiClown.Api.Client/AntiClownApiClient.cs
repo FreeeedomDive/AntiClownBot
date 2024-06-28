@@ -12,15 +12,15 @@ namespace AntiClown.Api.Client;
 
 public class AntiClownApiClient : IAntiClownApiClient
 {
-    public AntiClownApiClient(RestSharp.RestClient restClient)
+    public AntiClownApiClient(RestSharp.RestClient client)
     {
-        Economy = new EconomyClient(restClient);
-        Inventory = new InventoryClient(restClient);
-        Lohotron = new LohotronClient(restClient);
-        Shop = new ShopClient(restClient);
-        Transactions = new TransactionsClient(restClient);
-        Tributes = new TributesClient(restClient);
-        Users = new UsersClient(restClient);
+        Economy = new EconomyClient(client);
+        Inventory = new InventoryClient(client);
+        Lohotron = new LohotronClient(client);
+        Shop = new ShopClient(client);
+        Transactions = new TransactionsClient(client);
+        Tributes = new TributesClient(client);
+        Users = new UsersClient(client);
     }
 
     public IEconomyClient Economy { get; }

@@ -1,72 +1,59 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Api.Client.Shop;
 
 public class ShopClient : IShopClient
 {
-    public ShopClient(RestSharp.RestClient restClient)
+    public ShopClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Shops.CurrentShopInfoDto> ReadAsync(System.Guid shopId)
+    public async Task<AntiClown.Api.Dto.Shops.CurrentShopInfoDto> ReadAsync(System.Guid shopId)
     {
-        var request = new RestRequest("api/shops/{shopId}", Method.Get);
-        request.AddUrlSegment("shopId", shopId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Shops.CurrentShopInfoDto>();
+        var requestBuilder = new RequestBuilder($"api/shops/{shopId}", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Shops.CurrentShopInfoDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Shops.ShopItemDto> RevealAsync(System.Guid shopId, System.Guid itemId)
+    public async Task<AntiClown.Api.Dto.Shops.ShopItemDto> RevealAsync(System.Guid shopId, System.Guid itemId)
     {
-        var request = new RestRequest("api/shops/{shopId}/items/{itemId}/reveal", Method.Post);
-        request.AddUrlSegment("shopId", shopId);
-        request.AddUrlSegment("itemId", itemId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Shops.ShopItemDto>();
+        var requestBuilder = new RequestBuilder($"api/shops/{shopId}/items/{itemId}/reveal", HttpRequestMethod.POST);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Shops.ShopItemDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Inventories.BaseItemDto> BuyAsync(System.Guid shopId, System.Guid itemId)
+    public async Task<AntiClown.Api.Dto.Inventories.BaseItemDto> BuyAsync(System.Guid shopId, System.Guid itemId)
     {
-        var request = new RestRequest("api/shops/{shopId}/items/{itemId}/buy", Method.Post);
-        request.AddUrlSegment("shopId", shopId);
-        request.AddUrlSegment("itemId", itemId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Inventories.BaseItemDto>();
+        var requestBuilder = new RequestBuilder($"api/shops/{shopId}/items/{itemId}/buy", HttpRequestMethod.POST);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Inventories.BaseItemDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task ReRollAsync(System.Guid shopId)
+    public async Task ReRollAsync(System.Guid shopId)
     {
-        var request = new RestRequest("api/shops/{shopId}/reroll", Method.Post);
-        request.AddUrlSegment("shopId", shopId);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"api/shops/{shopId}/reroll", HttpRequestMethod.POST);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task ResetAsync(System.Guid shopId)
+    public async Task ResetAsync(System.Guid shopId)
     {
-        var request = new RestRequest("api/shops/{shopId}/reset", Method.Post);
-        request.AddUrlSegment("shopId", shopId);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"api/shops/{shopId}/reset", HttpRequestMethod.POST);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Shops.ShopStatsDto> ReadStatsAsync(System.Guid shopId)
+    public async Task<AntiClown.Api.Dto.Shops.ShopStatsDto> ReadStatsAsync(System.Guid shopId)
     {
-        var request = new RestRequest("api/shops/{shopId}/stats", Method.Get);
-        request.AddUrlSegment("shopId", shopId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Shops.ShopStatsDto>();
+        var requestBuilder = new RequestBuilder($"api/shops/{shopId}/stats", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Shops.ShopStatsDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task ResetAllAsync()
+    public async Task ResetAllAsync()
     {
-        var request = new RestRequest("api/shops/resetAll", Method.Post);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"api/shops/resetAll", HttpRequestMethod.POST);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

@@ -1,22 +1,23 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Entertainment.Api.Client.BedgeEvent;
 
 public class BedgeEventClient : IBedgeEventClient
 {
-    public BedgeEventClient(RestSharp.RestClient restClient)
+    public BedgeEventClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<System.Guid> StartNewAsync()
+    public async Task<System.Guid> StartNewAsync()
     {
-        var request = new RestRequest("entertainmentApi/events/common/bedge/start", Method.Post);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<System.Guid>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/common/bedge/start", HttpRequestMethod.POST);
+        return await client.MakeRequestAsync<System.Guid>(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

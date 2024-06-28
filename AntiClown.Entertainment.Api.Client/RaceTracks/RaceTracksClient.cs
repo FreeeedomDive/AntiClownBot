@@ -1,30 +1,30 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Entertainment.Api.Client.RaceTracks;
 
 public class RaceTracksClient : IRaceTracksClient
 {
-    public RaceTracksClient(RestSharp.RestClient restClient)
+    public RaceTracksClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.CommonEvents.Race.RaceTrackDto[]> ReadAllAsync()
+    public async Task<AntiClown.Entertainment.Api.Dto.CommonEvents.Race.RaceTrackDto[]> ReadAllAsync()
     {
-        var request = new RestRequest("entertainmentApi/events/common/race/tracks/", Method.Get);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.CommonEvents.Race.RaceTrackDto[]>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/common/race/tracks/", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.CommonEvents.Race.RaceTrackDto[]>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task CreateAsync(AntiClown.Entertainment.Api.Dto.CommonEvents.Race.RaceTrackDto raceTrack)
+    public async Task CreateAsync(AntiClown.Entertainment.Api.Dto.CommonEvents.Race.RaceTrackDto raceTrack)
     {
-        var request = new RestRequest("entertainmentApi/events/common/race/tracks/", Method.Post);
-        request.AddJsonBody(raceTrack);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/events/common/race/tracks/", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(raceTrack);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

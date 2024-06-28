@@ -6,9 +6,9 @@ namespace AntiClown.DiscordBot.Client;
 
 public class AntiClownDiscordBotClient : IAntiClownDiscordBotClient
 {
-    public AntiClownDiscordBotClient(RestSharp.RestClient restClient)
+    public AntiClownDiscordBotClient(RestSharp.RestClient client)
     {
-        DiscordMembers = new DiscordMembersClient(restClient);
+        DiscordMembers = new DiscordMembersClient(client);
     }
 
     public IDiscordMembersClient DiscordMembers { get; }

@@ -1,46 +1,43 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Entertainment.Api.Client.MinecraftAccount;
 
 public class MinecraftAccountClient : IMinecraftAccountClient
 {
-    public MinecraftAccountClient(RestSharp.RestClient restClient)
+    public MinecraftAccountClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.RegisterResponse> RegisterAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.RegisterRequest registerRequest)
+    public async Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.RegisterResponse> RegisterAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.RegisterRequest registerRequest)
     {
-        var request = new RestRequest("entertainmentApi/minecraftAccount/register", Method.Post);
-        request.AddJsonBody(registerRequest);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.MinecraftAuth.RegisterResponse>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/minecraftAccount/register", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(registerRequest);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.MinecraftAuth.RegisterResponse>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ChangeSkinResponse> SetSkinAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.ChangeSkinRequest changeSkinRequest)
+    public async Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ChangeSkinResponse> SetSkinAsync(AntiClown.Entertainment.Api.Dto.MinecraftAuth.ChangeSkinRequest changeSkinRequest)
     {
-        var request = new RestRequest("entertainmentApi/minecraftAccount/setSkin", Method.Post);
-        request.AddJsonBody(changeSkinRequest);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ChangeSkinResponse>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/minecraftAccount/setSkin", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(changeSkinRequest);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.MinecraftAuth.ChangeSkinResponse>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.GetRegisteredUsersResponse> GetAllNicknamesAsync()
+    public async Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.GetRegisteredUsersResponse> GetAllNicknamesAsync()
     {
-        var request = new RestRequest("entertainmentApi/minecraftAccount/getNicknames", Method.Get);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.MinecraftAuth.GetRegisteredUsersResponse>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/minecraftAccount/getNicknames", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.MinecraftAuth.GetRegisteredUsersResponse>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.HasRegistrationResponse> HasRegistrationByDiscordUserAsync(System.Guid discordUserId)
+    public async Task<AntiClown.Entertainment.Api.Dto.MinecraftAuth.HasRegistrationResponse> HasRegistrationByDiscordUserAsync(System.Guid discordUserId)
     {
-        var request = new RestRequest("entertainmentApi/minecraftAccount/hasRegistration/byDiscordUser/{discordUserId}", Method.Get);
-        request.AddUrlSegment("discordUserId", discordUserId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Entertainment.Api.Dto.MinecraftAuth.HasRegistrationResponse>();
+        var requestBuilder = new RequestBuilder($"entertainmentApi/minecraftAccount/hasRegistration/byDiscordUser/{discordUserId}", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.MinecraftAuth.HasRegistrationResponse>(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

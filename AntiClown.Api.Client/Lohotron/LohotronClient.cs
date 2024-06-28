@@ -1,30 +1,29 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Api.Client.Lohotron;
 
 public class LohotronClient : ILohotronClient
 {
-    public LohotronClient(RestSharp.RestClient restClient)
+    public LohotronClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Economies.LohotronRewardDto> UseLohotronAsync(System.Guid userId)
+    public async Task<AntiClown.Api.Dto.Economies.LohotronRewardDto> UseLohotronAsync(System.Guid userId)
     {
-        var request = new RestRequest("api/economy/{userId}/lohotron", Method.Post);
-        request.AddUrlSegment("userId", userId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Economies.LohotronRewardDto>();
+        var requestBuilder = new RequestBuilder($"api/economy/{userId}/lohotron", HttpRequestMethod.POST);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Economies.LohotronRewardDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task ResetAsync()
+    public async Task ResetAsync()
     {
-        var request = new RestRequest("api/economy/lohotron/reset", Method.Post);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"api/economy/lohotron/reset", HttpRequestMethod.POST);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

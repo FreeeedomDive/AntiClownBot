@@ -22,25 +22,25 @@ namespace AntiClown.Entertainment.Api.Client;
 
 public class AntiClownEntertainmentApiClient : IAntiClownEntertainmentApiClient
 {
-    public AntiClownEntertainmentApiClient(RestSharp.RestClient restClient)
+    public AntiClownEntertainmentApiClient(RestSharp.RestClient client)
     {
-        Parties = new PartiesClient(restClient);
-        MinecraftAccount = new MinecraftAccountClient(restClient);
-        MinecraftAuth = new MinecraftAuthClient(restClient);
-        F1Predictions = new F1PredictionsClient(restClient);
-        F1PredictionsStats = new F1PredictionsStatsClient(restClient);
-        ActiveDailyEventsIndex = new ActiveDailyEventsIndexClient(restClient);
-        AnnounceEvent = new AnnounceEventClient(restClient);
-        PaymentsAndResetsEvent = new PaymentsAndResetsEventClient(restClient);
-        ActiveEventsIndex = new ActiveEventsIndexClient(restClient);
-        BedgeEvent = new BedgeEventClient(restClient);
-        GuessNumberEvent = new GuessNumberEventClient(restClient);
-        LotteryEvent = new LotteryEventClient(restClient);
-        RaceDrivers = new RaceDriversClient(restClient);
-        RaceEvent = new RaceEventClient(restClient);
-        RaceTracks = new RaceTracksClient(restClient);
-        RemoveCoolDownsEvent = new RemoveCoolDownsEventClient(restClient);
-        TransfusionEvent = new TransfusionEventClient(restClient);
+        Parties = new PartiesClient(client);
+        MinecraftAccount = new MinecraftAccountClient(client);
+        MinecraftAuth = new MinecraftAuthClient(client);
+        F1Predictions = new F1PredictionsClient(client);
+        F1PredictionsStats = new F1PredictionsStatsClient(client);
+        ActiveDailyEventsIndex = new ActiveDailyEventsIndexClient(client);
+        AnnounceEvent = new AnnounceEventClient(client);
+        PaymentsAndResetsEvent = new PaymentsAndResetsEventClient(client);
+        ActiveEventsIndex = new ActiveEventsIndexClient(client);
+        BedgeEvent = new BedgeEventClient(client);
+        GuessNumberEvent = new GuessNumberEventClient(client);
+        LotteryEvent = new LotteryEventClient(client);
+        RaceDrivers = new RaceDriversClient(client);
+        RaceEvent = new RaceEventClient(client);
+        RaceTracks = new RaceTracksClient(client);
+        RemoveCoolDownsEvent = new RemoveCoolDownsEventClient(client);
+        TransfusionEvent = new TransfusionEventClient(client);
     }
 
     public IPartiesClient Parties { get; }

@@ -1,46 +1,43 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Api.Client.Users;
 
 public class UsersClient : IUsersClient
 {
-    public UsersClient(RestSharp.RestClient restClient)
+    public UsersClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Users.UserDto[]> ReadAllAsync()
+    public async Task<AntiClown.Api.Dto.Users.UserDto[]> ReadAllAsync()
     {
-        var request = new RestRequest("api/users/", Method.Get);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Users.UserDto[]>();
+        var requestBuilder = new RequestBuilder($"api/users/", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Users.UserDto[]>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Users.UserDto> ReadAsync(System.Guid userId)
+    public async Task<AntiClown.Api.Dto.Users.UserDto> ReadAsync(System.Guid userId)
     {
-        var request = new RestRequest("api/users/{userId}", Method.Get);
-        request.AddUrlSegment("userId", userId);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Users.UserDto>();
+        var requestBuilder = new RequestBuilder($"api/users/{userId}", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Users.UserDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Users.UserDto[]> FindAsync(AntiClown.Api.Dto.Users.UserFilterDto filter)
+    public async Task<AntiClown.Api.Dto.Users.UserDto[]> FindAsync(AntiClown.Api.Dto.Users.UserFilterDto filter)
     {
-        var request = new RestRequest("api/users/find", Method.Post);
-        request.AddJsonBody(filter);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Users.UserDto[]>();
+        var requestBuilder = new RequestBuilder($"api/users/find", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(filter);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Users.UserDto[]>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<System.Guid> CreateAsync(AntiClown.Api.Dto.Users.NewUserDto newUser)
+    public async Task<System.Guid> CreateAsync(AntiClown.Api.Dto.Users.NewUserDto newUser)
     {
-        var request = new RestRequest("api/users/", Method.Post);
-        request.AddJsonBody(newUser);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<System.Guid>();
+        var requestBuilder = new RequestBuilder($"api/users/", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(newUser);
+        return await client.MakeRequestAsync<System.Guid>(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

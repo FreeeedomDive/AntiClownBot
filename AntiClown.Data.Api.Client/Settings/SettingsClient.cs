@@ -1,47 +1,42 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Data.Api.Client.Settings;
 
 public class SettingsClient : ISettingsClient
 {
-    public SettingsClient(RestSharp.RestClient restClient)
+    public SettingsClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Data.Api.Dto.Settings.SettingDto[]> ReadAllAsync()
+    public async Task<AntiClown.Data.Api.Dto.Settings.SettingDto[]> ReadAllAsync()
     {
-        var request = new RestRequest("dataApi/settings/", Method.Get);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Data.Api.Dto.Settings.SettingDto[]>();
+        var requestBuilder = new RequestBuilder($"dataApi/settings/", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Data.Api.Dto.Settings.SettingDto[]>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Data.Api.Dto.Settings.SettingDto> ReadAsync(System.String category, System.String key)
+    public async Task<AntiClown.Data.Api.Dto.Settings.SettingDto> ReadAsync(string category, string key)
     {
-        var request = new RestRequest("dataApi/settings/categories/{category}/keys/{key}", Method.Get);
-        request.AddUrlSegment("category", category);
-        request.AddUrlSegment("key", key);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Data.Api.Dto.Settings.SettingDto>();
+        var requestBuilder = new RequestBuilder($"dataApi/settings/categories/{category}/keys/{key}", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Data.Api.Dto.Settings.SettingDto>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Data.Api.Dto.Settings.SettingDto[]> FindAsync(System.String category)
+    public async Task<AntiClown.Data.Api.Dto.Settings.SettingDto[]> FindAsync(string category)
     {
-        var request = new RestRequest("dataApi/settings/categories/{category}", Method.Get);
-        request.AddUrlSegment("category", category);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Data.Api.Dto.Settings.SettingDto[]>();
+        var requestBuilder = new RequestBuilder($"dataApi/settings/categories/{category}", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Data.Api.Dto.Settings.SettingDto[]>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task CreateOrUpdateAsync(AntiClown.Data.Api.Dto.Settings.SettingDto settingDto)
+    public async Task CreateOrUpdateAsync(AntiClown.Data.Api.Dto.Settings.SettingDto settingDto)
     {
-        var request = new RestRequest("dataApi/settings/", Method.Post);
-        request.AddJsonBody(settingDto);
-        var response = await restClient.ExecuteAsync(request);
-        response.ThrowIfNotSuccessful();
+        var requestBuilder = new RequestBuilder($"dataApi/settings/", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(settingDto);
+        await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }

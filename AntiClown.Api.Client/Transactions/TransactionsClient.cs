@@ -1,33 +1,32 @@
 /* Generated file */
-using RestSharp;
+using System.Threading.Tasks;
+
 using Xdd.HttpHelpers.Models.Extensions;
+using Xdd.HttpHelpers.Models.Requests;
 
 namespace AntiClown.Api.Client.Transactions;
 
 public class TransactionsClient : ITransactionsClient
 {
-    public TransactionsClient(RestSharp.RestClient restClient)
+    public TransactionsClient(RestSharp.RestClient client)
     {
-        this.restClient = restClient;
+        this.client = client;
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Economies.TransactionDto[]> ReadTransactionsAsync(System.Guid userId, System.Int32 skip = 0, System.Int32 take = 10)
+    public async Task<AntiClown.Api.Dto.Economies.TransactionDto[]> ReadTransactionsAsync(System.Guid userId, int skip = 0, int take = 10)
     {
-        var request = new RestRequest("api/economy/{userId}/transactions", Method.Get);
-        request.AddUrlSegment("userId", userId);
-        request.AddQueryParameter("skip", skip.ToString());
-        request.AddQueryParameter("take", take.ToString());
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Economies.TransactionDto[]>();
+        var requestBuilder = new RequestBuilder($"api/economy/{userId}/transactions", HttpRequestMethod.GET);
+        requestBuilder.WithQueryParameter("skip", skip);
+        requestBuilder.WithQueryParameter("take", take);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Economies.TransactionDto[]>(requestBuilder.Build());
     }
 
-    public async System.Threading.Tasks.Task<AntiClown.Api.Dto.Economies.TransactionDto[]> FindTransactionsAsync(AntiClown.Api.Dto.Economies.TransactionsFilterDto filter)
+    public async Task<AntiClown.Api.Dto.Economies.TransactionDto[]> FindTransactionsAsync(AntiClown.Api.Dto.Economies.TransactionsFilterDto filter)
     {
-        var request = new RestRequest("api/economy/transactions/find", Method.Post);
-        request.AddJsonBody(filter);
-        var response = await restClient.ExecuteAsync(request);
-        return response.TryDeserialize<AntiClown.Api.Dto.Economies.TransactionDto[]>();
+        var requestBuilder = new RequestBuilder($"api/economy/transactions/find", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(filter);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Economies.TransactionDto[]>(requestBuilder.Build());
     }
 
-    private readonly RestSharp.RestClient restClient;
+    private readonly RestSharp.RestClient client;
 }
