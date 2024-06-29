@@ -40,7 +40,7 @@ export default function F1RaceClassificationsElement(
         <Typography>{position}</Typography>
       </TableCell>
       <TableCell sx={{ padding: '1px'}}>
-        <ButtonGroup size="small" aria-label="Small button group">
+        <ButtonGroup size="medium">
           <Button
             variant="contained"
             color="success"
