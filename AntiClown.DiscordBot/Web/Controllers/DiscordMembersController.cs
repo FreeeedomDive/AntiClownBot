@@ -39,6 +39,7 @@ public class DiscordMembersController : Controller
 
         return new DiscordMemberDto
         {
+            UserId = userId,
             ServerName = discordMember.Nickname,
             UserName = discordMember.Username,
             AvatarUrl = discordMember.AvatarUrl,
