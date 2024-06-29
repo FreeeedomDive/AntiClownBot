@@ -93,7 +93,7 @@ const UserPageSideBar = ({user}: Props) => {
                         <ListItemText primary="Таблица"/>
                       </ListItemButton>
                     </ListItem>
-                    <ListItem key={"F1PredictionsStandings"} disablePadding>
+                    <ListItem key={"F1PredictionsCurrent"} disablePadding>
                       <ListItemButton
                         sx={{pl: 4}}
                         onClick={() => navigate(buildLink(userId, "f1Predictions/current"))}
@@ -104,7 +104,7 @@ const UserPageSideBar = ({user}: Props) => {
                       </ListItemButton>
                     </ListItem>
                     <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
-                      <ListItem key={"F1PredictionsStandings"} disablePadding>
+                      <ListItem key={"F1PredictionsAdmin"} disablePadding>
                         <ListItemButton
                           sx={{pl: 4}}
                           onClick={() => navigate(buildLink(userId, "f1Predictions/admin"))}
@@ -112,7 +112,7 @@ const UserPageSideBar = ({user}: Props) => {
                             location.pathname === buildLink(userId, "f1Predictions/admin")
                           }
                         >
-                          <ListItemText primary={"Внос результатов"}/>
+                          <ListItemText primary={"Админка результатов"}/>
                         </ListItemButton>
                       </ListItem>
                     </RightsWrapper>

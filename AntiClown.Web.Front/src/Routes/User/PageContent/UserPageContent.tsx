@@ -12,6 +12,7 @@ import {Loader} from "../../../Components/Loader/Loader";
 import F1PredictionsList from "./ControlPanel/F1Predictions/F1PredictionsList";
 import F1PredictionsAdminList from "./Admin/F1/F1PredictionsAdminList";
 import EditSettings from "./Admin/Settings/EditSettings";
+import F1PredictionsStandings from "./ControlPanel/F1Predictions/F1PredictionsStandings";
 
 interface Props {
   user: UserDto | null | undefined;
@@ -42,7 +43,7 @@ const UserPageContent = ({ user }: Props) => {
           <Route path="/economy" element={<UserEconomy />} />
           <Route path="/inventory" element={<UserInventory />} />
           <Route path="/shop" element={<UserShop />} />
-          <Route path="/f1Predictions/standings" element={<></>} />
+          <Route path="/f1Predictions/standings" element={<F1PredictionsStandings />} />
           <Route path="/f1Predictions/current" element={<F1PredictionsList />} />
           <Route path="/f1Predictions/admin" element={<F1PredictionsAdminList />} />
           <Route path="/settings" element={<EditSettings />} />
