@@ -92,11 +92,11 @@ public class F1PredictionsClient : IF1PredictionsClient
         return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]>(requestBuilder.Build());
     }
 
-    public async Task<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]>> ReadStandingsAsync(int? season = null)
+    public async Task<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto?[]>> ReadStandingsAsync(int? season = null)
     {
         var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/standings", HttpRequestMethod.GET);
         requestBuilder.WithQueryParameter("season", season);
-        return await client.MakeRequestAsync<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]>>(requestBuilder.Build());
+        return await client.MakeRequestAsync<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto?[]>>(requestBuilder.Build());
     }
 
     private readonly RestSharp.RestClient client;

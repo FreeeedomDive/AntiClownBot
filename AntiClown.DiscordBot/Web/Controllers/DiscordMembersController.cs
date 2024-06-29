@@ -18,6 +18,19 @@ public class DiscordMembersController : Controller
     [HttpGet("{userId:guid}")]
     public async Task<DiscordMemberDto?> GetDiscordMember([FromRoute] Guid userId)
     {
+        return await GetDiscordMemberAsync(userId);
+    }
+
+    [HttpPost("getMany")]
+    public async Task<DiscordMemberDto?[]> GetDiscordMembers([FromBody] Guid[] usersIds)
+    {
+        var tasks = usersIds.Select(GetDiscordMemberAsync);
+        var members = await Task.WhenAll(tasks);
+        return members;
+    }
+
+    private async Task<DiscordMemberDto?> GetDiscordMemberAsync(Guid userId)
+    {
         var discordMember = await usersCache.GetMemberByApiIdAsync(userId);
         if (discordMember is null)
         {
