@@ -42,8 +42,9 @@ const UserPageContent = ({ user }: Props) => {
           <Route path="/economy" element={<UserEconomy />} />
           <Route path="/inventory" element={<UserInventory />} />
           <Route path="/shop" element={<UserShop />} />
-          <Route path="/f1Predictions" element={<F1PredictionsList />} />
-          <Route path="/f1PredictionsAdmin" element={<F1PredictionsAdminList />} />
+          <Route path="/f1Predictions/standings" element={<></>} />
+          <Route path="/f1Predictions/current" element={<F1PredictionsList />} />
+          <Route path="/f1Predictions/admin" element={<F1PredictionsAdminList />} />
           <Route path="/settings" element={<EditSettings />} />
         </Routes>
       )}
