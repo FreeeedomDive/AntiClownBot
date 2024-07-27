@@ -17,7 +17,7 @@ export default function TransactionRow({transaction, scamCoinsBefore, scamCoinsA
     return number;
   }
 
-  const isTransactionPositive = transaction.scamCoinDiff > 0;
+  const isTransactionPositive = transaction.scamCoinDiff >= 0;
   return (
     <Stack direction="column">
       <Typography variant="h6">{transaction.reason}</Typography>
