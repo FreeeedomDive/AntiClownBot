@@ -25,11 +25,9 @@ import {
 } from "../../../../../Dto/F1Predictions/F1SafetyCarsPredictionDto";
 import {F1RaceDto} from "../../../../../Dto/F1Predictions/F1RaceDto";
 import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
-import {LoadingButton} from "@mui/lab";
 import {AddPredictionResultDto} from "../../../../../Dto/F1Predictions/AddPredictionResultDto";
 import {DRIVER_PAIRS, DRIVERS} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
 import {Save} from "@mui/icons-material";
-import {Loader} from "../../../../../Components/Loader/Loader";
 
 const isDriver = (driver: string): driver is F1DriverDto => {
   return driver in F1DriverDto;

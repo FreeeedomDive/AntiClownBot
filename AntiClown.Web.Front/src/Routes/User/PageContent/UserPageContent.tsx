@@ -4,7 +4,7 @@ import {useStore} from "../../../Stores";
 import UserOverview from "./UserOverview/UserOverview";
 import UserInventory from "./ControlPanel/UserInventory";
 import UserShop from "./ControlPanel/UserShop";
-import UserEconomy from "./ControlPanel/UserEconomy";
+import UserEconomy from "./ControlPanel/Economy/UserEconomy";
 import ItemsTrade from "./Interaction/ItemsTrade";
 import {UserDto} from "../../../Dto/Users/UserDto";
 import {Typography} from "@mui/material";
