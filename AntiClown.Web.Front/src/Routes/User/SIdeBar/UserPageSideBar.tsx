@@ -1,10 +1,11 @@
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import React from "react";
-import {Divider, List, ListItem, ListItemButton, ListItemText, Stack,} from "@mui/material";
+import React, {useState} from "react";
+import {Collapse, Divider, List, ListItem, ListItemButton, ListItemText, Stack,} from "@mui/material";
 import {useStore} from "../../../Stores";
 import {UserDto} from "../../../Dto/Users/UserDto";
 import {RightsWrapper} from "../../../Components/RIghts/RightsWrapper";
 import {RightsDto} from "../../../Dto/Rights/RightsDto";
+import {ExpandLess, ExpandMore} from "@mui/icons-material";
 
 const buildLink = (userId: string, subLink?: string): string => {
   return `/user/${userId}` + (subLink ? `/${subLink}` : "");
@@ -21,6 +22,7 @@ const UserPageSideBar = ({user}: Props) => {
   const isMyPage = currentLoggedInUserId === userId;
   const navigate = useNavigate();
   const location = useLocation();
+  const [isF1PredictionsCollapseOpened, setIsF1PredictionsCollapseOpened] = useState(false);
 
   return (
     <Stack
@@ -70,36 +72,61 @@ const UserPageSideBar = ({user}: Props) => {
             <RightsWrapper
               requiredRights={[RightsDto.F1Predictions]}
             >
-              <ListItem key={"F1Predictions"} disablePadding>
-                <ListItemButton
-                  onClick={() => navigate(buildLink(userId, "f1Predictions"))}
-                  selected={
-                    location.pathname === buildLink(userId, "f1Predictions")
-                  }
-                >
-                  <ListItemText primary={"Предсказания F1"}/>
-                </ListItemButton>
-              </ListItem>
-            </RightsWrapper>
-            <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
-              <ListItem key={"F1PredictionsAdmin"} disablePadding>
-                <ListItemButton
-                  onClick={() => navigate(buildLink(userId, "f1PredictionsAdmin"))}
-                  selected={
-                    location.pathname === buildLink(userId, "f1PredictionsAdmin")
-                  }
-                >
-                  <ListItemText primary={"Админка предсказаний F1"}/>
-                </ListItemButton>
-              </ListItem>
+              <>
+                <ListItem key={"F1Predictions"} disablePadding>
+                  <ListItemButton
+                    onClick={() => setIsF1PredictionsCollapseOpened(!isF1PredictionsCollapseOpened)}
+                  >
+                    <ListItemText primary={"Предсказания F1"}/>
+                    {isF1PredictionsCollapseOpened ? <ExpandLess/> : <ExpandMore/>}
+                  </ListItemButton>
+                </ListItem>
+                <Collapse in={isF1PredictionsCollapseOpened} timeout="auto" unmountOnExit>
+                  <List disablePadding>
+                    <ListItem key={"F1PredictionsStandings"} disablePadding>
+                      <ListItemButton
+                        sx={{pl: 4}}
+                        onClick={() => navigate(buildLink(userId, "f1Predictions/standings"))}
+                        selected={
+                          location.pathname === buildLink(userId, "f1Predictions/standings")
+                        }>
+                        <ListItemText primary="Таблица"/>
+                      </ListItemButton>
+                    </ListItem>
+                    <ListItem key={"F1PredictionsCurrent"} disablePadding>
+                      <ListItemButton
+                        sx={{pl: 4}}
+                        onClick={() => navigate(buildLink(userId, "f1Predictions/current"))}
+                        selected={
+                          location.pathname === buildLink(userId, "f1Predictions/current")
+                        }>
+                        <ListItemText primary="Текущие предсказания"/>
+                      </ListItemButton>
+                    </ListItem>
+                    <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
+                      <ListItem key={"F1PredictionsAdmin"} disablePadding>
+                        <ListItemButton
+                          sx={{pl: 4}}
+                          onClick={() => navigate(buildLink(userId, "f1Predictions/admin"))}
+                          selected={
+                            location.pathname === buildLink(userId, "f1Predictions/admin")
+                          }
+                        >
+                          <ListItemText primary={"Админка результатов"}/>
+                        </ListItemButton>
+                      </ListItem>
+                    </RightsWrapper>
+                  </List>
+                </Collapse>
+              </>
             </RightsWrapper>
             <RightsWrapper requiredRights={[RightsDto.EditSettings]}>
               <ListItem key={"Settings"} disablePadding>
                 <ListItemButton
-                    onClick={() => navigate(buildLink(userId, "settings"))}
-                    selected={
-                        location.pathname === buildLink(userId, "settings")
-                    }
+                  onClick={() => navigate(buildLink(userId, "settings"))}
+                  selected={
+                    location.pathname === buildLink(userId, "settings")
+                  }
                 >
                   <ListItemText primary={"Настройки"}/>
                 </ListItemButton>

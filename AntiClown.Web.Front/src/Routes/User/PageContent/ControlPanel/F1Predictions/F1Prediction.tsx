@@ -2,8 +2,8 @@ import {useParams} from "react-router-dom";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {
   Alert,
-  Button,
-  Checkbox,
+  Button, ButtonGroup,
+  Checkbox, Fab,
   FormControl,
   FormControlLabel,
   InputAdornment,
@@ -29,6 +29,7 @@ import {LoadingButton} from "@mui/lab";
 import {AddPredictionResultDto} from "../../../../../Dto/F1Predictions/AddPredictionResultDto";
 import {DRIVER_PAIRS, DRIVERS} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
 import {Save} from "@mui/icons-material";
+import {Loader} from "../../../../../Components/Loader/Loader";
 
 const isDriver = (driver: string): driver is F1DriverDto => {
   return driver in F1DriverDto;
@@ -51,6 +52,12 @@ type DNFList = [
   F1DriverDto,
   F1DriverDto,
 ];
+
+const fabStyle = {
+  position: 'absolute',
+  bottom: 16,
+  right: 16,
+};
 
 interface Props {
   f1Race: F1RaceDto;
@@ -349,58 +356,48 @@ export default function F1Prediction({f1Race}: Props) {
                 justifyContent={"space-between"}
                 spacing={3}
               >
-                <Button
-                  variant={
-                    selectedDriversFromTeams.has(driver1)
-                      ? "contained"
-                      : "outlined"
-                  }
-                  style={{width: teamButtonWidth}}
-                  onClick={() => {
-                    selectedDriversFromTeams.delete(driver2);
-                    selectedDriversFromTeams.add(driver1);
+                <ButtonGroup size="large">
+                  <Button
+                    variant={
+                      selectedDriversFromTeams.has(driver1)
+                        ? "contained"
+                        : "outlined"
+                    }
+                    style={{width: teamButtonWidth}}
+                    onClick={() => {
+                      selectedDriversFromTeams.delete(driver2);
+                      selectedDriversFromTeams.add(driver1);
 
-                    setSelectedDriversFromTeams(
-                      new Set(selectedDriversFromTeams)
-                    );
-                  }}
-                >
-                  {driver1}
-                </Button>
-                <span>vs</span>
-                <Button
-                  variant={
-                    selectedDriversFromTeams.has(driver2)
-                      ? "contained"
-                      : "outlined"
-                  }
-                  style={{width: teamButtonWidth}}
-                  onClick={() => {
-                    selectedDriversFromTeams.delete(driver1);
-                    selectedDriversFromTeams.add(driver2);
+                      setSelectedDriversFromTeams(
+                        new Set(selectedDriversFromTeams)
+                      );
+                    }}
+                  >
+                    {driver1}
+                  </Button>
+                  <Button
+                    variant={
+                      selectedDriversFromTeams.has(driver2)
+                        ? "contained"
+                        : "outlined"
+                    }
+                    style={{width: teamButtonWidth}}
+                    onClick={() => {
+                      selectedDriversFromTeams.delete(driver1);
+                      selectedDriversFromTeams.add(driver2);
 
-                    setSelectedDriversFromTeams(
-                      new Set(selectedDriversFromTeams)
-                    );
-                  }}
-                >
-                  {driver2}
-                </Button>
+                      setSelectedDriversFromTeams(
+                        new Set(selectedDriversFromTeams)
+                      );
+                    }}
+                  >
+                    {driver2}
+                  </Button>
+                </ButtonGroup>
               </Stack>
             ))}
           </Stack>
         </Stack>
-        <LoadingButton
-          loading={isSaving}
-          disabled={!isValid || isSaving}
-          size="large"
-          variant="contained"
-          startIcon={<Save/>}
-          style={{margin: "auto", marginBottom: "0", width: "50%"}}
-          onClick={saveF1Prediction}
-        >
-          Сохранить
-        </LoadingButton>
       </Stack>
       <Snackbar
         open={savePredictionResult !== null}
@@ -419,6 +416,16 @@ export default function F1Prediction({f1Race}: Props) {
           }
         </Alert>
       </Snackbar>
+      <Fab
+        disabled={!isValid || isSaving}
+        variant="extended"
+        sx={fabStyle}
+        onClick={saveF1Prediction}
+        color={"success"}
+      >
+        <Save/>
+        {isSaving ? (<>Сохранение...</>) : (<>Сохранить</>)}
+      </Fab>
     </Stack>
-  );
+  )
 }

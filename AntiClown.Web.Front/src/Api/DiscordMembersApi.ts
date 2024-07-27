@@ -21,4 +21,9 @@ export default class DiscordMembersApi {
     }
     return result.data;
   }
+
+  static getMembers = async (usersIds: string[]): Promise<DiscordMemberDto[]> => {
+    const result = await DiscordMembersApi.init().post(`/getMany`, usersIds);
+    return result.data;
+  }
 }

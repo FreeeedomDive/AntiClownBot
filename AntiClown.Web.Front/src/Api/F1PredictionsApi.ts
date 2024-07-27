@@ -1,9 +1,10 @@
 import axios from "axios";
-import { F1PredictionDto } from "../Dto/F1Predictions/F1PredictionDto";
-import { F1RaceDto } from "../Dto/F1Predictions/F1RaceDto";
+import {F1PredictionDto} from "../Dto/F1Predictions/F1PredictionDto";
+import {F1RaceDto} from "../Dto/F1Predictions/F1RaceDto";
 import {AddPredictionResultDto} from "../Dto/F1Predictions/AddPredictionResultDto";
 import {F1PredictionRaceResultDto} from "../Dto/F1Predictions/F1PredictionRaceResultDto";
 import {F1RaceFilterDto} from "../Dto/F1Predictions/F1RaceFilterDto";
+import {F1PredictionsStandingsDto} from "../Dto/F1Predictions/F1PredictionsStandingsDto";
 
 export default class F1PredictionsApi {
   static init = () => {
@@ -69,5 +70,13 @@ export default class F1PredictionsApi {
     await F1PredictionsApi.init().post(
       `${raceId}/finish`
     );
+  };
+
+  static getStandings = async (season?: number): Promise<F1PredictionsStandingsDto> => {
+    const qs = require('qs');
+    const result = await F1PredictionsApi.init().get(
+      `standings`, qs.stringify({"season": season}),
+    );
+    return result.data;
   };
 }

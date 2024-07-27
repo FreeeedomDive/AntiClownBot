@@ -20,5 +20,11 @@ public class DiscordMembersController : Controller
         return await antiClownDiscordBotClient.DiscordMembers.GetDiscordMemberAsync(userId);
     }
 
+    [HttpPost("getMany")]
+    public async Task<DiscordMemberDto?[]> GetDiscordMembers([FromBody] Guid[] usersIds)
+    {
+        return await antiClownDiscordBotClient.DiscordMembers.GetDiscordMembersAsync(usersIds);
+    }
+
     private readonly IAntiClownDiscordBotClient antiClownDiscordBotClient;
 }

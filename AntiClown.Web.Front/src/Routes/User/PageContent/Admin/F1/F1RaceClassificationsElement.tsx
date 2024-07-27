@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {
-  Button,
+  Button, ButtonGroup,
   Checkbox,
   FormControlLabel,
   TableCell, TableRow,
@@ -40,25 +40,25 @@ export default function F1RaceClassificationsElement(
         <Typography>{position}</Typography>
       </TableCell>
       <TableCell sx={{ padding: '1px'}}>
-        <Button
-          variant="contained"
-          color="success"
-          disabled={position === 1}
-          onClick={() => moveUp()}
-        >
-          <ArrowUpwardIcon/>
-        </Button>
-      </TableCell>
-      <TableCell sx={{ padding: '1px'}}>
-        <Button
-          variant="contained"
-          color="error"
-          disabled={position === 20}
-          sx={{marginLeft: '4px'}}
-          onClick={() => moveDown()}
-        >
-          <ArrowDownwardIcon/>
-        </Button>
+        <ButtonGroup size="medium">
+          <Button
+            variant="contained"
+            color="success"
+            disabled={position === 1}
+            onClick={() => moveUp()}
+          >
+            <ArrowUpwardIcon/>
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            disabled={position === 20}
+            sx={{marginLeft: '4px'}}
+            onClick={() => moveDown()}
+          >
+            <ArrowDownwardIcon/>
+          </Button>
+        </ButtonGroup>
       </TableCell>
       <TableCell sx={{ padding: '1px'}}>
         <Typography>{f1Driver}</Typography>

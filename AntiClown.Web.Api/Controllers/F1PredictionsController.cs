@@ -63,5 +63,11 @@ public class F1PredictionsController : Controller
         return NoContent();
     }
 
+    [HttpGet("standings")]
+    public async Task<Dictionary<Guid, F1PredictionUserResultDto?[]>> ReadStandingsAsync(int? season = null)
+    {
+        return await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season);
+    }
+
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }
