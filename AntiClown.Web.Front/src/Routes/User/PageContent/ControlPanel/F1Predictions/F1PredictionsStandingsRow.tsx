@@ -66,13 +66,13 @@ export function F1PredictionsStandingsRow({discordMember, results, isMe, races}:
         }
       </TableRow>
       <TableRow>
-        <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={16}>
+        <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={64}>
           <Collapse in={isOpen} timeout="auto" unmountOnExit>
             <Box sx={{margin: 1}}>
-              <Typography variant="h6" gutterBottom component="div">
+              <Typography variant="h6" component="div">
                 История предсказаний {userName}
               </Typography>
-              <Table size="small" aria-label="purchases">
+              <Table size="small">
                 <TableHead>
                   <TableRow key={"mainRow"}>
                     <TableCell key={"head_name"}>Гонка</TableCell>

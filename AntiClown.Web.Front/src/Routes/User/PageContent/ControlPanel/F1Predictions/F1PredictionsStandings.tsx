@@ -17,8 +17,10 @@ import {
   TableRow
 } from "@mui/material";
 import {convertRaceNameToFlag} from "../../../../../Helpers/RaceNameToFlagHelper";
+import {Loader} from "../../../../../Components/Loader/Loader";
 
 export default function F1PredictionsStandings() {
+  const [isLoading, setIsLoading] = useState(true);
   const {userId} = useParams<"userId">();
   const [finishedRaces, setFinishedRaces] = useState<F1RaceDto[]>([]);
   const [standings, setStandings] = useState<F1PredictionsStandingsDto>({});
@@ -37,6 +39,7 @@ export default function F1PredictionsStandings() {
       setFinishedRaces(allFinishedRaces);
       setStandings(standings);
       setMembers(members);
+      setIsLoading(false);
     }
 
     load();
@@ -45,55 +48,64 @@ export default function F1PredictionsStandings() {
   const sortedStandings = Object.values(standings).sort((a, b) => countTotalPoints(b) - countTotalPoints(a));
   return (
     <>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell align={"center"} sx={{padding: '8px'}}/>
-              <TableCell align={"left"} sx={{padding: '8px'}}/>
-              <TableCell align={"center"} sx={{padding: '8px'}}>
-                Очки за сезон
-              </TableCell>
-              {
-                finishedRaces.map(
-                  race => {
-                    const avatar = <Avatar
-                      variant={"rounded"}
-                      alt={race.name}
-                      src={convertRaceNameToFlag(race.name)}
-                      sx={{width: 24, height: 24}}
-                    />;
-                    return (<TableCell sx={{padding: '4px'}}>
-                      {
-                        race.name.indexOf("спринт") > 0
-                          ?
-                          <Badge variant={"dot"} color="info">
-                            {avatar}
-                          </Badge>
-                          : avatar
+      {
+        isLoading && (
+          <Loader/>
+        )
+      }
+      {
+        !isLoading && (
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align={"center"} sx={{padding: '8px'}}/>
+                  <TableCell align={"left"} sx={{padding: '8px'}}/>
+                  <TableCell align={"center"} sx={{padding: '8px'}}>
+                    Очки за сезон
+                  </TableCell>
+                  {
+                    finishedRaces.map(
+                      race => {
+                        const avatar = <Avatar
+                          variant={"rounded"}
+                          alt={race.name}
+                          src={convertRaceNameToFlag(race.name)}
+                          sx={{width: 24, height: 24}}
+                        />;
+                        return (<TableCell sx={{padding: '4px'}}>
+                          {
+                            race.name.indexOf("спринт") > 0
+                              ?
+                              <Badge variant={"dot"} color="info">
+                                {avatar}
+                              </Badge>
+                              : avatar
+                          }
+                        </TableCell>)
                       }
-                    </TableCell>)
+                    )
                   }
-                )
-              }
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sortedStandings
-              .map(results => {
-                const resultsUserId = results.find(x => x.userId !== null)!.userId;
-                return (<F1PredictionsStandingsRow
-                  key={resultsUserId}
-                  discordMember={members.find(member => member.userId === resultsUserId)}
-                  results={standings[resultsUserId]}
-                  isMe={resultsUserId === userId}
-                  races={finishedRaces}
-                />);
-              })
-            }
-          </TableBody>
-        </Table>
-      </TableContainer>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedStandings
+                  .map(results => {
+                    const resultsUserId = results.find(x => x.userId !== null)!.userId;
+                    return (<F1PredictionsStandingsRow
+                      key={resultsUserId}
+                      discordMember={members.find(member => member.userId === resultsUserId)}
+                      results={standings[resultsUserId]}
+                      isMe={resultsUserId === userId}
+                      races={finishedRaces}
+                    />);
+                  })
+                }
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )
+      }
     </>
   )
 }
