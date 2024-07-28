@@ -17,15 +17,15 @@ interface PredictionsSeries {
 }
 
 const colors: string[] = [
+  "#ffd700",
+  "#c0c0c0",
+  "#cd7f32",
   "#930000",
-  "#005a0f",
-  "#1fb590",
   "#2300d6",
+  "#005a0f",
   "#b600ad",
   "#00cf29",
-  "#aaff00",
   "#ff7c7c",
-  "#d57800",
   "#37c2ff",
 ]
 
