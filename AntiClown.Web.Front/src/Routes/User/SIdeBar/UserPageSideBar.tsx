@@ -123,7 +123,16 @@ const UserPageSideBar = ({ user }: Props) => {
                           buildLink(userId, "f1Predictions/standings")
                         }
                       >
-                        <ListItemText primary="Таблица" />
+                        <Badge
+                          anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "left",
+                          }}
+                          variant="dot"
+                          color="warning"
+                        >
+                          <ListItemText primary="Таблица" />
+                        </Badge>
                       </ListItemButton>
                     </ListItem>
                     <ListItem key={"F1PredictionsCurrent"} disablePadding>
