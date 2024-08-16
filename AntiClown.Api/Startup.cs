@@ -80,7 +80,7 @@ public class Startup
             }
         );
         services.AddTransient<IAntiClownDataApiClient>(
-            serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetService<IOptions<AntiClownDataApiConnectionOptions>>()?.Value.ServiceUrl)
+            serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
         );
 
         // temp manual build VersionedSqlRepository
