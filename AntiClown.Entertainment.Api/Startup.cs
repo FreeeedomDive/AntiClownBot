@@ -1,6 +1,6 @@
-﻿using System.Text;
-using AntiClown.Api.Client;
+﻿using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
+using AntiClown.Core.OpenTelemetryTracing;
 using AntiClown.Core.Schedules;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
@@ -53,6 +53,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddOpenTelemetryTracing(Configuration);
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
         // configure AutoMapper
@@ -96,47 +97,47 @@ public class Startup
         );
 
         // configure repositories
-        services.AddTransient<ICommonEventsRepository, CommonEventsRepository>();
-        services.AddTransient<IRaceTracksRepository, RaceTracksRepository>();
-        services.AddTransient<IRaceDriversRepository, RaceDriversRepository>();
-        services.AddTransient<ICommonActiveEventsIndexRepository, CommonActiveEventsIndexRepository>();
-        services.AddTransient<IDailyEventsRepository, DailyEventsRepository>();
-        services.AddTransient<IActiveDailyEventsIndexRepository, ActiveDailyEventsIndexRepository>();
-        services.AddTransient<IPartiesRepository, PartiesRepository>();
-        services.AddTransient<IF1RacesRepository, F1RacesRepository>();
-        services.AddTransient<IF1PredictionResultsRepository, F1PredictionResultsRepository>();
+        services.AddTransientWithProxy<ICommonEventsRepository, CommonEventsRepository>();
+        services.AddTransientWithProxy<IRaceTracksRepository, RaceTracksRepository>();
+        services.AddTransientWithProxy<IRaceDriversRepository, RaceDriversRepository>();
+        services.AddTransientWithProxy<ICommonActiveEventsIndexRepository, CommonActiveEventsIndexRepository>();
+        services.AddTransientWithProxy<IDailyEventsRepository, DailyEventsRepository>();
+        services.AddTransientWithProxy<IActiveDailyEventsIndexRepository, ActiveDailyEventsIndexRepository>();
+        services.AddTransientWithProxy<IPartiesRepository, PartiesRepository>();
+        services.AddTransientWithProxy<IF1RacesRepository, F1RacesRepository>();
+        services.AddTransientWithProxy<IF1PredictionResultsRepository, F1PredictionResultsRepository>();
 
         // configure other stuff
-        services.AddTransient<IAntiClownApiClient>(
+        services.AddTransientWithProxy<IAntiClownApiClient>(
             serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownApiConnectionOptions>>().Value.ServiceUrl)
         );
-        services.AddTransient<IAntiClownDataApiClient>(
+        services.AddTransientWithProxy<IAntiClownDataApiClient>(
             serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
         );
-        services.AddTransient<ICommonEventsMessageProducer, CommonEventsMessageProducer>();
-        services.AddTransient<IDailyEventsMessageProducer, DailyEventsMessageProducer>();
-        services.AddTransient<IPartiesMessageProducer, PartiesMessageProducer>();
-        services.AddTransient<IScheduler, HangfireScheduler>();
-        services.AddTransient<IRaceGenerator, RaceGenerator>();
+        services.AddTransientWithProxy<ICommonEventsMessageProducer, CommonEventsMessageProducer>();
+        services.AddTransientWithProxy<IDailyEventsMessageProducer, DailyEventsMessageProducer>();
+        services.AddTransientWithProxy<IPartiesMessageProducer, PartiesMessageProducer>();
+        services.AddTransientWithProxy<IScheduler, HangfireScheduler>();
+        services.AddTransientWithProxy<IRaceGenerator, RaceGenerator>();
 
         // configure services
-        services.AddTransient<IGuessNumberEventService, GuessNumberEventService>();
-        services.AddTransient<ILotteryService, LotteryService>();
-        services.AddTransient<IRemoveCoolDownsEventService, RemoveCoolDownsEventService>();
-        services.AddTransient<ITransfusionEventService, TransfusionEventService>();
-        services.AddTransient<IRaceService, RaceService>();
-        services.AddTransient<IBedgeService, BedgeService>();
-        services.AddTransient<IActiveEventsIndexService, ActiveEventsIndexService>();
-        services.AddTransient<IAnnounceEventService, AnnounceEventService>();
-        services.AddTransient<IPaymentsAndResetsService, PaymentsAndResetsService>();
-        services.AddTransient<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
-        services.AddTransient<IPartiesService, PartiesService>();
-        services.AddTransient<IF1PredictionsMessageProducer, F1PredictionsMessageProducer>();
-        services.AddTransient<IF1PredictionsService, F1PredictionsService>();
-        services.AddTransient<IF1PredictionsStatisticsService, F1PredictionsStatisticsService>();
-        services.AddTransient<IMinecraftAuthService, MinecraftAuthService>();
-        services.AddTransient<IMinecraftAccountRepository, MinecraftAccountRepository>();
-        services.AddTransient<IMinecraftAccountService, MinecraftAccountService>();
+        services.AddTransientWithProxy<IGuessNumberEventService, GuessNumberEventService>();
+        services.AddTransientWithProxy<ILotteryService, LotteryService>();
+        services.AddTransientWithProxy<IRemoveCoolDownsEventService, RemoveCoolDownsEventService>();
+        services.AddTransientWithProxy<ITransfusionEventService, TransfusionEventService>();
+        services.AddTransientWithProxy<IRaceService, RaceService>();
+        services.AddTransientWithProxy<IBedgeService, BedgeService>();
+        services.AddTransientWithProxy<IActiveEventsIndexService, ActiveEventsIndexService>();
+        services.AddTransientWithProxy<IAnnounceEventService, AnnounceEventService>();
+        services.AddTransientWithProxy<IPaymentsAndResetsService, PaymentsAndResetsService>();
+        services.AddTransientWithProxy<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
+        services.AddTransientWithProxy<IPartiesService, PartiesService>();
+        services.AddTransientWithProxy<IF1PredictionsMessageProducer, F1PredictionsMessageProducer>();
+        services.AddTransientWithProxy<IF1PredictionsService, F1PredictionsService>();
+        services.AddTransientWithProxy<IF1PredictionsStatisticsService, F1PredictionsStatisticsService>();
+        services.AddTransientWithProxy<IMinecraftAuthService, MinecraftAuthService>();
+        services.AddTransientWithProxy<IMinecraftAccountRepository, MinecraftAccountRepository>();
+        services.AddTransientWithProxy<IMinecraftAccountService, MinecraftAccountService>();
 
         // configure HangFire
         services.AddHangfire(
@@ -150,7 +151,8 @@ public class Startup
             {
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 options.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
-            });
+            }
+        );
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

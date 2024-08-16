@@ -13,6 +13,7 @@ using AntiClown.Api.Core.Transactions.Services;
 using AntiClown.Api.Core.Users.Repositories;
 using AntiClown.Api.Core.Users.Services;
 using AntiClown.Api.Middlewares;
+using AntiClown.Core.OpenTelemetryTracing;
 using AntiClown.Core.Schedules;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
@@ -39,6 +40,8 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddOpenTelemetryTracing(Configuration);
+
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
         // configure AutoMapper
@@ -79,42 +82,42 @@ public class Startup
                 );
             }
         );
-        services.AddTransient<IAntiClownDataApiClient>(
+        services.AddTransientWithProxy<IAntiClownDataApiClient>(
             serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
         );
 
         // temp manual build VersionedSqlRepository
-        services.AddTransient<IVersionedSqlRepository<EconomyStorageElement>, VersionedSqlRepository<EconomyStorageElement>>();
-        services.AddTransient<IVersionedSqlRepository<ShopStorageElement>, VersionedSqlRepository<ShopStorageElement>>();
-        services.AddTransient<IVersionedSqlRepository<ShopStatsStorageElement>, VersionedSqlRepository<ShopStatsStorageElement>>();
+        services.AddTransientWithProxy<IVersionedSqlRepository<EconomyStorageElement>, VersionedSqlRepository<EconomyStorageElement>>();
+        services.AddTransientWithProxy<IVersionedSqlRepository<ShopStorageElement>, VersionedSqlRepository<ShopStorageElement>>();
+        services.AddTransientWithProxy<IVersionedSqlRepository<ShopStatsStorageElement>, VersionedSqlRepository<ShopStatsStorageElement>>();
 
         // configure repositories
-        services.AddTransient<IUsersRepository, UsersRepository>();
-        services.AddTransient<ITransactionsRepository, TransactionsRepository>();
-        services.AddTransient<IEconomyRepository, EconomyRepository>();
-        services.AddTransient<IItemsRepository, ItemsRepository>();
-        services.AddTransient<IShopsRepository, ShopsRepository>();
-        services.AddTransient<IShopItemsRepository, ShopItemsRepository>();
-        services.AddTransient<IShopStatsRepository, ShopStatsRepository>();
+        services.AddTransientWithProxy<IUsersRepository, UsersRepository>();
+        services.AddTransientWithProxy<ITransactionsRepository, TransactionsRepository>();
+        services.AddTransientWithProxy<IEconomyRepository, EconomyRepository>();
+        services.AddTransientWithProxy<IItemsRepository, ItemsRepository>();
+        services.AddTransientWithProxy<IShopsRepository, ShopsRepository>();
+        services.AddTransientWithProxy<IShopItemsRepository, ShopItemsRepository>();
+        services.AddTransientWithProxy<IShopStatsRepository, ShopStatsRepository>();
 
         // configure validators
-        services.AddTransient<IItemsValidator, ItemsValidator>();
-        services.AddTransient<IShopsValidator, ShopsValidator>();
+        services.AddTransientWithProxy<IItemsValidator, ItemsValidator>();
+        services.AddTransientWithProxy<IShopsValidator, ShopsValidator>();
 
         // configure other stuff
-        services.AddTransient<ITributeMessageProducer, TributeMessageProducer>();
-        services.AddTransient<IScheduler, HangfireScheduler>();
+        services.AddTransientWithProxy<ITributeMessageProducer, TributeMessageProducer>();
+        services.AddTransientWithProxy<IScheduler, HangfireScheduler>();
 
         // configure services
-        services.AddTransient<IUsersService, UsersService>();
-        services.AddTransient<INewUserService, NewUserService>();
-        services.AddTransient<ITransactionsService, TransactionsService>();
-        services.AddTransient<IEconomyService, EconomyService>();
-        services.AddTransient<IItemsService, ItemsService>();
-        services.AddTransient<IShopsService, ShopsService>();
-        services.AddTransient<ITributeService, TributeService>();
-        services.AddTransient<ILohotronRewardGenerator, LohotronRewardGenerator>();
-        services.AddTransient<ILohotronService, LohotronService>();
+        services.AddTransientWithProxy<IUsersService, UsersService>();
+        services.AddTransientWithProxy<INewUserService, NewUserService>();
+        services.AddTransientWithProxy<ITransactionsService, TransactionsService>();
+        services.AddTransientWithProxy<IEconomyService, EconomyService>();
+        services.AddTransientWithProxy<IItemsService, ItemsService>();
+        services.AddTransientWithProxy<IShopsService, ShopsService>();
+        services.AddTransientWithProxy<ITributeService, TributeService>();
+        services.AddTransientWithProxy<ILohotronRewardGenerator, LohotronRewardGenerator>();
+        services.AddTransientWithProxy<ILohotronService, LohotronService>();
 
         // configure HangFire
         services.AddHangfire(
@@ -123,13 +126,14 @@ public class Startup
         );
         services.AddHangfireServer();
 
-        
+
         services.AddControllers().AddNewtonsoftJson(
             options =>
             {
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 options.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
-            });
+            }
+        );
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
