@@ -13,7 +13,7 @@ using AntiClown.Api.Core.Transactions.Services;
 using AntiClown.Api.Core.Users.Repositories;
 using AntiClown.Api.Core.Users.Services;
 using AntiClown.Api.Middlewares;
-using AntiClown.Core.OpenTelemetryTracing;
+using AntiClown.Core.OpenTelemetry;
 using AntiClown.Core.Schedules;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;

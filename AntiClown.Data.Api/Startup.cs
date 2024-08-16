@@ -1,4 +1,4 @@
-﻿using AntiClown.Core.OpenTelemetryTracing;
+﻿using AntiClown.Core.OpenTelemetry;
 using AntiClown.Data.Api.Core.Database;
 using AntiClown.Data.Api.Core.Rights.Repositories;
 using AntiClown.Data.Api.Core.Rights.Services;

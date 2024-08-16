@@ -22,6 +22,7 @@
     <ItemGroup>
         <ProjectReference Include="..\AntiClown.Api.Core\AntiClown.Api.Core.csproj"/>
         <ProjectReference Include="..\AntiClown.Api.Dto\AntiClown.Api.Dto.csproj"/>
+        <ProjectReference Include="..\AntiClown.Core.OpenTelemetry\AntiClown.Core.OpenTelemetry.csproj" />
         <ProjectReference Include="..\AntiClown.Core\AntiClown.Core.csproj"/>
     </ItemGroup>
 </Project>

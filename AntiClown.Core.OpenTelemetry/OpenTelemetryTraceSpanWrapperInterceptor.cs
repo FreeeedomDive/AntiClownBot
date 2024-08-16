@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Castle.DynamicProxy;
 
-namespace AntiClown.Core.OpenTelemetryTracing;
+namespace AntiClown.Core.OpenTelemetry;
 
 public class OpenTelemetryTraceSpanWrapperInterceptor : IInterceptor
 {

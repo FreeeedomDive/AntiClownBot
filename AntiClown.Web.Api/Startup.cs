@@ -1,6 +1,6 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
-using AntiClown.Core.OpenTelemetryTracing;
+using AntiClown.Core.OpenTelemetry;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.DiscordBot.Client;

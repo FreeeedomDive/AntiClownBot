@@ -6,7 +6,7 @@ using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-namespace AntiClown.Core.OpenTelemetryTracing;
+namespace AntiClown.Core.OpenTelemetry;
 
 public static class ServiceCollectionExtensions
 {
