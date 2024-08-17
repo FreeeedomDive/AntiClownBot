@@ -19,11 +19,12 @@ public class CustomProxiedServiceProvider : IServiceProvider
 
     public object? GetService(Type serviceType)
     {
+        loggerClient.InfoAsync("Requested service: {serviceName}", serviceType.Name);
         var builtService = serviceProvider.GetRequiredService(serviceType);
         try
         {
             var interceptors = serviceProvider.GetServices<IInterceptor>().ToArray();
-            return proxyGenerator.CreateClassProxyWithTarget(serviceType, builtService, interceptors);
+            return proxyGenerator.CreateClassProxyWithTarget(builtService.GetType(), builtService, interceptors);
         }
         catch(Exception ex)
         {
