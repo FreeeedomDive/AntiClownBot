@@ -23,7 +23,7 @@ public class CustomProxiedServiceProvider : IServiceProvider
         try
         {
             var interceptors = serviceProvider.GetServices<IInterceptor>().ToArray();
-            return proxyGenerator.CreateInterfaceProxyWithTarget(typeof(SlashCommandModuleWithMiddlewares), builtService, interceptors);
+            return proxyGenerator.CreateClassProxyWithTarget(serviceType, builtService, interceptors);
         }
         catch(Exception ex)
         {
