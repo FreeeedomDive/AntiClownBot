@@ -526,7 +526,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task RegisterSlashCommandsAsync(DiscordClient client)
     {
-        var customProxiedServiceProvider = new CustomProxiedServiceProvider(serviceProvider, proxyGenerator);
+        var customProxiedServiceProvider = new CustomProxiedServiceProvider(serviceProvider, proxyGenerator, loggerClient);
         var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
         var slash = client.UseSlashCommands(
             new SlashCommandsConfiguration
