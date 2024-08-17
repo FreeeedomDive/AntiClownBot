@@ -42,7 +42,7 @@ public static class ServiceCollectionExtensions
         return serviceCollection;
     }
 
-    public static IServiceCollection AddProxies(this IServiceCollection serviceCollection)
+    private static IServiceCollection AddProxies(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton(new ProxyGenerator());
         serviceCollection.AddSingleton<IInterceptor, OpenTelemetryTraceSpanWrapperInterceptor>();
@@ -54,16 +54,21 @@ public static class ServiceCollectionExtensions
         where TInterface : class
         where TImplementation : class, TInterface
     {
-        serviceCollection.AddTransient<TImplementation>();
+        return serviceCollection.AddTransientWithProxy(typeof(TInterface), typeof(TImplementation));
+    }
+
+    public static IServiceCollection AddTransientWithProxy(this IServiceCollection serviceCollection, Type serviceType, Type implementationType)
+    {
+        serviceCollection.AddTransient(implementationType);
         serviceCollection.AddTransient(
-            typeof(TInterface),
+            serviceType,
             serviceProvider =>
             {
                 var proxyGenerator = serviceProvider.GetRequiredService<ProxyGenerator>();
-                var implementation = serviceProvider.GetRequiredService<TImplementation>();
+                var implementation = serviceProvider.GetRequiredService(implementationType);
                 var interceptors = serviceProvider.GetServices<IInterceptor>().ToArray();
 
-                return proxyGenerator.CreateInterfaceProxyWithTarget(typeof(TInterface), implementation, interceptors);
+                return proxyGenerator.CreateInterfaceProxyWithTarget(serviceType, implementation, interceptors);
             }
         );
         return serviceCollection;
