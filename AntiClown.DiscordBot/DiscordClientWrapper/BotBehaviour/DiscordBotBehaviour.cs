@@ -29,6 +29,7 @@ using AntiClown.DiscordBot.SlashCommands.Web;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Tools.Utility.Extensions;
 using AntiClown.Tools.Utility.Random;
+using Castle.DynamicProxy;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
@@ -51,7 +52,8 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         ILotteryService lotteryService,
         IPartiesService partiesService,
         ILoggerClient loggerClient,
-        IRaceService raceService
+        IRaceService raceService,
+        ProxyGenerator proxyGenerator
     )
     {
         this.serviceProvider = serviceProvider;
@@ -66,6 +68,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.partiesService = partiesService;
         this.loggerClient = loggerClient;
         this.raceService = raceService;
+        this.proxyGenerator = proxyGenerator;
     }
 
     public async Task ConfigureAsync()
@@ -523,11 +526,12 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
 
     private async Task RegisterSlashCommandsAsync(DiscordClient client)
     {
+        var customProxiedServiceProvider = new CustomProxiedServiceProvider(serviceProvider, proxyGenerator);
         var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
         var slash = client.UseSlashCommands(
             new SlashCommandsConfiguration
             {
-                Services = serviceProvider,
+                Services = customProxiedServiceProvider,
             }
         );
         slash.RegisterCommands<MinecraftRegisterCommand>(guildId);
@@ -665,6 +669,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly ILotteryService lotteryService;
     private readonly IPartiesService partiesService;
     private readonly IRaceService raceService;
+    private readonly ProxyGenerator proxyGenerator;
     private readonly IServiceProvider serviceProvider;
     private readonly IShopService shopService;
 }
