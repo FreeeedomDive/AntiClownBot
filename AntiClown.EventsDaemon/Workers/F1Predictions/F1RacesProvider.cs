@@ -96,7 +96,7 @@ public class F1RacesProvider : IF1RacesProvider
                    new F1RaceInfo
                    {
                        Name = "Нидерланды",
-                       PredictionsStartTime = new DateTime(2024, 08, 23),
+                       PredictionsStartTime = new DateTime(2024, 08, 24),
                    },
                    new F1RaceInfo
                    {
