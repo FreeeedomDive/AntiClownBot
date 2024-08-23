@@ -1,4 +1,5 @@
-﻿using AntiClown.Data.Api.Core.Database;
+﻿using AntiClown.Core.OpenTelemetry;
+using AntiClown.Data.Api.Core.Database;
 using AntiClown.Data.Api.Core.Rights.Repositories;
 using AntiClown.Data.Api.Core.Rights.Services;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
@@ -23,6 +24,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddOpenTelemetryTracing(Configuration);
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
         // configure AutoMapper
@@ -42,22 +44,23 @@ public class Startup
                 .ConfigurePostgreSql();
 
         // configure repositories
-        services.AddTransient<ISettingsRepository, SettingsRepository>();
-        services.AddTransient<ITokensRepository, TokensRepository>();
-        services.AddTransient<IRightsRepository, RightsRepository>();
+        services.AddTransientWithProxy<ISettingsRepository, SettingsRepository>();
+        services.AddTransientWithProxy<ITokensRepository, TokensRepository>();
+        services.AddTransientWithProxy<IRightsRepository, RightsRepository>();
 
         // configure services
-        services.AddTransient<ISettingsService, SettingsService>();
-        services.AddTransient<ITokenGenerator, GuidTokenGenerator>();
-        services.AddTransient<ITokensService, TokensService>();
-        services.AddTransient<IRightsService, RightsService>();
+        services.AddTransientWithProxy<ISettingsService, SettingsService>();
+        services.AddTransientWithProxy<ITokenGenerator, GuidTokenGenerator>();
+        services.AddTransientWithProxy<ITokensService, TokensService>();
+        services.AddTransientWithProxy<IRightsService, RightsService>();
 
         services.AddControllers().AddNewtonsoftJson(
             options =>
             {
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 options.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
-            });
+            }
+        );
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

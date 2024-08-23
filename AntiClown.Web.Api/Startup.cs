@@ -1,5 +1,6 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
+using AntiClown.Core.OpenTelemetry;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.DiscordBot.Client;
@@ -23,6 +24,8 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddOpenTelemetryTracing(Configuration);
+
         var telemetryApiUrl = Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
         var deployingEnvironment = Configuration.GetValue<string>("DeployingEnvironment");
         services.ConfigureTelemetryClientWithLogger(
@@ -36,32 +39,30 @@ public class Startup
         services.Configure<AntiClownEntertainmentApiConnectionOptions>(Configuration.GetSection("AntiClownEntertainmentApi"));
         services.Configure<AntiClownDiscordApiConnectionOptions>(Configuration.GetSection("AntiClownDiscordApi"));
 
-        services.AddTransient<IAntiClownDataApiClient>(
+        services.AddTransientWithProxy<IAntiClownDataApiClient>(
             serviceProvider => AntiClownDataApiClientProvider.Build(
                 serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl
             )
         );
-        services.AddTransient<IAntiClownApiClient>(
+        services.AddTransientWithProxy<IAntiClownApiClient>(
             serviceProvider => AntiClownApiClientProvider.Build(
                 serviceProvider.GetRequiredService<IOptions<AntiClownApiConnectionOptions>>().Value.ServiceUrl
             )
         );
-        services.AddTransient<IAntiClownEntertainmentApiClient>(
+        services.AddTransientWithProxy<IAntiClownEntertainmentApiClient>(
             serviceProvider => AntiClownEntertainmentApiClientProvider.Build(
                 serviceProvider.GetRequiredService<IOptions<AntiClownEntertainmentApiConnectionOptions>>().Value.ServiceUrl
             )
         );
-        services.AddTransient<IAntiClownDiscordBotClient>(
+        services.AddTransientWithProxy<IAntiClownDiscordBotClient>(
             serviceProvider => AntiClownDiscordApiClientProvider.Build(
                 serviceProvider.GetRequiredService<IOptions<AntiClownDiscordApiConnectionOptions>>().Value.ServiceUrl
             )
         );
 
         services.AddControllers().AddNewtonsoftJson(
-            options =>
-            {
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
-            });
+            options => { options.SerializerSettings.Converters.Add(new StringEnumConverter()); }
+        );
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

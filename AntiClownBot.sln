@@ -89,6 +89,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.DiscordBot.Dto", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientGenerator", "ClientGenerator\ClientGenerator.csproj", "{45E2C1CB-ED4D-43A4-AF35-37DE7B19829E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Core.OpenTelemetry", "AntiClown.Core.OpenTelemetry\AntiClown.Core.OpenTelemetry.csproj", "{F4C17E77-67D4-4F97-B3E1-643F793E3658}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +233,10 @@ Global
 		{45E2C1CB-ED4D-43A4-AF35-37DE7B19829E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45E2C1CB-ED4D-43A4-AF35-37DE7B19829E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45E2C1CB-ED4D-43A4-AF35-37DE7B19829E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4C17E77-67D4-4F97-B3E1-643F793E3658}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4C17E77-67D4-4F97-B3E1-643F793E3658}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4C17E77-67D4-4F97-B3E1-643F793E3658}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4C17E77-67D4-4F97-B3E1-643F793E3658}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -274,5 +280,6 @@ Global
 		{5F92911B-CFA8-419A-BB69-6CE54890B376} = {FD8C2265-D1BC-4808-B209-8D794440BEDE}
 		{D4A6AA16-C4A3-40F2-9098-7DD26D47CCCE} = {FD8C2265-D1BC-4808-B209-8D794440BEDE}
 		{45E2C1CB-ED4D-43A4-AF35-37DE7B19829E} = {090A7686-8D18-42F2-BC5E-6D8EC65A3685}
+		{F4C17E77-67D4-4F97-B3E1-643F793E3658} = {1FE4EEC9-A515-4E6B-A4E9-01A805D97760}
 	EndGlobalSection
 EndGlobal

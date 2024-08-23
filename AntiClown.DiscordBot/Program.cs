@@ -1,5 +1,6 @@
 using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
+using AntiClown.Core.OpenTelemetry;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Data.Api.Client.Extensions;
@@ -66,6 +67,7 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddLogging();
+        builder.Services.AddOpenTelemetryTracing(builder.Configuration);
         var telemetryApiUrl = builder.Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
         var deployingEnvironment = builder.Configuration.GetValue<string>("DeployingEnvironment");
         var projectName = "AntiClownBot" + (string.IsNullOrEmpty(deployingEnvironment) ? "" : $"_{deployingEnvironment}");
@@ -154,15 +156,15 @@ internal class Program
 
     private static void BuildApiClients(WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<IAntiClownApiClient>(
+        builder.Services.AddTransientWithProxy<IAntiClownApiClient>(
             serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownApiConnectionOptions>>().Value.ServiceUrl)
         );
-        builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(
+        builder.Services.AddTransientWithProxy<IAntiClownEntertainmentApiClient>(
             serviceProvider => AntiClownEntertainmentApiClientProvider.Build(
                 serviceProvider.GetRequiredService<IOptions<AntiClownEntertainmentApiConnectionOptions>>().Value.ServiceUrl
             )
         );
-        builder.Services.AddTransient<IAntiClownDataApiClient>(
+        builder.Services.AddTransientWithProxy<IAntiClownDataApiClient>(
             serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
         );
     }
@@ -172,7 +174,7 @@ internal class Program
         builder.Services.AddSingleton<DiscordClient>(
             serviceProvider =>
             {
-                var settings = serviceProvider.GetService<IOptions<Settings>>()!.Value;
+                var settings = serviceProvider.GetRequiredService<IOptions<Settings>>().Value;
                 var antiClownDataApiClient = serviceProvider.GetRequiredService<IAntiClownDataApiClient>();
                 var logLevel = antiClownDataApiClient.Settings.ReadAsync(SettingsCategory.DiscordBot, "LogLevel").GetAwaiter().GetResult().Value;
                 return new DiscordClient(
@@ -186,14 +188,14 @@ internal class Program
                 );
             }
         );
-        builder.Services.AddTransient<IDiscordClientWrapper, DiscordClientWrapper.DiscordClientWrapper>();
-        builder.Services.AddTransient<IDiscordBotBehaviour, DiscordBotBehaviour>();
+        builder.Services.AddTransientWithProxy<IDiscordClientWrapper, DiscordClientWrapper.DiscordClientWrapper>();
+        builder.Services.AddTransientWithProxy<IDiscordBotBehaviour, DiscordBotBehaviour>();
     }
 
     private static void BuildDiscordCaches(WebApplicationBuilder builder)
     {
-        builder.Services.AddSingleton<IUsersCache, UsersCache>();
-        builder.Services.AddSingleton<IEmotesCache, EmotesCache>();
+        builder.Services.AddSingletonWithProxy<IUsersCache, UsersCache>();
+        builder.Services.AddSingletonWithProxy<IEmotesCache, EmotesCache>();
     }
 
     private static void BuildSlashCommands(WebApplicationBuilder builder)
@@ -204,56 +206,56 @@ internal class Program
         foreach (var middlewareType in middlewareTypes)
         {
             builder.Services.AddTransient(middlewareType);
-            builder.Services.AddTransient(typeof(ICommandMiddleware), middlewareType);
+            builder.Services.AddTransientWithProxy(typeof(ICommandMiddleware), middlewareType);
         }
 
-        builder.Services.AddSingleton<ICommandExecutor, CommandExecutor>();
+        builder.Services.AddSingletonWithProxy<ICommandExecutor, CommandExecutor>();
     }
 
     private static void BuildEmbedBuilders(WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<ITributeEmbedBuilder, TributeEmbedBuilder>();
-        builder.Services.AddTransient<ITransactionsEmbedBuilder, TransactionsEmbedBuilder>();
-        builder.Services.AddTransient<IInventoryEmbedBuilder, InventoryEmbedBuilder>();
-        builder.Services.AddTransient<IShopEmbedBuilder, ShopEmbedBuilder>();
-        builder.Services.AddTransient<IGuessNumberEmbedBuilder, GuessNumberEmbedBuilder>();
-        builder.Services.AddTransient<ITransfusionEmbedBuilder, TransfusionEmbedBuilder>();
-        builder.Services.AddTransient<ILotteryEmbedBuilder, LotteryEmbedBuilder>();
-        builder.Services.AddTransient<IPartyEmbedBuilder, PartyEmbedBuilder>();
-        builder.Services.AddTransient<IRatingEmbedBuilder, RatingEmbedBuilder>();
-        builder.Services.AddTransient<ILootBoxEmbedBuilder, LootBoxEmbedBuilder>();
-        builder.Services.AddTransient<IReleaseEmbedBuilder, ReleaseEmbedBuilder>();
-        builder.Services.AddTransient<IF1PredictionStatsEmbedBuilder, F1PredictionStatsEmbedBuilder>();
-        builder.Services.AddTransient<IF1PredictionsEmbedBuilder, F1PredictionsEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<ITributeEmbedBuilder, TributeEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<ITransactionsEmbedBuilder, TransactionsEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<IInventoryEmbedBuilder, InventoryEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<IShopEmbedBuilder, ShopEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<IGuessNumberEmbedBuilder, GuessNumberEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<ITransfusionEmbedBuilder, TransfusionEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<ILotteryEmbedBuilder, LotteryEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<IPartyEmbedBuilder, PartyEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<IRatingEmbedBuilder, RatingEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<ILootBoxEmbedBuilder, LootBoxEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<IReleaseEmbedBuilder, ReleaseEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<IF1PredictionStatsEmbedBuilder, F1PredictionStatsEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<IF1PredictionsEmbedBuilder, F1PredictionsEmbedBuilder>();
     }
 
     private static void BuildInteractivityServices(WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<IInventoryService, InventoryService>();
-        builder.Services.AddTransient<IShopService, ShopService>();
-        builder.Services.AddTransient<IGuessNumberEventService, GuessNumberEventService>();
-        builder.Services.AddTransient<ILotteryService, LotteryService>();
-        builder.Services.AddTransient<IRemoveCoolDownsEmbedBuilder, RemoveCoolDownsEmbedBuilder>();
-        builder.Services.AddTransient<IPartiesService, PartiesService>();
-        builder.Services.AddTransient<IRaceService, RaceService>();
-        builder.Services.AddTransient<ICurrentReleaseProvider, CurrentReleaseProvider>();
-        builder.Services.AddTransient<IReleasesService, ReleasesService>();
+        builder.Services.AddTransientWithProxy<IInventoryService, InventoryService>();
+        builder.Services.AddTransientWithProxy<IShopService, ShopService>();
+        builder.Services.AddTransientWithProxy<IGuessNumberEventService, GuessNumberEventService>();
+        builder.Services.AddTransientWithProxy<ILotteryService, LotteryService>();
+        builder.Services.AddTransientWithProxy<IRemoveCoolDownsEmbedBuilder, RemoveCoolDownsEmbedBuilder>();
+        builder.Services.AddTransientWithProxy<IPartiesService, PartiesService>();
+        builder.Services.AddTransientWithProxy<IRaceService, RaceService>();
+        builder.Services.AddTransientWithProxy<ICurrentReleaseProvider, CurrentReleaseProvider>();
+        builder.Services.AddTransientWithProxy<IReleasesService, ReleasesService>();
     }
 
     private static void BuildCommonEventsConsumers(WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<ICommonEventConsumer<GuessNumberEventDto>, GuessNumberEventConsumer>();
-        builder.Services.AddTransient<ICommonEventConsumer<LotteryEventDto>, LotteryEventConsumer>();
-        builder.Services.AddTransient<ICommonEventConsumer<RaceEventDto>, RaceEventConsumer>();
-        builder.Services.AddTransient<ICommonEventConsumer<RemoveCoolDownsEventDto>, RemoveCoolDownsEventConsumer>();
-        builder.Services.AddTransient<ICommonEventConsumer<TransfusionEventDto>, TransfusionEventConsumer>();
-        builder.Services.AddTransient<ICommonEventConsumer<BedgeEventDto>, BedgeEventConsumer>();
+        builder.Services.AddTransientWithProxy<ICommonEventConsumer<GuessNumberEventDto>, GuessNumberEventConsumer>();
+        builder.Services.AddTransientWithProxy<ICommonEventConsumer<LotteryEventDto>, LotteryEventConsumer>();
+        builder.Services.AddTransientWithProxy<ICommonEventConsumer<RaceEventDto>, RaceEventConsumer>();
+        builder.Services.AddTransientWithProxy<ICommonEventConsumer<RemoveCoolDownsEventDto>, RemoveCoolDownsEventConsumer>();
+        builder.Services.AddTransientWithProxy<ICommonEventConsumer<TransfusionEventDto>, TransfusionEventConsumer>();
+        builder.Services.AddTransientWithProxy<ICommonEventConsumer<BedgeEventDto>, BedgeEventConsumer>();
     }
 
     private static void BuildDailyEventsConsumers(WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<IDailyEventConsumer<AnnounceEventDto>, AnnounceEventConsumer>();
-        builder.Services.AddTransient<IDailyEventConsumer<ResetsAndPaymentsEventDto>, ResetsAndPaymentsConsumer>();
+        builder.Services.AddTransientWithProxy<IDailyEventConsumer<AnnounceEventDto>, AnnounceEventConsumer>();
+        builder.Services.AddTransientWithProxy<IDailyEventConsumer<ResetsAndPaymentsEventDto>, ResetsAndPaymentsConsumer>();
     }
 
     private static void BuildMassTransit(WebApplicationBuilder builder)
@@ -266,7 +268,7 @@ internal class Program
                 massTransitConfiguration.UsingRabbitMq(
                     (context, rabbitMqConfiguration) =>
                     {
-                        var rabbitMqOptions = context.GetService<IOptions<RabbitMqOptions>>()!.Value;
+                        var rabbitMqOptions = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
                         rabbitMqConfiguration.ConfigureEndpoints(context);
                         rabbitMqConfiguration.Host(
                             rabbitMqOptions.Host, "/", hostConfiguration =>

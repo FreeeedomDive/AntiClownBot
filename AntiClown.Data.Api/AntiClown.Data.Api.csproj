@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\AntiClown.Core.OpenTelemetry\AntiClown.Core.OpenTelemetry.csproj" />
+      <ProjectReference Include="..\AntiClown.Core\AntiClown.Core.csproj" />
       <ProjectReference Include="..\AntiClown.Data.Api.Core\AntiClown.Data.Api.Core.csproj" />
       <ProjectReference Include="..\AntiClown.Data.Api.Dto\AntiClown.Data.Api.Dto.csproj" />
     </ItemGroup>
