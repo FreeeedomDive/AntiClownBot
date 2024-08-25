@@ -141,7 +141,7 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                 await RespondToInteractionAsync(context, response);
 
                 var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-                await antiClownEntertainmentApiClient.Parties.CreateAsync(
+                var partyId = await antiClownEntertainmentApiClient.Parties.CreateAsync(
                     new CreatePartyDto
                     {
                         CreatorId = userId,
@@ -151,6 +151,7 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                         Description = description,
                     }
                 );
+                await antiClownEntertainmentApiClient.Parties.JoinAsync(partyId, userId);
             }
         );
     }
