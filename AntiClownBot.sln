@@ -91,6 +91,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientGenerator", "ClientGe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Core.OpenTelemetry", "AntiClown.Core.OpenTelemetry\AntiClown.Core.OpenTelemetry.csproj", "{F4C17E77-67D4-4F97-B3E1-643F793E3658}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.TelegramBot", "AntiClown.TelegramBot\AntiClown.TelegramBot.csproj", "{A1CB1D77-1D9A-4BE6-A4E9-F06CDF7767B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -237,6 +239,10 @@ Global
 		{F4C17E77-67D4-4F97-B3E1-643F793E3658}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4C17E77-67D4-4F97-B3E1-643F793E3658}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4C17E77-67D4-4F97-B3E1-643F793E3658}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1CB1D77-1D9A-4BE6-A4E9-F06CDF7767B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1CB1D77-1D9A-4BE6-A4E9-F06CDF7767B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1CB1D77-1D9A-4BE6-A4E9-F06CDF7767B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1CB1D77-1D9A-4BE6-A4E9-F06CDF7767B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -281,5 +287,6 @@ Global
 		{D4A6AA16-C4A3-40F2-9098-7DD26D47CCCE} = {FD8C2265-D1BC-4808-B209-8D794440BEDE}
 		{45E2C1CB-ED4D-43A4-AF35-37DE7B19829E} = {090A7686-8D18-42F2-BC5E-6D8EC65A3685}
 		{F4C17E77-67D4-4F97-B3E1-643F793E3658} = {1FE4EEC9-A515-4E6B-A4E9-01A805D97760}
+		{A1CB1D77-1D9A-4BE6-A4E9-F06CDF7767B9} = {4453D483-C837-49E7-A447-D9CF95F7CA9E}
 	EndGlobalSection
 EndGlobal

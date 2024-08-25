@@ -34,3 +34,4 @@ AntiClown.Data.Api.PostgreSqlMigrationsApplier/appsettings.Production.json
 AntiClown.Data.Api/appsettings.Local.json
 AntiClown.Data.Api/appsettings.Production.json
 AntiClown.Web.Api/appsettings.Production.json
+AntiClown.TelegramBot/appsettings.Production.json
