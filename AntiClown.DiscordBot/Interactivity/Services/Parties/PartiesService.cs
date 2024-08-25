@@ -176,18 +176,18 @@ public class PartiesService : IPartiesService
                    new DiscordButtonComponent
                    (
                        ButtonStyle.Secondary,
-                       InteractionsIds.PartyButtons.BuildId(party.Id, InteractionsIds.PartyButtons.Close),
-                       "Закрыть сбор",
-                       !party.IsOpened,
-                       new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("BibleThump"))
-                   ),
-                   new DiscordButtonComponent
-                   (
-                       ButtonStyle.Secondary,
                        InteractionsIds.PartyButtons.BuildId(party.Id, InteractionsIds.PartyButtons.Ping),
                        "Пинг участников",
                        !party.IsOpened,
                        new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("peepoPing"))
+                   ),
+                   new DiscordButtonComponent
+                   (
+                       ButtonStyle.Secondary,
+                       InteractionsIds.PartyButtons.BuildId(party.Id, InteractionsIds.PartyButtons.Close),
+                       "Закрыть сбор",
+                       !party.IsOpened,
+                       new DiscordComponentEmoji(await emotesCache.GetEmoteAsync("BibleThump"))
                    )
                );
     }
