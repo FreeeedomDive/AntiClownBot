@@ -13,7 +13,7 @@ using TelemetryApp.Utilities.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 var telemetrySettingsSection = builder.Configuration.GetRequiredSection("Telemetry");
-builder.Services.ConfigureTelemetryClientWithLogger("SpotifyListenTogether", "TelegramBot", telemetrySettingsSection["ApiUrl"]);
+builder.Services.ConfigureTelemetryClientWithLogger("AntiClown", "TelegramBot", telemetrySettingsSection["ApiUrl"]);
 
 var telegramSettingsSection = builder.Configuration.GetRequiredSection("Telegram");
 builder.Services.Configure<TelegramSettings>(telegramSettingsSection);
