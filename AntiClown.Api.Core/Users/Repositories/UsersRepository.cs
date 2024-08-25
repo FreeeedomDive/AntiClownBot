@@ -55,6 +55,16 @@ public class UsersRepository : IUsersRepository
         await sqlRepository.CreateAsync(storageElement);
     }
 
+    public async Task UpdateAsync(User user)
+    {
+        await sqlRepository.UpdateAsync(
+            user.Id, x =>
+            {
+                x.TelegramId = user.TelegramId;
+            }
+        );
+    }
+
     private readonly IMapper mapper;
 
     private readonly ISqlRepository<UserStorageElement> sqlRepository;

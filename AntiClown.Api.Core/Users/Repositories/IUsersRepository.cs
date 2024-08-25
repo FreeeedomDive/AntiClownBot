@@ -8,4 +8,5 @@ public interface IUsersRepository
     Task<User> ReadAsync(Guid id);
     Task<User[]> FindAsync(UserFilter filter);
     Task CreateAsync(User user);
+    Task UpdateAsync(User user);
 }

@@ -34,6 +34,5 @@ public class NewUserService : INewUserService
     private readonly IEconomyService economyService;
     private readonly IMapper mapper;
     private readonly IShopsService shopsService;
-
     private readonly IUsersRepository usersRepository;
 }
