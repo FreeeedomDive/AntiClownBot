@@ -1,4 +1,5 @@
 using AntiClown.Api.Client;
+using AntiClown.Api.Dto.Users;
 using AntiClown.Core.Dto.Exceptions;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Dto.Tokens;
@@ -59,12 +60,28 @@ public class TelegramBotWorker : ITelegramBotWorker
         {
             await telegramBotClient.SendTextMessageAsync(
                 message.Chat.Id,
-                "Чтобы привязать телеграм-аккаунт к дискорд-аккаунту, выполни команду web на сервере и введи UserId и Token сюда",
+                "Чтобы привязать телеграм-аккаунт к дискорд-аккаунту, выполни команду web на сервере и введи UserId и Token",
                 cancellationToken: cancellationToken
             );
             await telegramBotClient.SendTextMessageAsync(
                 message.Chat.Id,
                 "UserId:",
+                cancellationToken: cancellationToken
+            );
+        }
+
+        var userWithCurrentTelegramId = (await antiClownApiClient.Users.FindAsync(
+            new UserFilterDto
+            {
+                TelegramId = message.Chat.Id,
+            }
+        )).FirstOrDefault();
+        if (userWithCurrentTelegramId is not null)
+        {
+            // TODO: пользователь уже привязал телеграм, здесь будет обработчик будущих команд
+            await telegramBotClient.SendTextMessageAsync(
+                message.Chat.Id,
+                $"Привязанный UserId: {userWithCurrentTelegramId.Id}",
                 cancellationToken: cancellationToken
             );
             return;
@@ -106,7 +123,7 @@ public class TelegramBotWorker : ITelegramBotWorker
 
             return;
         }
-        
+
         // пользователь вводит токен
         try
         {
@@ -116,11 +133,13 @@ public class TelegramBotWorker : ITelegramBotWorker
                     Token = messageText,
                 }
             );
+            await antiClownApiClient.Users.BindTelegramAsync(apiUserId, message.Chat.Id);
             await telegramBotClient.SendTextMessageAsync(
                 message.Chat.Id,
                 "Телеграм-аккаунт успешно привязан",
                 cancellationToken: cancellationToken
             );
+            telegramToApiUserIds.Remove(message.Chat.Id);
         }
         catch (UnauthorizedException)
         {

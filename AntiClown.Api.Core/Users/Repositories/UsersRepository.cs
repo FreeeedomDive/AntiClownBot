@@ -44,6 +44,7 @@ public class UsersRepository : IUsersRepository
         var result = await sqlRepository
                            .BuildCustomQuery()
                            .WhereIf(filter.DiscordId.HasValue, x => x.DiscordId == filter.DiscordId)
+                           .WhereIf(filter.TelegramId.HasValue, x => x.TelegramId == filter.TelegramId)
                            .ToArrayAsync();
 
         return mapper.Map<User[]>(result);
