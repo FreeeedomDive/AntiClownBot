@@ -49,6 +49,11 @@ public class PartiesService : IPartiesService
             FirstFullPartyAt = null,
             Participants = new List<Guid>(),
         };
+        if (newParty.AuthorAutoJoin)
+        {
+            party.Participants.Add(newParty.CreatorId);
+        }
+
         var id = await partiesRepository.CreateAsync(party);
         await partiesMessageProducer.ProduceAsync(party);
         ScheduleEventFinish(id);

@@ -50,11 +50,10 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                 var response = await emotesCache.GetEmoteAsTextAsync("Okayge");
                 await RespondToInteractionAsync(context, response);
                 var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-                Guid? partyId = null;
                 switch (prefix)
                 {
                     case PartyPrefix.Dota:
-                        partyId = await antiClownEntertainmentApiClient.Parties.CreateAsync(
+                        await antiClownEntertainmentApiClient.Parties.CreateAsync(
                             new CreatePartyDto
                             {
                                 CreatorId = userId,
@@ -62,11 +61,12 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                                 Name = "Dota",
                                 RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "DotaRoleId"),
                                 Description = description,
+                                AuthorAutoJoin = true,
                             }
                         );
                         break;
                     case PartyPrefix.Cs2:
-                        partyId = await antiClownEntertainmentApiClient.Parties.CreateAsync(
+                        await antiClownEntertainmentApiClient.Parties.CreateAsync(
                             new CreatePartyDto
                             {
                                 CreatorId = userId,
@@ -74,11 +74,12 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                                 Name = "CS2",
                                 RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "CsRoleId"),
                                 Description = description,
+                                AuthorAutoJoin = true,
                             }
                         );
                         break;
                     case PartyPrefix.SiGame:
-                        partyId = await antiClownEntertainmentApiClient.Parties.CreateAsync(
+                        await antiClownEntertainmentApiClient.Parties.CreateAsync(
                             new CreatePartyDto
                             {
                                 CreatorId = userId,
@@ -86,6 +87,7 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                                 Name = "ДЕРЖУ ИГРУ",
                                 RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "SiGameRoleId"),
                                 Description = description,
+                                AuthorAutoJoin = true,
                             }
                         );
                         break;
@@ -95,11 +97,6 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                             $"Такую игру я не знаю {await emotesCache.GetEmoteAsTextAsync("CockInspector")}"
                         );
                         break;
-                }
-
-                if (partyId.HasValue)
-                {
-                    await antiClownEntertainmentApiClient.Parties.JoinAsync(partyId.Value, userId);
                 }
             }
         );
@@ -141,7 +138,7 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                 await RespondToInteractionAsync(context, response);
 
                 var userId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
-                var partyId = await antiClownEntertainmentApiClient.Parties.CreateAsync(
+                await antiClownEntertainmentApiClient.Parties.CreateAsync(
                     new CreatePartyDto
                     {
                         CreatorId = userId,
@@ -149,9 +146,9 @@ public class PartyCommandModule : SlashCommandModuleWithMiddlewares
                         Name = name,
                         RoleId = role.Id,
                         Description = description,
+                        AuthorAutoJoin = true,
                     }
                 );
-                await antiClownEntertainmentApiClient.Parties.JoinAsync(partyId, userId);
             }
         );
     }

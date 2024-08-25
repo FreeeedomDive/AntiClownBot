@@ -7,4 +7,5 @@ public class CreatePartyDto
     public int MaxPlayers { get; set; }
     public Guid CreatorId { get; set; }
     public ulong RoleId { get; set; }
+    public bool AuthorAutoJoin { get; set; }
 }
