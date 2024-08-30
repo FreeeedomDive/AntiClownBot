@@ -32,7 +32,7 @@ public static class F1PredictionsResultBuilder
             SelectHighestTeamMate(driverToPosition, F1Driver.Stroll, F1Driver.Alonso),
             SelectHighestTeamMate(driverToPosition, F1Driver.Magnussen, F1Driver.Hulkenberg),
             SelectHighestTeamMate(driverToPosition, F1Driver.Ricciardo, F1Driver.Tsunoda),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Albon, F1Driver.Sargeant),
+            SelectHighestTeamMate(driverToPosition, F1Driver.Albon, F1Driver.Colapinto),
         };
 
         var results = race

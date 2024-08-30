@@ -23,4 +23,5 @@ public enum F1DriverDto
     Albon,
     Sargeant,
     Bearman,
+    Colapinto,
 }

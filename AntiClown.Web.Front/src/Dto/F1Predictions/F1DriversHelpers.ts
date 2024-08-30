@@ -10,7 +10,7 @@ export const DRIVER_PAIRS = [
   [F1DriverDto.Stroll, F1DriverDto.Alonso],
   [F1DriverDto.Magnussen, F1DriverDto.Hulkenberg],
   [F1DriverDto.Ricciardo, F1DriverDto.Tsunoda],
-  [F1DriverDto.Albon, F1DriverDto.Sargeant],
+  [F1DriverDto.Albon, F1DriverDto.Colapinto],
 ] as const;
 
 export const DRIVERS = DRIVER_PAIRS.flatMap((pair) => pair);
