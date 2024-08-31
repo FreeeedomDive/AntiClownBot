@@ -91,7 +91,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientGenerator", "ClientGe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Core.OpenTelemetry", "AntiClown.Core.OpenTelemetry\AntiClown.Core.OpenTelemetry.csproj", "{F4C17E77-67D4-4F97-B3E1-643F793E3658}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.TelegramBot", "AntiClown.TelegramBot\AntiClown.TelegramBot.csproj", "{A1CB1D77-1D9A-4BE6-A4E9-F06CDF7767B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Telegram.Bot", "AntiClown.Telegram.Bot\AntiClown.Telegram.Bot.csproj", "{A1CB1D77-1D9A-4BE6-A4E9-F06CDF7767B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

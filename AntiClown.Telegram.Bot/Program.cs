@@ -28,6 +28,11 @@ builder.Services.AddTransient<IAntiClownDataApiClient>(
     serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
 );
 
+builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
+builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(
+    serviceProvider => AntiClownEntertainmentApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownEntertainmentApiConnectionOptions>>().Value.ServiceUrl)
+);
+
 builder.Services.AddTransient<ITelegramBotWorker, TelegramBotWorker>();
 builder.Services.AddSingleton<ITelegramBotClient>(
     serviceProvider =>
