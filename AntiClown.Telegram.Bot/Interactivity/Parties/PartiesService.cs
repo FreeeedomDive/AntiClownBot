@@ -40,13 +40,19 @@ public class PartiesService : IPartiesService
                                                       .Where(x => x?.TelegramId is not null)
                                                       .Select(x => x!.TelegramId!.Value)
                                                       .ToArray();
-        await Task.WhenAll(usersToNotify.Select(x => SendMessageAsync(partyId, x, messageText)));
+        await Task.WhenAll(usersToNotify.Select(x => SendMessageAsync(party, x, messageText)));
     }
 
     public async Task JoinPartyAsync(Guid partyId, long userId)
     {
         var user = usersCache.TryGetUser(userId);
         if (user is null)
+        {
+            return;
+        }
+
+        var party = await antiClownEntertainmentApiClient.Parties.ReadAsync(partyId);
+        if (!party.IsOpened)
         {
             return;
         }
@@ -58,6 +64,12 @@ public class PartiesService : IPartiesService
     {
         var user = usersCache.TryGetUser(userId);
         if (user is null)
+        {
+            return;
+        }
+
+        var party = await antiClownEntertainmentApiClient.Parties.ReadAsync(partyId);
+        if (!party.IsOpened)
         {
             return;
         }
@@ -92,10 +104,11 @@ public class PartiesService : IPartiesService
         return member is not null ? member.ServerName ?? member.UserName ?? "" : "(чел, которого нет на сервере)";
     }
 
-    private async Task SendMessageAsync(Guid partyId, long chatId, string messageText)
+    private async Task SendMessageAsync(PartyDto party, long chatId, string messageText)
     {
         try
         {
+            var partyId = party.Id;
             var messageKey = $"Party_{partyId}_{chatId}";
             var inlineButtons = new[]
             {
@@ -108,7 +121,7 @@ public class PartiesService : IPartiesService
                     CallbackData = $"LeaveParty_{partyId}",
                 },
             };
-            var markup = new InlineKeyboardMarkup(inlineButtons);
+            var markup = party.IsOpened ? new InlineKeyboardMarkup(inlineButtons) : null;
             if (partyIdToMessageId.TryGetValue(messageKey, out var messageId))
             {
                 await telegramBotClient.EditMessageTextAsync(chatId, messageId, messageText, replyMarkup: markup);
