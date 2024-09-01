@@ -23,7 +23,8 @@ public class TelegramBotWorker : ITelegramBotWorker
         IPartiesService partiesService,
         IUsersCache usersCache,
         ITelegramBotClient telegramBotClient,
-        ILoggerClient loggerClient
+        ILoggerClient loggerClient,
+        ILogger<TelegramBotWorker> logger
     )
     {
         this.antiClownApiClient = antiClownApiClient;
@@ -32,6 +33,7 @@ public class TelegramBotWorker : ITelegramBotWorker
         this.usersCache = usersCache;
         this.telegramBotClient = telegramBotClient;
         this.loggerClient = loggerClient;
+        this.logger = logger;
     }
 
     public async Task StartAsync()
@@ -50,9 +52,10 @@ public class TelegramBotWorker : ITelegramBotWorker
         await Task.Delay(-1);
     }
 
-    private async Task HandlePollingErrorAsync(ITelegramBotClient client, Exception exception, CancellationToken cancellationToken)
+    private Task HandlePollingErrorAsync(ITelegramBotClient client, Exception exception, CancellationToken cancellationToken)
     {
-        await loggerClient.ErrorAsync(exception, "Telegram polling error");
+        logger.LogError(exception, "Telegram polling error");
+        return Task.CompletedTask;
     }
 
     private async Task HandleUpdateAsync(ITelegramBotClient client, Update update, CancellationToken cancellationToken)
@@ -167,6 +170,7 @@ public class TelegramBotWorker : ITelegramBotWorker
             );
             usersCache.BindTelegram(message.Chat.Id, apiUserId);
             telegramToApiUserIds.Remove(message.Chat.Id);
+            await loggerClient.InfoAsync("User {userId} has bound telegram account {telegramUserId}", apiUserId, message.Chat.Id);
         }
         catch (UnauthorizedException)
         {
@@ -181,6 +185,7 @@ public class TelegramBotWorker : ITelegramBotWorker
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly ILoggerClient loggerClient;
+    private readonly ILogger<TelegramBotWorker> logger;
     private readonly IPartiesService partiesService;
     private readonly IUsersCache usersCache;
     private readonly ITelegramBotClient telegramBotClient;
