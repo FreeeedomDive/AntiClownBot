@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+
+WORKDIR /src
+COPY ["AntiClown.Telegram.Bot/AntiClown.Telegram.Bot.csproj", "AntiClown.Telegram.Bot/"]
+RUN dotnet restore "AntiClown.Telegram.Bot/AntiClown.Telegram.Bot.csproj"
+COPY . .
+
+FROM build AS publish
+WORKDIR "/src/AntiClown.Telegram.Bot"
+RUN dotnet publish "AntiClown.Telegram.Bot.csproj" -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "AntiClown.Telegram.Bot.dll"]
