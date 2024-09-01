@@ -33,7 +33,7 @@ public class DiscordMembersController : Controller
     }
 
     [HttpGet("findByRoleId")]
-    public async Task<DiscordMemberDto?[]> Find([FromQuery] ulong roleId)
+    public async Task<DiscordMemberDto?[]> FindByRoleId([FromQuery] ulong roleId)
     {
         var membersIds = await discordClientWrapper.Roles.GetRoleMembersIdsAsync(roleId);
         var userIds = await Task.WhenAll(membersIds.Select(x => usersCache.GetApiIdByMemberIdAsync(x)));
