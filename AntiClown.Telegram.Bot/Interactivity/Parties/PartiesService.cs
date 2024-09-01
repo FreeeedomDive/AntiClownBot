@@ -6,6 +6,7 @@ using AntiClown.DiscordBot.Dto.Members;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.Parties;
 using Telegram.Bot;
+using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.Telegram.Bot.Interactivity.Parties;
 
@@ -15,13 +16,15 @@ public class PartiesService : IPartiesService
         IAntiClownApiClient antiClownApiClient,
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IAntiClownDiscordBotClient antiClownDiscordBotClient,
-        ITelegramBotClient telegramBotClient
+        ITelegramBotClient telegramBotClient,
+        ILoggerClient logger
     )
     {
         this.antiClownApiClient = antiClownApiClient;
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.antiClownDiscordBotClient = antiClownDiscordBotClient;
         this.telegramBotClient = telegramBotClient;
+        this.logger = logger;
     }
 
     public async Task CreateOrUpdateMessageAsync(Guid partyId)
@@ -72,20 +75,28 @@ public class PartiesService : IPartiesService
 
     private async Task SendMessageAsync(Guid partyId, long chatId, string messageText)
     {
-        var messageKey = $"Party_{partyId}_{chatId}";
-        if (partyIdToMessageId.TryGetValue(messageKey, out var messageId))
+        try
         {
-            await telegramBotClient.EditMessageTextAsync(chatId, messageId, messageText);
-            return;
-        }
+            var messageKey = $"Party_{partyId}_{chatId}";
+            if (partyIdToMessageId.TryGetValue(messageKey, out var messageId))
+            {
+                await telegramBotClient.EditMessageTextAsync(chatId, messageId, messageText);
+                return;
+            }
 
-        var message = await telegramBotClient.SendTextMessageAsync(chatId, messageText);
-        partyIdToMessageId.TryAdd(messageKey, message.MessageId);
+            var message = await telegramBotClient.SendTextMessageAsync(chatId, messageText);
+            partyIdToMessageId.TryAdd(messageKey, message.MessageId);
+        }
+        catch (Exception e)
+        {
+            await logger.ErrorAsync(e, "Failed to send party message to {userId}", chatId);
+        }
     }
 
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IAntiClownDiscordBotClient antiClownDiscordBotClient;
     private readonly ITelegramBotClient telegramBotClient;
+    private readonly ILoggerClient logger;
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly ConcurrentDictionary<string, int> partyIdToMessageId = new();
 }

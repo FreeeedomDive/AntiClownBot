@@ -2,6 +2,8 @@
 using AntiClown.Api.Client.Configuration;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
+using AntiClown.DiscordBot.Client;
+using AntiClown.DiscordBot.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
 using AntiClown.Telegram.Bot.Interactivity.Parties;
@@ -58,6 +60,13 @@ builder.Services.AddTransient<IAntiClownDataApiClient>(
 builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
 builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(
     serviceProvider => AntiClownEntertainmentApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownEntertainmentApiConnectionOptions>>().Value.ServiceUrl)
+);
+
+builder.Services.Configure<AntiClownDiscordApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDiscordApi"));
+builder.Services.AddTransient<IAntiClownDiscordBotClient>(
+    serviceProvider => AntiClownDiscordApiClientProvider.Build(
+        serviceProvider.GetRequiredService<IOptions<AntiClownDiscordApiConnectionOptions>>().Value.ServiceUrl
+    )
 );
 
 builder.Services.AddTransient<ITelegramBotWorker, TelegramBotWorker>();
