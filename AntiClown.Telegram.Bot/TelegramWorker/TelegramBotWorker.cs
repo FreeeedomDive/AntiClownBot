@@ -3,6 +3,7 @@ using AntiClown.Api.Dto.Users;
 using AntiClown.Core.Dto.Exceptions;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Dto.Tokens;
+using AntiClown.Telegram.Bot.Caches.Users;
 using AntiClown.Telegram.Bot.Interactivity.Parties;
 using AntiClown.TelegramBot.TelegramWorker;
 using Telegram.Bot;
@@ -20,6 +21,7 @@ public class TelegramBotWorker : ITelegramBotWorker
         IAntiClownApiClient antiClownApiClient,
         IAntiClownDataApiClient antiClownDataApiClient,
         IPartiesService partiesService,
+        IUsersCache usersCache,
         ITelegramBotClient telegramBotClient,
         ILoggerClient loggerClient
     )
@@ -27,6 +29,7 @@ public class TelegramBotWorker : ITelegramBotWorker
         this.antiClownApiClient = antiClownApiClient;
         this.antiClownDataApiClient = antiClownDataApiClient;
         this.partiesService = partiesService;
+        this.usersCache = usersCache;
         this.telegramBotClient = telegramBotClient;
         this.loggerClient = loggerClient;
     }
@@ -162,6 +165,7 @@ public class TelegramBotWorker : ITelegramBotWorker
                 "Телеграм-аккаунт успешно привязан",
                 cancellationToken: cancellationToken
             );
+            usersCache.BindTelegram(message.Chat.Id, apiUserId);
             telegramToApiUserIds.Remove(message.Chat.Id);
         }
         catch (UnauthorizedException)
@@ -178,6 +182,7 @@ public class TelegramBotWorker : ITelegramBotWorker
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly ILoggerClient loggerClient;
     private readonly IPartiesService partiesService;
+    private readonly IUsersCache usersCache;
     private readonly ITelegramBotClient telegramBotClient;
     private readonly Dictionary<long, Guid> telegramToApiUserIds = new();
 }

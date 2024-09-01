@@ -17,13 +17,15 @@ public class PartiesService : IPartiesService
         IAntiClownDiscordBotClient antiClownDiscordBotClient,
         ITelegramBotClient telegramBotClient,
         IUsersCache usersCache,
-        ILoggerClient logger
+        ILoggerClient loggerClient,
+        ILogger<PartiesService> logger
     )
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.antiClownDiscordBotClient = antiClownDiscordBotClient;
         this.telegramBotClient = telegramBotClient;
         this.usersCache = usersCache;
+        this.loggerClient = loggerClient;
         this.logger = logger;
     }
 
@@ -130,16 +132,18 @@ public class PartiesService : IPartiesService
 
             var message = await telegramBotClient.SendTextMessageAsync(chatId, messageText, replyMarkup: markup);
             partyIdToMessageId.TryAdd(messageKey, message.MessageId);
+            logger.LogInformation("Successfully sent message {chatId} with partyId {partyId}", chatId, partyId);
         }
         catch (Exception e)
         {
-            await logger.ErrorAsync(e, "Failed to send party message to {userId}", chatId);
+            await loggerClient.ErrorAsync(e, "Failed to send party message to {userId}", chatId);
         }
     }
 
     private readonly IAntiClownDiscordBotClient antiClownDiscordBotClient;
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-    private readonly ILoggerClient logger;
+    private readonly ILoggerClient loggerClient;
+    private readonly ILogger<PartiesService> logger;
     private readonly ConcurrentDictionary<string, int> partyIdToMessageId = new();
     private readonly ITelegramBotClient telegramBotClient;
     private readonly IUsersCache usersCache;

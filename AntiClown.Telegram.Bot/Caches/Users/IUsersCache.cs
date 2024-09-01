@@ -9,4 +9,5 @@ public interface IUsersCache
     UserDto? TryGetUser(Guid userId);
     UserDto? TryGetUser(long telegramUserId);
     DiscordMemberDto? TryGetDiscordMember(Guid userId);
+    void BindTelegram(long telegramUserId, Guid userId);
 }

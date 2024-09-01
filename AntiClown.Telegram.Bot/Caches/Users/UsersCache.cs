@@ -44,6 +44,17 @@ public class UsersCache : IUsersCache
         }
     }
 
+    public void BindTelegram(long telegramUserId, Guid userId)
+    {
+        if (!users.TryGetValue(userId, out var user))
+        {
+            return;
+        }
+
+        user.TelegramId = telegramUserId;
+        usersByTelegramId[telegramUserId] = user;
+    }
+
     public UserDto? TryGetUser(Guid userId)
     {
         return users.GetValueOrDefault(userId);
