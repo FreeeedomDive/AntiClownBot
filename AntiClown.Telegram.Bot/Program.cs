@@ -44,7 +44,7 @@ builder.Services.AddMassTransit(
 );
 
 var telemetrySettingsSection = builder.Configuration.GetRequiredSection("Telemetry");
-builder.Services.ConfigureTelemetryClientWithLogger("AntiClown", "TelegramBot", telemetrySettingsSection["ApiUrl"]);
+builder.Services.ConfigureTelemetryClientWithLogger("AntiClownBot", "TelegramBot", telemetrySettingsSection["ApiUrl"]);
 
 var telegramSettingsSection = builder.Configuration.GetRequiredSection("Telegram");
 builder.Services.Configure<TelegramSettings>(telegramSettingsSection);
