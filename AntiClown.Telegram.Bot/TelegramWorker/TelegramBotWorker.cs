@@ -114,6 +114,7 @@ public class TelegramBotWorker : ITelegramBotWorker
                 "UserId:",
                 cancellationToken: cancellationToken
             );
+            return;
         }
 
         // пользователь вводит UserId
