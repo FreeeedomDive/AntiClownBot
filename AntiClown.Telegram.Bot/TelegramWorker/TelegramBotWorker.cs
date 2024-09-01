@@ -3,6 +3,8 @@ using AntiClown.Api.Dto.Users;
 using AntiClown.Core.Dto.Exceptions;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Dto.Tokens;
+using AntiClown.Telegram.Bot.Interactivity.Parties;
+using AntiClown.TelegramBot.TelegramWorker;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -10,19 +12,21 @@ using Telegram.Bot.Types.Enums;
 using TelemetryApp.Api.Client.Log;
 using Xdd.HttpHelpers.Models.Exceptions;
 
-namespace AntiClown.TelegramBot.TelegramWorker;
+namespace AntiClown.Telegram.Bot.TelegramWorker;
 
 public class TelegramBotWorker : ITelegramBotWorker
 {
     public TelegramBotWorker(
         IAntiClownApiClient antiClownApiClient,
         IAntiClownDataApiClient antiClownDataApiClient,
+        IPartiesService partiesService,
         ITelegramBotClient telegramBotClient,
         ILoggerClient loggerClient
     )
     {
         this.antiClownApiClient = antiClownApiClient;
         this.antiClownDataApiClient = antiClownDataApiClient;
+        this.partiesService = partiesService;
         this.telegramBotClient = telegramBotClient;
         this.loggerClient = loggerClient;
     }
@@ -50,25 +54,30 @@ public class TelegramBotWorker : ITelegramBotWorker
 
     private async Task HandleUpdateAsync(ITelegramBotClient client, Update update, CancellationToken cancellationToken)
     {
+        /* TODO: divide to different handlers */
+
+        if (update.CallbackQuery is not null)
+        {
+            var userId = update.CallbackQuery.From.Id;
+            if (update.CallbackQuery.Data?.StartsWith("JoinParty") ?? false)
+            {
+                var partyId = Guid.Parse(update.CallbackQuery.Data.Split("_")[1]);
+                await partiesService.JoinPartyAsync(partyId, userId);
+            }
+
+            if (update.CallbackQuery.Data?.StartsWith("LeaveParty") ?? false)
+            {
+                var partyId = Guid.Parse(update.CallbackQuery.Data.Split("_")[1]);
+                await partiesService.LeavePartyAsync(partyId, userId);
+            }
+        }
+
         if (update.Message is not { Text: not null } message)
         {
             return;
         }
 
         var messageText = message.Text ?? "";
-        if (messageText.StartsWith("/start"))
-        {
-            await telegramBotClient.SendTextMessageAsync(
-                message.Chat.Id,
-                "Чтобы привязать телеграм-аккаунт к дискорд-аккаунту, выполни команду web на сервере и введи UserId и Token",
-                cancellationToken: cancellationToken
-            );
-            await telegramBotClient.SendTextMessageAsync(
-                message.Chat.Id,
-                "UserId:",
-                cancellationToken: cancellationToken
-            );
-        }
 
         var userWithCurrentTelegramId = (await antiClownApiClient.Users.FindAsync(
             new UserFilterDto
@@ -85,6 +94,20 @@ public class TelegramBotWorker : ITelegramBotWorker
                 cancellationToken: cancellationToken
             );
             return;
+        }
+
+        if (messageText.StartsWith("/start"))
+        {
+            await telegramBotClient.SendTextMessageAsync(
+                message.Chat.Id,
+                "Чтобы привязать телеграм-аккаунт к дискорд-аккаунту, выполни команду web на сервере и введи UserId и Token",
+                cancellationToken: cancellationToken
+            );
+            await telegramBotClient.SendTextMessageAsync(
+                message.Chat.Id,
+                "UserId:",
+                cancellationToken: cancellationToken
+            );
         }
 
         // пользователь вводит UserId
@@ -153,7 +176,8 @@ public class TelegramBotWorker : ITelegramBotWorker
 
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
-    private readonly ITelegramBotClient telegramBotClient;
     private readonly ILoggerClient loggerClient;
+    private readonly IPartiesService partiesService;
+    private readonly ITelegramBotClient telegramBotClient;
     private readonly Dictionary<long, Guid> telegramToApiUserIds = new();
 }

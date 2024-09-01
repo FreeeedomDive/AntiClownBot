@@ -22,6 +22,7 @@
       <ProjectReference Include="..\AntiClown.DiscordBot.Client\AntiClown.DiscordBot.Client.csproj" />
       <ProjectReference Include="..\AntiClown.Entertainment.Api.Client\AntiClown.Entertainment.Api.Client.csproj" />
       <ProjectReference Include="..\AntiClown.Messages.Dto\AntiClown.Messages.Dto.csproj" />
+      <ProjectReference Include="..\Utility\Utility.csproj" />
     </ItemGroup>
 
 </Project>
