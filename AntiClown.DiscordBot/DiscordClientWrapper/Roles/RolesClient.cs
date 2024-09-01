@@ -35,12 +35,21 @@ public class RolesClient : IRolesClient
     {
         var guildId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
         var guild = discordClient.Guilds[guildId];
-        if (!guild.Roles.ContainsKey(roleId))
+        if (!guild.Roles.TryGetValue(roleId, out var role))
         {
             throw new ArgumentException($"Role {roleId} doesn't exist");
         }
 
-        return guild.Roles[roleId];
+        return role;
+    }
+
+    public async Task<ulong[]> GetRoleMembersIdsAsync(ulong roleId)
+    {
+        var members = await membersClient.GetAllAsync();
+        return members
+               .Where(member => member.Roles.Any(role => role.Id == roleId))
+               .Select(x => x.Id)
+               .ToArray();
     }
 
     public async Task GrantRoleAsync(ulong userId, DiscordRole role)

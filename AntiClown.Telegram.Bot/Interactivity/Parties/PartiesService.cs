@@ -51,7 +51,7 @@ public class PartiesService : IPartiesService
                        ? string.Join(
                            "\n", party
                                  .Participants
-                                 .Select((x, i) => $"{i + 1}. {(GetMemberName(x, discordMemberByUserId))}")
+                                 .Select((x, i) => $"{i + 1}. {GetMemberName(x, discordMemberByUserId)}")
                        )
                        : "Пока никто не записался..."
                )
