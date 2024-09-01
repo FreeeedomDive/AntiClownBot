@@ -4,13 +4,39 @@ using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
+using AntiClown.Telegram.Bot.Options;
 using AntiClown.TelegramBot.Options;
 using AntiClown.TelegramBot.TelegramWorker;
+using MassTransit;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using TelemetryApp.Utilities.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddLogging();
+
+builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.AddMassTransit(
+    massTransitConfiguration =>
+    {
+        massTransitConfiguration.AddConsumers(AppDomain.CurrentDomain.GetAssemblies());
+        massTransitConfiguration.SetKebabCaseEndpointNameFormatter();
+        massTransitConfiguration.UsingRabbitMq(
+            (context, rabbitMqConfiguration) =>
+            {
+                var rabbitMqOptions = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+                rabbitMqConfiguration.ConfigureEndpoints(context);
+                rabbitMqConfiguration.Host(
+                    rabbitMqOptions.Host, "/", hostConfiguration =>
+                    {
+                        hostConfiguration.Username(rabbitMqOptions.Login);
+                        hostConfiguration.Password(rabbitMqOptions.Password);
+                    }
+                );
+            }
+        );
+    }
+);
 
 var telemetrySettingsSection = builder.Configuration.GetRequiredSection("Telemetry");
 builder.Services.ConfigureTelemetryClientWithLogger("AntiClown", "TelegramBot", telemetrySettingsSection["ApiUrl"]);
@@ -45,4 +71,4 @@ builder.Services.AddSingleton<ITelegramBotClient>(
 var app = builder.Build();
 
 var telegramBotWorker = app.Services.GetRequiredService<ITelegramBotWorker>();
-await telegramBotWorker.StartAsync();
+await Task.WhenAll(telegramBotWorker.StartAsync(), app.RunAsync());
