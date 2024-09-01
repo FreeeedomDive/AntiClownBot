@@ -4,6 +4,7 @@ using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
+using AntiClown.Telegram.Bot.Interactivity.Parties;
 using AntiClown.Telegram.Bot.Options;
 using AntiClown.TelegramBot.Options;
 using AntiClown.TelegramBot.TelegramWorker;
@@ -67,6 +68,8 @@ builder.Services.AddSingleton<ITelegramBotClient>(
         return new TelegramBotClient(telegramSettings.Value.BotToken);
     }
 );
+
+builder.Services.AddSingleton<IPartiesService, PartiesService>();
 
 var app = builder.Build();
 
