@@ -1,4 +1,5 @@
-﻿using AntiClown.Api.Client;
+﻿using System.Collections.Concurrent;
+using AntiClown.Api.Client;
 using AntiClown.Api.Dto.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
 using DSharpPlus.Entities;
@@ -16,8 +17,8 @@ public class UsersCache : IUsersCache
         this.antiClownApiClient = antiClownApiClient;
         this.discordClientWrapper = discordClientWrapper;
         this.logger = logger;
-        discordMemberToApiId = new Dictionary<ulong, Guid>();
-        apiIdToDiscordMember = new Dictionary<Guid, DiscordMember>();
+        discordMemberToApiId = new ConcurrentDictionary<ulong, Guid>();
+        apiIdToDiscordMember = new ConcurrentDictionary<Guid, DiscordMember>();
     }
 
     public async Task InitializeAsync()
@@ -117,9 +118,9 @@ public class UsersCache : IUsersCache
     }
 
     private readonly IAntiClownApiClient antiClownApiClient;
-    private readonly Dictionary<Guid, DiscordMember> apiIdToDiscordMember;
+    private readonly ConcurrentDictionary<Guid, DiscordMember> apiIdToDiscordMember;
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly Dictionary<ulong, Guid> discordMemberToApiId;
+    private readonly ConcurrentDictionary<ulong, Guid> discordMemberToApiId;
     private readonly ILogger<UsersCache> logger;
 
     private bool isInitialized;

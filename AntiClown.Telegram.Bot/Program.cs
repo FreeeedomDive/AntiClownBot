@@ -6,8 +6,10 @@ using AntiClown.DiscordBot.Client;
 using AntiClown.DiscordBot.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
+using AntiClown.Telegram.Bot.Caches.Users;
 using AntiClown.Telegram.Bot.Interactivity.Parties;
 using AntiClown.Telegram.Bot.Options;
+using AntiClown.Telegram.Bot.TelegramWorker;
 using AntiClown.TelegramBot.Options;
 using AntiClown.TelegramBot.TelegramWorker;
 using MassTransit;
@@ -78,9 +80,14 @@ builder.Services.AddSingleton<ITelegramBotClient>(
     }
 );
 
+builder.Services.AddSingleton<IUsersCache, UsersCache>();
+
 builder.Services.AddSingleton<IPartiesService, PartiesService>();
 
 var app = builder.Build();
+
+var usersCache = app.Services.GetRequiredService<IUsersCache>();
+await usersCache.InitializeAsync();
 
 var telegramBotWorker = app.Services.GetRequiredService<ITelegramBotWorker>();
 await Task.WhenAll(telegramBotWorker.StartAsync(), app.RunAsync());
