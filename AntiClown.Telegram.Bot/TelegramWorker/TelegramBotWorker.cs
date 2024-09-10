@@ -169,7 +169,7 @@ public class TelegramBotWorker : ITelegramBotWorker
                 "Телеграм-аккаунт успешно привязан",
                 cancellationToken: cancellationToken
             );
-            usersCache.BindTelegram(message.Chat.Id, apiUserId);
+            await usersCache.BindTelegramAsync(message.Chat.Id, apiUserId);
             telegramToApiUserIds.Remove(message.Chat.Id);
             await loggerClient.InfoAsync("User {userId} has bound telegram account {telegramUserId}", apiUserId, message.Chat.Id);
         }

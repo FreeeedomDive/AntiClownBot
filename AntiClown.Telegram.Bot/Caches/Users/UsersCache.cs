@@ -44,7 +44,7 @@ public class UsersCache : IUsersCache
         }
     }
 
-    public void BindTelegram(long telegramUserId, Guid userId)
+    public async Task BindTelegramAsync(long telegramUserId, Guid userId)
     {
         if (!users.TryGetValue(userId, out var user))
         {
@@ -53,6 +53,8 @@ public class UsersCache : IUsersCache
 
         user.TelegramId = telegramUserId;
         usersByTelegramId[telegramUserId] = user;
+        var discordMember = await antiClownDiscordBotClient.DiscordMembers.GetDiscordMemberAsync(userId);
+        discordMembers.TryAdd(userId, discordMember);
     }
 
     public UserDto? TryGetUser(Guid userId)
