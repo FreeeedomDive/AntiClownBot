@@ -6,5 +6,6 @@ namespace AntiClown.DiscordBot.Client.DiscordMembers;
 public interface IDiscordMembersClient
 {
     Task<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto> GetDiscordMemberAsync(System.Guid userId);
-    Task<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto[]> GetDiscordMembersAsync(System.Guid[] usersIds);
+    Task<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto?[]> GetDiscordMembersAsync(System.Guid[] usersIds);
+    Task<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto?[]> FindByRoleIdAsync(System.UInt64 roleId);
 }

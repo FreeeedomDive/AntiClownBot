@@ -4,4 +4,5 @@ public class User
 {
     public Guid Id { get; set; }
     public ulong DiscordId { get; set; }
+    public long? TelegramId { get; set; }
 }

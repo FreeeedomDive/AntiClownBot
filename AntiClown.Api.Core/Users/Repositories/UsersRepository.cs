@@ -44,6 +44,7 @@ public class UsersRepository : IUsersRepository
         var result = await sqlRepository
                            .BuildCustomQuery()
                            .WhereIf(filter.DiscordId.HasValue, x => x.DiscordId == filter.DiscordId)
+                           .WhereIf(filter.TelegramId.HasValue, x => x.TelegramId == filter.TelegramId)
                            .ToArrayAsync();
 
         return mapper.Map<User[]>(result);
@@ -53,6 +54,16 @@ public class UsersRepository : IUsersRepository
     {
         var storageElement = mapper.Map<UserStorageElement>(user);
         await sqlRepository.CreateAsync(storageElement);
+    }
+
+    public async Task UpdateAsync(User user)
+    {
+        await sqlRepository.UpdateAsync(
+            user.Id, x =>
+            {
+                x.TelegramId = user.TelegramId;
+            }
+        );
     }
 
     private readonly IMapper mapper;

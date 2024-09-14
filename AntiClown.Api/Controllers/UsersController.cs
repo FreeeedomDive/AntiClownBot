@@ -47,6 +47,12 @@ public class UsersController : Controller
         return await newUserService.CreateNewUserAsync(mapper.Map<NewUser>(newUser));
     }
 
+    [HttpPatch("{userId:guid}/bindTelegram")]
+    public async Task BindTelegramAsync([FromRoute] Guid userId, [FromQuery] long telegramId)
+    {
+        await usersService.BindTelegramUserIdAsync(userId, telegramId);
+    }
+
     private readonly IMapper mapper;
     private readonly INewUserService newUserService;
     private readonly IUsersService usersService;

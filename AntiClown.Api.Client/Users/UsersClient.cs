@@ -39,5 +39,12 @@ public class UsersClient : IUsersClient
         return await client.MakeRequestAsync<System.Guid>(requestBuilder.Build());
     }
 
+    public async Task BindTelegramAsync(System.Guid userId, long telegramId)
+    {
+        var requestBuilder = new RequestBuilder($"api/users/{userId}/bindTelegram", HttpRequestMethod.PATCH);
+        requestBuilder.WithQueryParameter("telegramId", telegramId);
+        await client.MakeRequestAsync(requestBuilder.Build());
+    }
+
     private readonly RestSharp.RestClient client;
 }

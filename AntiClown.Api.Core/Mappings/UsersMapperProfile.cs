@@ -12,6 +12,10 @@ public class UsersMapperProfile : Profile
         CreateMap<NewUser, User>().ForMember(
             user => user.Id,
             cfg => cfg.MapFrom(_ => Guid.NewGuid())
+        )
+        .ForMember(
+            user => user.TelegramId,
+            cfg => cfg.MapFrom(_ => (long?)null)
         );
     }
 }

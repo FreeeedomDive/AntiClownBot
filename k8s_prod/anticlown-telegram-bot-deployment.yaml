@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anticlown-telegram-bot-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anticlowntelegrambot
+  template:
+    metadata:
+      labels:
+        app: anticlowntelegrambot
+    spec:
+      containers:
+        - name: anticlowntelegrambot
+          image: localhost:5000/anticlowntelegrambot:{{TAG_NUMBER}}
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: TZ
+              value: Asia/Yekaterinburg

@@ -25,5 +25,12 @@ public class UsersService : IUsersService
         return await usersRepository.FindAsync(filter);
     }
 
+    public async Task BindTelegramUserIdAsync(Guid id, long telegramUserId)
+    {
+        var user = await usersRepository.ReadAsync(id);
+        user.TelegramId = telegramUserId;
+        await usersRepository.UpdateAsync(user);
+    }
+
     private readonly IUsersRepository usersRepository;
 }

@@ -19,10 +19,17 @@ public class DiscordMembersClient : IDiscordMembersClient
         return await client.MakeRequestAsync<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto>(requestBuilder.Build());
     }
 
-    public async Task<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto[]> GetDiscordMembersAsync(System.Guid[] usersIds)
+    public async Task<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto?[]> GetDiscordMembersAsync(System.Guid[] usersIds)
     {
         var requestBuilder = new RequestBuilder($"discordApi/members/getMany", HttpRequestMethod.POST);
         requestBuilder.WithJsonBody(usersIds);
+        return await client.MakeRequestAsync<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto[]>(requestBuilder.Build());
+    }
+
+    public async Task<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto?[]> FindByRoleIdAsync(System.UInt64 roleId)
+    {
+        var requestBuilder = new RequestBuilder($"discordApi/members/findByRoleId", HttpRequestMethod.GET);
+        requestBuilder.WithQueryParameter("roleId", roleId);
         return await client.MakeRequestAsync<AntiClown.DiscordBot.Dto.Members.DiscordMemberDto[]>(requestBuilder.Build());
     }
 
