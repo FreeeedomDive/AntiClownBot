@@ -62,34 +62,6 @@ public class F1PredictionsController : Controller
         return NoContent();
     }
 
-    [HttpPost("{raceId:guid}/addClassification")]
-    public async Task<ActionResult> AddClassificationsResult([FromRoute] Guid raceId, [FromBody] F1DriverDto[] f1Drivers)
-    {
-        await f1PredictionsService.AddClassificationsResultAsync(raceId, mapper.Map<F1Driver[]>(f1Drivers));
-        return NoContent();
-    }
-
-    [HttpPost("{raceId:guid}/addDnf")]
-    public async Task<ActionResult> AddDnfDriver([FromRoute] Guid raceId, [FromQuery] F1DriverDto dnfDriver)
-    {
-        await f1PredictionsService.AddDnfDriverAsync(raceId, mapper.Map<F1Driver>(dnfDriver));
-        return NoContent();
-    }
-
-    [HttpPost("{raceId:guid}/addSafetyCar")]
-    public async Task<ActionResult> AddSafetyCar([FromRoute] Guid raceId)
-    {
-        await f1PredictionsService.AddSafetyCarAsync(raceId);
-        return NoContent();
-    }
-
-    [HttpPost("{raceId:guid}/addFirstPlaceLead")]
-    public async Task<ActionResult> AddFirstPlaceLead([FromRoute] Guid raceId, [FromQuery] decimal firstPlaceLead)
-    {
-        await f1PredictionsService.AddFirstPlaceLeadAsync(raceId, firstPlaceLead);
-        return NoContent();
-    }
-
     [HttpPost("{raceId:guid}/finish")]
     public async Task<ActionResult<F1PredictionUserResultDto[]>> FinishRace([FromRoute] Guid raceId)
     {

@@ -53,33 +53,6 @@ public class F1PredictionsClient : IF1PredictionsClient
         await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async Task AddClassificationsResultAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1DriverDto[] f1Drivers)
-    {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/{raceId}/addClassification", HttpRequestMethod.POST);
-        requestBuilder.WithJsonBody(f1Drivers);
-        await client.MakeRequestAsync(requestBuilder.Build());
-    }
-
-    public async Task AddDnfDriverAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1DriverDto dnfDriver)
-    {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/{raceId}/addDnf", HttpRequestMethod.POST);
-        requestBuilder.WithQueryParameter("dnfDriver", dnfDriver);
-        await client.MakeRequestAsync(requestBuilder.Build());
-    }
-
-    public async Task AddSafetyCarAsync(System.Guid raceId)
-    {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/{raceId}/addSafetyCar", HttpRequestMethod.POST);
-        await client.MakeRequestAsync(requestBuilder.Build());
-    }
-
-    public async Task AddFirstPlaceLeadAsync(System.Guid raceId, System.Decimal firstPlaceLead)
-    {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/{raceId}/addFirstPlaceLead", HttpRequestMethod.POST);
-        requestBuilder.WithQueryParameter("firstPlaceLead", firstPlaceLead);
-        await client.MakeRequestAsync(requestBuilder.Build());
-    }
-
     public async Task<AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]> FinishRaceAsync(System.Guid raceId)
     {
         var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/{raceId}/finish", HttpRequestMethod.POST);

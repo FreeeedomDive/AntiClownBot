@@ -11,10 +11,6 @@ public interface IF1PredictionsClient
     Task AddPredictionAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionDto prediction);
     Task ClosePredictionsAsync(System.Guid raceId);
     Task AddResultAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionRaceResultDto raceResult);
-    Task AddClassificationsResultAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1DriverDto[] f1Drivers);
-    Task AddDnfDriverAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1DriverDto dnfDriver);
-    Task AddSafetyCarAsync(System.Guid raceId);
-    Task AddFirstPlaceLeadAsync(System.Guid raceId, System.Decimal firstPlaceLead);
     Task<AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]> FinishRaceAsync(System.Guid raceId);
     Task<AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]> ReadResultsAsync(System.Guid raceId);
     Task<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto?[]>> ReadStandingsAsync(int? season = null);

@@ -95,36 +95,6 @@ public class F1PredictionsService : IF1PredictionsService
         await f1PredictionsMessageProducer.ProduceRaceResultUpdatedAsync(raceId);
     }
 
-    public async Task AddClassificationsResultAsync(Guid raceId, F1Driver[] f1Drivers)
-    {
-        var race = await f1RacesRepository.ReadAsync(raceId);
-        race.Result.Classification = f1Drivers;
-        await f1RacesRepository.UpdateAsync(race);
-    }
-
-    public async Task AddDnfDriverAsync(Guid raceId, F1Driver dnfDriver)
-    {
-        var race = await f1RacesRepository.ReadAsync(raceId);
-        var dnfs = race.Result.DnfDrivers.ToList();
-        dnfs.Add(dnfDriver);
-        race.Result.DnfDrivers = dnfs.ToArray();
-        await f1RacesRepository.UpdateAsync(race);
-    }
-
-    public async Task AddSafetyCarAsync(Guid raceId)
-    {
-        var race = await f1RacesRepository.ReadAsync(raceId);
-        race.Result.SafetyCars++;
-        await f1RacesRepository.UpdateAsync(race);
-    }
-
-    public async Task AddFirstPlaceLeadAsync(Guid raceId, decimal firstPlaceLead)
-    {
-        var race = await f1RacesRepository.ReadAsync(raceId);
-        race.Result.FirstPlaceLead = firstPlaceLead;
-        await f1RacesRepository.UpdateAsync(race);
-    }
-
     public async Task<F1PredictionResult[]> FinishRaceAsync(Guid raceId)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
