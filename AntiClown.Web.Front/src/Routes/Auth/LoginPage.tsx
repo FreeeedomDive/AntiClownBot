@@ -3,7 +3,6 @@ import React, {useState} from "react";
 import "./LoginPage.css";
 import {Navigate, useNavigate} from "react-router-dom";
 import {useStore} from "../../Stores";
-import UsersApi from "../../Api/UsersApi";
 import TokensApi from "../../Api/TokensApi";
 
 const LoginPage = () => {
@@ -51,18 +50,13 @@ const LoginPage = () => {
               return;
             }
             setLoading(true);
-            const user = await UsersApi.get(userId);
-            setLoading(false);
-            if (!user) {
-              setError(`Пользователь ${userId} не найден!`)
-              return;
-            }
             const isValidToken = await TokensApi.isTokenValid(userId, token);
             if (!isValidToken){
-              setError(`Невалидный токен`)
+              setError(`Неправильный UserId или токен`)
               return;
             }
             authStore.logIn(userId, token);
+            setLoading(false);
             navigate(`/user/${userId}`);
           }}
         >
