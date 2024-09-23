@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import EconomyApi from "../../../../../Api/EconomyApi";
 import { Loader } from "../../../../../Components/Loader/Loader";
 import {
-  Box, Icon,
+  Box, 
   List,
   ListItem,
   ListItemButton, ListItemText,
@@ -14,7 +14,7 @@ import { LineChart } from "@mui/x-charts/LineChart";
 import { TransactionDto } from "../../../../../Dto/Economy/TransactionDto";
 import { EconomyDto } from "../../../../../Dto/Economy/EconomyDto";
 import TransactionRow from "./TransactionRow";
-import {Add, AddOutlined, HdrPlusOutlined, PlusOne, PlusOneTwoTone} from "@mui/icons-material";
+import {AddOutlined} from "@mui/icons-material";
 
 export default function UserEconomy() {
   const { userId } = useParams<"userId">();

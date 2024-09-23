@@ -7,9 +7,7 @@ import {RightsWrapper} from "../../../../../Components/RIghts/RightsWrapper";
 import {
     Box,
     Button,
-    Checkbox,
     FormControl,
-    FormControlLabel,
     MenuItem, Modal,
     Select,
     Stack,
@@ -18,7 +16,7 @@ import {
     TableContainer
 } from "@mui/material";
 import EditSettingRow from "./EditSettingRow";
-import {Add, Save} from "@mui/icons-material";
+import {Add} from "@mui/icons-material";
 import AddSettings from "./AddSettings";
 
 const modalStyle = {

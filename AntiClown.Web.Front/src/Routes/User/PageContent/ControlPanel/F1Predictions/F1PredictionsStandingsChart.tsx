@@ -55,7 +55,18 @@ export default function F1PredictionsStandingsChart({
       userName: user?.serverName ?? user?.userName ?? "",
       points: points,
     });
-    series.sort((a, b) => b.points[b.points.length - 1] - a.points[a.points.length - 1]);
+  }
+  series.sort((a, b) => b.points[b.points.length - 1] - a.points[a.points.length - 1]);
+
+  const totalRaces = 30;
+  const maxPointsPerRace = 55;
+  const possibleChampionPoints = series[0].points.map((currentLeaderPoints, raceNumber) => Math.max(0, currentLeaderPoints - ((totalRaces - raceNumber) * maxPointsPerRace)));
+  if (possibleChampionPoints.filter(x => x > 0).length > 0){
+    series.push({
+      isMe: false,
+      userName: "Необходимое количество очков для чемпионства",
+      points: possibleChampionPoints
+    })
   }
 
   return (
