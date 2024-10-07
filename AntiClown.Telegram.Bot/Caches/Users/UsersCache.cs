@@ -69,6 +69,7 @@ public class UsersCache : IUsersCache
 
     public DiscordMemberDto? TryGetDiscordMember(Guid userId)
     {
+        logger.LogInformation("DiscordMembers count: {count}, trying to get userId {userId}", discordMembers.Count, userId);
         return discordMembers.GetValueOrDefault(userId);
     }
 
