@@ -24,4 +24,5 @@ public enum F1Driver
     Sargeant,
     Bearman,
     Colapinto,
+    Lawson,
 }

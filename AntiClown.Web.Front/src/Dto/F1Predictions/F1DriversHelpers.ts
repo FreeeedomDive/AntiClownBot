@@ -9,7 +9,7 @@ export const DRIVER_PAIRS = [
   [F1DriverDto.Bottas, F1DriverDto.Zhou],
   [F1DriverDto.Stroll, F1DriverDto.Alonso],
   [F1DriverDto.Magnussen, F1DriverDto.Hulkenberg],
-  [F1DriverDto.Ricciardo, F1DriverDto.Tsunoda],
+  [F1DriverDto.Lawson, F1DriverDto.Tsunoda],
   [F1DriverDto.Albon, F1DriverDto.Colapinto],
 ] as const;
 

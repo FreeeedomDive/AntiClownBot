@@ -21,4 +21,5 @@ export enum F1DriverDto {
   Sargeant = "Sargeant",
   Bearman = "Bearman",
   Colapinto = "Colapinto",
+  Lawson = "Lawson"
 }
