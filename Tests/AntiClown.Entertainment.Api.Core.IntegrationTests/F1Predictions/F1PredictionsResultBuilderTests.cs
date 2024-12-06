@@ -4,7 +4,6 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 using AntiClown.Tools.Utility.Extensions;
 using FluentAssertions;
-using Hangfire;
 
 namespace AntiClown.Entertainment.Api.Core.IntegrationTests.F1Predictions;
 
@@ -38,7 +37,7 @@ public class F1PredictionsResultBuilderTests
             Name = "Тест на подсчет очков за 10 место",
             IsActive = true,
             IsOpened = true,
-            Predictions = new[] { F1Driver.Tsunoda, F1Driver.Albon, F1Driver.Leclerc, F1Driver.Sargeant }.Select(
+            Predictions = new[] { F1Driver.Tsunoda, F1Driver.Albon, F1Driver.Leclerc, F1Driver.Colapinto }.Select(
                 x => new F1Prediction
                 {
                     UserId = Guid.NewGuid(),
@@ -66,7 +65,7 @@ public class F1PredictionsResultBuilderTests
         CheckTenthPlacePrediction(race, F1Driver.Tsunoda, 15, result);
         CheckTenthPlacePrediction(race, F1Driver.Albon, 25, result);
         CheckTenthPlacePrediction(race, F1Driver.Leclerc, 6, result);
-        CheckTenthPlacePrediction(race, F1Driver.Sargeant, 1, result);
+        CheckTenthPlacePrediction(race, F1Driver.Colapinto, 1, result);
     }
 
     private static void CheckTenthPlacePrediction(F1Race race, F1Driver tenthPlace, int expectedPoints, F1PredictionResult[] result)
@@ -199,7 +198,7 @@ public class F1PredictionsResultBuilderTests
                         NoDnfPredicted = false,
                         DnfPickedDrivers = new[]
                         {
-                            F1Driver.Sargeant,
+                            F1Driver.Colapinto,
                             F1Driver.Alonso,
                             F1Driver.Stroll,
                             F1Driver.Gasly,
@@ -219,7 +218,7 @@ public class F1PredictionsResultBuilderTests
                 {
                     F1Driver.Stroll,
                     F1Driver.Hamilton,
-                    F1Driver.Sargeant,
+                    F1Driver.Colapinto,
                 },
                 SafetyCars = 0,
                 FirstPlaceLead = 3m,
@@ -372,7 +371,7 @@ public class F1PredictionsResultBuilderTests
                         F1Driver.Alonso, // correct
                         F1Driver.Hulkenberg,
                         F1Driver.Tsunoda,
-                        F1Driver.Sargeant,
+                        F1Driver.Colapinto,
                     },
                 },
                 new()
@@ -391,12 +390,12 @@ public class F1PredictionsResultBuilderTests
                         F1Driver.Verstappen, // correct
                         F1Driver.Leclerc, // correct
                         F1Driver.Hamilton,
-                        F1Driver.Ocon,
+                        F1Driver.Doohan,
                         F1Driver.Piastri,
                         F1Driver.Bottas, // correct
                         F1Driver.Stroll,
                         F1Driver.Magnussen, // correct
-                        F1Driver.Ricciardo, // correct
+                        F1Driver.Lawson, // correct
                         F1Driver.Albon, // correct
                     },
                 },
@@ -435,7 +434,7 @@ public class F1PredictionsResultBuilderTests
                 DnfDrivers = new[]
                 {
                     F1Driver.Zhou,
-                    F1Driver.Sargeant,
+                    F1Driver.Colapinto,
                 },
                 SafetyCars = 2,
                 FirstPlaceLead = 14.350m,
@@ -468,7 +467,7 @@ public class F1PredictionsResultBuilderTests
                     F1Driver.Alonso, // correct
                     F1Driver.Hulkenberg,
                     F1Driver.Tsunoda,
-                    F1Driver.Sargeant,
+                    F1Driver.Colapinto,
                 },
             }
         );
@@ -485,7 +484,7 @@ public class F1PredictionsResultBuilderTests
             {
                 RaceId = raceId,
                 UserId = userId2,
-                TenthPlacePickedDriver = F1Driver.Ocon, // 4 очка
+                TenthPlacePickedDriver = F1Driver.Doohan, // 4 очка
                 DnfPrediction = new F1DnfPrediction     // 2 очка
                 {
                     NoDnfPredicted = false,
@@ -494,7 +493,7 @@ public class F1PredictionsResultBuilderTests
                         F1Driver.Verstappen,
                         F1Driver.Hamilton,
                         F1Driver.Stroll,
-                        F1Driver.Sargeant,
+                        F1Driver.Colapinto,
                         F1Driver.Tsunoda,
                     },
                 },
@@ -505,12 +504,12 @@ public class F1PredictionsResultBuilderTests
                     F1Driver.Verstappen, // correct
                     F1Driver.Leclerc,    // correct
                     F1Driver.Hamilton,
-                    F1Driver.Ocon,
+                    F1Driver.Doohan,
                     F1Driver.Piastri,
                     F1Driver.Bottas,     // correct
                     F1Driver.Stroll,
                     F1Driver.Magnussen,  // correct
-                    F1Driver.Ricciardo,  // correct
+                    F1Driver.Lawson,     // correct
                     F1Driver.Albon,      // correct
                 },
             }
@@ -537,7 +536,7 @@ public class F1PredictionsResultBuilderTests
                         F1Driver.Zhou,
                         F1Driver.Russell,
                         F1Driver.Alonso,
-                        F1Driver.Sargeant,
+                        F1Driver.Colapinto,
                         F1Driver.Ricciardo,
                     },
                 },
@@ -553,7 +552,7 @@ public class F1PredictionsResultBuilderTests
                     F1Driver.Bottas,     // correct
                     F1Driver.Alonso,     // correct
                     F1Driver.Magnussen,  // correct
-                    F1Driver.Ricciardo,  // correct
+                    F1Driver.Lawson,     // correct
                     F1Driver.Albon,      // correct
                 },
             }
@@ -581,15 +580,15 @@ public class F1PredictionsResultBuilderTests
         F1Driver.Russell, // 15
         F1Driver.Hamilton, // 18
         F1Driver.Albon, // 25
-        F1Driver.Ricciardo, // 18
+        F1Driver.Lawson, // 18
         F1Driver.Tsunoda, // 15
         F1Driver.Stroll, // 12
         F1Driver.Gasly, // 10
         F1Driver.Bottas, // 8
         F1Driver.Magnussen, // 6
-        F1Driver.Ocon, // 4
+        F1Driver.Doohan, // 4
         F1Driver.Hulkenberg, // 2
         F1Driver.Zhou, // 1
-        F1Driver.Sargeant, // 1
+        F1Driver.Colapinto, // 1
     };
 }

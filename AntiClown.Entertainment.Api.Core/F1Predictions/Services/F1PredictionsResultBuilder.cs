@@ -26,7 +26,7 @@ public static class F1PredictionsResultBuilder
             SelectHighestTeamMate(driverToPosition, F1Driver.Verstappen, F1Driver.Perez),
             SelectHighestTeamMate(driverToPosition, F1Driver.Leclerc, F1Driver.Sainz),
             SelectHighestTeamMate(driverToPosition, F1Driver.Hamilton, F1Driver.Russell),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Ocon, F1Driver.Gasly),
+            SelectHighestTeamMate(driverToPosition, F1Driver.Doohan, F1Driver.Gasly),
             SelectHighestTeamMate(driverToPosition, F1Driver.Piastri, F1Driver.Norris),
             SelectHighestTeamMate(driverToPosition, F1Driver.Bottas, F1Driver.Zhou),
             SelectHighestTeamMate(driverToPosition, F1Driver.Stroll, F1Driver.Alonso),

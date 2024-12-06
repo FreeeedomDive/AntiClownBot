@@ -25,4 +25,5 @@ public enum F1DriverDto
     Bearman,
     Colapinto,
     Lawson,
+    Doohan,
 }

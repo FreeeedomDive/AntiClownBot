@@ -4,7 +4,7 @@ export const DRIVER_PAIRS = [
   [F1DriverDto.Verstappen, F1DriverDto.Perez],
   [F1DriverDto.Leclerc, F1DriverDto.Sainz],
   [F1DriverDto.Hamilton, F1DriverDto.Russell],
-  [F1DriverDto.Ocon, F1DriverDto.Gasly],
+  [F1DriverDto.Doohan, F1DriverDto.Gasly],
   [F1DriverDto.Piastri, F1DriverDto.Norris],
   [F1DriverDto.Bottas, F1DriverDto.Zhou],
   [F1DriverDto.Stroll, F1DriverDto.Alonso],
