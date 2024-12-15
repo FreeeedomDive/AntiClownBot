@@ -155,6 +155,27 @@ public class F1PredictionsService : IF1PredictionsService
         return result;
     }
 
+    public async Task ConvertRacesAsync()
+    {
+        foreach (var season in new[] { 2023, 2024 })
+        {
+            var races = await f1RacesRepository.FindAsync(
+                new F1RaceFilter
+                {
+                    Season = season,
+                }
+            );
+            foreach (var race in races)
+            {
+                const string sprintSuffix = " (спринт)";
+                var isSprint = race.Name.Contains(sprintSuffix);
+                race.IsSprint = isSprint;
+                race.Name = isSprint ? race.Name.Replace(sprintSuffix, "") : race.Name;
+                await f1RacesRepository.UpdateAsync(race);
+            }
+        }
+    }
+
     private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
     private readonly IF1PredictionsMessageProducer f1PredictionsMessageProducer;
     private readonly IF1RacesRepository f1RacesRepository;

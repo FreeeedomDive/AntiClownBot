@@ -2,6 +2,7 @@
 using AntiClown.Api.Client.Configuration;
 using AntiClown.Core.OpenTelemetry;
 using AntiClown.Core.Schedules;
+using AntiClown.Core.Serializers;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Entertainment.Api.Core.AdditionalEventsInfo.Race.Repositories;
@@ -95,6 +96,8 @@ public class Startup
                 );
             }
         );
+
+        services.AddTransient<IJsonSerializer, NewtonsoftJsonSerializer>();
 
         // configure repositories
         services.AddTransientWithProxy<ICommonEventsRepository, CommonEventsRepository>();

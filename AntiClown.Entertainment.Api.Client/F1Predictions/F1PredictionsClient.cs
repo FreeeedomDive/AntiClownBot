@@ -72,5 +72,11 @@ public class F1PredictionsClient : IF1PredictionsClient
         return await client.MakeRequestAsync<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto?[]>>(requestBuilder.Build());
     }
 
+    public async Task ConvertAsync()
+    {
+        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/convert", HttpRequestMethod.PATCH);
+        await client.MakeRequestAsync(requestBuilder.Build());
+    }
+
     private readonly RestSharp.RestClient client;
 }

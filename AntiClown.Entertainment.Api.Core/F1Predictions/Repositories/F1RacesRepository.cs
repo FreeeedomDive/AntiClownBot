@@ -1,4 +1,5 @@
-﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+﻿using AntiClown.Core.Serializers;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,13 @@ namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 
 public class F1RacesRepository : IF1RacesRepository
 {
-    public F1RacesRepository(IVersionedSqlRepository<F1RaceStorageElement> sqlRepository)
+    public F1RacesRepository(
+        IVersionedSqlRepository<F1RaceStorageElement> sqlRepository,
+        IJsonSerializer jsonSerializer
+    )
     {
         this.sqlRepository = sqlRepository;
+        this.jsonSerializer = jsonSerializer;
     }
 
     public async Task<F1Race> ReadAsync(Guid id)
@@ -63,7 +68,7 @@ public class F1RacesRepository : IF1RacesRepository
         );
     }
 
-    private static F1RaceStorageElement ToStorageElement(F1Race race)
+    private F1RaceStorageElement ToStorageElement(F1Race race)
     {
         return new F1RaceStorageElement
         {
@@ -72,12 +77,12 @@ public class F1RacesRepository : IF1RacesRepository
             Name = race.Name,
             IsActive = race.IsActive,
             IsOpened = race.IsOpened,
-            SerializedPredictions = JsonConvert.SerializeObject(race.Predictions),
-            SerializedResults = JsonConvert.SerializeObject(race.Result),
+            SerializedPredictions = jsonSerializer.Serialize(race.Predictions),
+            SerializedResults = jsonSerializer.Serialize(race.Result),
         };
     }
 
-    private static F1Race ToModel(F1RaceStorageElement storageElement)
+    private F1Race ToModel(F1RaceStorageElement storageElement)
     {
         return new F1Race
         {
@@ -92,4 +97,5 @@ public class F1RacesRepository : IF1RacesRepository
     }
 
     private readonly IVersionedSqlRepository<F1RaceStorageElement> sqlRepository;
+    private readonly IJsonSerializer jsonSerializer;
 }
