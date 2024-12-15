@@ -60,6 +60,8 @@ public class F1RacesRepository : IF1RacesRepository
         await sqlRepository.ConcurrentUpdateAsync(
             race.Id, x =>
             {
+                x.Name = storageElement.Name;
+                x.IsSprint = storageElement.IsSprint;
                 x.IsActive = storageElement.IsActive;
                 x.IsOpened = storageElement.IsOpened;
                 x.SerializedPredictions = storageElement.SerializedPredictions;
@@ -77,6 +79,7 @@ public class F1RacesRepository : IF1RacesRepository
             Name = race.Name,
             IsActive = race.IsActive,
             IsOpened = race.IsOpened,
+            IsSprint = race.IsSprint,
             SerializedPredictions = jsonSerializer.Serialize(race.Predictions),
             SerializedResults = jsonSerializer.Serialize(race.Result),
         };
@@ -91,6 +94,7 @@ public class F1RacesRepository : IF1RacesRepository
             Name = storageElement.Name,
             IsActive = storageElement.IsActive,
             IsOpened = storageElement.IsOpened,
+            IsSprint = storageElement.IsSprint,
             Predictions = JsonConvert.DeserializeObject<List<F1Prediction>>(storageElement.SerializedPredictions)!,
             Result = JsonConvert.DeserializeObject<F1PredictionRaceResult>(storageElement.SerializedResults)!,
         };

@@ -6,7 +6,7 @@ public class ConvertF1RacesTool : ToolBase
 {
     public ConvertF1RacesTool(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-        ILogger logger
+        ILogger<ConvertF1RacesTool> logger
     ) : base(logger)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
