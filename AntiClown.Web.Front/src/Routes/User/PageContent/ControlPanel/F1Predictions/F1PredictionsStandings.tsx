@@ -77,7 +77,7 @@ export default function F1PredictionsStandings() {
                           />;
                           return (<TableCell sx={{padding: '4px'}}>
                             {
-                              race.name.indexOf("спринт") > 0
+                              race.isSprint
                                 ?
                                 <Badge variant={"dot"} color="info">
                                   {avatar}
