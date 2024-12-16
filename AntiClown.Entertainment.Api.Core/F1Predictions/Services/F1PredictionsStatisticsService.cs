@@ -41,7 +41,7 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
             foreach (var driver in raceResult.Classification)
             {
                 position++;
-                tenthPlacePoints[driver] += F1PredictionsPointsHelper.PointsDistribution[position];
+                tenthPlacePoints[driver] += F1PredictionsPointsHelper.PointsByFinishPlaceDistribution[position];
             }
         }
 

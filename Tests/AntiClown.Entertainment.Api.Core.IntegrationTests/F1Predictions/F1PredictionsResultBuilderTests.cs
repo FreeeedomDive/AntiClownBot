@@ -472,7 +472,7 @@ public class F1PredictionsResultBuilderTests
             }
         );
         var results = F1PredictionsResultBuilder.Build(race);
-        CountTotalPoints(results.First(x => x.UserId == userId1)).Should().Be(29);
+        results.First(x => x.UserId == userId1).TotalPoints.Should().Be(29);
 
         #endregion
         
@@ -515,7 +515,9 @@ public class F1PredictionsResultBuilderTests
             }
         );
         results = F1PredictionsResultBuilder.Build(race);
-        CountTotalPoints(results.First(x => x.UserId == userId2)).Should().Be(17);
+        results.First(x => x.UserId == userId2).TotalPoints.Should().Be(17);
+        // второй челик теперь ближе в предикте первого места, у первого -5 за это предсказание 
+        results.First(x => x.UserId == userId1).TotalPoints.Should().Be(24);
 
         #endregion
         
@@ -558,14 +560,160 @@ public class F1PredictionsResultBuilderTests
             }
         );
         results = F1PredictionsResultBuilder.Build(race);
-        CountTotalPoints(results.First(x => x.UserId == userId3)).Should().Be(39);
+        results.First(x => x.UserId == userId3).TotalPoints.Should().Be(39);
 
         #endregion
     }
 
-    private static int CountTotalPoints(F1PredictionResult result)
+    [Test]
+    public void ComplexPointsSprintTest()
     {
-        return result.TenthPlacePoints + result.DnfsPoints + result.SafetyCarsPoints + result.FirstPlaceLeadPoints + result.TeamMatesPoints;
+        var raceId = Guid.NewGuid();
+        var race = new F1Race
+        {
+            Id = raceId,
+            Season = DateTime.UtcNow.Year,
+            Name = "Тест на подсчет очков за всю гонку",
+            IsActive = true,
+            IsSprint = true,
+            IsOpened = true,
+            Predictions = new List<F1Prediction>(),
+            Result = new F1PredictionRaceResult
+            {
+                RaceId = raceId,
+                Classification = TestClassification,
+                DnfDrivers = new[]
+                {
+                    F1Driver.Zhou,
+                    F1Driver.Colapinto,
+                },
+                SafetyCars = 2,
+                FirstPlaceLead = 14.350m,
+            },
+        };
+
+        # region User1
+
+        var userId1 = Guid.NewGuid();
+        race.Predictions.Add(
+            new F1Prediction
+            {
+                RaceId = raceId,
+                UserId = userId1,
+                TenthPlacePickedDriver = F1Driver.Russell, // 15 очков
+                DnfPrediction = new F1DnfPrediction // 0 очков
+                {
+                    NoDnfPredicted = true,
+                },
+                SafetyCarsPrediction = F1SafetyCars.Two, // 5 очков
+                FirstPlaceLeadPrediction = 7.455m, // 5 очков, так как он пока единственный и самый близкий к правильному ответу
+                TeamsPickedDrivers = new[] // 4 очка
+                {
+                    F1Driver.Perez,
+                    F1Driver.Sainz,
+                    F1Driver.Russell, // correct
+                    F1Driver.Gasly, // correct
+                    F1Driver.Norris, // correct
+                    F1Driver.Zhou,
+                    F1Driver.Alonso, // correct
+                    F1Driver.Hulkenberg,
+                    F1Driver.Tsunoda,
+                    F1Driver.Colapinto,
+                },
+            }
+        );
+        var results = F1PredictionsResultBuilder.Build(race);
+        results.First(x => x.UserId == userId1).TotalPoints.Should().Be(8);
+
+        #endregion
+        
+        # region User2
+
+        var userId2 = Guid.NewGuid();
+        race.Predictions.Add(
+            new F1Prediction
+            {
+                RaceId = raceId,
+                UserId = userId2,
+                TenthPlacePickedDriver = F1Driver.Doohan, // 4 очка
+                DnfPrediction = new F1DnfPrediction     // 2 очка
+                {
+                    NoDnfPredicted = false,
+                    DnfPickedDrivers = new[]
+                    {
+                        F1Driver.Verstappen,
+                        F1Driver.Hamilton,
+                        F1Driver.Stroll,
+                        F1Driver.Colapinto,
+                        F1Driver.Tsunoda,
+                    },
+                },
+                SafetyCarsPrediction = F1SafetyCars.One, // 0 очков
+                FirstPlaceLeadPrediction = 11.215m,      // 5 очков
+                TeamsPickedDrivers = new[]               // 6 очков
+                {
+                    F1Driver.Verstappen, // correct
+                    F1Driver.Leclerc,    // correct
+                    F1Driver.Hamilton,
+                    F1Driver.Doohan,
+                    F1Driver.Piastri,
+                    F1Driver.Bottas,     // correct
+                    F1Driver.Stroll,
+                    F1Driver.Magnussen,  // correct
+                    F1Driver.Lawson,     // correct
+                    F1Driver.Albon,      // correct
+                },
+            }
+        );
+        results = F1PredictionsResultBuilder.Build(race);
+        results.First(x => x.UserId == userId2).TotalPoints.Should().Be(5);
+        // второй челик теперь ближе в предикте первого места, у первого -5 за это предсказание 
+        results.First(x => x.UserId == userId1).TotalPoints.Should().Be(7);
+
+        #endregion
+        
+        # region User3
+
+        var userId3 = Guid.NewGuid();
+        race.Predictions.Add(
+            new F1Prediction
+            {
+                RaceId = raceId,
+                UserId = userId3,
+                TenthPlacePickedDriver = F1Driver.Albon, // 25 очков
+                DnfPrediction = new F1DnfPrediction      // 4 очка
+                {
+                    NoDnfPredicted = false,
+                    DnfPickedDrivers = new[]
+                    {
+                        F1Driver.Zhou,
+                        F1Driver.Russell,
+                        F1Driver.Alonso,
+                        F1Driver.Colapinto,
+                        F1Driver.Ricciardo,
+                    },
+                },
+                SafetyCarsPrediction = F1SafetyCars.Zero, // 0 очков
+                FirstPlaceLeadPrediction = 3.512m,        // 0 очков
+                TeamsPickedDrivers = new[]                // 10 очков
+                {
+                    F1Driver.Verstappen, // correct
+                    F1Driver.Leclerc,    // correct
+                    F1Driver.Russell,    // correct
+                    F1Driver.Gasly,      // correct
+                    F1Driver.Norris,     // correct
+                    F1Driver.Bottas,     // correct
+                    F1Driver.Alonso,     // correct
+                    F1Driver.Magnussen,  // correct
+                    F1Driver.Lawson,     // correct
+                    F1Driver.Albon,      // correct
+                },
+            }
+        );
+        results = F1PredictionsResultBuilder.Build(race);
+        results.First(x => x.UserId == userId3).TotalPoints.Should().Be(11);
+
+        #endregion
     }
 
     private static readonly F1Driver[] TestClassification =

@@ -2,9 +2,7 @@
 
 public static class F1PredictionsPointsHelper
 {
-    public const int PointsForCorrectFirstDnfPrediction = 5;
-
-    public static readonly Dictionary<int, int> PointsDistribution = new()
+    public static readonly Dictionary<int, int> PointsByFinishPlaceDistribution = new()
     {
         { 1, 1 },
         { 2, 2 },
@@ -27,4 +25,11 @@ public static class F1PredictionsPointsHelper
         { 19, 1 },
         { 20, 1 },
     };
+
+    public const int NoDnfPredictionPoints = 10;
+    public const int DnfPredictionPoints = 2;
+
+    public const int IncidentsPredictionPoints = 5;
+
+    public const int SprintRacePointsPercent = 30;
 }
