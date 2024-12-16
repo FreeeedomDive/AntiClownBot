@@ -13,7 +13,6 @@ import {
   Typography
 } from "@mui/material";
 import React from "react";
-import {countPointsForRace} from "../../../../../Helpers/F1PredictionUserResultDtoHelpers";
 import {countTotalPoints} from "../../../../../Helpers/F1PredictionUserResultDtoHelpers";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -61,7 +60,7 @@ export function F1PredictionsStandingsRow({discordMember, results, isMe, races}:
         {
           results.map(x =>
             <TableCell key={`${x?.raceId}_points`} sx={{padding: '4px'}}>
-              <Typography>{!!x ? countPointsForRace(x) : ""}</Typography>
+              <Typography>{!!x ? x.totalPoints : ""}</Typography>
             </TableCell>)
         }
       </TableRow>
@@ -93,7 +92,7 @@ export function F1PredictionsStandingsRow({discordMember, results, isMe, races}:
                       <TableCell key={`${race!.raceId}_incidents`} align="center">{race!.safetyCarsPoints}</TableCell>
                       <TableCell key={`${race!.raceId}_1st`} align="center">{race!.firstPlaceLeadPoints}</TableCell>
                       <TableCell key={`${race!.raceId}_teams`} align="center">{race!.teamMatesPoints}</TableCell>
-                      <TableCell key={`${race!.raceId}_sum`} align="center">{countPointsForRace(race!)}</TableCell>
+                      <TableCell key={`${race!.raceId}_sum`} align="center">{race!.totalPoints}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

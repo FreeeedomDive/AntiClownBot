@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import { F1PredictionsStandingsDto } from "../../../../../Dto/F1Predictions/F1PredictionsStandingsDto";
 import { DiscordMemberDto } from "../../../../../Dto/Users/DiscordMemberDto";
-import { countPointsForRace } from "../../../../../Helpers/F1PredictionUserResultDtoHelpers";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
@@ -64,7 +63,7 @@ export default function F1PredictionsStandingsChart({
         continue;
       }
 
-      currentSum += countPointsForRace(raceResult);
+      currentSum += raceResult.totalPoints;
       points.push(currentSum);
     }
 
