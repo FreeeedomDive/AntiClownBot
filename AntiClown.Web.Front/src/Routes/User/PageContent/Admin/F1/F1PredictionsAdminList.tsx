@@ -10,7 +10,6 @@ import F1PredictionAdmin from "./F1PredictionAdmin";
 export default function F1PredictionsAdminList() {
   const [f1Races, setF1Races] = useState<F1RaceDto[] | undefined>();
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto | undefined>();
-  const [selectedRace, setSelectedRace] = useState("")
   const [isActive, setIsActive] = useState(true)
 
   async function loadRaces(onlyActive: boolean) {
@@ -20,10 +19,7 @@ export default function F1PredictionsAdminList() {
     });
 
     setF1Races(result);
-    if (result.length > 0) {
-      setCurrentF1Race(result[0])
-      setSelectedRace(result[0]?.name)
-    }
+    setCurrentF1Race(result[0]);
   }
 
   useEffect(() => {
@@ -40,17 +36,16 @@ export default function F1PredictionsAdminList() {
                 <Select
                   labelId="race-select"
                   id="race-select"
-                  value={selectedRace}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    setSelectedRace(value)
-                    const race = f1Races?.find(x => x.name === value)
-                    setCurrentF1Race(race)
+                  key={currentF1Race?.id ?? ""}
+                  value={currentF1Race}
+                  onChange={(selectedRace) => {
+                    setCurrentF1Race(selectedRace.target.value as F1RaceDto)
                   }}
                 >
                   {f1Races.map((race) => (
-                    <MenuItem key={race.id} value={race.name}>
-                      {race.name}{" "}{race.season}
+                    //@ts-ignore - necessary to load object into value
+                    <MenuItem key={race.id} value={race}>
+                      {race.name}{race.isSprint ? " (спринт) " : " "}{race.season}
                     </MenuItem>
                   ))}
                 </Select>

@@ -10,7 +10,6 @@ import F1Prediction from "./F1Prediction";
 export default function F1PredictionsList() {
   const [f1Races, setF1Races] = useState<F1RaceDto[] | undefined>();
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto | undefined>();
-  const [selectedRace, setSelectedRace] = useState("")
 
   useEffect(() => {
     async function load() {
@@ -21,7 +20,6 @@ export default function F1PredictionsList() {
 
       setF1Races(result);
       setCurrentF1Race(result[0]);
-      setSelectedRace(result[0]?.name)
     }
 
     load();
@@ -36,17 +34,16 @@ export default function F1PredictionsList() {
               <Select
                 labelId="race-select"
                 id="race-select"
-                value={selectedRace}
-                onChange={(event) => {
-                  const value = event.target.value;
-                  setSelectedRace(value)
-                  const race = f1Races?.find(x => x.name === value)
-                  setCurrentF1Race(race)
+                value={currentF1Race}
+                key={currentF1Race?.id ?? ""}
+                onChange={(selectedRace) => {
+                  setCurrentF1Race(selectedRace.target.value as F1RaceDto)
                 }}
               >
                 {f1Races.map((race) => (
-                  <MenuItem key={race.id} value={race.name}>
-                    {race.name}{" "}{race.season}
+                  //@ts-ignore - necessary to load object into value
+                  <MenuItem key={race.id} value={race}>
+                    {race.name}{" "}{race.season}{race.isSprint ? " (спринт)" : ""}
                   </MenuItem>
                 ))}
               </Select>

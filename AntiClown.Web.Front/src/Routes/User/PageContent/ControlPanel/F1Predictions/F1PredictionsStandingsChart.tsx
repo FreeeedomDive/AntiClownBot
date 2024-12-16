@@ -1,6 +1,5 @@
 import {
   Box,
-  Collapse,
   FormControl,
   MenuItem,
   Select,
@@ -77,7 +76,7 @@ export default function F1PredictionsStandingsChart({
     });
   }
   series.sort(
-    (a, b) => b.points[b.points.length - 1] - a.points[a.points.length - 1]
+    (a, b) => b.points[b.points.length - 1] - a.points[a.points.length - 1],
   );
 
   const totalRaces = 30;
@@ -86,8 +85,8 @@ export default function F1PredictionsStandingsChart({
     (currentLeaderPoints, raceNumber) =>
       Math.max(
         0,
-        currentLeaderPoints - (totalRaces - raceNumber) * maxPointsPerRace
-      )
+        currentLeaderPoints - (totalRaces - raceNumber) * maxPointsPerRace,
+      ),
   );
   if (possibleChampionPoints.filter((x) => x > 0).length > 0) {
     series.push({
@@ -97,16 +96,33 @@ export default function F1PredictionsStandingsChart({
     });
   }
 
-  if(showLastRacesCount !== ShowLastNumberOfRaces.All){
-    series = series.filter(x => x.points[x.points.length - 1] >= possibleChampionPoints[possibleChampionPoints.length - 1]);
-  }
-
   const sliceCount =
     showLastRacesCount === ShowLastNumberOfRaces.All
       ? series[0].points.length
       : showLastRacesCount === ShowLastNumberOfRaces.Last10
         ? 10
         : 5;
+
+  if (showLastRacesCount !== ShowLastNumberOfRaces.All) {
+    series = series.filter(
+      (x) =>
+        x.points[x.points.length - sliceCount - 1] >= possibleChampionPoints[possibleChampionPoints.length - sliceCount - 1]
+    );
+  }
+
+  const getMinY = () => {
+    const pts = series.map((x) => x.points.slice(-sliceCount)[0]);
+    return Math.min(...pts);
+  };
+
+  const getMaxY = () => {
+    const pts = series.slice(-sliceCount).map((x) => {
+      const slice = x.points.slice(-sliceCount);
+      return slice[slice.length - 1];
+    });
+    return Math.max(...pts);
+  };
+
   return (
     <Stack direction={"column"}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -149,8 +165,8 @@ export default function F1PredictionsStandingsChart({
         ]}
         yAxis={[
           {
-            min: Math.min(...series.map(x => x.points[0])),
-            max: Math.max(...series.map(x => x.points[x.points.length - 1])),
+            min: getMinY(),
+            max: getMaxY(),
             scaleType: "linear",
           },
         ]}
