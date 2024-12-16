@@ -167,11 +167,20 @@ public class F1PredictionsService : IF1PredictionsService
             );
             foreach (var race in races)
             {
-                const string sprintSuffix = " (спринт)";
-                var isSprint = race.Name.Contains(sprintSuffix);
-                race.IsSprint = isSprint;
-                race.Name = isSprint ? race.Name.Replace(sprintSuffix, "") : race.Name;
-                await f1RacesRepository.UpdateAsync(race);
+                var results = await f1PredictionResultsRepository.FindAsync(
+                    new F1PredictionResultsFilter
+                    {
+                        RaceId = race.Id,
+                    }
+                );
+                results = results.Select(
+                    x =>
+                    {
+                        x.TotalPoints = x.TenthPlacePoints + x.DnfsPoints + x.SafetyCarsPoints + x.FirstPlaceLeadPoints + x.TeamMatesPoints;
+                        return x;
+                    }
+                ).ToArray();
+                await f1PredictionResultsRepository.CreateOrUpdateAsync(results);
             }
         }
     }
