@@ -9,4 +9,5 @@ public class F1PredictionUserResultDto
     public int SafetyCarsPoints { get; set; }
     public int FirstPlaceLeadPoints { get; set; }
     public int TeamMatesPoints { get; set; }
+    public int TotalPoints { get; set; }
 }
