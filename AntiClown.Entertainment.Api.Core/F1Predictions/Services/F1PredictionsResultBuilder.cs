@@ -21,18 +21,20 @@ public static class F1PredictionsResultBuilder
                 return pos;
             }
         );
+        //var teamMatesWinners = Array.Empty<string>();
+        // TODO: take this data from the future repository of active drivers
         var teamMatesWinners = new[]
         {
-            SelectHighestTeamMate(driverToPosition, F1Driver.Verstappen, F1Driver.Perez),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Leclerc, F1Driver.Sainz),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Hamilton, F1Driver.Russell),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Doohan, F1Driver.Gasly),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Piastri, F1Driver.Norris),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Bottas, F1Driver.Zhou),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Stroll, F1Driver.Alonso),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Magnussen, F1Driver.Hulkenberg),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Lawson, F1Driver.Tsunoda),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Albon, F1Driver.Colapinto),
+            SelectHighestTeamMate(driverToPosition, "Verstappen", "Perez"),
+            SelectHighestTeamMate(driverToPosition, "Leclerc", "Sainz"),
+            SelectHighestTeamMate(driverToPosition, "Hamilton", "Russell"),
+            SelectHighestTeamMate(driverToPosition, "Doohan", "Gasly"),
+            SelectHighestTeamMate(driverToPosition, "Piastri", "Norris"),
+            SelectHighestTeamMate(driverToPosition, "Bottas", "Zhou"),
+            SelectHighestTeamMate(driverToPosition, "Stroll", "Alonso"),
+            SelectHighestTeamMate(driverToPosition, "Magnussen", "Hulkenberg"),
+            SelectHighestTeamMate(driverToPosition, "Lawson", "Tsunoda"),
+            SelectHighestTeamMate(driverToPosition, "Albon", "Colapinto"),
         };
 
         var resultsByUserId = race
@@ -93,7 +95,7 @@ public static class F1PredictionsResultBuilder
         };
     }
 
-    private static F1Driver SelectHighestTeamMate(Dictionary<F1Driver, int> positions, F1Driver firstDriver, F1Driver secondDriver)
+    private static string SelectHighestTeamMate(Dictionary<string, int> positions, string firstDriver, string secondDriver)
     {
         return positions.GetValueOrDefault(firstDriver, 999) < positions.GetValueOrDefault(secondDriver, 999)
             ? firstDriver

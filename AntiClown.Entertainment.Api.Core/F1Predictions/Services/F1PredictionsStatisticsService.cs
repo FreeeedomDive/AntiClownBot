@@ -5,6 +5,7 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 
+// this is completely useless, need to rewrite stats from scratch
 public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
 {
     public F1PredictionsStatisticsService(
@@ -18,7 +19,7 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
 
     public async Task<MostPickedDriversStats> GetMostPickedDriversAsync()
     {
-        var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
+        /*var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
         var predictions = finishedRaces.SelectMany(x => x.Predictions).ToArray();
         var tenthPlacePredictions = CountAndOrderByScore(predictions, x => x.TenthPlacePickedDriver);
         // var dnfPredictions = CountAndOrderByScore(predictions, x => x.FirstDnfPickedDriver);
@@ -27,12 +28,14 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
         {
             TenthPlacePickedDrivers = tenthPlacePredictions,
             FirstDnfPickedDrivers = Array.Empty<DriverStatistics>(),
-        };
+        };*/
+
+        return new MostPickedDriversStats();
     }
 
     public async Task<MostProfitableDriversStats> GetMostProfitableDriversAsync()
     {
-        var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
+        /*var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
         var raceResults = finishedRaces.Select(x => x.Result).ToArray();
         var tenthPlacePoints = Enum.GetValues<F1Driver>().ToDictionary(driver => driver, _ => 0);
         foreach (var raceResult in raceResults)
@@ -64,12 +67,14 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
             TenthPlacePoints = correctedTenthPlacePoints,
             TenthPlaceCount = tenthPlaceCount,
             FirstDnfCount = Array.Empty<DriverStatistics>(),
-        };
+        };*/
+
+        return new MostProfitableDriversStats();
     }
 
     public async Task<UserPointsStats> GetUserPointsStatsAsync(Guid userId)
     {
-        var userPredictionsResults = (await f1PredictionResultsRepository.FindAsync(
+        /*var userPredictionsResults = (await f1PredictionResultsRepository.FindAsync(
             new F1PredictionResultsFilter
             {
                 UserId = userId,
@@ -99,12 +104,14 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
             ? sortedPoints[sortedPoints.Length / 2]
             : (double)(sortedPoints[sortedPoints.Length / 2 - 1] + sortedPoints[sortedPoints.Length / 2]) / 2;
         result.MedianPoints = median;
-        return result;
+        return result;*/
+
+        return new UserPointsStats();
     }
 
     public async Task<MostPickedDriversStats> GetMostPickedDriversAsync(Guid userId)
     {
-        var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
+        /*var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
         var predictions = finishedRaces
                           .SelectMany(x => x.Predictions)
                           .Where(x => x.UserId == userId)
@@ -116,10 +123,12 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
         {
             TenthPlacePickedDrivers = tenthPlacePredictions,
             FirstDnfPickedDrivers = Array.Empty<DriverStatistics>(),
-        };
+        };*/
+
+        return new MostPickedDriversStats();
     }
 
-    private static DriverStatistics[] CountAndOrderByScore<T>(IEnumerable<T> predictions, Func<T, F1Driver?> selector)
+    /*private static DriverStatistics[] CountAndOrderByScore<T>(IEnumerable<T> predictions, Func<T, F1Driver?> selector)
     {
         return predictions
                .GroupBy(selector)
@@ -133,7 +142,7 @@ public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
                )
                .OrderByDescending(x => x.Score)
                .ToArray();
-    }
+    }*/
 
     private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
     private readonly IF1RacesRepository f1RacesRepository;

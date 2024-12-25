@@ -52,8 +52,8 @@ public class F1PredictionsService : IF1PredictionsService
             Result = new F1PredictionRaceResult
             {
                 RaceId = raceId,
-                Classification = Array.Empty<F1Driver>(),
-                DnfDrivers = Array.Empty<F1Driver>(),
+                Classification = Array.Empty<string>(),
+                DnfDrivers = Array.Empty<string>(),
                 SafetyCars = 0,
                 FirstPlaceLead = 0,
             },

@@ -2,6 +2,6 @@
 
 public class DriverStatistics
 {
-    public F1Driver Driver { get; set; }
+    public string Driver { get; set; }
     public int Score { get; set; }
 }
