@@ -91,10 +91,12 @@ public class F1PredictionsController : Controller
     }
 
     [HttpPost("teams")]
-    public async Task CreateOrUpdateTeam([FromBody] F1TeamDto dto)
+    public async Task<ActionResult> CreateOrUpdateTeam([FromBody] F1TeamDto dto)
     {
         var team = mapper.Map<F1Team>(dto);
         await f1PredictionsService.CreateOrUpdateTeamAsync(team);
+
+        return NoContent();
     }
 
     private readonly IF1PredictionsService f1PredictionsService;
