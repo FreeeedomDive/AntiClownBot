@@ -109,6 +109,7 @@ public class Startup
         services.AddTransientWithProxy<IPartiesRepository, PartiesRepository>();
         services.AddTransientWithProxy<IF1RacesRepository, F1RacesRepository>();
         services.AddTransientWithProxy<IF1PredictionResultsRepository, F1PredictionResultsRepository>();
+        services.AddTransientWithProxy<IF1PredictionTeamsRepository, F1PredictionTeamsRepository>();
 
         // configure other stuff
         services.AddTransientWithProxy<IAntiClownApiClient>(

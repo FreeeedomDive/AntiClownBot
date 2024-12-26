@@ -16,5 +16,6 @@ public interface IF1PredictionsService
     Task<F1PredictionResult[]> FinishRaceAsync(Guid raceId);
     Task<F1PredictionResult[]> ReadRaceResultsAsync(Guid raceId);
     Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync(int? season = null);
-    Task ConvertRacesAsync();
+    Task<F1Team[]> GetActiveTeamsAsync();
+    Task CreateOrUpdateTeamAsync(F1Team team);
 }

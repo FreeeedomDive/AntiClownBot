@@ -11,12 +11,14 @@ public class F1PredictionsService : IF1PredictionsService
     public F1PredictionsService(
         IF1RacesRepository f1RacesRepository,
         IF1PredictionResultsRepository f1PredictionResultsRepository,
-        IF1PredictionsMessageProducer f1PredictionsMessageProducer
+        IF1PredictionsMessageProducer f1PredictionsMessageProducer,
+        IF1PredictionTeamsRepository f1PredictionTeamsRepository
     )
     {
         this.f1RacesRepository = f1RacesRepository;
         this.f1PredictionResultsRepository = f1PredictionResultsRepository;
         this.f1PredictionsMessageProducer = f1PredictionsMessageProducer;
+        this.f1PredictionTeamsRepository = f1PredictionTeamsRepository;
     }
 
     public async Task<F1Race> ReadAsync(Guid raceId)
@@ -155,37 +157,18 @@ public class F1PredictionsService : IF1PredictionsService
         return result;
     }
 
-    public async Task ConvertRacesAsync()
+    public async Task<F1Team[]> GetActiveTeamsAsync()
     {
-        foreach (var season in new[] { 2023, 2024 })
-        {
-            var races = await f1RacesRepository.FindAsync(
-                new F1RaceFilter
-                {
-                    Season = season,
-                }
-            );
-            foreach (var race in races)
-            {
-                var results = await f1PredictionResultsRepository.FindAsync(
-                    new F1PredictionResultsFilter
-                    {
-                        RaceId = race.Id,
-                    }
-                );
-                results = results.Select(
-                    x =>
-                    {
-                        x.TotalPoints = x.TenthPlacePoints + x.DnfsPoints + x.SafetyCarsPoints + x.FirstPlaceLeadPoints + x.TeamMatesPoints;
-                        return x;
-                    }
-                ).ToArray();
-                await f1PredictionResultsRepository.CreateOrUpdateAsync(results);
-            }
-        }
+        return await f1PredictionTeamsRepository.ReadAllAsync();
+    }
+
+    public async Task CreateOrUpdateTeamAsync(F1Team team)
+    {
+        await f1PredictionTeamsRepository.CreateOrUpdateAsync(team);
     }
 
     private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
     private readonly IF1PredictionsMessageProducer f1PredictionsMessageProducer;
+    private readonly IF1PredictionTeamsRepository f1PredictionTeamsRepository;
     private readonly IF1RacesRepository f1RacesRepository;
 }

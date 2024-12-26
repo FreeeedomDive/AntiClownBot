@@ -83,13 +83,6 @@ public class F1PredictionsController : Controller
         return mapper.Map<Dictionary<Guid, F1PredictionUserResultDto?[]>>(result);
     }
 
-    [HttpPatch("convert")]
-    public async Task<ActionResult> Convert()
-    {
-        await f1PredictionsService.ConvertRacesAsync();
-        return NoContent();
-    }
-
     private readonly IF1PredictionsService f1PredictionsService;
     private readonly IMapper mapper;
 }
