@@ -18,6 +18,7 @@ import { countTotalPoints } from "../../../../../Helpers/F1PredictionUserResultD
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { F1RaceDto } from "../../../../../Dto/F1Predictions/F1RaceDto";
+import DiscordMember from "../../../../../Components/Users/DiscordMember";
 
 interface IProps {
   discordMember: DiscordMemberDto | undefined;
@@ -61,7 +62,7 @@ export function F1PredictionsStandingsRow({
                 src={discordMember.avatarUrl}
                 sx={{ width: 24, height: 24 }}
               />
-              <Typography>{userName}</Typography>
+              <DiscordMember member={discordMember} />
             </Stack>
           )}
         </TableCell>
@@ -69,7 +70,7 @@ export function F1PredictionsStandingsRow({
           <Typography>{sumPoints}</Typography>
         </TableCell>
         {results.map((x) => (
-          <TableCell key={`${x?.raceId}_points`} sx={{ padding: "4px" }}>
+          <TableCell key={`${discordMember?.userId}_${x?.raceId}_points`} sx={{ padding: "4px" }}>
             <Typography>{!!x ? x.totalPoints : ""}</Typography>
           </TableCell>
         ))}
