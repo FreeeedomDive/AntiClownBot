@@ -167,6 +167,24 @@ const UserPageSideBar = ({ user }: Props) => {
                         </ListItemButton>
                       </ListItem>
                     </RightsWrapper>
+                    <RightsWrapper
+                      requiredRights={[RightsDto.F1PredictionsAdmin]}
+                    >
+                      <ListItem key={"F1PredictionsTeamsAdmin"} disablePadding>
+                        <ListItemButton
+                          sx={{ pl: 4 }}
+                          onClick={() =>
+                            navigate(buildLink(userId, "f1Predictions/teams"))
+                          }
+                          selected={
+                            location.pathname ===
+                            buildLink(userId, "f1Predictions/teams")
+                          }
+                        >
+                          <ListItemText primary={"Команды"} />
+                        </ListItemButton>
+                      </ListItem>
+                    </RightsWrapper>
                   </List>
                 </Collapse>
               </>
