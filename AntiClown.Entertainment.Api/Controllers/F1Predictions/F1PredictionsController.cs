@@ -83,6 +83,20 @@ public class F1PredictionsController : Controller
         return mapper.Map<Dictionary<Guid, F1PredictionUserResultDto?[]>>(result);
     }
 
+    [HttpGet("teams")]
+    public async Task<ActionResult<F1TeamDto[]>> ReadTeams()
+    {
+        var result = await f1PredictionsService.GetActiveTeamsAsync();
+        return mapper.Map<F1TeamDto[]>(result);
+    }
+
+    [HttpPost("teams")]
+    public async Task CreateOrUpdateTeam([FromBody] F1TeamDto dto)
+    {
+        var team = mapper.Map<F1Team>(dto);
+        await f1PredictionsService.CreateOrUpdateTeamAsync(team);
+    }
+
     private readonly IF1PredictionsService f1PredictionsService;
     private readonly IMapper mapper;
 }

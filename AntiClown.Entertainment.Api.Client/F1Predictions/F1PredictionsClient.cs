@@ -65,16 +65,23 @@ public class F1PredictionsClient : IF1PredictionsClient
         return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]>(requestBuilder.Build());
     }
 
-    public async Task<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto?[]>> ReadStandingsAsync(int? season = null)
+    public async Task<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]>> ReadStandingsAsync(int? season = null)
     {
         var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/standings", HttpRequestMethod.GET);
         requestBuilder.WithQueryParameter("season", season);
-        return await client.MakeRequestAsync<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto?[]>>(requestBuilder.Build());
+        return await client.MakeRequestAsync<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]>>(requestBuilder.Build());
     }
 
-    public async Task ConvertAsync()
+    public async Task<AntiClown.Entertainment.Api.Dto.F1Predictions.F1TeamDto[]> ReadTeamsAsync()
     {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/convert", HttpRequestMethod.PATCH);
+        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/teams", HttpRequestMethod.GET);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.F1TeamDto[]>(requestBuilder.Build());
+    }
+
+    public async Task CreateOrUpdateTeamAsync(AntiClown.Entertainment.Api.Dto.F1Predictions.F1TeamDto dto)
+    {
+        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/teams", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(dto);
         await client.MakeRequestAsync(requestBuilder.Build());
     }
 
