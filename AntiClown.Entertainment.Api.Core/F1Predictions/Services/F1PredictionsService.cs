@@ -41,7 +41,7 @@ public class F1PredictionsService : IF1PredictionsService
         return await f1RacesRepository.FindAsync(filter);
     }
 
-    public async Task<Guid> StartNewRaceAsync(string name)
+    public async Task<Guid> StartNewRaceAsync(string name, bool isSprint)
     {
         var raceId = Guid.NewGuid();
         var newRace = new F1Race
@@ -49,6 +49,7 @@ public class F1PredictionsService : IF1PredictionsService
             Id = raceId,
             Season = DateTime.UtcNow.Year,
             Name = name,
+            IsSprint = isSprint,
             IsActive = true,
             IsOpened = true,
             Result = new F1PredictionRaceResult

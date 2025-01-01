@@ -26,10 +26,11 @@ public class F1PredictionsClient : IF1PredictionsClient
         return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.F1RaceDto>(requestBuilder.Build());
     }
 
-    public async Task<System.Guid> StartNewRaceAsync(string name)
+    public async Task<System.Guid> StartNewRaceAsync(string name, bool isSprint)
     {
         var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/", HttpRequestMethod.POST);
         requestBuilder.WithQueryParameter("name", name);
+        requestBuilder.WithQueryParameter("isSprint", isSprint);
         return await client.MakeRequestAsync<System.Guid>(requestBuilder.Build());
     }
 

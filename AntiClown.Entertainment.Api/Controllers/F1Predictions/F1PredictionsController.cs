@@ -35,9 +35,9 @@ public class F1PredictionsController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> StartNewRace([FromQuery] string name)
+    public async Task<ActionResult<Guid>> StartNewRace([FromQuery] string name, [FromQuery] bool isSprint)
     {
-        return await f1PredictionsService.StartNewRaceAsync(name);
+        return await f1PredictionsService.StartNewRaceAsync(name, isSprint);
     }
 
     [HttpPost("{raceId:guid}/addPrediction")]
