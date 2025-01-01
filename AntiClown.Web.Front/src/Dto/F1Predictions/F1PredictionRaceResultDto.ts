@@ -1,9 +1,7 @@
-import {F1DriverDto} from "./F1DriverDto";
-
 export interface F1PredictionRaceResultDto {
   raceId: string;
-  classification: F1DriverDto[];
-  dnfDrivers: F1DriverDto[];
+  classification: string[];
+  dnfDrivers: string[];
   safetyCars: number;
   firstPlaceLead: number;
 }

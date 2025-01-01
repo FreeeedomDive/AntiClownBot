@@ -4,8 +4,9 @@ import {Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography} f
 import F1RaceClassifications from "./F1RaceClassifications";
 import {LoadingButton} from "@mui/lab";
 import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
-import {DRIVERS} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
+import {getDriversFromTeams} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
 import {Block, Done, Save} from "@mui/icons-material";
+import {F1TeamDto} from "../../../../../Dto/F1Predictions/F1TeamDto";
 
 interface Props {
   f1Race: F1RaceDto;
@@ -13,18 +14,22 @@ interface Props {
 
 export default function F1PredictionAdmin({f1Race}: Props) {
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto>(f1Race);
+  const [teams, setTeams] = useState<F1TeamDto[]>([]);
 
   useEffect(() => {
     async function load() {
       const result = await F1PredictionsApi.read(f1Race.id);
       setCurrentF1Race(result);
+
+      const teams = await F1PredictionsApi.getActiveTeams();
+      setTeams(teams);
     }
 
     load();
   }, [f1Race.id]);
 
   const [drivers, setDrivers] = useState(
-    currentF1Race.result.classification.length === 0 ? DRIVERS : currentF1Race.result.classification
+    currentF1Race.result.classification.length === 0 ? getDriversFromTeams(teams) : currentF1Race.result.classification
   );
   const [dnfDrivers, setDnfDrivers] = useState(new Set(currentF1Race.result?.dnfDrivers ?? []));
   const [incidents, setIncidents] = useState(currentF1Race.result?.safetyCars ?? 0)
