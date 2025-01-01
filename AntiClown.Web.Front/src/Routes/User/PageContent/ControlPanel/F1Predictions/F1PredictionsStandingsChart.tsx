@@ -105,7 +105,8 @@ export default function F1PredictionsStandingsChart({
   if (showLastRacesCount !== ShowLastNumberOfRaces.All) {
     series = series.filter(
       (x) =>
-        x.points[x.points.length - sliceCount - 1] >= possibleChampionPoints[possibleChampionPoints.length - sliceCount - 1]
+        x.points[x.points.length - sliceCount - 1] >=
+        possibleChampionPoints[possibleChampionPoints.length - sliceCount - 1],
     );
   }
 

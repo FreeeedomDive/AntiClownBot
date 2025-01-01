@@ -11,13 +11,13 @@ export default function F1PredictionsTeamsEditor() {
   const [teams, setTeams] = useState<F1TeamDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  async function loadTeams() {
-    const teams = await F1PredictionsApi.getActiveTeams();
-    setTeams(teams);
-    setIsLoading(false);
-  }
-
   useEffect(() => {
+    async function loadTeams() {
+      const teams = await F1PredictionsApi.getActiveTeams();
+      setTeams(teams);
+      setIsLoading(false);
+    }
+
     loadTeams();
   }, []);
 

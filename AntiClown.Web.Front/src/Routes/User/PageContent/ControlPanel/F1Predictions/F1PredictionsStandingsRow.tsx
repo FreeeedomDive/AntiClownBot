@@ -40,7 +40,7 @@ export function F1PredictionsStandingsRow({
   const getRaceName = (id: string) => {
     const race = races.find((x) => x.id === id)!;
     return race.name + (race.isSprint ? " (спринт)" : "");
-  }
+  };
 
   return (
     <React.Fragment>
@@ -70,7 +70,10 @@ export function F1PredictionsStandingsRow({
           <Typography>{sumPoints}</Typography>
         </TableCell>
         {results.map((x) => (
-          <TableCell key={`${discordMember?.userId}_${x?.raceId}_points`} sx={{ padding: "4px" }}>
+          <TableCell
+            key={`${discordMember?.userId}_${x?.raceId}_points`}
+            sx={{ padding: "4px" }}
+          >
             <Typography>{!!x ? x.totalPoints : ""}</Typography>
           </TableCell>
         ))}

@@ -1,18 +1,25 @@
-import {F1RaceDto} from "../../../../../Dto/F1Predictions/F1RaceDto";
-import React, {useCallback, useEffect, useState} from "react";
-import {Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography} from "@mui/material";
+import { F1RaceDto } from "../../../../../Dto/F1Predictions/F1RaceDto";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Button,
+  FormControl,
+  InputAdornment,
+  OutlinedInput,
+  Stack,
+  Typography,
+} from "@mui/material";
 import F1RaceClassifications from "./F1RaceClassifications";
-import {LoadingButton} from "@mui/lab";
+import { LoadingButton } from "@mui/lab";
 import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
-import {getDriversFromTeams} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
-import {Block, Done, Save} from "@mui/icons-material";
-import {F1TeamDto} from "../../../../../Dto/F1Predictions/F1TeamDto";
+import { getDriversFromTeams } from "../../../../../Dto/F1Predictions/F1DriversHelpers";
+import { Block, Done, Save } from "@mui/icons-material";
+import { F1TeamDto } from "../../../../../Dto/F1Predictions/F1TeamDto";
 
 interface Props {
   f1Race: F1RaceDto;
 }
 
-export default function F1PredictionAdmin({f1Race}: Props) {
+export default function F1PredictionAdmin({ f1Race }: Props) {
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto>(f1Race);
   const [teams, setTeams] = useState<F1TeamDto[]>([]);
 
@@ -29,12 +36,18 @@ export default function F1PredictionAdmin({f1Race}: Props) {
   }, [f1Race.id]);
 
   const [drivers, setDrivers] = useState(
-    currentF1Race.result.classification.length === 0 ? getDriversFromTeams(teams) : currentF1Race.result.classification
+    currentF1Race.result.classification.length === 0
+      ? getDriversFromTeams(teams)
+      : currentF1Race.result.classification,
   );
-  const [dnfDrivers, setDnfDrivers] = useState(new Set(currentF1Race.result?.dnfDrivers ?? []));
-  const [incidents, setIncidents] = useState(currentF1Race.result?.safetyCars ?? 0)
+  const [dnfDrivers, setDnfDrivers] = useState(
+    new Set(currentF1Race.result?.dnfDrivers ?? []),
+  );
+  const [incidents, setIncidents] = useState(
+    currentF1Race.result?.safetyCars ?? 0,
+  );
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>(
-    String(currentF1Race.result?.firstPlaceLead ?? "0")
+    String(currentF1Race.result?.firstPlaceLead ?? "0"),
   );
   const [isClosing, setIsClosing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -47,20 +60,20 @@ export default function F1PredictionAdmin({f1Race}: Props) {
       firstPlaceLead: Number(firstPlaceLead),
       safetyCars: incidents,
       dnfDrivers: Array.from(dnfDrivers.values()),
-      classification: drivers
-    })
+      classification: drivers,
+    });
     setIsSaving(false);
   }, [currentF1Race.id, dnfDrivers, drivers, firstPlaceLead, incidents]);
 
   const closePredictions = useCallback(async () => {
-    setIsClosing(true)
-    await F1PredictionsApi.close(currentF1Race.id)
-    setIsClosing(false)
+    setIsClosing(true);
+    await F1PredictionsApi.close(currentF1Race.id);
+    setIsClosing(false);
   }, [currentF1Race.id]);
 
   const finishRace = useCallback(async () => {
     setIsFinishing(true);
-    await F1PredictionsApi.finish(currentF1Race.id)
+    await F1PredictionsApi.finish(currentF1Race.id);
     setIsFinishing(false);
   }, [currentF1Race.id]);
 
@@ -82,7 +95,9 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           >
             <Typography variant="h4">-</Typography>
           </Button>
-          <Typography variant="h6">Инциденты (VSC, SC, Red Flag): {incidents}</Typography>
+          <Typography variant="h6">
+            Инциденты (VSC, SC, Red Flag): {incidents}
+          </Typography>
           <Button
             variant="contained"
             color="success"
@@ -97,9 +112,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           alignItems={"flex-start"}
           justifyContent={"space-between"}
         >
-          <Typography variant="h6">
-            Отрыв 1 места
-          </Typography>
+          <Typography variant="h6">Отрыв 1 места</Typography>
           <FormControl>
             <OutlinedInput
               id="outlined-adornment-weight"
@@ -132,7 +145,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           color="error"
           size="large"
           variant="contained"
-          startIcon={<Block/>}
+          startIcon={<Block />}
           onClick={closePredictions}
         >
           Закрыть предсказания
@@ -143,7 +156,7 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           color="success"
           size="large"
           variant="contained"
-          startIcon={<Save/>}
+          startIcon={<Save />}
           onClick={saveRaceResults}
         >
           Сохранить
@@ -154,12 +167,12 @@ export default function F1PredictionAdmin({f1Race}: Props) {
           color="primary"
           size="large"
           variant="contained"
-          startIcon={<Done/>}
+          startIcon={<Done />}
           onClick={finishRace}
         >
           Завершить гонку и рассчитать результаты
         </LoadingButton>
       </Stack>
     </Stack>
-  )
+  );
 }

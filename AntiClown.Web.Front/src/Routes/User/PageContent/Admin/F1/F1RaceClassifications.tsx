@@ -1,5 +1,5 @@
 import F1RaceClassificationsElement from "./F1RaceClassificationsElement";
-import {Stack, Table, TableBody, TableContainer} from "@mui/material";
+import { Stack, Table, TableBody, TableContainer } from "@mui/material";
 
 interface Props {
   drivers: string[];
@@ -8,14 +8,19 @@ interface Props {
   setDnfDrivers: (x: Set<string>) => void;
 }
 
-export default function F1RaceClassifications({drivers, setDrivers, dnfDrivers, setDnfDrivers}: Props) {
+export default function F1RaceClassifications({
+  drivers,
+  setDrivers,
+  dnfDrivers,
+  setDnfDrivers,
+}: Props) {
   const swapDrivers = (firstDriverIndex: number, secondDriverIndex: number) => {
     const updatedDrivers = [...drivers];
     const firstDriver = updatedDrivers[firstDriverIndex];
     updatedDrivers[firstDriverIndex] = updatedDrivers[secondDriverIndex];
     updatedDrivers[secondDriverIndex] = firstDriver;
     setDrivers(updatedDrivers);
-  }
+  };
 
   return (
     <Stack width={"30%"}>
@@ -47,5 +52,5 @@ export default function F1RaceClassifications({drivers, setDrivers, dnfDrivers, 
         </Table>
       </TableContainer>
     </Stack>
-  )
+  );
 }
