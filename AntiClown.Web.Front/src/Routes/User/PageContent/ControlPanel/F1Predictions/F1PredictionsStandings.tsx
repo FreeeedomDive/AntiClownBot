@@ -55,7 +55,7 @@ export default function F1PredictionsStandings() {
         )
       }
       {
-        !isLoading && (
+        !isLoading && sortedStandings && sortedStandings.length > 0 && (
           <Stack direction={"column"} spacing={4}>
             <TableContainer>
               <Table>
