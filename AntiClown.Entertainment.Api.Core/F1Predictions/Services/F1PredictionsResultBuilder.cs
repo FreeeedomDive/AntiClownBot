@@ -21,36 +21,40 @@ public static class F1PredictionsResultBuilder
                 return pos;
             }
         );
+        //var teamMatesWinners = Array.Empty<string>();
+        // TODO: take this data from the future repository of active drivers
         var teamMatesWinners = new[]
         {
-            SelectHighestTeamMate(driverToPosition, F1Driver.Verstappen, F1Driver.Perez),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Leclerc, F1Driver.Sainz),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Hamilton, F1Driver.Russell),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Doohan, F1Driver.Gasly),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Piastri, F1Driver.Norris),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Bottas, F1Driver.Zhou),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Stroll, F1Driver.Alonso),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Magnussen, F1Driver.Hulkenberg),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Lawson, F1Driver.Tsunoda),
-            SelectHighestTeamMate(driverToPosition, F1Driver.Albon, F1Driver.Colapinto),
+            SelectHighestTeamMate(driverToPosition, "Verstappen", "Perez"),
+            SelectHighestTeamMate(driverToPosition, "Leclerc", "Sainz"),
+            SelectHighestTeamMate(driverToPosition, "Hamilton", "Russell"),
+            SelectHighestTeamMate(driverToPosition, "Doohan", "Gasly"),
+            SelectHighestTeamMate(driverToPosition, "Piastri", "Norris"),
+            SelectHighestTeamMate(driverToPosition, "Bottas", "Zhou"),
+            SelectHighestTeamMate(driverToPosition, "Stroll", "Alonso"),
+            SelectHighestTeamMate(driverToPosition, "Magnussen", "Hulkenberg"),
+            SelectHighestTeamMate(driverToPosition, "Lawson", "Tsunoda"),
+            SelectHighestTeamMate(driverToPosition, "Albon", "Colapinto"),
         };
 
-        var results = race
+        var resultsByUserId = race
                       .Predictions
                       .Select(
                           prediction => new F1PredictionResult
                           {
                               RaceId = race.Id,
                               UserId = prediction.UserId,
-                              TenthPlacePoints = F1PredictionsPointsHelper.PointsDistribution.GetValueOrDefault(
+                              TenthPlacePoints = F1PredictionsPointsHelper.PointsByFinishPlaceDistribution.GetValueOrDefault(
                                   driverToPosition.GetValueOrDefault(prediction.TenthPlacePickedDriver, 0), 0
                               ),
                               DnfsPoints = race.Result.DnfDrivers.Length == 0 && prediction.DnfPrediction.NoDnfPredicted
-                                  ? 10
+                                  ? F1PredictionsPointsHelper.NoDnfPredictionPoints
                                   : prediction.DnfPrediction.NoDnfPredicted
                                       ? 0
-                                      : prediction.DnfPrediction.DnfPickedDrivers!.Intersect(race.Result.DnfDrivers).Count() * 2,
-                              SafetyCarsPoints = prediction.SafetyCarsPrediction == ToSafetyCarsEnum(race.Result.SafetyCars) ? 5 : 0,
+                                      : prediction.DnfPrediction.DnfPickedDrivers!.Intersect(race.Result.DnfDrivers).Count() * F1PredictionsPointsHelper.DnfPredictionPoints,
+                              SafetyCarsPoints = prediction.SafetyCarsPrediction == ToSafetyCarsEnum(race.Result.SafetyCars)
+                                  ? F1PredictionsPointsHelper.IncidentsPredictionPoints
+                                  : 0,
                               TeamMatesPoints = prediction.TeamsPickedDrivers.Intersect(teamMatesWinners).Count(),
                           }
                       )
@@ -60,10 +64,23 @@ public static class F1PredictionsResultBuilder
                                                            .Predictions
                                                            .OrderBy(x => Math.Abs(race.Result.FirstPlaceLead - x.FirstPlaceLeadPrediction));
         var closestPrediction = predictionsOrderedByFirstPlaceLeadDifference.First();
-        var closestFirstPlaceLeadPredictionResult = results[closestPrediction.UserId];
+        var closestFirstPlaceLeadPredictionResult = resultsByUserId[closestPrediction.UserId];
         closestFirstPlaceLeadPredictionResult.FirstPlaceLeadPoints = 5;
 
-        return results.Values.ToArray();
+        var results = resultsByUserId.Values.Select(
+            x =>
+            {
+                x.TotalPoints = x.TenthPlacePoints + x.DnfsPoints + x.SafetyCarsPoints + x.FirstPlaceLeadPoints + x.TeamMatesPoints;
+                if (race.IsSprint)
+                {
+                    x.TotalPoints = x.TotalPoints * F1PredictionsPointsHelper.SprintRacePointsPercent / 100;
+                }
+
+                return x;
+            }
+        ).ToArray();
+
+        return results;
     }
 
     public static F1SafetyCars ToSafetyCarsEnum(int safetyCarsCount)
@@ -78,7 +95,7 @@ public static class F1PredictionsResultBuilder
         };
     }
 
-    private static F1Driver SelectHighestTeamMate(Dictionary<F1Driver, int> positions, F1Driver firstDriver, F1Driver secondDriver)
+    private static string SelectHighestTeamMate(Dictionary<string, int> positions, string firstDriver, string secondDriver)
     {
         return positions.GetValueOrDefault(firstDriver, 999) < positions.GetValueOrDefault(secondDriver, 999)
             ? firstDriver

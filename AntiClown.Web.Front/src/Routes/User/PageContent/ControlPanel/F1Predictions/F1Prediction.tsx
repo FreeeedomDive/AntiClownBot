@@ -1,9 +1,11 @@
-import {useParams} from "react-router-dom";
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import { useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Alert,
-  Button, ButtonGroup,
-  Checkbox, Fab,
+  Button,
+  ButtonGroup,
+  Checkbox,
+  Fab,
   FormControl,
   FormControlLabel,
   InputAdornment,
@@ -17,21 +19,17 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import {F1DriverDto} from "../../../../../Dto/F1Predictions/F1DriverDto";
 import {
   F1SafetyCarPredictionDto,
   F1SafetyCarsPredictionDto,
   F1SafetyCarsPredictionObject,
 } from "../../../../../Dto/F1Predictions/F1SafetyCarsPredictionDto";
-import {F1RaceDto} from "../../../../../Dto/F1Predictions/F1RaceDto";
+import { F1RaceDto } from "../../../../../Dto/F1Predictions/F1RaceDto";
 import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
-import {AddPredictionResultDto} from "../../../../../Dto/F1Predictions/AddPredictionResultDto";
-import {DRIVER_PAIRS, DRIVERS} from "../../../../../Dto/F1Predictions/F1DriversHelpers";
-import {Save} from "@mui/icons-material";
-
-const isDriver = (driver: string): driver is F1DriverDto => {
-  return driver in F1DriverDto;
-};
+import { AddPredictionResultDto } from "../../../../../Dto/F1Predictions/AddPredictionResultDto";
+import { getDriversFromTeams } from "../../../../../Dto/F1Predictions/F1DriversHelpers";
+import { Save } from "@mui/icons-material";
+import { F1TeamDto } from "../../../../../Dto/F1Predictions/F1TeamDto";
 
 const F1SafetyCarPredictionTexts: Record<F1SafetyCarPredictionDto, string> = {
   Zero: "0",
@@ -43,16 +41,10 @@ const F1SafetyCarPredictionTexts: Record<F1SafetyCarPredictionDto, string> = {
 const firstColumnWidth = 150;
 const teamButtonWidth = 150;
 
-type DNFList = [
-  F1DriverDto,
-  F1DriverDto,
-  F1DriverDto,
-  F1DriverDto,
-  F1DriverDto,
-];
+type DNFList = [string, string, string, string, string];
 
 const fabStyle = {
-  position: 'absolute',
+  position: "absolute",
   bottom: 16,
   right: 16,
 };
@@ -61,14 +53,18 @@ interface Props {
   f1Race: F1RaceDto;
 }
 
-export default function F1Prediction({f1Race}: Props) {
-  const {userId} = useParams<"userId">();
+export default function F1Prediction({ f1Race }: Props) {
+  const { userId } = useParams<"userId">();
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto>(f1Race);
+  const [teams, setTeams] = useState<F1TeamDto[]>([]);
 
   useEffect(() => {
     async function load() {
       const result = await F1PredictionsApi.read(f1Race.id);
       setCurrentF1Race(result);
+
+      const teams = await F1PredictionsApi.getActiveTeams();
+      setTeams(teams);
     }
 
     load();
@@ -76,12 +72,12 @@ export default function F1Prediction({f1Race}: Props) {
 
   const userPrediction = useMemo(() => {
     return currentF1Race.predictions.find(
-      (prediction) => prediction.userId === userId
+      (prediction) => prediction.userId === userId,
     );
   }, [currentF1Race, userId]);
 
-  const [selected10Position, setSelected10Position] = useState<F1DriverDto>(
-    userPrediction?.tenthPlacePickedDriver ?? F1DriverDto.Verstappen
+  const [selected10Position, setSelected10Position] = useState<string>(
+    userPrediction?.tenthPlacePickedDriver ?? teams[0]?.firstDriver,
   );
 
   const [isDNFNobody, setIsDNFNobody] = useState(() => {
@@ -89,18 +85,16 @@ export default function F1Prediction({f1Race}: Props) {
   });
 
   const [dnfList, setDnfList] = useState<DNFList>(() => {
-    if (
-      userPrediction?.dnfPrediction.dnfPickedDrivers?.length === 5
-    ) {
+    if (userPrediction?.dnfPrediction.dnfPickedDrivers?.length === 5) {
       return userPrediction.dnfPrediction.dnfPickedDrivers as DNFList;
     }
 
     return [
-      F1DriverDto.Verstappen,
-      F1DriverDto.Verstappen,
-      F1DriverDto.Verstappen,
-      F1DriverDto.Verstappen,
-      F1DriverDto.Verstappen,
+      teams[0]?.firstDriver,
+      teams[0]?.firstDriver,
+      teams[0]?.firstDriver,
+      teams[0]?.firstDriver,
+      teams[0]?.firstDriver,
     ];
   });
   const onDnfListChange =
@@ -112,19 +106,19 @@ export default function F1Prediction({f1Race}: Props) {
           }
 
           return dnfItem;
-        }) as DNFList
+        }) as DNFList,
       );
     };
 
   const [selectedSafetyCarPrediction, setSafetyCarPrediction] =
     useState<F1SafetyCarPredictionDto>(
-      userPrediction?.safetyCarsPrediction ?? F1SafetyCarsPredictionObject.Zero
+      userPrediction?.safetyCarsPrediction ?? F1SafetyCarsPredictionObject.Zero,
     );
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>(
-    String(userPrediction?.firstPlaceLeadPrediction ?? "")
+    String(userPrediction?.firstPlaceLeadPrediction ?? ""),
   );
   const [selectedDriversFromTeams, setSelectedDriversFromTeams] = useState<
-    Set<F1DriverDto>
+    Set<string>
   >(() => {
     const initialArray = (() => userPrediction?.teamsPickedDrivers)();
 
@@ -141,13 +135,11 @@ export default function F1Prediction({f1Race}: Props) {
     }
 
     return selectedDriversFromTeams.size === 10;
-
-
   }, [dnfList, firstPlaceLead, isDNFNobody, selectedDriversFromTeams.size]);
 
   const [isSaving, setIsSaving] = useState(false);
-  const [savePredictionResult, setSavePredictionResult]
-    = useState<AddPredictionResultDto | null>(null);
+  const [savePredictionResult, setSavePredictionResult] =
+    useState<AddPredictionResultDto | null>(null);
   const saveF1Prediction = useCallback(async () => {
     if (!userId || !isValid) {
       return;
@@ -201,12 +193,10 @@ export default function F1Prediction({f1Race}: Props) {
               value={selected10Position}
               onChange={(event) => {
                 const value = event.target.value;
-                if (isDriver(value)) {
-                  setSelected10Position(value);
-                }
+                setSelected10Position(value);
               }}
             >
-              {DRIVERS.map((driver) => (
+              {getDriversFromTeams(teams).map((driver) => (
                 <MenuItem key={driver} value={driver}>
                   {driver}
                 </MenuItem>
@@ -247,14 +237,16 @@ export default function F1Prediction({f1Race}: Props) {
                       value={dnfItem}
                       onChange={onDnfListChange(index)}
                     >
-                      {DRIVERS.filter(
-                        (driver) =>
-                          !dnfList.includes(driver) || dnfItem === driver
-                      ).map((driver) => (
-                        <MenuItem key={driver} value={driver}>
-                          {driver}
-                        </MenuItem>
-                      ))}
+                      {getDriversFromTeams(teams)
+                        .filter(
+                          (driver) =>
+                            !dnfList.includes(driver) || dnfItem === driver,
+                        )
+                        .map((driver) => (
+                          <MenuItem key={driver} value={driver}>
+                            {driver}
+                          </MenuItem>
+                        ))}
                     </Select>
                   );
                 })}
@@ -282,7 +274,7 @@ export default function F1Prediction({f1Race}: Props) {
                 <FormControlLabel
                   key={F1SafetyCarPredictionDto}
                   value={F1SafetyCarPredictionDto}
-                  control={<Radio/>}
+                  control={<Radio />}
                   label={F1SafetyCarPredictionTexts[F1SafetyCarPredictionDto]}
                   checked={
                     selectedSafetyCarPrediction === F1SafetyCarPredictionDto
@@ -340,15 +332,15 @@ export default function F1Prediction({f1Race}: Props) {
           direction="row"
           alignItems={"flex-start"}
           justifyContent={"space-between"}
-          style={{paddingBottom: "40px"}}
+          style={{ paddingBottom: "40px" }}
         >
           <Typography variant="h6" flexShrink={0} width={firstColumnWidth}>
             Команды
           </Typography>
           <Stack flexGrow={1} spacing={1}>
-            {DRIVER_PAIRS.map(([driver1, driver2]) => (
+            {teams.map((team) => (
               <Stack
-                key={driver1 + driver2}
+                key={team.name}
                 direction={"row"}
                 alignItems={"center"}
                 justifyContent={"space-between"}
@@ -357,39 +349,39 @@ export default function F1Prediction({f1Race}: Props) {
                 <ButtonGroup size="large">
                   <Button
                     variant={
-                      selectedDriversFromTeams.has(driver1)
+                      selectedDriversFromTeams.has(team.firstDriver)
                         ? "contained"
                         : "outlined"
                     }
-                    style={{width: teamButtonWidth}}
+                    style={{ width: teamButtonWidth }}
                     onClick={() => {
-                      selectedDriversFromTeams.delete(driver2);
-                      selectedDriversFromTeams.add(driver1);
+                      selectedDriversFromTeams.delete(team.secondDriver);
+                      selectedDriversFromTeams.add(team.firstDriver);
 
                       setSelectedDriversFromTeams(
-                        new Set(selectedDriversFromTeams)
+                        new Set(selectedDriversFromTeams),
                       );
                     }}
                   >
-                    {driver1}
+                    {team.firstDriver}
                   </Button>
                   <Button
                     variant={
-                      selectedDriversFromTeams.has(driver2)
+                      selectedDriversFromTeams.has(team.secondDriver)
                         ? "contained"
                         : "outlined"
                     }
-                    style={{width: teamButtonWidth}}
+                    style={{ width: teamButtonWidth }}
                     onClick={() => {
-                      selectedDriversFromTeams.delete(driver1);
-                      selectedDriversFromTeams.add(driver2);
+                      selectedDriversFromTeams.delete(team.firstDriver);
+                      selectedDriversFromTeams.add(team.secondDriver);
 
                       setSelectedDriversFromTeams(
-                        new Set(selectedDriversFromTeams)
+                        new Set(selectedDriversFromTeams),
                       );
                     }}
                   >
-                    {driver2}
+                    {team.secondDriver}
                   </Button>
                 </ButtonGroup>
               </Stack>
@@ -402,16 +394,16 @@ export default function F1Prediction({f1Race}: Props) {
         autoHideDuration={3000}
         onClose={() => setSavePredictionResult(null)}
       >
-        <Alert severity={
-          savePredictionResult === AddPredictionResultDto.Success
-            ? "success"
-            : "warning"
-        }>
-          {
+        <Alert
+          severity={
             savePredictionResult === AddPredictionResultDto.Success
-              ? "Предсказания успешно сохранены"
-              : "Предсказания на эту гонку уже закрыты"
+              ? "success"
+              : "warning"
           }
+        >
+          {savePredictionResult === AddPredictionResultDto.Success
+            ? "Предсказания успешно сохранены"
+            : "Предсказания на эту гонку уже закрыты"}
         </Alert>
       </Snackbar>
       <Fab
@@ -421,9 +413,9 @@ export default function F1Prediction({f1Race}: Props) {
         onClick={saveF1Prediction}
         color={"success"}
       >
-        <Save/>
-        {isSaving ? (<>Сохранение...</>) : (<>Сохранить</>)}
+        <Save />
+        {isSaving ? <>Сохранение...</> : <>Сохранить</>}
       </Fab>
     </Stack>
-  )
+  );
 }

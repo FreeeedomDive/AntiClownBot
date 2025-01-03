@@ -4,9 +4,9 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Local"
+        "ASPNETCORE_ENVIRONMENT": "Production"
       },
-      "commandLineArgs": "-tool ReadAllSettingsTool"
+      "commandLineArgs": "-tool Calculate2024SeasonWithNewSprintPointsTool"
     }
   }
 }

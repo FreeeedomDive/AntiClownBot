@@ -28,7 +28,7 @@ public class F1AdminCommandModule : SlashCommandModuleWithMiddlewares
         await ExecuteWithRightsAsync(
             interactionContext, async () =>
             {
-                await antiClownEntertainmentApiClient.F1Predictions.StartNewRaceAsync(trackName);
+                await antiClownEntertainmentApiClient.F1Predictions.StartNewRaceAsync(trackName, trackName.Contains("(спринт)"));
                 await RespondToInteractionAsync(interactionContext, $"Начались сборы предсказаний на гонку {trackName}");
             }, RightsDto.F1PredictionsAdmin
         );

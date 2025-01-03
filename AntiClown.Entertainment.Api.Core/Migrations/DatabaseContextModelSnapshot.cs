@@ -191,6 +191,9 @@ namespace AntiClown.Entertainment.Api.Core.Migrations
                     b.Property<int>("TenthPlacePoints")
                         .HasColumnType("integer");
 
+                    b.Property<int>("TotalPoints")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -201,6 +204,31 @@ namespace AntiClown.Entertainment.Api.Core.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("F1PredictionsResults");
+                });
+
+            modelBuilder.Entity("AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.F1PredictionTeamStorageElement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FirstDriver")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SecondDriver")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("F1PredictionTeams");
                 });
 
             modelBuilder.Entity("AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.F1RaceStorageElement", b =>
@@ -216,6 +244,9 @@ namespace AntiClown.Entertainment.Api.Core.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsOpened")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSprint")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")

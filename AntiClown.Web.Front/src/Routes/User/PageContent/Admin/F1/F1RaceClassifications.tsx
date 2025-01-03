@@ -1,22 +1,26 @@
 import F1RaceClassificationsElement from "./F1RaceClassificationsElement";
-import {Stack, Table, TableBody, TableContainer} from "@mui/material";
-import {F1DriverDto} from "../../../../../Dto/F1Predictions/F1DriverDto";
+import { Stack, Table, TableBody, TableContainer } from "@mui/material";
 
 interface Props {
-  drivers: F1DriverDto[];
-  setDrivers: (x: F1DriverDto[]) => void;
-  dnfDrivers: Set<F1DriverDto>;
-  setDnfDrivers: (x: Set<F1DriverDto>) => void;
+  drivers: string[];
+  setDrivers: (x: string[]) => void;
+  dnfDrivers: Set<string>;
+  setDnfDrivers: (x: Set<string>) => void;
 }
 
-export default function F1RaceClassifications({drivers, setDrivers, dnfDrivers, setDnfDrivers}: Props) {
+export default function F1RaceClassifications({
+  drivers,
+  setDrivers,
+  dnfDrivers,
+  setDnfDrivers,
+}: Props) {
   const swapDrivers = (firstDriverIndex: number, secondDriverIndex: number) => {
     const updatedDrivers = [...drivers];
     const firstDriver = updatedDrivers[firstDriverIndex];
     updatedDrivers[firstDriverIndex] = updatedDrivers[secondDriverIndex];
     updatedDrivers[secondDriverIndex] = firstDriver;
     setDrivers(updatedDrivers);
-  }
+  };
 
   return (
     <Stack width={"30%"}>
@@ -48,5 +52,5 @@ export default function F1RaceClassifications({drivers, setDrivers, dnfDrivers, 
         </Table>
       </TableContainer>
     </Stack>
-  )
+  );
 }

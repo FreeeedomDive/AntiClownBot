@@ -7,6 +7,7 @@ export interface F1RaceDto {
   name: string;
   isActive: boolean;
   isOpened: boolean;
+  isSprint: boolean;
   predictions: F1PredictionDto[];
   result: F1PredictionRaceResultDto;
 }

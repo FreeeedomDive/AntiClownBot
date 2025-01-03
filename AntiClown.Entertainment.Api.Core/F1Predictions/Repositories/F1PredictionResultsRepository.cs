@@ -35,6 +35,7 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
                             x.SafetyCarsPoints = storageElement.SafetyCarsPoints;
                             x.FirstPlaceLeadPoints = storageElement.FirstPlaceLeadPoints;
                             x.TeamMatesPoints = storageElement.TeamMatesPoints;
+                            x.TotalPoints = storageElement.TotalPoints;
                         }
                     )
                     : sqlRepository.CreateAsync(storageElement)
@@ -69,6 +70,7 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
             SafetyCarsPoints = predictionResult.SafetyCarsPoints,
             FirstPlaceLeadPoints = predictionResult.FirstPlaceLeadPoints,
             TeamMatesPoints = predictionResult.TeamMatesPoints,
+            TotalPoints = predictionResult.TotalPoints,
         };
     }
 
@@ -83,6 +85,7 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
             SafetyCarsPoints = storageElement.SafetyCarsPoints,
             FirstPlaceLeadPoints = storageElement.FirstPlaceLeadPoints,
             TeamMatesPoints = storageElement.TeamMatesPoints,
+            TotalPoints = storageElement.TotalPoints,
         };
     }
 

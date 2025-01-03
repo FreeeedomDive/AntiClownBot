@@ -2,6 +2,6 @@
 
 public class F1DnfPredictionDto
 {
-    public F1DriverDto[]? DnfPickedDrivers { get; set; }
+    public string[]? DnfPickedDrivers { get; set; }
     public bool NoDnfPredicted { get; set; }
 }

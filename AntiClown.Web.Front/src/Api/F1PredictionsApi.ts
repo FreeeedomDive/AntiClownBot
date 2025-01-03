@@ -5,6 +5,7 @@ import {AddPredictionResultDto} from "../Dto/F1Predictions/AddPredictionResultDt
 import {F1PredictionRaceResultDto} from "../Dto/F1Predictions/F1PredictionRaceResultDto";
 import {F1RaceFilterDto} from "../Dto/F1Predictions/F1RaceFilterDto";
 import {F1PredictionsStandingsDto} from "../Dto/F1Predictions/F1PredictionsStandingsDto";
+import {F1TeamDto} from "../Dto/F1Predictions/F1TeamDto";
 
 export default class F1PredictionsApi {
   static init = () => {
@@ -79,4 +80,19 @@ export default class F1PredictionsApi {
     );
     return result.data;
   };
+
+  static getActiveTeams = async (): Promise<F1TeamDto[]> => {
+    const result = await F1PredictionsApi.init().get(`teams`);
+    return result.data;
+  }
+
+  static createOrUpdateTeam = async (teamName: string, firstDriver: string, secondDriver: string): Promise<void> => {
+    const team = {
+      name: teamName,
+      firstDriver: firstDriver,
+      secondDriver: secondDriver,
+    }
+    const result = await F1PredictionsApi.init().post(`teams`, team);
+    return result.data;
+  }
 }

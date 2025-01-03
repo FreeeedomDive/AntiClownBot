@@ -35,9 +35,9 @@ public class F1PredictionsController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> StartNewRace([FromQuery] string name)
+    public async Task<ActionResult<Guid>> StartNewRace([FromQuery] string name, [FromQuery] bool isSprint)
     {
-        return await f1PredictionsService.StartNewRaceAsync(name);
+        return await f1PredictionsService.StartNewRaceAsync(name, isSprint);
     }
 
     [HttpPost("{raceId:guid}/addPrediction")]
@@ -81,6 +81,22 @@ public class F1PredictionsController : Controller
     {
         var result = await f1PredictionsService.ReadStandingsAsync(season);
         return mapper.Map<Dictionary<Guid, F1PredictionUserResultDto?[]>>(result);
+    }
+
+    [HttpGet("teams")]
+    public async Task<ActionResult<F1TeamDto[]>> ReadTeams()
+    {
+        var result = await f1PredictionsService.GetActiveTeamsAsync();
+        return mapper.Map<F1TeamDto[]>(result);
+    }
+
+    [HttpPost("teams")]
+    public async Task<ActionResult> CreateOrUpdateTeam([FromBody] F1TeamDto dto)
+    {
+        var team = mapper.Map<F1Team>(dto);
+        await f1PredictionsService.CreateOrUpdateTeamAsync(team);
+
+        return NoContent();
     }
 
     private readonly IF1PredictionsService f1PredictionsService;

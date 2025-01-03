@@ -27,4 +27,5 @@ public class DatabaseContext : PostgreSqlDbContext
     public DbSet<F1RaceStorageElement> F1PredictionsRaces { get; set; }
     public DbSet<F1PredictionResultStorageElement> F1PredictionsResults { get; set; }
     public DbSet<MinecraftAccountStorageElement> MinecraftAccounts { get; set; }
+    public DbSet<F1PredictionTeamStorageElement> F1PredictionTeams { get; set; }
 }

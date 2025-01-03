@@ -1,4 +1,5 @@
-﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+﻿using AntiClown.Core.Serializers;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,13 @@ namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 
 public class F1RacesRepository : IF1RacesRepository
 {
-    public F1RacesRepository(IVersionedSqlRepository<F1RaceStorageElement> sqlRepository)
+    public F1RacesRepository(
+        IVersionedSqlRepository<F1RaceStorageElement> sqlRepository,
+        IJsonSerializer jsonSerializer
+    )
     {
         this.sqlRepository = sqlRepository;
+        this.jsonSerializer = jsonSerializer;
     }
 
     public async Task<F1Race> ReadAsync(Guid id)
@@ -55,6 +60,8 @@ public class F1RacesRepository : IF1RacesRepository
         await sqlRepository.ConcurrentUpdateAsync(
             race.Id, x =>
             {
+                x.Name = storageElement.Name;
+                x.IsSprint = storageElement.IsSprint;
                 x.IsActive = storageElement.IsActive;
                 x.IsOpened = storageElement.IsOpened;
                 x.SerializedPredictions = storageElement.SerializedPredictions;
@@ -63,7 +70,7 @@ public class F1RacesRepository : IF1RacesRepository
         );
     }
 
-    private static F1RaceStorageElement ToStorageElement(F1Race race)
+    private F1RaceStorageElement ToStorageElement(F1Race race)
     {
         return new F1RaceStorageElement
         {
@@ -72,12 +79,13 @@ public class F1RacesRepository : IF1RacesRepository
             Name = race.Name,
             IsActive = race.IsActive,
             IsOpened = race.IsOpened,
-            SerializedPredictions = JsonConvert.SerializeObject(race.Predictions),
-            SerializedResults = JsonConvert.SerializeObject(race.Result),
+            IsSprint = race.IsSprint,
+            SerializedPredictions = jsonSerializer.Serialize(race.Predictions),
+            SerializedResults = jsonSerializer.Serialize(race.Result),
         };
     }
 
-    private static F1Race ToModel(F1RaceStorageElement storageElement)
+    private F1Race ToModel(F1RaceStorageElement storageElement)
     {
         return new F1Race
         {
@@ -86,10 +94,12 @@ public class F1RacesRepository : IF1RacesRepository
             Name = storageElement.Name,
             IsActive = storageElement.IsActive,
             IsOpened = storageElement.IsOpened,
+            IsSprint = storageElement.IsSprint,
             Predictions = JsonConvert.DeserializeObject<List<F1Prediction>>(storageElement.SerializedPredictions)!,
             Result = JsonConvert.DeserializeObject<F1PredictionRaceResult>(storageElement.SerializedResults)!,
         };
     }
 
     private readonly IVersionedSqlRepository<F1RaceStorageElement> sqlRepository;
+    private readonly IJsonSerializer jsonSerializer;
 }

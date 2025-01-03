@@ -90,9 +90,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                                                UserId = kv.Key,
                                                Predictions = kv.Value,
                                                TotalPoints = kv.Value.Select(
-                                                   p => p is null
-                                                       ? 0
-                                                       : SumPoints(p)
+                                                   p => p?.TotalPoints ?? 0
                                                ).Sum(),
                                            }
                                        )
@@ -108,7 +106,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
                             string.Join(
                                 " ", userPredictions
                                      .Predictions
-                                     .Select(p => p is null ? "  " : SumPoints(p).ToString().AddSpaces(2))
+                                     .Select(p => p is null ? "  " : p.TotalPoints.ToString().AddSpaces(2))
                             )
                         )
                         .Append($" | {userPredictions.TotalPoints.AddSpaces(3)}")

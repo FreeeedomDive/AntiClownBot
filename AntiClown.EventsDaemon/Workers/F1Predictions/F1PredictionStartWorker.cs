@@ -45,7 +45,7 @@ public class F1PredictionStartWorker : ArbitraryIntervalPeriodicJobWorker
                           .GetRaces()
                           .OrderBy(x => Math.Abs((x.PredictionsStartTime - now).TotalMilliseconds))
                           .First();
-        await antiClownEntertainmentApiClient.F1Predictions.StartNewRaceAsync(currentRace.Name);
+        await antiClownEntertainmentApiClient.F1Predictions.StartNewRaceAsync(currentRace.Name, currentRace.IsSprint);
     }
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;

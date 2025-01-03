@@ -12,7 +12,6 @@ public class F1PredictionsMapperProfile : Profile
 {
     public F1PredictionsMapperProfile()
     {
-        CreateMap<F1Driver, F1DriverDto>().ReverseMap();
         CreateMap<F1SafetyCars, F1SafetyCarsPredictionDto>().ReverseMap();
         CreateMap<F1DnfPrediction, F1DnfPredictionDto>().ReverseMap();
         CreateMap<F1Prediction, F1PredictionDto>().ReverseMap();
@@ -24,5 +23,6 @@ public class F1PredictionsMapperProfile : Profile
         CreateMap<MostPickedDriversStats, MostPickedDriversStatsDto>();
         CreateMap<MostProfitableDriversStats, MostProfitableDriversStatsDto>();
         CreateMap<UserPointsStats, UserPointsStatsDto>();
+        CreateMap<F1Team, F1TeamDto>().ReverseMap();
     }
 }

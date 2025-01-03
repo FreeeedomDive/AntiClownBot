@@ -69,5 +69,18 @@ public class F1PredictionsController : Controller
         return await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season);
     }
 
+    [HttpGet("teams")]
+    public async Task<ActionResult<F1TeamDto[]>> ReadTeams()
+    {
+        return await antiClownEntertainmentApiClient.F1Predictions.ReadTeamsAsync();
+    }
+
+    [HttpPost("teams")]
+    public async Task<ActionResult> CreateOrUpdateTeam([FromBody] F1TeamDto dto)
+    {
+        await antiClownEntertainmentApiClient.F1Predictions.CreateOrUpdateTeamAsync(dto);
+        return NoContent();
+    }
+
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

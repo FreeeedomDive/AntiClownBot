@@ -41,10 +41,10 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
                    "Классификация",
                    string.Join(
                        "\n",
-                       race.Result.Classification.Batch(10).Select(x => string.Join(" ", x.Select(driver => driver.Trigram())))
+                       race.Result.Classification.Batch(10).Select(x => string.Join(" ", x.Select(Trigram)))
                    )
                )
-               .AddField("DNF", race.Result.DnfDrivers.Length == 0 ? "Никто" : string.Join(" ", race.Result.DnfDrivers.Select(driver => driver.Trigram())))
+               .AddField("DNF", race.Result.DnfDrivers.Length == 0 ? "Никто" : string.Join(" ", race.Result.DnfDrivers.Select(Trigram)))
                .AddField("Количество инцидентов", race.Result.SafetyCars.ToString())
                .AddField("Отрыв лидера", race.Result.FirstPlaceLead.ToString(CultureInfo.InvariantCulture))
                .Build();
@@ -65,15 +65,15 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
                 var userPrediction = race.Predictions.First(x => x.UserId == userResult.UserId);
                 embedBuilder.AddField(
                     apiIdToMember[userResult.UserId].ServerOrUserName(),
-                    $"10 место: {userPrediction.TenthPlacePickedDriver.Trigram()} - "
+                    $"10 место: {Trigram(userPrediction.TenthPlacePickedDriver)} - "
                     + $"{userResult.TenthPlacePoints.ToPluralizedString("очко", "очка", "очков")}\n"
-                    + $"DNF: {(userPrediction.DnfPrediction.NoDnfPredicted ? "Никто" : string.Join(" ", userPrediction.DnfPrediction.DnfPickedDrivers!.Select(x => x.Trigram())))} - "
+                    + $"DNF: {(userPrediction.DnfPrediction.NoDnfPredicted ? "Никто" : string.Join(" ", userPrediction.DnfPrediction.DnfPickedDrivers!.Select(Trigram)))} - "
                     + $"{userResult.DnfsPoints.ToPluralizedString("очко", "очка", "очков")}\n"
                     + $"Инциденты: {userPrediction.SafetyCarsPrediction} - "
                     + $"{userResult.SafetyCarsPoints.ToPluralizedString("очко", "очка", "очков")}\n"
                     + $"Отрыв лидера: {userPrediction.FirstPlaceLeadPrediction} - "
                     + $"{userResult.FirstPlaceLeadPoints.ToPluralizedString("очко", "очка", "очков")}\n"
-                    + $"Победители внутри команд: {string.Join(" ", userPrediction.TeamsPickedDrivers.Select(x => x.Trigram()))} - "
+                    + $"Победители внутри команд: {string.Join(" ", userPrediction.TeamsPickedDrivers.Select(Trigram))} - "
                     + $"{userResult.TeamMatesPoints.ToPluralizedString("очко", "очка", "очков")}\n"
                 );
             }
@@ -81,5 +81,10 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
         return embedBuilder.Build();
     }
 
-    private readonly IUsersCache usersCache;
+    private static string Trigram(string x)
+    {
+        return x[..3].ToUpper();
+    }
+
+private readonly IUsersCache usersCache;
 }
