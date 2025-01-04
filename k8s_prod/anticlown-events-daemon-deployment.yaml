@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: anticlowneventsdaemon
-          image: localhost:5000/anticlowneventsdaemon:{{TAG_NUMBER}}
+          {{docker_registry_domain}}/anticlowneventsdaemon:{{docker_image_version}}
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production

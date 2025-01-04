@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: anticlownwebfront
-          image: localhost:5000/anticlownwebfront:{{TAG_NUMBER}}
+          {{docker_registry_domain}}/anticlownwebfront:{{docker_image_version}}
 ---
 apiVersion: v1
 kind: Service
