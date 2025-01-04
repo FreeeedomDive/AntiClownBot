@@ -1,10 +1,10 @@
-name: Deploy Api
+name: Deploy EntertainmentApi
 
 on:
   workflow_dispatch:
     inputs:
       project:
-        description: 'Deploy Api'
+        description: 'Deploy EntertainmentApi'
 # Edit only names and variables below, everything is based on this variables
 env:
   PROJECT_FOLDER: AntiClown.Entertainment.Api
