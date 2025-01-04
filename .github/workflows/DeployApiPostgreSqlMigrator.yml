@@ -69,13 +69,5 @@ jobs:
         echo "$KUBECONFIG_CONTENT" > ./kubeconfig.yaml
         export KUBECONFIG=./kubeconfig.yaml
         kubectl apply -f $K8SFILENAME
-
-    - name: k8s
-      env:
-        KUBECONFIG_CONTENT: ${{ secrets.KUBECONFIG }}
-      run: |
-        echo "$KUBECONFIG_CONTENT" > ./kubeconfig.yaml
-        export KUBECONFIG=./kubeconfig.yaml
-        kubectl apply -f $K8SFILENAME
         kubectl wait --for=condition=complete job/$JOBNAME
         kubectl delete job/$JOBNAME
