@@ -8,7 +8,7 @@ on:
 # Edit only names and variables below, everything is based on this variables
 env:
   PROJECT_FOLDER: AntiClown.Web.Front
-  DOCKERFILE: AntiClown.Web.Front/Dockerfile.AntiClown.Web.Front
+  DOCKERFILE: Dockerfile.AntiClown.Web.Front
   DOCKERIMAGE: anticlownwebfront
   K8SFILENAME: k8s_prod/anticlown-web-front-deployment.yaml
 
@@ -41,7 +41,9 @@ jobs:
       env:
         DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
       run: |
+        cd $PROJECT_FOLDER
         docker build . -f $DOCKERFILE -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${GITHUB_SHA}
+        cd ..
 
     - name: Push Docker Image to Registry
       env:
