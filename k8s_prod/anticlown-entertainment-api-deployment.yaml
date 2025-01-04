@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: anticlownentertainmentapi
-          {{docker_registry_domain}}/anticlownentertainmentapi:{{docker_image_version}}
+          image: {{docker_registry_domain}}/anticlownentertainmentapi:{{docker_image_version}}
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production

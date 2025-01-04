@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: anticlowndiscordbot
-          {{docker_registry_domain}}/anticlowndiscordbot:{{docker_image_version}}
+          image: {{docker_registry_domain}}/anticlowndiscordbot:{{docker_image_version}}
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production

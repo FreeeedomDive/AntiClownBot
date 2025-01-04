@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          {{docker_registry_domain}}/anticlownnginx:{{docker_image_version}}
+          image: {{docker_registry_domain}}/anticlownnginx:{{docker_image_version}}
 ---
 apiVersion: v1
 kind: Service

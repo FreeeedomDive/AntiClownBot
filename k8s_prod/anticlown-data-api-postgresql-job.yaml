@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: anticlowndataapipostgresql
-          {{docker_registry_domain}}/anticlowndataapipostgresql:{{docker_image_version}}
+          image: {{docker_registry_domain}}/anticlowndataapipostgresql:{{docker_image_version}}
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production

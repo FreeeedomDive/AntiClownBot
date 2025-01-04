@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: anticlowndiscordbotpostgresql
-          {{docker_registry_domain}}/anticlowndiscordbotpostgresql:{{docker_image_version}}
+          image: {{docker_registry_domain}}/anticlowndiscordbotpostgresql:{{docker_image_version}}
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: PostgreSqlProduction
