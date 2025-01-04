@@ -24,8 +24,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Recreate appsettings.Production.json
+      # особое имя у окружения - PostgreSqlProduction
       run: |
-        echo "$APPSETTINGS_PRODUCTION_JSON" > ./$PROJECT_FOLDER/appsettings.Production.json
+        echo "$APPSETTINGS_PRODUCTION_JSON" > ./$PROJECT_FOLDER/appsettings.PostgreSqlProduction.json
 
     - name: Configure Docker for Insecure Registry
       env:
