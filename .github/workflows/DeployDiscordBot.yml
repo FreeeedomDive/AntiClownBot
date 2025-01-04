@@ -8,7 +8,7 @@ on:
 # Edit only names and variables below, everything is based on this variables
 env:
   PROJECT_FOLDER: AntiClown.DiscordBot
-  DOCKERFILE: Dockerfile.DiscordBot
+  DOCKERFILE: Dockerfile.AntiClown.DiscordBot
   DOCKERIMAGE: anticlowndiscordbot
   K8SFILENAME: k8s_prod/anticlown-discord-bot-deployment.yaml
   APPSETTINGS_PRODUCTION_JSON: ${{ secrets.DISCORDBOT_APPSETTINGS }}
