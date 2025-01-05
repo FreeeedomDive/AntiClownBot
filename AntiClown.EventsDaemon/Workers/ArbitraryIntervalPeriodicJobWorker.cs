@@ -1,27 +1,21 @@
 ﻿namespace AntiClown.EventsDaemon.Workers;
 
-public abstract class ArbitraryIntervalPeriodicJobWorker : IWorker
+public abstract class ArbitraryIntervalPeriodicJobWorker(ILogger logger) : IWorker
 {
-    protected ArbitraryIntervalPeriodicJobWorker(
-        ILogger logger
-    )
-    {
-        Logger = logger;
-    }
-
     public async Task StartAsync()
     {
         currentIteration = 1;
         while (true)
         {
-            var delay = await TryGetMillisecondsBeforeNextIterationAsync();
-            if (delay is null)
+            var delayMs = await TryGetMillisecondsBeforeNextIterationAsync();
+            if (delayMs is null)
             {
                 return;
             }
 
-            Logger.LogInformation("{WorkerName} will start iteration {iteration} in {delay}", WorkerName, currentIteration, TimeSpan.FromMilliseconds(delay.Value));
-            await Task.Delay(delay.Value);
+            var delay = TimeSpan.FromMilliseconds(delayMs.Value);
+            Logger.LogInformation("{WorkerName} will start iteration {iteration} in {delay}", WorkerName, currentIteration, delay);
+            await Task.Delay(delay);
             await ExecuteIterationWithLogAsync();
             currentIteration++;
         }
@@ -58,10 +52,10 @@ public abstract class ArbitraryIntervalPeriodicJobWorker : IWorker
         }
     }
 
-    protected abstract Task<int?> TryGetMillisecondsBeforeNextIterationAsync();
+    protected abstract Task<double?> TryGetMillisecondsBeforeNextIterationAsync();
     protected abstract Task ExecuteIterationAsync();
 
-    protected ILogger Logger { get; }
+    protected ILogger Logger { get; } = logger;
     protected string WorkerName => GetType().Name;
 
     private int currentIteration;
