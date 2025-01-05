@@ -130,3 +130,5 @@ app.UseMiddleware<ServiceExceptionHandlingMiddleware>();
 app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.UseHangfireDashboard();
+
+await app.RunAsync();
