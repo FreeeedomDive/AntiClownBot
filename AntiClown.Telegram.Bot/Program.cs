@@ -14,11 +14,13 @@ using AntiClown.TelegramBot.Options;
 using AntiClown.TelegramBot.TelegramWorker;
 using MassTransit;
 using Microsoft.Extensions.Options;
+using Serilog;
 using Telegram.Bot;
 using TelemetryApp.Utilities.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddLogging();
+
+builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMQ"));
 builder.Services.AddMassTransit(
@@ -42,9 +44,6 @@ builder.Services.AddMassTransit(
         );
     }
 );
-
-var telemetrySettingsSection = builder.Configuration.GetRequiredSection("Telemetry");
-builder.Services.ConfigureTelemetryClientWithLogger("AntiClownBot", "TelegramBot", telemetrySettingsSection["ApiUrl"]);
 
 var telegramSettingsSection = builder.Configuration.GetRequiredSection("Telegram");
 builder.Services.Configure<TelegramSettings>(telegramSettingsSection);
