@@ -7,15 +7,14 @@ public abstract class ArbitraryIntervalPeriodicJobWorker(ILogger logger) : IWork
         currentIteration = 1;
         while (true)
         {
-            var delayMs = await TryGetMillisecondsBeforeNextIterationAsync();
-            if (delayMs is null)
+            var delay = await TryGetMillisecondsBeforeNextIterationAsync();
+            if (delay is null)
             {
                 return;
             }
 
-            var delay = TimeSpan.FromMilliseconds(delayMs.Value);
-            Logger.LogInformation("{WorkerName} will start iteration {iteration} in {delay}", WorkerName, currentIteration, delay);
-            await Task.Delay(delay);
+            Logger.LogInformation("{WorkerName} will start iteration {iteration} in {delay}", WorkerName, currentIteration, delay.Value);
+            await Task.Delay(delay.Value);
             await ExecuteIterationWithLogAsync();
             currentIteration++;
         }
@@ -52,7 +51,7 @@ public abstract class ArbitraryIntervalPeriodicJobWorker(ILogger logger) : IWork
         }
     }
 
-    protected abstract Task<double?> TryGetMillisecondsBeforeNextIterationAsync();
+    protected abstract Task<TimeSpan?> TryGetMillisecondsBeforeNextIterationAsync();
     protected abstract Task ExecuteIterationAsync();
 
     protected ILogger Logger { get; } = logger;

@@ -10,7 +10,7 @@ public class F1PredictionStartWorker(
 )
     : ArbitraryIntervalPeriodicJobWorker(logger)
 {
-    protected override async Task<double?> TryGetMillisecondsBeforeNextIterationAsync()
+    protected override async Task<TimeSpan?> TryGetMillisecondsBeforeNextIterationAsync()
     {
         var now = DateTime.UtcNow;
         var currentRacesNames = (await antiClownEntertainmentApiClient.F1Predictions.FindAsync(
@@ -29,7 +29,7 @@ public class F1PredictionStartWorker(
                        );
         return nextRace is null
             ? null
-            : (nextRace.PredictionsStartTime - now).TotalMilliseconds;
+            : nextRace.PredictionsStartTime - now;
     }
 
     protected override async Task ExecuteIterationAsync()
