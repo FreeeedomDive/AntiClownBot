@@ -11,6 +11,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
+
 builder.Services.AddSingleton<IArgsProvider>(new ArgsProvider(args));
 
 var antiClownApiServiceUrl = builder.Configuration.GetSection("AntiClown").GetSection("ApiUrl").Value!;
@@ -38,3 +39,6 @@ var app = builder.Build();
 
 var toolsRunner = app.Services.GetService<IToolsRunner>()!;
 await toolsRunner.RunAsync();
+
+// даем логам выгрузиться в seq
+await Task.Delay(5000);
