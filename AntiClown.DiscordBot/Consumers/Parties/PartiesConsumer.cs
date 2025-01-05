@@ -1,7 +1,6 @@
 ﻿using AntiClown.DiscordBot.Interactivity.Services.Parties;
 using AntiClown.Messages.Dto.Parties;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Parties;
 
@@ -9,7 +8,7 @@ public class PartiesConsumer : IConsumer<PartyUpdatedMessageDto>
 {
     public PartiesConsumer(
         IPartiesService partiesService,
-        ILoggerClient logger
+        ILogger<PartiesConsumer> logger
     )
     {
         this.partiesService = partiesService;
@@ -20,15 +19,15 @@ public class PartiesConsumer : IConsumer<PartyUpdatedMessageDto>
     {
         try
         {
-            await logger.InfoAsync("{ConsumerName} received message with party {PartyId}", nameof(PartiesConsumer), context.Message.PartyId);
+            logger.LogInformation("{ConsumerName} received message with party {PartyId}", nameof(PartiesConsumer), context.Message.PartyId);
             await partiesService.CreateOrUpdateAsync(context.Message.PartyId);
         }
         catch (Exception e)
         {
-            await logger.ErrorAsync(e, "Unhandled exception in consumer {ConsumerName}", nameof(PartiesConsumer));
+            logger.LogError(e, "Unhandled exception in consumer {ConsumerName}", nameof(PartiesConsumer));
         }
     }
 
-    private readonly ILoggerClient logger;
+    private readonly ILogger<PartiesConsumer> logger;
     private readonly IPartiesService partiesService;
 }

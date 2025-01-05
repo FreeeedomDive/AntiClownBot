@@ -9,7 +9,6 @@ using AntiClown.Entertainment.Api.Dto.DailyEvents.Announce;
 using AntiClown.Messages.Dto.Events.Daily;
 using DSharpPlus.Entities;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Daily;
 
@@ -20,7 +19,7 @@ public class AnnounceEventConsumer : IDailyEventConsumer<AnnounceEventDto>
         IDiscordClientWrapper discordClientWrapper,
         IAntiClownDataApiClient antiClownDataApiClient,
         IUsersCache usersCache,
-        ILoggerClient logger
+        ILogger<AnnounceEventConsumer> logger
     )
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
@@ -33,7 +32,7 @@ public class AnnounceEventConsumer : IDailyEventConsumer<AnnounceEventDto>
     public async Task ConsumeAsync(ConsumeContext<DailyEventMessageDto> context)
     {
         var eventId = context.Message.EventId;
-        await logger.InfoAsync(
+        logger.LogInformation(
             "{ConsumerName} received event with id {eventId}",
             ConsumerName,
             eventId
@@ -72,6 +71,6 @@ public class AnnounceEventConsumer : IDailyEventConsumer<AnnounceEventDto>
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
-    private readonly ILoggerClient logger;
+    private readonly ILogger<AnnounceEventConsumer> logger;
     private readonly IUsersCache usersCache;
 }

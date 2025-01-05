@@ -3,7 +3,6 @@ using AntiClown.Api.Client;
 using AntiClown.Api.Dto.Users;
 using AntiClown.DiscordBot.Client;
 using AntiClown.DiscordBot.Dto.Members;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.Telegram.Bot.Caches.Users;
 
@@ -12,13 +11,11 @@ public class UsersCache : IUsersCache
     public UsersCache(
         IAntiClownApiClient antiClownApiClient,
         IAntiClownDiscordBotClient antiClownDiscordBotClient,
-        ILoggerClient loggerClient,
         ILogger<UsersCache> logger
     )
     {
         this.antiClownApiClient = antiClownApiClient;
         this.antiClownDiscordBotClient = antiClownDiscordBotClient;
-        this.loggerClient = loggerClient;
         this.logger = logger;
     }
 
@@ -40,7 +37,7 @@ public class UsersCache : IUsersCache
         }
         catch (Exception e)
         {
-            await loggerClient.ErrorAsync(e, "Failed to initialize users cache");
+            logger.LogError(e, "Failed to initialize users cache");
         }
     }
 
@@ -79,6 +76,5 @@ public class UsersCache : IUsersCache
 
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IAntiClownDiscordBotClient antiClownDiscordBotClient;
-    private readonly ILoggerClient loggerClient;
     private readonly ILogger<UsersCache> logger;
 }

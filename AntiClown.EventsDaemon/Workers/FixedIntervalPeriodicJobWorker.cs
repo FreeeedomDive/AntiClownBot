@@ -1,20 +1,11 @@
-using TelemetryApp.Api.Client.Log;
-
 namespace AntiClown.EventsDaemon.Workers;
 
-public abstract class FixedIntervalPeriodicJobWorker : IWorker
+public abstract class FixedIntervalPeriodicJobWorker(ILogger logger) : IWorker
 {
-    protected FixedIntervalPeriodicJobWorker(
-        ILoggerClient logger
-    )
-    {
-        Logger = logger;
-    }
-
     public async Task StartAsync()
     {
         var delay = await GetMillisecondsBeforeStartAsync();
-        await Logger.InfoAsync("{WorkerName} will start in {delay}", WorkerName, TimeSpan.FromMilliseconds(delay));
+        Logger.LogInformation("{WorkerName} will start in {delay}", WorkerName, TimeSpan.FromMilliseconds(delay));
         await Task.Delay(delay);
 
         currentIteration = 1;
@@ -29,12 +20,12 @@ public abstract class FixedIntervalPeriodicJobWorker : IWorker
 
     private async Task ExecuteIterationWithLogAsync()
     {
-        await Logger.InfoAsync("{WorkerName} Iteration {i} START at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
+        Logger.LogInformation("{WorkerName} Iteration {i} START at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
         try
         {
             await ExecuteIterationAsync();
             successfulIterations++;
-            await Logger.InfoAsync(
+            Logger.LogInformation(
                 "{WorkerName} Iteration {i} SUCCESS at {startTime} ({success} succeeded, {failed} failed)",
                 WorkerName,
                 currentIteration,
@@ -46,7 +37,7 @@ public abstract class FixedIntervalPeriodicJobWorker : IWorker
         catch (Exception e)
         {
             failedIterations++;
-            await Logger.ErrorAsync(
+            Logger.LogError(
                 "{WorkerName} Iteration {i} FAIL at {startTime} ({success} succeeded, {failed} failed)\n{exception}",
                 WorkerName,
                 currentIteration,
@@ -61,7 +52,7 @@ public abstract class FixedIntervalPeriodicJobWorker : IWorker
     protected abstract Task<int> GetMillisecondsBeforeStartAsync();
     protected abstract Task ExecuteIterationAsync();
 
-    protected ILoggerClient Logger { get; }
+    protected ILogger Logger { get; } = logger;
     protected string WorkerName => this.GetType().Name;
     protected abstract TimeSpan IterationTime { get; set; }
     private int currentIteration;

@@ -3,7 +3,6 @@ using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.DailyEvents;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.EventsDaemon.Workers.DailyEvents;
 
@@ -12,8 +11,8 @@ public class DailyEventsWorker : FixedIntervalPeriodicJobWorker
     public DailyEventsWorker(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IAntiClownDataApiClient antiClownDataApiClient,
-        ILoggerClient loggerClient
-    ) : base(loggerClient)
+        ILogger<DailyEventsWorker> logger
+    ) : base(logger)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.antiClownDataApiClient = antiClownDataApiClient;

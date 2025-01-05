@@ -2,7 +2,6 @@
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Lottery;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
@@ -10,7 +9,7 @@ public class LotteryEventConsumer : ICommonEventConsumer<LotteryEventDto>
 {
     public LotteryEventConsumer(
         ILotteryService lotteryService,
-        ILoggerClient logger
+        ILogger<LotteryEventConsumer> logger
     )
     {
         this.lotteryService = lotteryService;
@@ -24,7 +23,7 @@ public class LotteryEventConsumer : ICommonEventConsumer<LotteryEventDto>
         {
             await lotteryService.FinishAsync(eventId);
 
-            await logger.InfoAsync(
+            logger.LogInformation(
                 "{ConsumerName} received FINISHED event with id {eventId}",
                 ConsumerName,
                 eventId
@@ -34,11 +33,11 @@ public class LotteryEventConsumer : ICommonEventConsumer<LotteryEventDto>
 
         await lotteryService.StartAsync(eventId);
 
-        await logger.InfoAsync("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
+        logger.LogInformation("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
     }
 
     private static string ConsumerName => nameof(LotteryEventConsumer);
-    private readonly ILoggerClient logger;
+    private readonly ILogger<LotteryEventConsumer> logger;
 
     private readonly ILotteryService lotteryService;
 }

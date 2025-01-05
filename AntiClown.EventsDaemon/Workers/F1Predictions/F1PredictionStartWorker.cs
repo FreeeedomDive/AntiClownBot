@@ -1,22 +1,16 @@
 ﻿using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.EventsDaemon.Workers.F1Predictions;
 
-public class F1PredictionStartWorker : ArbitraryIntervalPeriodicJobWorker
+public class F1PredictionStartWorker(
+    IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+    IF1RacesProvider f1RacesProvider,
+    ILogger<F1PredictionStartWorker> logger
+)
+    : ArbitraryIntervalPeriodicJobWorker(logger)
 {
-    public F1PredictionStartWorker(
-        IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-        IF1RacesProvider f1RacesProvider,
-        ILoggerClient logger
-    ) : base(logger)
-    {
-        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
-        this.f1RacesProvider = f1RacesProvider;
-    }
-
-    protected override async Task<int?> TryGetMillisecondsBeforeNextIterationAsync()
+    protected override async Task<TimeSpan?> TryGetMillisecondsBeforeNextIterationAsync()
     {
         var now = DateTime.UtcNow;
         var currentRacesNames = (await antiClownEntertainmentApiClient.F1Predictions.FindAsync(
@@ -35,7 +29,7 @@ public class F1PredictionStartWorker : ArbitraryIntervalPeriodicJobWorker
                        );
         return nextRace is null
             ? null
-            : (int?)(nextRace.PredictionsStartTime - now).TotalMilliseconds;
+            : nextRace.PredictionsStartTime - now;
     }
 
     protected override async Task ExecuteIterationAsync()
@@ -47,7 +41,4 @@ public class F1PredictionStartWorker : ArbitraryIntervalPeriodicJobWorker
                           .First();
         await antiClownEntertainmentApiClient.F1Predictions.StartNewRaceAsync(currentRace.Name, currentRace.IsSprint);
     }
-
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-    private readonly IF1RacesProvider f1RacesProvider;
 }

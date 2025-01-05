@@ -1,3 +1,4 @@
+using AntiClown.Core.OpenTelemetry;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
@@ -5,18 +6,12 @@ using AntiClown.Entertainment.Api.Client.Configuration;
 using AntiClown.EventsDaemon.Workers;
 using AntiClown.EventsDaemon.Workers.F1Predictions;
 using Microsoft.Extensions.Options;
-using TelemetryApp.Utilities.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddLogging();
-var telemetryApiUrl = builder.Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
-var deployingEnvironment = builder.Configuration.GetValue<string>("DeployingEnvironment");
-builder.Services.ConfigureTelemetryClientWithLogger(
-    "AntiClownBot" + (string.IsNullOrEmpty(deployingEnvironment) ? "" : $"_{deployingEnvironment}"),
-    "EventsDaemon",
-    telemetryApiUrl
-);
+builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
+builder.Services.AddOpenTelemetryTracing(builder.Configuration);
 
 builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
 builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));

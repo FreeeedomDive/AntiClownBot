@@ -1,6 +1,4 @@
-﻿using AntiClown.DiscordBot.SlashCommands.Base;
-using Castle.DynamicProxy;
-using TelemetryApp.Api.Client.Log;
+﻿using Castle.DynamicProxy;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 
@@ -9,17 +7,17 @@ public class CustomProxiedServiceProvider : IServiceProvider
     public CustomProxiedServiceProvider(
         IServiceProvider serviceProvider,
         ProxyGenerator proxyGenerator,
-        ILoggerClient loggerClient
+        ILogger<CustomProxiedServiceProvider> logger
     )
     {
         this.serviceProvider = serviceProvider;
         this.proxyGenerator = proxyGenerator;
-        this.loggerClient = loggerClient;
+        this.logger = logger;
     }
 
     public object? GetService(Type serviceType)
     {
-        loggerClient.InfoAsync("Requested service: {serviceName}", serviceType.Name);
+        logger.LogInformation("Requested service: {serviceName}", serviceType.Name);
         var builtService = serviceProvider.GetRequiredService(serviceType);
         try
         {
@@ -29,12 +27,12 @@ public class CustomProxiedServiceProvider : IServiceProvider
         catch(Exception ex)
         {
             // return built service without proxy to prevent crash
-            loggerClient.ErrorAsync(ex, "Failed to build slash command with proxy").GetAwaiter().GetResult();
+            logger.LogError(ex, "Failed to build slash command with proxy");
             return builtService;
         }
     }
 
     private readonly IServiceProvider serviceProvider;
     private readonly ProxyGenerator proxyGenerator;
-    private readonly ILoggerClient loggerClient;
+    private readonly ILogger<CustomProxiedServiceProvider> logger;
 }

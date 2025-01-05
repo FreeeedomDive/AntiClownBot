@@ -7,7 +7,6 @@ using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
@@ -18,7 +17,7 @@ public class TransfusionEventConsumer : ICommonEventConsumer<TransfusionEventDto
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         ITransfusionEmbedBuilder transfusionEmbedBuilder,
         IAntiClownDataApiClient antiClownDataApiClient,
-        ILoggerClient logger
+        ILogger<TransfusionEventConsumer> logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
@@ -36,14 +35,14 @@ public class TransfusionEventConsumer : ICommonEventConsumer<TransfusionEventDto
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         await discordClientWrapper.Messages.SendAsync(botChannelId, embed);
 
-        await logger.InfoAsync("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
+        logger.LogInformation("{ConsumerName} received event with id {eventId}", ConsumerName, eventId);
     }
 
     private static string ConsumerName => nameof(TransfusionEventConsumer);
 
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly ILoggerClient logger;
+    private readonly ILogger<TransfusionEventConsumer> logger;
     private readonly ITransfusionEmbedBuilder transfusionEmbedBuilder;
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

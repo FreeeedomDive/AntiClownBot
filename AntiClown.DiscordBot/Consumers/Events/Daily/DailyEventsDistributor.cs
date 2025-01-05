@@ -2,7 +2,6 @@
 using AntiClown.Entertainment.Api.Dto.DailyEvents.ResetsAndPayments;
 using AntiClown.Messages.Dto.Events.Daily;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Daily;
 
@@ -11,7 +10,7 @@ public class DailyEventsDistributor : IConsumer<DailyEventMessageDto>
     public DailyEventsDistributor(
         IDailyEventConsumer<AnnounceEventDto> announceEventsConsumer,
         IDailyEventConsumer<ResetsAndPaymentsEventDto> resetsAndPaymentsEventDto,
-        ILoggerClient logger
+        ILogger<DailyEventsDistributor> logger
     )
     {
         this.announceEventsConsumer = announceEventsConsumer;
@@ -32,7 +31,7 @@ public class DailyEventsDistributor : IConsumer<DailyEventMessageDto>
                     await resetsAndPaymentsEventDto.ConsumeAsync(context);
                     break;
                 default:
-                    await logger.WarnAsync(
+                    logger.LogWarning(
                         "Found an unknown event {eventType} with id {eventId} in {ConsumerName}",
                         context.Message.EventType,
                         context.Message.EventId,
@@ -43,11 +42,11 @@ public class DailyEventsDistributor : IConsumer<DailyEventMessageDto>
         }
         catch (Exception e)
         {
-            await logger.ErrorAsync(e, "Unhandled exception in consumer {ConsumerName}", nameof(DailyEventsDistributor));
+            logger.LogError(e, "Unhandled exception in consumer {ConsumerName}", nameof(DailyEventsDistributor));
         }
     }
 
     private readonly IDailyEventConsumer<AnnounceEventDto> announceEventsConsumer;
-    private readonly ILoggerClient logger;
+    private readonly ILogger<DailyEventsDistributor> logger;
     private readonly IDailyEventConsumer<ResetsAndPaymentsEventDto> resetsAndPaymentsEventDto;
 }

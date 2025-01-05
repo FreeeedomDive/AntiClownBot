@@ -6,7 +6,6 @@ using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Bedge;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
@@ -16,7 +15,7 @@ public class BedgeEventConsumer : ICommonEventConsumer<BedgeEventDto>
         IDiscordClientWrapper discordClientWrapper,
         IEmotesCache emotesCache,
         IAntiClownDataApiClient antiClownDataApiClient,
-        ILoggerClient logger
+        ILogger<BedgeEventConsumer> logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
@@ -31,7 +30,7 @@ public class BedgeEventConsumer : ICommonEventConsumer<BedgeEventDto>
         var botChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "BotChannelId");
         await discordClientWrapper.Messages.SendAsync(botChannelId, bedge);
 
-        await logger.InfoAsync("{ConsumerName} received bedge event with id {eventId}",ConsumerName,context.Message.EventId);
+        logger.LogInformation("{ConsumerName} received bedge event with id {eventId}",ConsumerName,context.Message.EventId);
     }
 
     private static string ConsumerName => nameof(BedgeEventConsumer);
@@ -39,5 +38,5 @@ public class BedgeEventConsumer : ICommonEventConsumer<BedgeEventDto>
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IEmotesCache emotesCache;
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
-    private readonly ILoggerClient logger;
+    private readonly ILogger<BedgeEventConsumer> logger;
 }

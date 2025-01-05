@@ -2,7 +2,6 @@
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Race;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
@@ -10,7 +9,7 @@ public class RaceEventConsumer : ICommonEventConsumer<RaceEventDto>
 {
     public RaceEventConsumer(
         IRaceService raceService,
-        ILoggerClient logger
+        ILogger<RaceEventConsumer> logger
     )
     {
         this.raceService = raceService;
@@ -32,13 +31,13 @@ public class RaceEventConsumer : ICommonEventConsumer<RaceEventDto>
                     }
                     catch (Exception e)
                     {
-                        await logger.ErrorAsync(e, "Failed to finish race {raceId}", eventId);
+                        logger.LogError(e, "Failed to finish race {raceId}", eventId);
                     }
                 }
             );
 #pragma warning restore CS4014
 
-            await logger.InfoAsync(
+            logger.LogInformation(
                 "{ConsumerName} received FINISHED event with id {eventId}",
                 ConsumerName,
                 eventId
@@ -48,7 +47,7 @@ public class RaceEventConsumer : ICommonEventConsumer<RaceEventDto>
 
         await raceService.StartAsync(eventId);
 
-        await logger.InfoAsync(
+        logger.LogInformation(
             "{ConsumerName} received event with id {eventId}",
             ConsumerName,
             eventId
@@ -57,6 +56,6 @@ public class RaceEventConsumer : ICommonEventConsumer<RaceEventDto>
 
     private static string ConsumerName => nameof(RaceEventConsumer);
 
-    private readonly ILoggerClient logger;
+    private readonly ILogger<RaceEventConsumer> logger;
     private readonly IRaceService raceService;
 }

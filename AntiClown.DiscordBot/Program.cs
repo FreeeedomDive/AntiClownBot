@@ -54,9 +54,8 @@ using MassTransit;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Serilog;
 using SqlRepositoryBase.Configuration.Extensions;
-using TelemetryApp.Utilities.Extensions;
-using TelemetryApp.Utilities.Middlewares;
 
 namespace AntiClown.DiscordBot;
 
@@ -66,17 +65,8 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddLogging();
+        builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
         builder.Services.AddOpenTelemetryTracing(builder.Configuration);
-        var telemetryApiUrl = builder.Configuration.GetSection("Telemetry").GetSection("ApiUrl").Value;
-        var deployingEnvironment = builder.Configuration.GetValue<string>("DeployingEnvironment");
-        var projectName = "AntiClownBot" + (string.IsNullOrEmpty(deployingEnvironment) ? "" : $"_{deployingEnvironment}");
-        Console.WriteLine($"DeployingEnvironment: {deployingEnvironment}, project name: {projectName}");
-        builder.Services.ConfigureTelemetryClientWithLogger(
-            projectName,
-            "DiscordBot",
-            telemetryApiUrl
-        );
 
         ConfigureOptions(builder);
         ConfigurePostgreSql(builder);
@@ -125,7 +115,7 @@ internal class Program
         app.UseRouting();
         app.UseWebSockets();
 
-        app.UseMiddleware<RequestLoggingMiddleware>();
+        app.UseSerilogRequestLogging();
         app.UseMiddleware<ServiceExceptionHandlingMiddleware>();
         app.UseEndpoints(endpoints => endpoints.MapControllers());
 
@@ -148,10 +138,10 @@ internal class Program
                .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
                .ConfigurePostgreSql();
 
-        builder.Services.AddTransient<ILocker, Locker>();
-        builder.Services.AddTransient<IInteractivityRepository, InteractivityRepository>();
-        builder.Services.AddTransient<IReleasesRepository, ReleasesRepository>();
-        builder.Services.AddTransient<IRolesRepository, RolesRepository>();
+        builder.Services.AddTransientWithProxy<ILocker, Locker>();
+        builder.Services.AddTransientWithProxy<IInteractivityRepository, InteractivityRepository>();
+        builder.Services.AddTransientWithProxy<IReleasesRepository, ReleasesRepository>();
+        builder.Services.AddTransientWithProxy<IRolesRepository, RolesRepository>();
     }
 
     private static void BuildApiClients(WebApplicationBuilder builder)

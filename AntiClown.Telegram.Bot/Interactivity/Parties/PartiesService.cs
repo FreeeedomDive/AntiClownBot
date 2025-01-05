@@ -6,7 +6,6 @@ using AntiClown.Entertainment.Api.Dto.Parties;
 using AntiClown.Telegram.Bot.Caches.Users;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.Telegram.Bot.Interactivity.Parties;
 
@@ -17,7 +16,6 @@ public class PartiesService : IPartiesService
         IAntiClownDiscordBotClient antiClownDiscordBotClient,
         ITelegramBotClient telegramBotClient,
         IUsersCache usersCache,
-        ILoggerClient loggerClient,
         ILogger<PartiesService> logger
     )
     {
@@ -25,7 +23,6 @@ public class PartiesService : IPartiesService
         this.antiClownDiscordBotClient = antiClownDiscordBotClient;
         this.telegramBotClient = telegramBotClient;
         this.usersCache = usersCache;
-        this.loggerClient = loggerClient;
         this.logger = logger;
     }
 
@@ -136,13 +133,12 @@ public class PartiesService : IPartiesService
         }
         catch (Exception e)
         {
-            await loggerClient.ErrorAsync(e, "Failed to send party message to {userId}", chatId);
+            logger.LogError(e, "Failed to send party message to {userId}", chatId);
         }
     }
 
     private readonly IAntiClownDiscordBotClient antiClownDiscordBotClient;
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-    private readonly ILoggerClient loggerClient;
     private readonly ILogger<PartiesService> logger;
     private readonly ConcurrentDictionary<string, int> partyIdToMessageId = new();
     private readonly ITelegramBotClient telegramBotClient;

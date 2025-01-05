@@ -33,7 +33,6 @@ using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 
@@ -50,7 +49,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         IGuessNumberEventService guessNumberEventService,
         ILotteryService lotteryService,
         IPartiesService partiesService,
-        ILoggerClient loggerClient,
+        ILogger<DiscordBotBehaviour> logger,
         IRaceService raceService
     )
     {
@@ -64,7 +63,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         this.guessNumberEventService = guessNumberEventService;
         this.lotteryService = lotteryService;
         this.partiesService = partiesService;
-        this.loggerClient = loggerClient;
+        this.logger = logger;
         this.raceService = raceService;
     }
 
@@ -335,7 +334,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         }
         catch (Exception exception)
         {
-            await loggerClient.ErrorAsync(
+            logger.LogError(
                 exception,
                 "Unhandled exception in component interaction {InteractionId} by member {MemberId}",
                 eventArgs.Id,
@@ -661,7 +660,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
     private readonly IEmotesCache emotesCache;
     private readonly IGuessNumberEventService guessNumberEventService;
     private readonly IInventoryService inventoryService;
-    private readonly ILoggerClient loggerClient;
+    private readonly ILogger<DiscordBotBehaviour> logger;
     private readonly ILotteryService lotteryService;
     private readonly IPartiesService partiesService;
     private readonly IRaceService raceService;

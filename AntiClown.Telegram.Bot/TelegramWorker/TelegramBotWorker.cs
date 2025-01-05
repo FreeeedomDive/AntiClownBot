@@ -10,7 +10,6 @@ using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using TelemetryApp.Api.Client.Log;
 using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Telegram.Bot.TelegramWorker;
@@ -23,7 +22,6 @@ public class TelegramBotWorker : ITelegramBotWorker
         IPartiesService partiesService,
         IUsersCache usersCache,
         ITelegramBotClient telegramBotClient,
-        ILoggerClient loggerClient,
         ILogger<TelegramBotWorker> logger
     )
     {
@@ -32,7 +30,6 @@ public class TelegramBotWorker : ITelegramBotWorker
         this.partiesService = partiesService;
         this.usersCache = usersCache;
         this.telegramBotClient = telegramBotClient;
-        this.loggerClient = loggerClient;
         this.logger = logger;
     }
 
@@ -171,7 +168,7 @@ public class TelegramBotWorker : ITelegramBotWorker
             );
             await usersCache.BindTelegramAsync(message.Chat.Id, apiUserId);
             telegramToApiUserIds.Remove(message.Chat.Id);
-            await loggerClient.InfoAsync("User {userId} has bound telegram account {telegramUserId}", apiUserId, message.Chat.Id);
+            logger.LogInformation("User {userId} has bound telegram account {telegramUserId}", apiUserId, message.Chat.Id);
         }
         catch (UnauthorizedException)
         {
@@ -185,7 +182,6 @@ public class TelegramBotWorker : ITelegramBotWorker
 
     private readonly IAntiClownApiClient antiClownApiClient;
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
-    private readonly ILoggerClient loggerClient;
     private readonly ILogger<TelegramBotWorker> logger;
     private readonly IPartiesService partiesService;
     private readonly IUsersCache usersCache;

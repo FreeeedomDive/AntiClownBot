@@ -1,7 +1,6 @@
 using AntiClown.Messages.Dto.Parties;
 using AntiClown.Telegram.Bot.Interactivity.Parties;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.Telegram.Bot.Consumers.Parties;
 
@@ -9,13 +8,11 @@ public class PartiesNotificationsConsumer : IConsumer<PartyUpdatedMessageDto>
 {
     public PartiesNotificationsConsumer(
         IPartiesService partiesService,
-        ILogger<PartiesNotificationsConsumer> log,
-        ILoggerClient logger
+        ILogger<PartiesNotificationsConsumer> log
     )
     {
         this.partiesService = partiesService;
         this.log = log;
-        this.logger = logger;
     }
 
     public async Task Consume(ConsumeContext<PartyUpdatedMessageDto> context)
@@ -33,5 +30,4 @@ public class PartiesNotificationsConsumer : IConsumer<PartyUpdatedMessageDto>
 
     private readonly IPartiesService partiesService;
     private readonly ILogger<PartiesNotificationsConsumer> log;
-    private readonly ILoggerClient logger;
 }

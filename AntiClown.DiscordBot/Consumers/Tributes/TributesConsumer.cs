@@ -5,7 +5,6 @@ using AntiClown.DiscordBot.DiscordClientWrapper;
 using AntiClown.DiscordBot.EmbedBuilders.Tributes;
 using AntiClown.Messages.Dto.Tributes;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Tributes;
 
@@ -15,7 +14,7 @@ public class TributesConsumer : IConsumer<TributeMessageDto>
         IDiscordClientWrapper discordClientWrapper,
         ITributeEmbedBuilder tributeEmbedBuilder,
         IAntiClownDataApiClient antiClownDataApiClient,
-        ILoggerClient logger
+        ILogger<TributesConsumer> logger
     )
     {
         this.discordClientWrapper = discordClientWrapper;
@@ -29,7 +28,7 @@ public class TributesConsumer : IConsumer<TributeMessageDto>
         try
         {
             var tribute = context.Message;
-            await logger.InfoAsync("Received auto tribute for user {userId}", tribute.UserId);
+            logger.LogInformation("Received auto tribute for user {userId}", tribute.UserId);
             var tributeEmbed = await tributeEmbedBuilder.BuildForSuccessfulTributeAsync(tribute.Tribute);
             
             var tributeChannelId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "TributeChannelId");
@@ -37,12 +36,12 @@ public class TributesConsumer : IConsumer<TributeMessageDto>
         }
         catch (Exception e)
         {
-            await logger.ErrorAsync(e, "Unhandled exception in consumer {ConsumerName}", nameof(TributesConsumer));
+            logger.LogError(e, "Unhandled exception in consumer {ConsumerName}", nameof(TributesConsumer));
         }
     }
 
     private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly ILoggerClient logger;
+    private readonly ILogger<TributesConsumer> logger;
     private readonly ITributeEmbedBuilder tributeEmbedBuilder;
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }
