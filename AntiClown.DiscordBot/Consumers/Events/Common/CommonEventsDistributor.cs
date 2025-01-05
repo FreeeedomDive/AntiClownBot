@@ -6,7 +6,6 @@ using AntiClown.Entertainment.Api.Dto.CommonEvents.RemoveCoolDowns;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion;
 using AntiClown.Messages.Dto.Events.Common;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.Events.Common;
 
@@ -19,7 +18,7 @@ public class CommonEventsDistributor : IConsumer<CommonEventMessageDto>
         ICommonEventConsumer<RemoveCoolDownsEventDto> removeCoolDownsEventConsumer,
         ICommonEventConsumer<TransfusionEventDto> transfusionEventConsumer,
         ICommonEventConsumer<BedgeEventDto> bedgeEventConsumer,
-        ILoggerClient logger
+        ILogger<CommonEventsDistributor> logger
     )
     {
         this.guessNumberEventConsumer = guessNumberEventConsumer;
@@ -56,7 +55,7 @@ public class CommonEventsDistributor : IConsumer<CommonEventMessageDto>
                     await bedgeEventConsumer.ConsumeAsync(context);
                     break;
                 default:
-                    await logger.WarnAsync(
+                    logger.LogWarning(
                         "Found an unknown event {eventType} with id {eventId} in {ConsumerName}",
                         context.Message.EventType,
                         context.Message.EventId,
@@ -67,13 +66,13 @@ public class CommonEventsDistributor : IConsumer<CommonEventMessageDto>
         }
         catch (Exception e)
         {
-            await logger.ErrorAsync(e, "Unhandled exception in consumer {ConsumerName}", nameof(CommonEventsDistributor));
+            logger.LogError(e, "Unhandled exception in consumer {ConsumerName}", nameof(CommonEventsDistributor));
         }
     }
 
     private readonly ICommonEventConsumer<BedgeEventDto> bedgeEventConsumer;
     private readonly ICommonEventConsumer<GuessNumberEventDto> guessNumberEventConsumer;
-    private readonly ILoggerClient logger;
+    private readonly ILogger<CommonEventsDistributor> logger;
     private readonly ICommonEventConsumer<LotteryEventDto> lotteryEventConsumer;
     private readonly ICommonEventConsumer<RaceEventDto> raceEventConsumer;
     private readonly ICommonEventConsumer<RemoveCoolDownsEventDto> removeCoolDownsEventConsumer;

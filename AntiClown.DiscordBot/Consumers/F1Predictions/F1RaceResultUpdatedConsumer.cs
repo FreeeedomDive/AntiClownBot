@@ -6,7 +6,6 @@ using AntiClown.DiscordBot.EmbedBuilders.F1Predictions;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Messages.Dto.F1Predictions;
 using MassTransit;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.DiscordBot.Consumers.F1Predictions;
 
@@ -17,14 +16,14 @@ public class F1RaceResultUpdatedConsumer : IConsumer<F1RaceResultUpdatedMessageD
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IDiscordClientWrapper discordClientWrapper,
         IF1PredictionsEmbedBuilder f1PredictionsEmbedBuilder,
-        ILoggerClient loggerClient
+        ILogger<F1RaceResultUpdatedConsumer> logger
     )
     {
         this.antiClownDataApiClient = antiClownDataApiClient;
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.discordClientWrapper = discordClientWrapper;
         this.f1PredictionsEmbedBuilder = f1PredictionsEmbedBuilder;
-        this.loggerClient = loggerClient;
+        this.logger = logger;
     }
 
     public async Task Consume(ConsumeContext<F1RaceResultUpdatedMessageDto> context)
@@ -39,7 +38,7 @@ public class F1RaceResultUpdatedConsumer : IConsumer<F1RaceResultUpdatedMessageD
         }
         catch(Exception e)
         {
-            await loggerClient.ErrorAsync(e, "Error in {ConsumerName}", nameof(F1RaceResultUpdatedConsumer));
+            logger.LogError(e, "Error in {ConsumerName}", nameof(F1RaceResultUpdatedConsumer));
         }
     }
 
@@ -47,5 +46,5 @@ public class F1RaceResultUpdatedConsumer : IConsumer<F1RaceResultUpdatedMessageD
     private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IF1PredictionsEmbedBuilder f1PredictionsEmbedBuilder;
-    private readonly ILoggerClient loggerClient;
+    private readonly ILogger<F1RaceResultUpdatedConsumer> logger;
 }

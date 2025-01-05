@@ -4,7 +4,6 @@ using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents;
 using AntiClown.Tools.Utility.Extensions;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.EventsDaemon.Workers.CommonEvents;
 
@@ -13,8 +12,8 @@ public class CommonEventsWorker : FixedIntervalPeriodicJobWorker
     public CommonEventsWorker(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IAntiClownDataApiClient antiClownDataApiClient,
-        ILoggerClient loggerClient
-    ) : base(loggerClient)
+        ILogger<CommonEventsWorker> logger
+    ) : base(logger)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
         this.antiClownDataApiClient = antiClownDataApiClient;
@@ -61,7 +60,7 @@ public class CommonEventsWorker : FixedIntervalPeriodicJobWorker
                 $"Found unknown for {WorkerName} type of event. Consider adding an execution path for this type of event."
             ),
         };
-        await Logger.InfoAsync(
+        Logger.LogInformation(
             "{WorkerName} started {eventType} event with id {eventId}", WorkerName, eventToExecute,
             eventId
         );

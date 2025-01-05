@@ -1,11 +1,9 @@
-﻿using TelemetryApp.Api.Client.Log;
-
-namespace AntiClown.EventsDaemon.Workers;
+﻿namespace AntiClown.EventsDaemon.Workers;
 
 public abstract class ArbitraryIntervalPeriodicJobWorker : IWorker
 {
-    public ArbitraryIntervalPeriodicJobWorker(
-        ILoggerClient logger
+    protected ArbitraryIntervalPeriodicJobWorker(
+        ILogger logger
     )
     {
         Logger = logger;
@@ -22,7 +20,7 @@ public abstract class ArbitraryIntervalPeriodicJobWorker : IWorker
                 return;
             }
 
-            await Logger.InfoAsync("{WorkerName} will start iteration {iteration} in {delay}", WorkerName, currentIteration, TimeSpan.FromMilliseconds(delay.Value));
+            Logger.LogInformation("{WorkerName} will start iteration {iteration} in {delay}", WorkerName, currentIteration, TimeSpan.FromMilliseconds(delay.Value));
             await Task.Delay(delay.Value);
             await ExecuteIterationWithLogAsync();
             currentIteration++;
@@ -31,12 +29,12 @@ public abstract class ArbitraryIntervalPeriodicJobWorker : IWorker
 
     private async Task ExecuteIterationWithLogAsync()
     {
-        await Logger.InfoAsync("{WorkerName} Iteration {i} START at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
+        Logger.LogInformation("{WorkerName} Iteration {i} START at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
         try
         {
             await ExecuteIterationAsync();
             successfulIterations++;
-            await Logger.InfoAsync(
+            Logger.LogInformation(
                 "{WorkerName} Iteration {i} SUCCESS at {startTime} ({success} succeeded, {failed} failed)",
                 WorkerName,
                 currentIteration,
@@ -48,7 +46,7 @@ public abstract class ArbitraryIntervalPeriodicJobWorker : IWorker
         catch (Exception e)
         {
             failedIterations++;
-            await Logger.ErrorAsync(
+            Logger.LogError(
                 "{WorkerName} Iteration {i} FAIL at {startTime} ({success} succeeded, {failed} failed)\n{exception}",
                 WorkerName,
                 currentIteration,
@@ -63,7 +61,7 @@ public abstract class ArbitraryIntervalPeriodicJobWorker : IWorker
     protected abstract Task<int?> TryGetMillisecondsBeforeNextIterationAsync();
     protected abstract Task ExecuteIterationAsync();
 
-    protected ILoggerClient Logger { get; }
+    protected ILogger Logger { get; }
     protected string WorkerName => GetType().Name;
 
     private int currentIteration;

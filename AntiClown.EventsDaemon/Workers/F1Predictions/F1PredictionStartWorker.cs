@@ -1,6 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
-using TelemetryApp.Api.Client.Log;
 
 namespace AntiClown.EventsDaemon.Workers.F1Predictions;
 
@@ -9,7 +8,7 @@ public class F1PredictionStartWorker : ArbitraryIntervalPeriodicJobWorker
     public F1PredictionStartWorker(
         IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
         IF1RacesProvider f1RacesProvider,
-        ILoggerClient logger
+        ILogger<F1PredictionStartWorker> logger
     ) : base(logger)
     {
         this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
