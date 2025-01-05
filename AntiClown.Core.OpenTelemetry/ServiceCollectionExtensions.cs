@@ -15,25 +15,35 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration
     )
     {
-        var openTelemetryConfigurationSection = configuration.GetSection("OpenTelemetry");
+        var serilogConfigurationSection = configuration.GetSection("Serilog");
+        var seqConfiguration = serilogConfigurationSection.GetSection("WriteTo").GetChildren().FirstOrDefault(x => x["Name"] == "Seq");
+        if (seqConfiguration is null)
+        {
+            return serviceCollection;
+        }
 
-        var tracingSource = new ActivitySource(openTelemetryConfigurationSection["ServiceName"]!);
+        var applicationName = serilogConfigurationSection.GetSection("Properties")["Application"]!;
+        var seqConfigurationArgs = seqConfiguration.GetSection("Args");
+        var seqEndpoint = seqConfigurationArgs["serverUrl"]!;
+        var seqApiKey = seqConfigurationArgs["apiKey"]!;
+
+        var tracingSource = new ActivitySource(applicationName);
         serviceCollection.AddSingleton(tracingSource);
         serviceCollection.AddProxies();
         serviceCollection.AddOpenTelemetry()
-                         .ConfigureResource(r => r.AddService(openTelemetryConfigurationSection["ServiceName"]!))
+                         .ConfigureResource(r => r.AddService(applicationName))
                          .WithTracing(
                              tracing =>
                              {
                                  tracing
-                                     .AddSource(openTelemetryConfigurationSection["ServiceName"]!)
+                                     .AddSource(applicationName)
                                      .AddAspNetCoreInstrumentation()
                                      .AddOtlpExporter(
                                          opt =>
                                          {
-                                             opt.Endpoint = new Uri($"{openTelemetryConfigurationSection["SeqUrl"]!}/ingest/otlp/v1/traces");
+                                             opt.Endpoint = new Uri($"{seqEndpoint}/ingest/otlp/v1/traces");
                                              opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                                             opt.Headers = $"X-Seq-ApiKey={openTelemetryConfigurationSection["SeqApiKey"]!}";
+                                             opt.Headers = $"X-Seq-ApiKey={seqApiKey}";
                                          }
                                      );
                              }
