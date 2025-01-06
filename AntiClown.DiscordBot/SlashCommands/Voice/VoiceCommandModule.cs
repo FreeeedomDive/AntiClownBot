@@ -42,7 +42,6 @@ public class VoiceCommandModule(
                     if (connection == null)
                     {
                         connection = await channel.ConnectAsync();
-                        logger.LogInformation("Я подключился");
                     }
 
                     var client = await TextToSpeechClient.CreateAsync();
@@ -66,22 +65,20 @@ public class VoiceCommandModule(
                     };
 
                     var response = await client.SynthesizeSpeechAsync(input, voiceSelection, audioConfig);
-                    logger.LogInformation("Я отправил запрос в гугл");
                     var transmit = connection!.GetTransmitSink();
                     var contentBytes = response.AudioContent.ToByteArray();
-                    logger.LogInformation("Я покакал {count} байтами", contentBytes.Length);
                     var stream = new MemoryStream(contentBytes);
                     await stream.CopyToAsync(transmit);
                     await connection.WaitForPlaybackFinishAsync();
-                    logger.LogInformation("Я насрал в плейбек");
                 }
                 catch (Exception e)
                 {
-                    logger.LogError(e, "Real shit happened");
+                    logger.LogError(e, "VoiceCommandModule error");
                 }
                 finally
                 {
                     connection?.Disconnect();
+                    await RespondToInteractionAsync(ctx, text);
                 }
             }
         );
