@@ -142,15 +142,8 @@ public static class InteractionsIds
 
         public const string F1Admin_Group = "f1admin";
         public const string F1Admin_Start = "start";
-        public const string F1Admin_Results = "results";
-        public const string F1Admin_Close = "close";
-        public const string F1Admin_Dnf = "dnf";
-        public const string F1Admin_Sc = "sc";
-        public const string F1Admin_FirstPlaceLead = "firstPlaceLead";
-        public const string F1Admin_Finish = "finish";
 
         public const string F1_Group = "f1";
-        public const string F1_Predict = "predict";
         public const string F1_List = "list";
         public const string F1_Standings = "standings";
 
@@ -160,13 +153,7 @@ public static class InteractionsIds
         public const string F1Stats_MostProfitableDrivers = "mostProfitableDrivers";
         public const string F1Stats_UserPointsStats = "userPointsStats";
 
-        public const string Ip = "ip";
-
         public const string ChangeNickname = "nickname";
-
-        public const string EmojiStats = "emoji";
-
-        public const string Lottery = "lottery";
 
         public const string Race_Group = "race";
         public const string Race_Drivers = "drivers";
@@ -196,5 +183,8 @@ public static class InteractionsIds
         public const string When = "when";
 
         public const string Web = "web";
+        
+        public const string VoiceAi = "voiceAi";
+        public const string VoiceTts = "voiceTts";
     }
 }

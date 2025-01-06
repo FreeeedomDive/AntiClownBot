@@ -2,6 +2,7 @@
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Ai.Client;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Interactivity.Domain.Inventory;
 using AntiClown.DiscordBot.Interactivity.Domain.Shop;
@@ -25,6 +26,7 @@ using AntiClown.DiscordBot.SlashCommands.Other.Race;
 using AntiClown.DiscordBot.SlashCommands.Random;
 using AntiClown.DiscordBot.SlashCommands.Roles;
 using AntiClown.DiscordBot.SlashCommands.SocialRating;
+using AntiClown.DiscordBot.SlashCommands.Voice;
 using AntiClown.DiscordBot.SlashCommands.Web;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Tools.Utility.Extensions;
@@ -36,37 +38,22 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 
-public class DiscordBotBehaviour : IDiscordBotBehaviour
+public class DiscordBotBehaviour(
+    IServiceProvider serviceProvider,
+    DiscordClient discordClient,
+    IDiscordClientWrapper discordClientWrapper,
+    IEmotesCache emotesCache,
+    IAntiClownDataApiClient antiClownDataApiClient,
+    IInventoryService inventoryService,
+    IShopService shopService,
+    IGuessNumberEventService guessNumberEventService,
+    ILotteryService lotteryService,
+    IPartiesService partiesService,
+    ILogger<DiscordBotBehaviour> logger,
+    IRaceService raceService,
+    IGeminiAiClient geminiAiClient
+) : IDiscordBotBehaviour
 {
-    public DiscordBotBehaviour(
-        IServiceProvider serviceProvider,
-        DiscordClient discordClient,
-        IDiscordClientWrapper discordClientWrapper,
-        IEmotesCache emotesCache,
-        IAntiClownDataApiClient antiClownDataApiClient,
-        IInventoryService inventoryService,
-        IShopService shopService,
-        IGuessNumberEventService guessNumberEventService,
-        ILotteryService lotteryService,
-        IPartiesService partiesService,
-        ILogger<DiscordBotBehaviour> logger,
-        IRaceService raceService
-    )
-    {
-        this.serviceProvider = serviceProvider;
-        this.discordClient = discordClient;
-        this.discordClientWrapper = discordClientWrapper;
-        this.emotesCache = emotesCache;
-        this.antiClownDataApiClient = antiClownDataApiClient;
-        this.inventoryService = inventoryService;
-        this.shopService = shopService;
-        this.guessNumberEventService = guessNumberEventService;
-        this.lotteryService = lotteryService;
-        this.partiesService = partiesService;
-        this.logger = logger;
-        this.raceService = raceService;
-    }
-
     public async Task ConfigureAsync()
     {
         discordClient.GuildEmojisUpdated += GuildEmojisUpdated;
@@ -182,19 +169,30 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
                 return;
             }
 
-            if (Randomizer.CoinFlip())
+            if (Randomizer.GetRandomNumberBetween(0, 10) == 7)
             {
+                var aiResponse = await geminiAiClient.GetResponseAsync(message);
                 await discordClientWrapper.Messages.RespondAsync(
                     e.Message,
-                    $"{await emotesCache.GetEmoteAsTextAsync("YEP")}"
+                    aiResponse
                 );
             }
             else
             {
-                await discordClientWrapper.Messages.RespondAsync(
-                    e.Message,
-                    $"{await emotesCache.GetEmoteAsTextAsync("NOPE")}"
-                );
+                if (Randomizer.CoinFlip())
+                {
+                    await discordClientWrapper.Messages.RespondAsync(
+                        e.Message,
+                        $"{await emotesCache.GetEmoteAsTextAsync("YEP")}"
+                    );
+                }
+                else
+                {
+                    await discordClientWrapper.Messages.RespondAsync(
+                        e.Message,
+                        $"{await emotesCache.GetEmoteAsTextAsync("NOPE")}"
+                    );
+                }
             }
 
             return;
@@ -548,6 +546,7 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         slash.RegisterCommands<F1CommandModule>(guildId);
         slash.RegisterCommands<F1StatsCommand>(guildId);
         slash.RegisterCommands<WebCommandModule>(guildId);
+        slash.RegisterCommands<VoiceAiCommandModule>(guildId);
 
         // admin commands
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildId);
@@ -652,18 +651,4 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         var result = sb.ToString();
         return result.Contains("anime");
     }
-
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
-
-    private readonly DiscordClient discordClient;
-    private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IEmotesCache emotesCache;
-    private readonly IGuessNumberEventService guessNumberEventService;
-    private readonly IInventoryService inventoryService;
-    private readonly ILogger<DiscordBotBehaviour> logger;
-    private readonly ILotteryService lotteryService;
-    private readonly IPartiesService partiesService;
-    private readonly IRaceService raceService;
-    private readonly IServiceProvider serviceProvider;
-    private readonly IShopService shopService;
 }

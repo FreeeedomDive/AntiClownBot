@@ -5,6 +5,8 @@ using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Ai.Client;
+using AntiClown.DiscordBot.Ai.Settings;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Consumers.Events.Common;
@@ -50,6 +52,7 @@ using AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.Announce;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.ResetsAndPayments;
 using DSharpPlus;
+using DSharpPlus.VoiceNext;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -130,6 +133,7 @@ internal class Program
         builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
         builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
         builder.Services.Configure<WebOptions>(builder.Configuration.GetSection("Web"));
+        builder.Services.Configure<GeminiAiSettings>(builder.Configuration.GetSection("GeminiAi"));
     }
 
     private static void ConfigurePostgreSql(WebApplicationBuilder builder)
@@ -157,6 +161,7 @@ internal class Program
         builder.Services.AddTransientWithProxy<IAntiClownDataApiClient>(
             serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
         );
+        builder.Services.AddTransientWithProxy<IGeminiAiClient, GeminiAiClient>();
     }
 
     private static void BuildDiscordServices(WebApplicationBuilder builder)
@@ -167,7 +172,7 @@ internal class Program
                 var settings = serviceProvider.GetRequiredService<IOptions<Settings>>().Value;
                 var antiClownDataApiClient = serviceProvider.GetRequiredService<IAntiClownDataApiClient>();
                 var logLevel = antiClownDataApiClient.Settings.ReadAsync(SettingsCategory.DiscordBot, "LogLevel").GetAwaiter().GetResult().Value;
-                return new DiscordClient(
+                var client = new DiscordClient(
                     new DiscordConfiguration
                     {
                         Token = settings.ApiToken,
@@ -176,8 +181,15 @@ internal class Program
                         Intents = DiscordIntents.All,
                     }
                 );
+                client.UseVoiceNext();
+                return client;
             }
         );
+        builder.Services.AddSingleton<VoiceNextExtension>(provider =>
+        {
+            var discordClient = provider.GetRequiredService<DiscordClient>();
+            return discordClient.GetVoiceNext();
+        });
         builder.Services.AddTransientWithProxy<IDiscordClientWrapper, DiscordClientWrapper.DiscordClientWrapper>();
         builder.Services.AddTransientWithProxy<IDiscordBotBehaviour, DiscordBotBehaviour>();
     }

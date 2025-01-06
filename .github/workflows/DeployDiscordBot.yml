@@ -26,6 +26,12 @@ jobs:
       run: |
         echo "$APPSETTINGS_PRODUCTION_JSON" > ./$PROJECT_FOLDER/appsettings.Production.json
 
+    - name: Fill GoogleApi Credentials
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      run: |
+        echo "$GOOGLE_APPLICATION_CREDENTIALS" > ./$PROJECT_FOLDER/google_credentials.json
+
     - name: Configure Docker for Insecure Registry
       env:
         DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}

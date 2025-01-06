@@ -6,12 +6,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DSharpPlus" Version="4.4.2"/>
-        <PackageReference Include="DSharpPlus.SlashCommands" Version="4.4.2"/>
+        <PackageReference Include="DSharpPlus" Version="4.5.0" />
+        <PackageReference Include="DSharpPlus.SlashCommands" Version="4.5.0" />
+        <PackageReference Include="DSharpPlus.VoiceNext" Version="4.5.0" />
+        <PackageReference Include="Google.Cloud.TextToSpeech.V1" Version="3.9.0" />
         <PackageReference Include="MassTransit" Version="8.0.15"/>
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.15"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.16" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5"/>
+        <PackageReference Include="NAudio" Version="2.1.0"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4"/>
         <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
         <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
