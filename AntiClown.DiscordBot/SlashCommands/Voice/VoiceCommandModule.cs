@@ -37,14 +37,14 @@ public class VoiceCommandModule(
                     return;
                 }
 
-                if (connection == null)
-                {
-                    connection = await voiceNextExtension.ConnectAsync(channel);
-                    logger.LogInformation("Я подключился");
-                }
-
                 try
                 {
+                    if (connection == null)
+                    {
+                        connection = await channel.ConnectAsync();
+                        logger.LogInformation("Я подключился");
+                    }
+
                     var client = await TextToSpeechClient.CreateAsync();
                     logger.LogInformation("Я создал клиента");
 
