@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
+RUN apt-get update && apt-get install -y libopus-dev libopus0
+
 WORKDIR /certificate
 RUN dotnet dev-certs https --clean
 RUN mkdir https
@@ -20,8 +22,7 @@ RUN dotnet publish "AntiClown.DiscordBot.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 
-RUN apt-get update && apt-get install -y libopus-dev libopus0
-COPY --from=build /usr/lib/x86_64-linux-gnu/libopus.* /app/release
+COPY --from=build /usr/lib/x86_64-linux-gnu/libopus.* /app
 
 WORKDIR /app
 COPY --from=build /certificate /certificate
