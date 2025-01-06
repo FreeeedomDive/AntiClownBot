@@ -50,7 +50,7 @@ public class VoiceCommandModule(
                         Text = text,
                     };
 
-                    var voiceSelection = new VoiceSelectionParams
+                    var voice = new VoiceSelectionParams
                     {
                         LanguageCode = "ru-RU",
                         SsmlGender = SsmlVoiceGender.Neutral,
@@ -61,21 +61,13 @@ public class VoiceCommandModule(
                         AudioEncoding = AudioEncoding.Linear16,
                         SampleRateHertz = 16000,
                     };
-                    var response = await client.SynthesizeSpeechAsync(input, voiceSelection, audioConfig);
-                    using var ttsStream = new MemoryStream(response.AudioContent.ToByteArray());
-                    await using var waveReader = new WaveFileReader(ttsStream);
-                    var desiredFormat = new WaveFormat(48000, 16, 1);
-                    using var resampler = new MediaFoundationResampler(waveReader, desiredFormat);
-                    resampler.ResamplerQuality = 60;
-                    using var transmit = connection.GetTransmitSink();
-                    var buffer = new byte[8192];
-                    int bytesRead;
-                    while ((bytesRead = resampler.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        await transmit.WriteAsync(buffer, 0, bytesRead);
-                    }
 
-                    await transmit.FlushAsync();
+                    var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
+                    var transmit = connection!.GetTransmitSink();
+                    var contentBytes = response.AudioContent.ToByteArray();
+                    var stream = new MemoryStream(contentBytes);
+                    await stream.CopyToAsync(transmit);
+                    await stream.FlushAsync();
                     await connection.WaitForPlaybackFinishAsync();
                 }
                 catch (Exception e)
