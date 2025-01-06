@@ -90,12 +90,12 @@ public class VoiceCommandModule(
         {
             var buffer = new byte[4];
             var outIndex = 0;
-            buffer[outIndex++] = buffer[i];
-            buffer[outIndex++] = buffer[i + 1];
+            buffer[outIndex++] = monoStreamBytes[i];
+            buffer[outIndex++] = monoStreamBytes[i + 1];
 
             // Copy the same 2 bytes again for the right channel
-            buffer[outIndex++] = buffer[i];
-            buffer[outIndex] = buffer[i + 1];
+            buffer[outIndex++] = monoStreamBytes[i];
+            buffer[outIndex] = monoStreamBytes[i + 1];
             stereoStream.Write(buffer, 0, buffer.Length);
         }
 
