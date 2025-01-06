@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
-RUN apt-get update && apt-get install -y libopus-dev libopus0 libsodium23 libsodium-dev
+RUN apt-get update && apt-get install -y ffmpeg libopus-dev libopus0 libsodium23 libsodium-dev
 
 WORKDIR /certificate
 RUN dotnet dev-certs https --clean

@@ -1,4 +1,5 @@
-﻿using AntiClown.Data.Api.Client;
+﻿using System.Diagnostics;
+using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.Models.Interactions;
@@ -6,8 +7,6 @@ using AntiClown.DiscordBot.SlashCommands.Base;
 using DSharpPlus.SlashCommands;
 using DSharpPlus.VoiceNext;
 using Google.Cloud.TextToSpeech.V1;
-using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
 
 namespace AntiClown.DiscordBot.SlashCommands.Voice;
 
@@ -64,11 +63,41 @@ public class VoiceCommandModule(
                     };
 
                     var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
-                    var transmit = connection!.GetTransmitSink();
-                    var contentBytes = response.AudioContent.ToByteArray();
-                    var stream = new MemoryStream(ToPcm16(contentBytes, contentBytes.Length, new WaveFormat(16000, 16, 1)));
-                    await stream.CopyToAsync(transmit);
-                    await stream.FlushAsync();
+                    var ttsData = response.AudioContent.ToByteArray();
+
+                    using var ffmpeg = new Process();
+                    ffmpeg.StartInfo.FileName = "ffmpeg";
+                    // -i pipe:0       => read input from STDIN
+                    // -f s16le        => output raw 16-bit PCM
+                    // -ar 48000       => resample to 48kHz
+                    // -ac 2           => stereo
+                    // pipe:1          => write output to STDOUT
+                    ffmpeg.StartInfo.Arguments = "-i pipe:0 -f s16le -ar 48000 -ac 2 pipe:1";
+                    ffmpeg.StartInfo.UseShellExecute = false;
+                    ffmpeg.StartInfo.RedirectStandardInput = true;
+                    ffmpeg.StartInfo.RedirectStandardOutput = true;
+                    ffmpeg.StartInfo.CreateNoWindow = true;
+
+                    ffmpeg.Start();
+
+                    var ffmpegIn = ffmpeg.StandardInput.BaseStream;
+                    var ffmpegOut = ffmpeg.StandardOutput.BaseStream;
+
+                    // Send TTS audio to FFmpeg's STDIN
+                    await ffmpegIn.WriteAsync(ttsData);
+                    ffmpegIn.Close();
+
+                    // Read resampled PCM from FFmpeg's STDOUT and send to Discord
+                    using var discordStream = connection.GetTransmitSink();
+                    var buffer = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = await ffmpegOut.ReadAsync(buffer)) > 0)
+                    {
+                        await discordStream.WriteAsync(buffer, 0, bytesRead);
+                    }
+                    await discordStream.FlushAsync();
+
+                    await ffmpeg.WaitForExitAsync();
                     await connection.WaitForPlaybackFinishAsync();
                 }
                 catch (Exception e)
@@ -82,35 +111,5 @@ public class VoiceCommandModule(
                 }
             }
         );
-    }
-
-    private static byte[] ToPcm16(byte[] inputBuffer, int length, WaveFormat format)
-    {
-        if (length == 0)
-        {
-            return [];
-        }
-
-        using var memStream = new MemoryStream(inputBuffer, 0, length);
-        using var inputStream = new RawSourceWaveStream(memStream, format);
-
-        var convertedPcm = new SampleToWaveProvider16(
-            new WdlResamplingSampleProvider(
-                new WaveToSampleProvider(inputStream),
-                48000
-            )
-        );
-
-        var convertedBuffer = new byte[length];
-
-        using var stream = new MemoryStream();
-        int read;
-
-        while ((read = convertedPcm.Read(convertedBuffer, 0, length)) > 0)
-        {
-            stream.Write(convertedBuffer, 0, read);
-        }
-
-        return stream.ToArray();
     }
 }
