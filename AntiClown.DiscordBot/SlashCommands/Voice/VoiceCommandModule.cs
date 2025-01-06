@@ -6,6 +6,7 @@ using AntiClown.DiscordBot.SlashCommands.Base;
 using DSharpPlus.SlashCommands;
 using DSharpPlus.VoiceNext;
 using Google.Cloud.TextToSpeech.V1;
+using NAudio.Wave;
 
 namespace AntiClown.DiscordBot.SlashCommands.Voice;
 
@@ -39,10 +40,7 @@ public class VoiceCommandModule(
 
                 try
                 {
-                    if (connection == null)
-                    {
-                        connection = await channel.ConnectAsync();
-                    }
+                    connection ??= await channel.ConnectAsync();
 
                     var client = await TextToSpeechClient.CreateAsync();
                     logger.LogInformation("Я создал клиента");
@@ -61,14 +59,23 @@ public class VoiceCommandModule(
                     var audioConfig = new AudioConfig
                     {
                         AudioEncoding = AudioEncoding.Linear16,
-                        SampleRateHertz = 48000,
+                        SampleRateHertz = 16000,
                     };
-
                     var response = await client.SynthesizeSpeechAsync(input, voiceSelection, audioConfig);
-                    var transmit = connection!.GetTransmitSink();
-                    var contentBytes = response.AudioContent.ToByteArray();
-                    var stream = new MemoryStream(contentBytes);
-                    await stream.CopyToAsync(transmit);
+                    using var ttsStream = new MemoryStream(response.AudioContent.ToByteArray());
+                    await using var waveReader = new WaveFileReader(ttsStream);
+                    var desiredFormat = new WaveFormat(48000, 16, 1);
+                    using var resampler = new MediaFoundationResampler(waveReader, desiredFormat);
+                    resampler.ResamplerQuality = 60;
+                    using var transmit = connection.GetTransmitSink();
+                    var buffer = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = resampler.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        await transmit.WriteAsync(buffer, 0, bytesRead);
+                    }
+
+                    await transmit.FlushAsync();
                     await connection.WaitForPlaybackFinishAsync();
                 }
                 catch (Exception e)
