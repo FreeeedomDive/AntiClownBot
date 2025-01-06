@@ -61,17 +61,12 @@ public class VoiceCommandModule(
                     };
 
                     var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
-                    logger.LogInformation("Я получил ответ от гугла");
                     var ttsData = response.AudioContent.ToByteArray();
+                    logger.LogInformation("Я получил ответ от гугла {length} байт", ttsData.Length);
 
                     using var ffmpeg = new Process();
                     ffmpeg.StartInfo.FileName = "ffmpeg";
-                    // -i pipe:0       => read input from STDIN
-                    // -f s16le        => output raw 16-bit PCM
-                    // -ar 48000       => resample to 48kHz
-                    // -ac 2           => stereo
-                    // pipe:1          => write output to STDOUT
-                    ffmpeg.StartInfo.Arguments = "-i pipe:0 -f s16le -ar 48000 -ac 2 pipe:1";
+                    ffmpeg.StartInfo.Arguments = "-i pipe:0 -f s16le -ar 48000 -vn -sn -dn -ac 1 pipe:1 -loglevel quiet";
                     ffmpeg.StartInfo.UseShellExecute = false;
                     ffmpeg.StartInfo.RedirectStandardInput = true;
                     ffmpeg.StartInfo.RedirectStandardOutput = true;
@@ -82,19 +77,20 @@ public class VoiceCommandModule(
                     var ffmpegIn = ffmpeg.StandardInput.BaseStream;
                     var ffmpegOut = ffmpeg.StandardOutput.BaseStream;
 
-                    // Send TTS audio to FFmpeg's STDIN
                     await ffmpegIn.WriteAsync(ttsData);
                     ffmpegIn.Close();
                     logger.LogInformation("Я записал стрим в ffmpeg");
 
-                    // Read resampled PCM from FFmpeg's STDOUT and send to Discord
                     connection ??= await channel.ConnectAsync();
                     using var discordStream = connection.GetTransmitSink();
                     var buffer = new byte[8192];
                     int bytesRead;
+                    var totalBytesRead = 0;
                     while ((bytesRead = await ffmpegOut.ReadAsync(buffer)) > 0)
                     {
                         await discordStream.WriteAsync(buffer, 0, bytesRead);
+                        logger.LogInformation("Я высрал {TotalBytes} байтов", totalBytesRead);
+                        totalBytesRead += bytesRead;
                     }
                     await discordStream.FlushAsync();
 
