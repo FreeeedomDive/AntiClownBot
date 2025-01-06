@@ -22,7 +22,7 @@ public class VoiceAiCommandModule(
     : SlashCommandModuleWithMiddlewares(commandExecutor)
 {
     [SlashCommand(InteractionsIds.CommandsNames.VoiceAi, "Разговоры с батюшкой")]
-    public async Task Voice_Test(
+    public async Task Voice_Ai(
         InteractionContext ctx,
         [Option("text", "Спроси у ИИ...")] string text
     )
@@ -31,65 +31,83 @@ public class VoiceAiCommandModule(
             ctx, () =>
             {
                 return locker.DoInLockAsync(
-                    nameof(VoiceAiCommandModule), async () =>
-                    {
-                        var guildId =
-                            await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
-                        var guild = await ctx.Client.GetGuildAsync(guildId);
-                        var connection = voiceNextExtension.GetConnection(guild);
-                        var channel = ctx.Member.VoiceState?.Channel;
-                        if (channel == null)
-                        {
-                            await RespondToInteractionAsync(ctx, "Сначала зайди в войс-канал");
-                            return;
-                        }
-
-                        try
-                        {
-                            var aiResponse = await geminiAiClient.GetResponseAsync(text);
-                            var client = await TextToSpeechClient.CreateAsync();
-
-                            var input = new SynthesisInput
-                            {
-                                Text = aiResponse,
-                            };
-
-                            var voice = new VoiceSelectionParams
-                            {
-                                LanguageCode = "ru-RU",
-                                SsmlGender = SsmlVoiceGender.Neutral,
-                                Name = "ru-RU-Standard-D",
-                            };
-
-                            var audioConfig = new AudioConfig
-                            {
-                                AudioEncoding = AudioEncoding.Linear16,
-                                SampleRateHertz = 48000,
-                            };
-
-                            var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
-                            connection ??= await channel.ConnectAsync();
-                            var transmit = connection!.GetTransmitSink();
-                            var contentBytes = response.AudioContent.ToByteArray();
-                            var stream = ToStereoStream(contentBytes);
-                            await stream.CopyToAsync(transmit);
-                            await stream.FlushAsync();
-                            await connection.WaitForPlaybackFinishAsync();
-                            await RespondToInteractionAsync(ctx, "Вот и поговорили");
-                        }
-                        catch (Exception e)
-                        {
-                            logger.LogError(e, $"{nameof(VoiceAiCommandModule)} error");
-                            await RespondToInteractionAsync(ctx, "Я споткнулся");
-                        }
-                        finally
-                        {
-                            connection?.Disconnect();
-                        }
-                    }
+                    nameof(VoiceAiCommandModule), () => TextToSpeech(ctx, text, () => geminiAiClient.GetResponseAsync(text))
                 );
             }
         );
+    }
+
+    [SlashCommand(InteractionsIds.CommandsNames.VoiceTts, "Озвучить текст")]
+    public async Task Voice_Tts(
+        InteractionContext ctx,
+        [Option("text", "Текст")] string text
+    )
+    {
+        await ExecuteAsync(
+            ctx, () =>
+            {
+                return locker.DoInLockAsync(
+                    nameof(VoiceAiCommandModule), () => TextToSpeech(ctx, text, () => Task.FromResult(text))
+                );
+            }
+        );
+    }
+
+    private async Task TextToSpeech(InteractionContext ctx, string request, Func<Task<string>> textToSpeechFunc)
+    {
+        var guildId =
+            await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
+        var guild = await ctx.Client.GetGuildAsync(guildId);
+        var connection = voiceNextExtension.GetConnection(guild);
+        var channel = ctx.Member.VoiceState?.Channel;
+        if (channel == null)
+        {
+            await RespondToInteractionAsync(ctx, "Сначала зайди в войс-канал");
+            return;
+        }
+
+        try
+        {
+            var textToSpeech = await textToSpeechFunc();
+            var client = await TextToSpeechClient.CreateAsync();
+
+            var input = new SynthesisInput
+            {
+                Text = textToSpeech,
+            };
+
+            var voice = new VoiceSelectionParams
+            {
+                LanguageCode = "ru-RU",
+                SsmlGender = SsmlVoiceGender.Neutral,
+                Name = "ru-RU-Standard-D",
+            };
+
+            var audioConfig = new AudioConfig
+            {
+                AudioEncoding = AudioEncoding.Linear16,
+                SampleRateHertz = 48000,
+            };
+
+            var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
+            connection ??= await channel.ConnectAsync();
+            var transmit = connection!.GetTransmitSink();
+            var contentBytes = response.AudioContent.ToByteArray();
+            var stream = ToStereoStream(contentBytes);
+            await stream.CopyToAsync(transmit);
+            await stream.FlushAsync();
+            await connection.WaitForPlaybackFinishAsync();
+            await RespondToInteractionAsync(ctx, "Вот и поговорили");
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, $"{nameof(VoiceAiCommandModule)} error");
+            await RespondToInteractionAsync(ctx, "Я споткнулся");
+        }
+        finally
+        {
+            connection?.Disconnect();
+        }
     }
 
     private static MemoryStream ToStereoStream(byte[] monoStreamBytes)
