@@ -4,6 +4,7 @@ using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Base;
+using AntiClown.Tools.Utility.Extensions;
 using DSharpPlus.SlashCommands;
 using DSharpPlus.VoiceNext;
 using Google.Cloud.TextToSpeech.V1;
@@ -66,37 +67,41 @@ public class VoiceCommandModule(
 
                     using var ffmpeg = new Process();
                     ffmpeg.StartInfo.FileName = "ffmpeg";
-                    ffmpeg.StartInfo.Arguments = "-i pipe:0 -f s16le -ar 48000 -vn -sn -dn -ac 1 pipe:1 -loglevel quiet";
+                    ffmpeg.StartInfo.Arguments = "-i pipe:0 -f s16le -ar 48000 -vn -sn -dn -ac 2 pipe:1 -loglevel quiet";
                     ffmpeg.StartInfo.UseShellExecute = false;
                     ffmpeg.StartInfo.RedirectStandardInput = true;
                     ffmpeg.StartInfo.RedirectStandardOutput = true;
                     ffmpeg.StartInfo.CreateNoWindow = true;
-
                     ffmpeg.Start();
 
                     var ffmpegIn = ffmpeg.StandardInput.BaseStream;
                     var ffmpegOut = ffmpeg.StandardOutput.BaseStream;
 
-                    await ffmpegIn.WriteAsync(ttsData);
-                    ffmpegIn.Close();
-                    logger.LogInformation("Я записал стрим в ffmpeg");
-
                     connection ??= await channel.ConnectAsync();
                     using var discordStream = connection.GetTransmitSink();
-                    var buffer = new byte[8192];
-                    int bytesRead;
+
+                    const int bufferSize = 8192;
                     var totalBytesRead = 0;
-                    while ((bytesRead = await ffmpegOut.ReadAsync(buffer)) > 0)
+                    var readBuffer = new byte[8192];
+                    foreach (var batch in ttsData.Batch(bufferSize))
                     {
-                        await discordStream.WriteAsync(buffer, 0, bytesRead);
-                        logger.LogInformation("Я высрал {TotalBytes} байтов", totalBytesRead);
-                        totalBytesRead += bytesRead;
+                        var batchData = batch.ToArray();
+                        await ffmpegIn.WriteAsync(batchData);
+                        int bytesRead;
+                        while ((bytesRead = await ffmpegOut.ReadAsync(readBuffer)) > 0)
+                        {
+                            await discordStream.WriteAsync(readBuffer, 0, bytesRead);
+                            logger.LogInformation("Я высрал {TotalBytes} байтов", totalBytesRead);
+                            totalBytesRead += bytesRead;
+                        }
                     }
                     await discordStream.FlushAsync();
 
+                    ffmpegIn.Close();
+                    ffmpegOut.Close();
+
                     await ffmpeg.WaitForExitAsync();
                     await connection.WaitForPlaybackFinishAsync();
-                    logger.LogInformation("Я кончил");
                 }
                 catch (Exception e)
                 {
