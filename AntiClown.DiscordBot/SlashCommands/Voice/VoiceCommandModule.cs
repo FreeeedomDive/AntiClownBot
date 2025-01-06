@@ -40,11 +40,13 @@ public class VoiceCommandModule(
                 if (connection == null)
                 {
                     await voiceNextExtension.ConnectAsync(channel);
+                    logger.LogInformation("Я подключился");
                 }
 
                 try
                 {
                     var client = await TextToSpeechClient.CreateAsync();
+                    logger.LogInformation("Я создал клиента");
 
                     var input = new SynthesisInput
                     {
@@ -64,10 +66,14 @@ public class VoiceCommandModule(
                     };
 
                     var response = await client.SynthesizeSpeechAsync(input, voiceSelection, audioConfig);
+                    logger.LogInformation("Я отправил запрос в гугл");
                     var transmit = connection!.GetTransmitSink();
-                    var stream = new MemoryStream(response.AudioContent.ToByteArray());
+                    var contentBytes = response.AudioContent.ToByteArray();
+                    logger.LogInformation("Я покакал {count} байтами", contentBytes.Length);
+                    var stream = new MemoryStream(contentBytes);
                     await stream.CopyToAsync(transmit);
                     await connection.WaitForPlaybackFinishAsync();
+                    logger.LogInformation("Я насрал в плейбек");
                 }
                 catch (Exception e)
                 {
