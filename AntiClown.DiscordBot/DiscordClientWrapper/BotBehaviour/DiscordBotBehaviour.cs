@@ -2,6 +2,7 @@
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Ai.Client;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Interactivity.Domain.Inventory;
 using AntiClown.DiscordBot.Interactivity.Domain.Shop;
@@ -49,7 +50,8 @@ public class DiscordBotBehaviour(
     ILotteryService lotteryService,
     IPartiesService partiesService,
     ILogger<DiscordBotBehaviour> logger,
-    IRaceService raceService
+    IRaceService raceService,
+    IGeminiAiClient geminiAiClient
 ) : IDiscordBotBehaviour
 {
     public async Task ConfigureAsync()
@@ -167,19 +169,30 @@ public class DiscordBotBehaviour(
                 return;
             }
 
-            if (Randomizer.CoinFlip())
+            if (Randomizer.GetRandomNumberBetween(0, 10) == 7)
             {
+                var aiResponse = await geminiAiClient.GetResponseAsync(message);
                 await discordClientWrapper.Messages.RespondAsync(
                     e.Message,
-                    $"{await emotesCache.GetEmoteAsTextAsync("YEP")}"
+                    aiResponse
                 );
             }
             else
             {
-                await discordClientWrapper.Messages.RespondAsync(
-                    e.Message,
-                    $"{await emotesCache.GetEmoteAsTextAsync("NOPE")}"
-                );
+                if (Randomizer.CoinFlip())
+                {
+                    await discordClientWrapper.Messages.RespondAsync(
+                        e.Message,
+                        $"{await emotesCache.GetEmoteAsTextAsync("YEP")}"
+                    );
+                }
+                else
+                {
+                    await discordClientWrapper.Messages.RespondAsync(
+                        e.Message,
+                        $"{await emotesCache.GetEmoteAsTextAsync("NOPE")}"
+                    );
+                }
             }
 
             return;
@@ -533,7 +546,7 @@ public class DiscordBotBehaviour(
         slash.RegisterCommands<F1CommandModule>(guildId);
         slash.RegisterCommands<F1StatsCommand>(guildId);
         slash.RegisterCommands<WebCommandModule>(guildId);
-        slash.RegisterCommands<VoiceCommandModule>(guildId);
+        slash.RegisterCommands<VoiceAiCommandModule>(guildId);
 
         // admin commands
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildId);

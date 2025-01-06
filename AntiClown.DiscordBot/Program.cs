@@ -5,6 +5,8 @@ using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
+using AntiClown.DiscordBot.Ai.Client;
+using AntiClown.DiscordBot.Ai.Settings;
 using AntiClown.DiscordBot.Cache.Emotes;
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Consumers.Events.Common;
@@ -131,6 +133,7 @@ internal class Program
         builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
         builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
         builder.Services.Configure<WebOptions>(builder.Configuration.GetSection("Web"));
+        builder.Services.Configure<GeminiAiSettings>(builder.Configuration.GetSection("GeminiAi"));
     }
 
     private static void ConfigurePostgreSql(WebApplicationBuilder builder)
@@ -158,6 +161,7 @@ internal class Program
         builder.Services.AddTransientWithProxy<IAntiClownDataApiClient>(
             serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
         );
+        builder.Services.AddTransientWithProxy<IGeminiAiClient, GeminiAiClient>();
     }
 
     private static void BuildDiscordServices(WebApplicationBuilder builder)
