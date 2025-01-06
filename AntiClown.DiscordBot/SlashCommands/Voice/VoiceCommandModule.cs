@@ -40,8 +40,6 @@ public class VoiceCommandModule(
 
                 try
                 {
-                    connection ??= await channel.ConnectAsync();
-
                     var client = await TextToSpeechClient.CreateAsync();
                     logger.LogInformation("Я создал клиента");
 
@@ -63,6 +61,7 @@ public class VoiceCommandModule(
                     };
 
                     var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
+                    logger.LogInformation("Я получил ответ от гугла");
                     var ttsData = response.AudioContent.ToByteArray();
 
                     using var ffmpeg = new Process();
@@ -86,8 +85,10 @@ public class VoiceCommandModule(
                     // Send TTS audio to FFmpeg's STDIN
                     await ffmpegIn.WriteAsync(ttsData);
                     ffmpegIn.Close();
+                    logger.LogInformation("Я записал стрим в ffmpeg");
 
                     // Read resampled PCM from FFmpeg's STDOUT and send to Discord
+                    connection ??= await channel.ConnectAsync();
                     using var discordStream = connection.GetTransmitSink();
                     var buffer = new byte[8192];
                     int bytesRead;
@@ -99,6 +100,7 @@ public class VoiceCommandModule(
 
                     await ffmpeg.WaitForExitAsync();
                     await connection.WaitForPlaybackFinishAsync();
+                    logger.LogInformation("Я кончил");
                 }
                 catch (Exception e)
                 {
