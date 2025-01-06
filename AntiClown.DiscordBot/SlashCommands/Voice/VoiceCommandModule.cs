@@ -39,7 +39,7 @@ public class VoiceCommandModule(
 
                 if (connection == null)
                 {
-                    await voiceNextExtension.ConnectAsync(channel);
+                    connection = await voiceNextExtension.ConnectAsync(channel);
                     logger.LogInformation("Я подключился");
                 }
 
