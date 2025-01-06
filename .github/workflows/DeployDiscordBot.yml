@@ -30,7 +30,7 @@ jobs:
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       run: |
-        echo "$GOOGLE_APPLICATION_CREDENTIALS" > ~/google_credentials.json
+        echo "$GOOGLE_APPLICATION_CREDENTIALS" > ./$PROJECT_FOLDER/google_credentials.json
 
     - name: Configure Docker for Insecure Registry
       env:

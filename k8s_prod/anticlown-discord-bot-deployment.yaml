@@ -27,7 +27,7 @@ spec:
             - name: TZ
               value: Asia/Yekaterinburg
             - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: ~/google_credentials.json
+              value: /app/google_credentials.json
 ---
 apiVersion: v1
 kind: Service
