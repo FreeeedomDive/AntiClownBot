@@ -37,37 +37,21 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClown.DiscordBot.DiscordClientWrapper.BotBehaviour;
 
-public class DiscordBotBehaviour : IDiscordBotBehaviour
+public class DiscordBotBehaviour(
+    IServiceProvider serviceProvider,
+    DiscordClient discordClient,
+    IDiscordClientWrapper discordClientWrapper,
+    IEmotesCache emotesCache,
+    IAntiClownDataApiClient antiClownDataApiClient,
+    IInventoryService inventoryService,
+    IShopService shopService,
+    IGuessNumberEventService guessNumberEventService,
+    ILotteryService lotteryService,
+    IPartiesService partiesService,
+    ILogger<DiscordBotBehaviour> logger,
+    IRaceService raceService
+) : IDiscordBotBehaviour
 {
-    public DiscordBotBehaviour(
-        IServiceProvider serviceProvider,
-        DiscordClient discordClient,
-        IDiscordClientWrapper discordClientWrapper,
-        IEmotesCache emotesCache,
-        IAntiClownDataApiClient antiClownDataApiClient,
-        IInventoryService inventoryService,
-        IShopService shopService,
-        IGuessNumberEventService guessNumberEventService,
-        ILotteryService lotteryService,
-        IPartiesService partiesService,
-        ILogger<DiscordBotBehaviour> logger,
-        IRaceService raceService
-    )
-    {
-        this.serviceProvider = serviceProvider;
-        this.discordClient = discordClient;
-        this.discordClientWrapper = discordClientWrapper;
-        this.emotesCache = emotesCache;
-        this.antiClownDataApiClient = antiClownDataApiClient;
-        this.inventoryService = inventoryService;
-        this.shopService = shopService;
-        this.guessNumberEventService = guessNumberEventService;
-        this.lotteryService = lotteryService;
-        this.partiesService = partiesService;
-        this.logger = logger;
-        this.raceService = raceService;
-    }
-
     public async Task ConfigureAsync()
     {
         discordClient.GuildEmojisUpdated += GuildEmojisUpdated;
@@ -654,18 +638,4 @@ public class DiscordBotBehaviour : IDiscordBotBehaviour
         var result = sb.ToString();
         return result.Contains("anime");
     }
-
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
-
-    private readonly DiscordClient discordClient;
-    private readonly IDiscordClientWrapper discordClientWrapper;
-    private readonly IEmotesCache emotesCache;
-    private readonly IGuessNumberEventService guessNumberEventService;
-    private readonly IInventoryService inventoryService;
-    private readonly ILogger<DiscordBotBehaviour> logger;
-    private readonly ILotteryService lotteryService;
-    private readonly IPartiesService partiesService;
-    private readonly IRaceService raceService;
-    private readonly IServiceProvider serviceProvider;
-    private readonly IShopService shopService;
 }
