@@ -58,49 +58,15 @@ public class VoiceCommandModule(
                     var audioConfig = new AudioConfig
                     {
                         AudioEncoding = AudioEncoding.Linear16,
-                        SampleRateHertz = 16000,
+                        SampleRateHertz = 48000,
                     };
 
                     var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
-                    var ttsData = response.AudioContent.ToByteArray();
-                    logger.LogInformation("Я получил ответ от гугла {length} байт", ttsData.Length);
-
-                    using var ffmpeg = new Process();
-                    ffmpeg.StartInfo.FileName = "ffmpeg";
-                    ffmpeg.StartInfo.Arguments = "-i pipe:0 -f s16le -ar 48000 -vn -sn -dn -ac 2 pipe:1 -loglevel quiet";
-                    ffmpeg.StartInfo.UseShellExecute = false;
-                    ffmpeg.StartInfo.RedirectStandardInput = true;
-                    ffmpeg.StartInfo.RedirectStandardOutput = true;
-                    ffmpeg.StartInfo.CreateNoWindow = true;
-                    ffmpeg.Start();
-
-                    var ffmpegIn = ffmpeg.StandardInput.BaseStream;
-                    var ffmpegOut = ffmpeg.StandardOutput.BaseStream;
-
-                    connection ??= await channel.ConnectAsync();
-                    using var discordStream = connection.GetTransmitSink();
-
-                    const int bufferSize = 8192;
-                    var totalBytesRead = 0;
-                    var readBuffer = new byte[8192];
-                    foreach (var batch in ttsData.Batch(bufferSize))
-                    {
-                        var batchData = batch.ToArray();
-                        await ffmpegIn.WriteAsync(batchData);
-                        int bytesRead;
-                        while ((bytesRead = await ffmpegOut.ReadAsync(readBuffer)) > 0)
-                        {
-                            await discordStream.WriteAsync(readBuffer, 0, bytesRead);
-                            logger.LogInformation("Я высрал {TotalBytes} байтов", totalBytesRead);
-                            totalBytesRead += bytesRead;
-                        }
-                    }
-                    await discordStream.FlushAsync();
-
-                    ffmpegIn.Close();
-                    ffmpegOut.Close();
-
-                    await ffmpeg.WaitForExitAsync();
+                    var transmit = connection!.GetTransmitSink();
+                    var contentBytes = response.AudioContent.ToByteArray();
+                    var stream = ToStereoStream(contentBytes);
+                    await stream.CopyToAsync(transmit);
+                    await stream.FlushAsync();
                     await connection.WaitForPlaybackFinishAsync();
                 }
                 catch (Exception e)
@@ -114,5 +80,25 @@ public class VoiceCommandModule(
                 }
             }
         );
+    }
+
+    private static Stream ToStereoStream(byte[] monoStreamBytes)
+    {
+        var stereoStream = new MemoryStream();
+        for (var i = 0; i < monoStreamBytes.Length; i += 2)
+        {
+            var buffer = new byte[4];
+            var outIndex = 0;
+            buffer[outIndex++] = buffer[i];
+            buffer[outIndex++] = buffer[i + 1];
+
+            // Copy the same 2 bytes again for the right channel
+            buffer[outIndex++] = buffer[i];
+            buffer[outIndex] = buffer[i + 1];
+            stereoStream.Write(buffer, 0, buffer.Length);
+        }
+
+        stereoStream.Position = 0;
+        return stereoStream;
     }
 }
