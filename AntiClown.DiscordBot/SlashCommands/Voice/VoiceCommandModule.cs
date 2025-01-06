@@ -7,6 +7,7 @@ using DSharpPlus.SlashCommands;
 using DSharpPlus.VoiceNext;
 using Google.Cloud.TextToSpeech.V1;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace AntiClown.DiscordBot.SlashCommands.Voice;
 
@@ -65,7 +66,7 @@ public class VoiceCommandModule(
                     var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
                     var transmit = connection!.GetTransmitSink();
                     var contentBytes = response.AudioContent.ToByteArray();
-                    var stream = new MemoryStream(contentBytes);
+                    var stream = new MemoryStream(ToPcm16(contentBytes, contentBytes.Length, new WaveFormat(16000, 16, 1)));
                     await stream.CopyToAsync(transmit);
                     await stream.FlushAsync();
                     await connection.WaitForPlaybackFinishAsync();
@@ -81,5 +82,35 @@ public class VoiceCommandModule(
                 }
             }
         );
+    }
+
+    private static byte[] ToPcm16(byte[] inputBuffer, int length, WaveFormat format)
+    {
+        if (length == 0)
+        {
+            return [];
+        }
+
+        using var memStream = new MemoryStream(inputBuffer, 0, length);
+        using var inputStream = new RawSourceWaveStream(memStream, format);
+
+        var convertedPcm = new SampleToWaveProvider16(
+            new WdlResamplingSampleProvider(
+                new WaveToSampleProvider(inputStream),
+                48000
+            )
+        );
+
+        var convertedBuffer = new byte[length];
+
+        using var stream = new MemoryStream();
+        int read;
+
+        while ((read = convertedPcm.Read(convertedBuffer, 0, length)) > 0)
+        {
+            stream.Write(convertedBuffer, 0, read);
+        }
+
+        return stream.ToArray();
     }
 }
