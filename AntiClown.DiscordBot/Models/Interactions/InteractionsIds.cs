@@ -196,5 +196,7 @@ public static class InteractionsIds
         public const string When = "when";
 
         public const string Web = "web";
+        
+        public const string Voice_Test = "voice_test";
     }
 }

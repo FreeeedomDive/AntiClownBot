@@ -50,6 +50,7 @@ using AntiClown.Entertainment.Api.Dto.CommonEvents.Transfusion;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.Announce;
 using AntiClown.Entertainment.Api.Dto.DailyEvents.ResetsAndPayments;
 using DSharpPlus;
+using DSharpPlus.VoiceNext;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -167,7 +168,7 @@ internal class Program
                 var settings = serviceProvider.GetRequiredService<IOptions<Settings>>().Value;
                 var antiClownDataApiClient = serviceProvider.GetRequiredService<IAntiClownDataApiClient>();
                 var logLevel = antiClownDataApiClient.Settings.ReadAsync(SettingsCategory.DiscordBot, "LogLevel").GetAwaiter().GetResult().Value;
-                return new DiscordClient(
+                var client = new DiscordClient(
                     new DiscordConfiguration
                     {
                         Token = settings.ApiToken,
@@ -176,8 +177,15 @@ internal class Program
                         Intents = DiscordIntents.All,
                     }
                 );
+                client.UseVoiceNext();
+                return client;
             }
         );
+        builder.Services.AddSingleton<VoiceNextExtension>(provider =>
+        {
+            var discordClient = provider.GetRequiredService<DiscordClient>();
+            return discordClient.GetVoiceNext();
+        });
         builder.Services.AddTransientWithProxy<IDiscordClientWrapper, DiscordClientWrapper.DiscordClientWrapper>();
         builder.Services.AddTransientWithProxy<IDiscordBotBehaviour, DiscordBotBehaviour>();
     }
