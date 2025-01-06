@@ -22,7 +22,6 @@ RUN dotnet publish "AntiClown.DiscordBot.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 
-RUN apt-get update && apt-get install -y ffmpeg
 WORKDIR /app
 COPY --from=build /usr/lib/x86_64-linux-gnu/libopus.* .
 COPY --from=build /usr/lib/x86_64-linux-gnu/libsodium.* .

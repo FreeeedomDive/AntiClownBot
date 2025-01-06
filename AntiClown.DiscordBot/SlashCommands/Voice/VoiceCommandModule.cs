@@ -62,6 +62,7 @@ public class VoiceCommandModule(
                     };
 
                     var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
+                    connection ??= await channel.ConnectAsync();
                     var transmit = connection!.GetTransmitSink();
                     var contentBytes = response.AudioContent.ToByteArray();
                     var stream = ToStereoStream(contentBytes);
@@ -82,7 +83,7 @@ public class VoiceCommandModule(
         );
     }
 
-    private static Stream ToStereoStream(byte[] monoStreamBytes)
+    private static MemoryStream ToStereoStream(byte[] monoStreamBytes)
     {
         var stereoStream = new MemoryStream();
         for (var i = 0; i < monoStreamBytes.Length; i += 2)
