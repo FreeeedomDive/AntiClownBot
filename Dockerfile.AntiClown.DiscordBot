@@ -6,8 +6,6 @@ RUN mkdir https
 RUN dotnet dev-certs https -ep ./https/certificate.pfx -p aspnet
 RUN dotnet dev-certs https --trust
 
-RUN apt-get update && apt-get install -y libopus-dev libopus0
-
 WORKDIR /src
 COPY ["AntiClown.DiscordBot/AntiClown.DiscordBot.csproj", "AntiClown.DiscordBot/"]
 COPY ["AntiClown.Api.Client/AntiClown.Api.Client.csproj", "AntiClown.Api.Client/"]
@@ -21,8 +19,11 @@ WORKDIR "/src/AntiClown.DiscordBot"
 RUN dotnet publish "AntiClown.DiscordBot.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
-WORKDIR /app
+
+RUN apt-get update && apt-get install -y libopus-dev libopus0
 COPY --from=build /usr/lib/x86_64-linux-gnu/libopus.* /app/release
+
+WORKDIR /app
 COPY --from=build /certificate /certificate
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AntiClown.DiscordBot.dll"]
