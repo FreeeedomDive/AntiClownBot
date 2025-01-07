@@ -2,6 +2,13 @@ name: Deploy EntertainmentApi
 
 on:
   workflow_call:
+    secrets:
+      DOCKER_REGISTRY_IP:
+      ENTERTAINMENTAPI_APPSETTINGS:
+      DOCKER_REGISTRY_LOGIN:
+      DOCKER_REGISTRY_PASSWORD:
+      DOCKER_REGISTRY_DOMAIN:
+      KUBECONFIG:
 
 # Edit only names and variables below, everything is based on this variables
 env:

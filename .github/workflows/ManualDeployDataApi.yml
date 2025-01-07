@@ -3,7 +3,7 @@ name: Deploy DataApi
 on:
   workflow_dispatch:
 
-# Edit only this variables, everything down below is based on this variables
+# Edit only names and variables below, everything is based on this variables
 env:
   PROJECT_FOLDER: AntiClown.Data.Api
   DOCKERFILE: Dockerfile.AntiClown.Data.Api

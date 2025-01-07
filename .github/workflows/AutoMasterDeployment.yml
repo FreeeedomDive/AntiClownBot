@@ -66,18 +66,39 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_data_api == 'true'
     uses: ./.github/workflows/DeployDataApi.yml
+    secrets:
+      DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+      DATAAPI_APPSETTINGS: ${{ secrets.DATAAPI_APPSETTINGS }}
+      DOCKER_REGISTRY_LOGIN: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
+      DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
   deploy_api:
     name: Deploy Api
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_api == 'true'
     uses: ./.github/workflows/DeployApi.yml
+    secrets:
+      DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+      API_APPSETTINGS: ${{ secrets.API_APPSETTINGS }}
+      DOCKER_REGISTRY_LOGIN: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
+      DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
   deploy_entertainment_api:
     name: Deploy Entertainment.Api
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_entertainment_api == 'true'
     uses: ./.github/workflows/DeployEntertainmentApi.yml
+    secrets:
+      DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+      API_APPSETTINGS: ${{ secrets.API_APPSETTINGS }}
+      DOCKER_REGISTRY_LOGIN: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
+      DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
   deploy_discord_bot:
     name: Deploy DiscordBot
@@ -98,15 +119,35 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_events_daemon == 'true'
     uses: ./.github/workflows/DeployEventsDaemon.yml
+    secrets:
+      DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+      EVENTSDAEMON_APPSETTINGS: ${{ secrets.EVENTSDAEMON_APPSETTINGS }}
+      DOCKER_REGISTRY_LOGIN: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
+      DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
   deploy_web_api:
     name: Deploy Web.Api
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_web_api == 'true'
     uses: ./.github/workflows/DeployWebApi.yml
+    secrets:
+      DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+      WEBAPI_APPSETTINGS: ${{ secrets.WEBAPI_APPSETTINGS }}
+      DOCKER_REGISTRY_LOGIN: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
+      DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
   deploy_front:
     name: Deploy Web.Front
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_front == 'true'
     uses: ./.github/workflows/DeployWebFront.yml
+    secrets:
+      DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+      DOCKER_REGISTRY_LOGIN: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
+      DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}

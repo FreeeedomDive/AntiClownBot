@@ -2,8 +2,15 @@ name: Deploy DataApi
 
 on:
   workflow_call:
+    secrets:
+      DOCKER_REGISTRY_IP:
+      DATAAPI_APPSETTINGS:
+      DOCKER_REGISTRY_LOGIN:
+      DOCKER_REGISTRY_PASSWORD:
+      DOCKER_REGISTRY_DOMAIN:
+      KUBECONFIG:
 
-# Edit only this variables, everything down below is based on this variables
+# Edit only names and variables below, everything is based on this variables
 env:
   PROJECT_FOLDER: AntiClown.Data.Api
   DOCKERFILE: Dockerfile.AntiClown.Data.Api
