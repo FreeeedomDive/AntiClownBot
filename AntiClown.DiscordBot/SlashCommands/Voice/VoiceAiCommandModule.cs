@@ -28,12 +28,7 @@ public class VoiceAiCommandModule(
     )
     {
         await ExecuteAsync(
-            ctx, () =>
-            {
-                return locker.DoInLockAsync(
-                    nameof(VoiceAiCommandModule), () => TextToSpeech(ctx, text, () => geminiAiClient.GetResponseAsync(text))
-                );
-            }
+            ctx, () => locker.DoInLockAsync(nameof(VoiceAiCommandModule), () => TextToSpeech(ctx, () => geminiAiClient.GetResponseAsync(text)))
         );
     }
 
@@ -44,16 +39,11 @@ public class VoiceAiCommandModule(
     )
     {
         await ExecuteAsync(
-            ctx, () =>
-            {
-                return locker.DoInLockAsync(
-                    nameof(VoiceAiCommandModule), () => TextToSpeech(ctx, text, () => Task.FromResult(text))
-                );
-            }
+            ctx, () => locker.DoInLockAsync(nameof(VoiceAiCommandModule), () => TextToSpeech(ctx, () => Task.FromResult(text)))
         );
     }
 
-    private async Task TextToSpeech(InteractionContext ctx, string request, Func<Task<string>> textToSpeechFunc)
+    private async Task TextToSpeech(InteractionContext ctx, Func<Task<string>> textToSpeechFunc)
     {
         var guildId =
             await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, "GuildId");
