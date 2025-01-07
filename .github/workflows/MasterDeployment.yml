@@ -99,4 +99,4 @@ jobs:
     name: Deploy Web.Front
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_front == 'true'
-    uses: ./.github/workflows/DeployFront.yml
+    uses: ./.github/workflows/DeployWebFront.yml
