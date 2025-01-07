@@ -27,6 +27,7 @@ public class GeminiAiClient(IOptions<GeminiAiSettings> options, ILogger<GeminiAi
                 },
             }
         );
+
         var response = await client.ExecutePostAsync<AiResponse>(restRequest);
         if (response.Data is null)
         {
