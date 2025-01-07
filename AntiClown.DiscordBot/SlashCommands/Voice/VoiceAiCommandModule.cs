@@ -59,27 +59,8 @@ public class VoiceAiCommandModule(
         try
         {
             var textToSpeech = await textToSpeechFunc();
-            var client = await TextToSpeechClient.CreateAsync();
+            var response = await GetSynthesizedSpeechAsync(textToSpeech);
 
-            var input = new SynthesisInput
-            {
-                Text = textToSpeech,
-            };
-
-            var voice = new VoiceSelectionParams
-            {
-                LanguageCode = "ru-RU",
-                SsmlGender = SsmlVoiceGender.Neutral,
-                Name = "ru-RU-Standard-D",
-            };
-
-            var audioConfig = new AudioConfig
-            {
-                AudioEncoding = AudioEncoding.Linear16,
-                SampleRateHertz = 48000,
-            };
-
-            var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
             connection ??= await channel.ConnectAsync();
             var transmit = connection!.GetTransmitSink();
             var contentBytes = response.AudioContent.ToByteArray();
@@ -98,6 +79,32 @@ public class VoiceAiCommandModule(
         {
             connection?.Disconnect();
         }
+    }
+
+    private static async Task<SynthesizeSpeechResponse> GetSynthesizedSpeechAsync(string textToSpeech)
+    {
+        var client = await TextToSpeechClient.CreateAsync();
+
+        var input = new SynthesisInput
+        {
+            Text = textToSpeech,
+        };
+
+        var voice = new VoiceSelectionParams
+        {
+            LanguageCode = "ru-RU",
+            SsmlGender = SsmlVoiceGender.Neutral,
+            Name = "ru-RU-Standard-D",
+        };
+
+        var audioConfig = new AudioConfig
+        {
+            AudioEncoding = AudioEncoding.Linear16,
+            SampleRateHertz = 48000,
+        };
+
+        var response = await client.SynthesizeSpeechAsync(input, voice, audioConfig);
+        return response;
     }
 
     private static MemoryStream ToStereoStream(byte[] monoStreamBytes)
