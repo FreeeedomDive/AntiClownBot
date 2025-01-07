@@ -14,23 +14,15 @@ using Hangfire;
 
 namespace AntiClown.Api.Core.Economies.Services;
 
-public class TributeService : ITributeService
+public class TributeService(
+    IEconomyService economyService,
+    IItemsService itemsService,
+    ITributeMessageProducer tributeMessageProducer,
+    IAntiClownDataApiClient antiClownDataApiClient,
+    IScheduler scheduler
+)
+    : ITributeService
 {
-    public TributeService(
-        IEconomyService economyService,
-        IItemsService itemsService,
-        ITributeMessageProducer tributeMessageProducer,
-        IAntiClownDataApiClient antiClownDataApiClient,
-        IScheduler scheduler
-    )
-    {
-        this.economyService = economyService;
-        this.itemsService = itemsService;
-        this.tributeMessageProducer = tributeMessageProducer;
-        this.antiClownDataApiClient = antiClownDataApiClient;
-        this.scheduler = scheduler;
-    }
-
     public async Task<DateTime> WhenNextTributeAsync(Guid userId)
     {
         var economy = await economyService.ReadEconomyAsync(userId);
@@ -220,10 +212,4 @@ public class TributeService : ITributeService
         {
         }
     }
-
-    private readonly IEconomyService economyService;
-    private readonly IItemsService itemsService;
-    private readonly IScheduler scheduler;
-    private readonly ITributeMessageProducer tributeMessageProducer;
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

@@ -10,21 +10,14 @@ using AntiClown.Data.Api.Dto.Settings;
 
 namespace AntiClown.Api.Core.Economies.Services;
 
-public class EconomyService : IEconomyService
+public class EconomyService(
+    IEconomyRepository economyRepository,
+    IUsersService usersService,
+    ITransactionsService transactionsService,
+    IAntiClownDataApiClient antiClownDataApiClient
+)
+    : IEconomyService
 {
-    public EconomyService(
-        IEconomyRepository economyRepository,
-        IUsersService usersService,
-        ITransactionsService transactionsService,
-        IAntiClownDataApiClient antiClownDataApiClient
-    )
-    {
-        this.economyRepository = economyRepository;
-        this.usersService = usersService;
-        this.transactionsService = transactionsService;
-        this.antiClownDataApiClient = antiClownDataApiClient;
-    }
-
     public async Task<Economy> ReadEconomyAsync(Guid userId)
     {
         return await economyRepository.ReadAsync(userId);
@@ -133,9 +126,4 @@ public class EconomyService : IEconomyService
             IsLohotronReady = true,
         };
     }
-
-    private readonly IEconomyRepository economyRepository;
-    private readonly ITransactionsService transactionsService;
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
-    private readonly IUsersService usersService;
 }

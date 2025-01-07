@@ -3,17 +3,12 @@ using AntiClown.Api.Dto.Exceptions.Economy;
 
 namespace AntiClown.Api.Core.Economies.Services;
 
-public class LohotronService : ILohotronService
+public class LohotronService(
+    IEconomyService economyService,
+    ILohotronRewardGenerator lohotronRewardGenerator
+)
+    : ILohotronService
 {
-    public LohotronService(
-        IEconomyService economyService,
-        ILohotronRewardGenerator lohotronRewardGenerator
-    )
-    {
-        this.economyService = economyService;
-        this.lohotronRewardGenerator = lohotronRewardGenerator;
-    }
-
     public async Task<LohotronReward> UseLohotronAsync(Guid userId)
     {
         var economy = await economyService.ReadEconomyAsync(userId);
@@ -45,7 +40,4 @@ public class LohotronService : ILohotronService
     {
         await economyService.ResetLohotronForAllAsync();
     }
-
-    private readonly IEconomyService economyService;
-    private readonly ILohotronRewardGenerator lohotronRewardGenerator;
 }

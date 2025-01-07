@@ -6,14 +6,8 @@ using MassTransit;
 
 namespace AntiClown.Api.Core.Economies.Services;
 
-public class TributeMessageProducer : ITributeMessageProducer
+public class TributeMessageProducer(IBus bus, IMapper mapper) : ITributeMessageProducer
 {
-    public TributeMessageProducer(IBus bus, IMapper mapper)
-    {
-        this.bus = bus;
-        this.mapper = mapper;
-    }
-
     public async Task ProduceAsync(Tribute tribute)
     {
         var dto = mapper.Map<TributeDto>(tribute);
@@ -23,7 +17,4 @@ public class TributeMessageProducer : ITributeMessageProducer
             Tribute = dto,
         });
     }
-
-    private readonly IBus bus;
-    private readonly IMapper mapper;
 }

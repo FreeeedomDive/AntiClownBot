@@ -7,19 +7,13 @@ using AntiClown.Tools.Utility.Extensions;
 
 namespace AntiClown.EventsDaemon.Workers.CommonEvents;
 
-public class CommonEventsWorker : FixedIntervalPeriodicJobWorker
+public class CommonEventsWorker(
+    IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+    IAntiClownDataApiClient antiClownDataApiClient,
+    ILogger<CommonEventsWorker> logger
+)
+    : FixedIntervalPeriodicJobWorker(logger)
 {
-    public CommonEventsWorker(
-        IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-        IAntiClownDataApiClient antiClownDataApiClient,
-        ILogger<CommonEventsWorker> logger
-    ) : base(logger)
-    {
-        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
-        this.antiClownDataApiClient = antiClownDataApiClient;
-        IterationTime = antiClownDataApiClient.Settings.ReadAsync<TimeSpan>(SettingsCategory.CommonEvents, "CommonEventsWorker.IterationTime").GetAwaiter().GetResult();
-    }
-
     protected override async Task<int> GetMillisecondsBeforeStartAsync()
     {
         var eventStartHour = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.CommonEvents, "CommonEventsWorker.StartHour");
@@ -66,8 +60,5 @@ public class CommonEventsWorker : FixedIntervalPeriodicJobWorker
         );
     }
 
-    protected sealed override TimeSpan IterationTime { get; set; }
-
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
+    protected sealed override TimeSpan IterationTime { get; set; } = antiClownDataApiClient.Settings.ReadAsync<TimeSpan>(SettingsCategory.CommonEvents, "CommonEventsWorker.IterationTime").GetAwaiter().GetResult();
 }

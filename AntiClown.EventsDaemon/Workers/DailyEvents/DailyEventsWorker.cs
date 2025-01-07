@@ -6,19 +6,13 @@ using AntiClown.Entertainment.Api.Dto.DailyEvents;
 
 namespace AntiClown.EventsDaemon.Workers.DailyEvents;
 
-public class DailyEventsWorker : FixedIntervalPeriodicJobWorker
+public class DailyEventsWorker(
+    IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+    IAntiClownDataApiClient antiClownDataApiClient,
+    ILogger<DailyEventsWorker> logger
+)
+    : FixedIntervalPeriodicJobWorker(logger)
 {
-    public DailyEventsWorker(
-        IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-        IAntiClownDataApiClient antiClownDataApiClient,
-        ILogger<DailyEventsWorker> logger
-    ) : base(logger)
-    {
-        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
-        this.antiClownDataApiClient = antiClownDataApiClient;
-        IterationTime = antiClownDataApiClient.Settings.ReadAsync<TimeSpan>(SettingsCategory.DailyEvents, "DailyEventsWorker.IterationTime").GetAwaiter().GetResult();
-    }
-
     protected override async Task<int> GetMillisecondsBeforeStartAsync()
     {
         var dailyEventStartHour = await antiClownDataApiClient.Settings.ReadAsync<int>(SettingsCategory.DailyEvents, "DailyEventsWorker.StartHour");
@@ -63,7 +57,5 @@ public class DailyEventsWorker : FixedIntervalPeriodicJobWorker
         }
     }
 
-    protected sealed override TimeSpan IterationTime { get; set; }
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
+    protected sealed override TimeSpan IterationTime { get; set; } = antiClownDataApiClient.Settings.ReadAsync<TimeSpan>(SettingsCategory.DailyEvents, "DailyEventsWorker.IterationTime").GetAwaiter().GetResult();
 }
