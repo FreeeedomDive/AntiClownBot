@@ -1,10 +1,8 @@
 name: Deploy WebApi
 
 on:
-  workflow_dispatch:
-    inputs:
-      project:
-        description: 'Deploy WebApi'
+  workflow_call:
+
 # Edit only names and variables below, everything is based on this variables
 env:
   PROJECT_FOLDER: AntiClown.Web.Api

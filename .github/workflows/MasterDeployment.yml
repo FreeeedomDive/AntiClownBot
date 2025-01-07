@@ -1,0 +1,102 @@
+name: Master Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  detect-changes:
+    name: Detect Changes for Deployments
+    runs-on: ubuntu-latest
+    outputs:
+      deploy_api: ${{ steps.check.outputs.deploy_api }}
+      deploy_data_api: ${{ steps.check.outputs.deploy_data_api }}
+      deploy_entertainment_api: ${{ steps.check.outputs.deploy_entertainment_api }}
+      deploy_discord_bot: ${{ steps.check.outputs.deploy_discord_bot }}
+      deploy_events_daemon: ${{ steps.check.outputs.deploy_events_daemon }}
+      deploy_web_api: ${{ steps.check.outputs.deploy_web_api }}
+      deploy_front: ${{ steps.check.outputs.deploy_front }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Detect changes in specific projects
+        id: check
+        run: |
+          # Data.Api
+          if git diff --name-only HEAD^ HEAD | grep -E '^(AntiClown\.Data\.Api|AntiClown\.Data\.Api\.Core)/'; then
+            echo "deploy_data_api=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Api
+          if git diff --name-only HEAD^ HEAD | grep -E '^(AntiClown\.Api|AntiClown\.Api\.Core)/'; then
+            echo "deploy_api=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Entertainment.Api
+          if git diff --name-only HEAD^ HEAD | grep -E '^(AntiClown\.Entertainment\.Api|AntiClown\.Entertainment\.Api\.Core)/'; then
+            echo "deploy_entertainment_api=true" >> $GITHUB_OUTPUT
+          fi
+
+          # DiscordBot
+          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.DiscordBot/'; then
+            echo "deploy_discord_bot=true" >> $GITHUB_OUTPUT
+          fi
+
+          # EventsDaemon
+          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.EventsDaemon/'; then
+            echo "deploy_events_daemon=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Web.Api
+          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.Web\.Api/'; then
+            echo "deploy_web_api=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Web.Front
+          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.Web\.Front/'; then
+            echo "deploy_front=true" >> $GITHUB_OUTPUT
+          fi
+
+  deploy_data_api:
+    name: Deploy Data.Api
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deploy_data_api == 'true'
+    uses: ./.github/workflows/DeployDataApi.yml@main
+
+  deploy_api:
+    name: Deploy Api
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deploy_api == 'true'
+    uses: ./.github/workflows/DeployApi.yml@main
+
+  deploy_entertainment_api:
+    name: Deploy Entertainment.Api
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deploy_entertainment_api == 'true'
+    uses: ./.github/workflows/DeployEntertainmentApi.yml@main
+
+  deploy_discord_bot:
+    name: Deploy DiscordBot
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deploy_discord_bot == 'true'
+    uses: ./.github/workflows/DeployDiscordBot.yml@main
+
+  deploy_events_daemon:
+    name: Deploy EventsDaemon
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deploy_events_daemon == 'true'
+    uses: ./.github/workflows/DeployEventsDaemon.yml@main
+
+  deploy_web_api:
+    name: Deploy Web.Api
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deploy_web_api == 'true'
+    uses: ./.github/workflows/DeployWebApi.yml@main
+
+  deploy_front:
+    name: Deploy Web.Front
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deploy_front == 'true'
+    uses: ./.github/workflows/DeployFront.yml@main

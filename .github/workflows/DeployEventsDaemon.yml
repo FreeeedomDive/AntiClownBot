@@ -1,10 +1,8 @@
 name: Deploy EventsDaemon
 
 on:
-  workflow_dispatch:
-    inputs:
-      project:
-        description: 'Deploy EventsDaemon'
+  workflow_call:
+
 # Edit only names and variables below, everything is based on this variables
 env:
   PROJECT_FOLDER: AntiClown.EventsDaemon
