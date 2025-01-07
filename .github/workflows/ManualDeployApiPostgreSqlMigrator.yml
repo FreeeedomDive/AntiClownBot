@@ -2,9 +2,7 @@ name: Deploy Api PostgreSql Migrator
 
 on:
   workflow_dispatch:
-    inputs:
-      project:
-        description: 'Deploy Api PostgreSql Migrator'
+
 # Edit only names and variables below, everything is based on this variables
 env:
   PROJECT_FOLDER: AntiClown.Api.PostgreSqlMigrationsApplier

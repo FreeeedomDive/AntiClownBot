@@ -1,7 +1,7 @@
 name: Deploy EventsDaemon
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 # Edit only names and variables below, everything is based on this variables
 env:

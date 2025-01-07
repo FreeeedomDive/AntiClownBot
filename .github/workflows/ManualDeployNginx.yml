@@ -2,9 +2,7 @@ name: Deploy Nginx
 
 on:
   workflow_dispatch:
-    inputs:
-      project:
-        description: 'Deploy Nginx'
+
 # Edit only names and variables below, everything is based on this variables
 env:
   PROJECT_FOLDER: nginx

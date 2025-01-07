@@ -1,7 +1,7 @@
 name: Deploy DataApi
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 # Edit only this variables, everything down below is based on this variables
 env:
