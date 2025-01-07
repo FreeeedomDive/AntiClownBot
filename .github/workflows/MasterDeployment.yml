@@ -63,40 +63,40 @@ jobs:
     name: Deploy Data.Api
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_data_api == 'true'
-    uses: ./.github/workflows/DeployDataApi.yml@main
+    uses: ./.github/workflows/DeployDataApi.yml
 
   deploy_api:
     name: Deploy Api
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_api == 'true'
-    uses: ./.github/workflows/DeployApi.yml@main
+    uses: ./.github/workflows/DeployApi.yml
 
   deploy_entertainment_api:
     name: Deploy Entertainment.Api
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_entertainment_api == 'true'
-    uses: ./.github/workflows/DeployEntertainmentApi.yml@main
+    uses: ./.github/workflows/DeployEntertainmentApi.yml
 
   deploy_discord_bot:
     name: Deploy DiscordBot
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_discord_bot == 'true'
-    uses: ./.github/workflows/DeployDiscordBot.yml@main
+    uses: ./.github/workflows/DeployDiscordBot.yml
 
   deploy_events_daemon:
     name: Deploy EventsDaemon
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_events_daemon == 'true'
-    uses: ./.github/workflows/DeployEventsDaemon.yml@main
+    uses: ./.github/workflows/DeployEventsDaemon.yml
 
   deploy_web_api:
     name: Deploy Web.Api
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_web_api == 'true'
-    uses: ./.github/workflows/DeployWebApi.yml@main
+    uses: ./.github/workflows/DeployWebApi.yml
 
   deploy_front:
     name: Deploy Web.Front
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_front == 'true'
-    uses: ./.github/workflows/DeployFront.yml@main
+    uses: ./.github/workflows/DeployFront.yml
