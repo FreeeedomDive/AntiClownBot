@@ -29,7 +29,7 @@ public class GeminiAiClient(IOptions<GeminiAiSettings> options, ILogger<GeminiAi
         );
 
         var response = await client.ExecutePostAsync<AiResponse>(restRequest);
-        if (response.Data is null)
+        if (response.Data?.Candidates is null || response.Data?.Candidates.Length == 0)
         {
             logger.LogError("Failed to get GeminiAi response\n{Data}", response);
             return string.Empty;
