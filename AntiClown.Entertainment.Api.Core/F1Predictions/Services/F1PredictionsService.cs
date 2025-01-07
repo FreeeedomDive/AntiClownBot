@@ -6,21 +6,14 @@ using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 
-public class F1PredictionsService : IF1PredictionsService
+public class F1PredictionsService(
+    IF1RacesRepository f1RacesRepository,
+    IF1PredictionResultsRepository f1PredictionResultsRepository,
+    IF1PredictionsMessageProducer f1PredictionsMessageProducer,
+    IF1PredictionTeamsRepository f1PredictionTeamsRepository
+)
+    : IF1PredictionsService
 {
-    public F1PredictionsService(
-        IF1RacesRepository f1RacesRepository,
-        IF1PredictionResultsRepository f1PredictionResultsRepository,
-        IF1PredictionsMessageProducer f1PredictionsMessageProducer,
-        IF1PredictionTeamsRepository f1PredictionTeamsRepository
-    )
-    {
-        this.f1RacesRepository = f1RacesRepository;
-        this.f1PredictionResultsRepository = f1PredictionResultsRepository;
-        this.f1PredictionsMessageProducer = f1PredictionsMessageProducer;
-        this.f1PredictionTeamsRepository = f1PredictionTeamsRepository;
-    }
-
     public async Task<F1Race> ReadAsync(Guid raceId)
     {
         return await f1RacesRepository.ReadAsync(raceId);
@@ -167,9 +160,4 @@ public class F1PredictionsService : IF1PredictionsService
     {
         await f1PredictionTeamsRepository.CreateOrUpdateAsync(team);
     }
-
-    private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
-    private readonly IF1PredictionsMessageProducer f1PredictionsMessageProducer;
-    private readonly IF1PredictionTeamsRepository f1PredictionTeamsRepository;
-    private readonly IF1RacesRepository f1RacesRepository;
 }

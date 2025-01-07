@@ -8,13 +8,8 @@ using DSharpPlus.Entities;
 
 namespace AntiClown.DiscordBot.EmbedBuilders.F1Predictions;
 
-public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
+public class F1PredictionsEmbedBuilder(IUsersCache usersCache) : IF1PredictionsEmbedBuilder
 {
-    public F1PredictionsEmbedBuilder(IUsersCache usersCache)
-    {
-        this.usersCache = usersCache;
-    }
-
     public DiscordEmbed BuildPredictionStarted(string raceName)
     {
         return new DiscordEmbedBuilder()
@@ -85,6 +80,4 @@ public class F1PredictionsEmbedBuilder : IF1PredictionsEmbedBuilder
     {
         return x[..3].ToUpper();
     }
-
-private readonly IUsersCache usersCache;
 }

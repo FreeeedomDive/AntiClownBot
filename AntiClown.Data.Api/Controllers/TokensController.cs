@@ -5,13 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AntiClown.Data.Api.Controllers;
 
 [Route("dataApi/tokens/{userId:guid}")]
-public class TokensController : Controller
+public class TokensController(ITokensService tokensService) : Controller
 {
-    public TokensController(ITokensService tokensService)
-    {
-        this.tokensService = tokensService;
-    }
-
     [HttpDelete]
     public async Task<ActionResult> InvalidateAsync([FromRoute] Guid userId)
     {
@@ -31,6 +26,4 @@ public class TokensController : Controller
     {
         return Json(await tokensService.GetAsync(userId));
     }
-
-    private readonly ITokensService tokensService;
 }

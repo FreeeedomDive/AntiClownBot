@@ -7,17 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace AntiClown.Data.Api.Controllers;
 
 [Route("dataApi/rights")]
-public class RightsController : Controller
+public class RightsController(
+    IRightsService rightsService,
+    IMapper mapper
+) : Controller
 {
-    public RightsController(
-        IRightsService rightsService,
-        IMapper mapper
-    )
-    {
-        this.rightsService = rightsService;
-        this.mapper = mapper;
-    }
-
     [HttpGet]
     public async Task<ActionResult<Dictionary<RightsDto, Guid[]>>> ReadAll()
     {
@@ -45,7 +39,4 @@ public class RightsController : Controller
         await rightsService.RevokeAsync(userId, mapper.Map<Rights>(right));
         return NoContent();
     }
-
-    private readonly IRightsService rightsService;
-    private readonly IMapper mapper;
 }

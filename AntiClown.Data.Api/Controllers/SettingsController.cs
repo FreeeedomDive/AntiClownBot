@@ -6,17 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace AntiClown.Data.Api.Controllers;
 
 [Route("dataApi/settings")]
-public class SettingsController : Controller
+public class SettingsController(
+    ISettingsService settingsService,
+    IMapper mapper
+) : Controller
 {
-    public SettingsController(
-        ISettingsService settingsService,
-        IMapper mapper
-    )
-    {
-        this.settingsService = settingsService;
-        this.mapper = mapper;
-    }
-
     [HttpGet]
     public async Task<ActionResult<SettingDto[]>> ReadAllAsync()
     {
@@ -44,7 +38,4 @@ public class SettingsController : Controller
         await settingsService.CreateOrUpdateAsync(settingDto.Category, settingDto.Name, settingDto.Value);
         return NoContent();
     }
-
-    private readonly IMapper mapper;
-    private readonly ISettingsService settingsService;
 }
