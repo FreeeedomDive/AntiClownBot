@@ -37,7 +37,11 @@ jobs:
         sudo mkdir -p /etc/docker
         echo "{\"insecure-registries\": [\"$DOCKER_REGISTRY_IP\"]}" | sudo tee /etc/docker/daemon.json
         cat /etc/docker/daemon.json
+        systemctl status docker.service
+        journalctl -xeu docker.service
         sudo systemctl restart docker
+        systemctl status docker.service
+        journalctl -xeu docker.service
 
     - name: Log in to Docker Registry
       env:

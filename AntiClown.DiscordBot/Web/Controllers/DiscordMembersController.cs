@@ -7,17 +7,12 @@ namespace AntiClown.DiscordBot.Web.Controllers;
 
 [ApiController]
 [Route("discordApi/members")]
-public class DiscordMembersController : Controller
+public class DiscordMembersController(
+    IUsersCache usersCache,
+    IDiscordClientWrapper discordClientWrapper
+)
+    : Controller
 {
-    public DiscordMembersController(
-        IUsersCache usersCache,
-        IDiscordClientWrapper discordClientWrapper
-    )
-    {
-        this.usersCache = usersCache;
-        this.discordClientWrapper = discordClientWrapper;
-    }
-
     [HttpGet("{userId:guid}")]
     public async Task<DiscordMemberDto?> GetDiscordMember([FromRoute] Guid userId)
     {
@@ -57,7 +52,4 @@ public class DiscordMembersController : Controller
             AvatarUrl = discordMember.AvatarUrl,
         };
     }
-
-    private readonly IUsersCache usersCache;
-    private readonly IDiscordClientWrapper discordClientWrapper;
 }
