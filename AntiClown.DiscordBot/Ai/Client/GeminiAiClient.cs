@@ -34,6 +34,9 @@ public class GeminiAiClient(IOptions<GeminiAiSettings> options, ILogger<GeminiAi
             return string.Empty;
         }
 
-        return response.Data.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text ?? string.Empty;
+        var aiResponse = response.Data.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text ?? string.Empty;
+        logger.LogInformation("AI request: {Request}\nResponse: {Response}", request, aiResponse);
+
+        return aiResponse;
     }
 }
