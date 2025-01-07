@@ -84,6 +84,14 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_discord_bot == 'true'
     uses: ./.github/workflows/DeployDiscordBot.yml
+    secrets:
+      DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+      DISCORDBOT_APPSETTINGS: ${{ secrets.DISCORDBOT_APPSETTINGS }}
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      DOCKER_REGISTRY_LOGIN: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
+      DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
   deploy_events_daemon:
     name: Deploy EventsDaemon

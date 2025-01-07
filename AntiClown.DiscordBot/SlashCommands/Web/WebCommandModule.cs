@@ -9,22 +9,16 @@ using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.SlashCommands.Web;
 
-public class WebCommandModule : SlashCommandModuleWithMiddlewares
+public class WebCommandModule(
+    IAntiClownDataApiClient antiClownDataApiClient,
+    IUsersCache usersCache,
+    IOptions<WebOptions> webOptions,
+    ICommandExecutor commandExecutor
+)
+    : SlashCommandModuleWithMiddlewares(commandExecutor)
 {
-    public WebCommandModule(
-        IAntiClownDataApiClient antiClownDataApiClient,
-        IUsersCache usersCache,
-        IOptions<WebOptions> webOptions,
-        ICommandExecutor commandExecutor
-    ) : base(commandExecutor)
-    {
-        this.antiClownDataApiClient = antiClownDataApiClient;
-        this.usersCache = usersCache;
-        this.webOptions = webOptions;
-    }
-
     [SlashCommand(InteractionsIds.CommandsNames.Web, "Открыть страницу в браузере")]
-    public async Task When(InteractionContext context)
+    public async Task Web(InteractionContext context)
     {
         await ExecuteEphemeralAsync(
             context, async () =>
@@ -42,8 +36,4 @@ public class WebCommandModule : SlashCommandModuleWithMiddlewares
             }
         );
     }
-
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
-    private readonly IUsersCache usersCache;
-    private readonly IOptions<WebOptions> webOptions;
 }
