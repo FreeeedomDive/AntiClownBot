@@ -94,7 +94,7 @@ jobs:
     uses: ./.github/workflows/DeployEntertainmentApi.yml
     secrets:
       DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
-      API_APPSETTINGS: ${{ secrets.API_APPSETTINGS }}
+      ENTERTAINMENTAPI_APPSETTINGS: ${{ secrets.ENTERTAINMENTAPI_APPSETTINGS }}
       DOCKER_REGISTRY_LOGIN: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
       DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
       DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}

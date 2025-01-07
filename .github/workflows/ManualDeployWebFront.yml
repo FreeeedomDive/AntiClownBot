@@ -1,4 +1,4 @@
-name: Deploy Front
+name: Manual Deploy Front
 
 on:
   workflow_dispatch:

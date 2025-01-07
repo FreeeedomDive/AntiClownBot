@@ -1,4 +1,4 @@
-name: Deploy DataApi
+name: Manual Deploy DataApi
 
 on:
   workflow_dispatch:

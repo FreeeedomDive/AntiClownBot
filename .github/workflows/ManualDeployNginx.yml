@@ -1,4 +1,4 @@
-name: Deploy Nginx
+name: Manual Deploy Nginx
 
 on:
   workflow_dispatch:

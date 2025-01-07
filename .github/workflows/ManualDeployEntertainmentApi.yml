@@ -1,4 +1,4 @@
-name: Deploy EntertainmentApi
+name: Manual Deploy EntertainmentApi
 
 on:
   workflow_dispatch:

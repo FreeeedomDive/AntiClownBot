@@ -1,4 +1,4 @@
-name: Deploy EntertainmentApi PostgreSql Migrator
+name: Manual Deploy EntertainmentApi PostgreSql Migrator
 
 on:
   workflow_dispatch:

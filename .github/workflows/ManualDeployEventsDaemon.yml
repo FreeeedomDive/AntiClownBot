@@ -1,4 +1,4 @@
-name: Deploy EventsDaemon
+name: Manual Deploy EventsDaemon
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Deploy Api PostgreSql Migrator
+name: Manual Deploy Api PostgreSql Migrator
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Deploy DiscordBot PostgreSql Migrator
+name: Manual Deploy DiscordBot PostgreSql Migrator
 
 on:
   workflow_dispatch:

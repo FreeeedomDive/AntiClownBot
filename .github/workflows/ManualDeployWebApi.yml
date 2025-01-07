@@ -1,4 +1,4 @@
-name: Deploy WebApi
+name: Manual Deploy WebApi
 
 on:
   workflow_dispatch:
