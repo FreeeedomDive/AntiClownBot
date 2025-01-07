@@ -8,13 +8,8 @@ namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/users")]
 [RequireUserToken]
-public class UsersController : Controller
+public class UsersController(IAntiClownApiClient antiClownApiClient) : Controller
 {
-    public UsersController(IAntiClownApiClient antiClownApiClient)
-    {
-        this.antiClownApiClient = antiClownApiClient;
-    }
-
     [HttpGet("{userId:guid}")]
     public async Task<UserDto?> Read([FromRoute] Guid userId)
     {
@@ -27,6 +22,4 @@ public class UsersController : Controller
             return null;
         }
     }
-
-    private readonly IAntiClownApiClient antiClownApiClient;
 }

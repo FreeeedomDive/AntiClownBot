@@ -7,18 +7,11 @@ namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/rights")]
 [RequireUserToken]
-public class RightsController : Controller
+public class RightsController(IAntiClownDataApiClient antiClownDataApiClient) : Controller
 {
-    public RightsController(IAntiClownDataApiClient antiClownDataApiClient)
-    {
-        this.antiClownDataApiClient = antiClownDataApiClient;
-    }
-
     [HttpGet("{userId:guid}")]
     public async Task<ActionResult<RightsDto[]>> FindAllUserRights([FromRoute] Guid userId)
     {
         return await antiClownDataApiClient.Rights.FindAllUserRightsAsync(userId);
     }
-
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

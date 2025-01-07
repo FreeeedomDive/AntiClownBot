@@ -8,13 +8,8 @@ namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/economy/{userId:guid}")]
 [RequireUserToken]
-public class EconomyController : ControllerBase
+public class EconomyController(IAntiClownApiClient antiClownApiClient) : ControllerBase
 {
-    public EconomyController(IAntiClownApiClient antiClownApiClient)
-    {
-        this.antiClownApiClient = antiClownApiClient;
-    }
-
     [HttpGet]
     public async Task<ActionResult<EconomyDto>> GetEconomy([FromRoute] Guid userId)
     {
@@ -26,6 +21,4 @@ public class EconomyController : ControllerBase
     {
         return await antiClownApiClient.Transactions.ReadTransactionsAsync(userId, filter.Offset, filter.Limit);
     }
-
-    private readonly IAntiClownApiClient antiClownApiClient;
 }

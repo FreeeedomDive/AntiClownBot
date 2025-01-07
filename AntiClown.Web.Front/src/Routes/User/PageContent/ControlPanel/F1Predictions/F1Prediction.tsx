@@ -326,6 +326,7 @@ export default function F1Prediction({ f1Race }: Props) {
           </FormControl>
         </Stack>
       </Stack>
+
       <Stack flexGrow={1} padding={1} spacing={2} width={"50%"}>
         <Stack
           spacing={2}

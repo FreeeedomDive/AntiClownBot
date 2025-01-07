@@ -5,13 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/tokens/{userId:guid}")]
-public class TokensController : Controller
+public class TokensController(IAntiClownDataApiClient antiClownDataApiClient) : Controller
 {
-    public TokensController(IAntiClownDataApiClient antiClownDataApiClient)
-    {
-        this.antiClownDataApiClient = antiClownDataApiClient;
-    }
-
     [HttpPost("validate")]
     public async Task<ActionResult> ValidateAsync([FromRoute] Guid userId, [FromBody] string token)
     {
@@ -21,6 +16,4 @@ public class TokensController : Controller
         });
         return NoContent();
     }
-
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
 }

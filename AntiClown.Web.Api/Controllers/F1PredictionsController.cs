@@ -9,13 +9,8 @@ namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/f1Predictions")]
 [RequireUserToken]
-public class F1PredictionsController : Controller
+public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient) : Controller
 {
-    public F1PredictionsController(IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient)
-    {
-        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
-    }
-
     [HttpPost("find")]
     public async Task<ActionResult<F1RaceDto[]>> Find([FromBody] F1RaceFilterDto filter)
     {
@@ -81,6 +76,4 @@ public class F1PredictionsController : Controller
         await antiClownEntertainmentApiClient.F1Predictions.CreateOrUpdateTeamAsync(dto);
         return NoContent();
     }
-
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
 }

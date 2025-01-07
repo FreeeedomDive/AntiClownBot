@@ -7,13 +7,8 @@ namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/discordMembers")]
 [RequireUserToken]
-public class DiscordMembersController : Controller
+public class DiscordMembersController(IAntiClownDiscordBotClient antiClownDiscordBotClient) : Controller
 {
-    public DiscordMembersController(IAntiClownDiscordBotClient antiClownDiscordBotClient)
-    {
-        this.antiClownDiscordBotClient = antiClownDiscordBotClient;
-    }
-
     [HttpGet("{userId:guid}")]
     public async Task<ActionResult<DiscordMemberDto?>> GetDiscordMember(Guid userId)
     {
@@ -25,6 +20,4 @@ public class DiscordMembersController : Controller
     {
         return await antiClownDiscordBotClient.DiscordMembers.GetDiscordMembersAsync(usersIds);
     }
-
-    private readonly IAntiClownDiscordBotClient antiClownDiscordBotClient;
 }
