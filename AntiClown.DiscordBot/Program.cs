@@ -161,7 +161,7 @@ internal class Program
         builder.Services.AddTransientWithProxy<IAntiClownDataApiClient>(
             serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
         );
-        builder.Services.AddTransientWithProxy<IGeminiAiClient, GeminiAiClient>();
+        builder.Services.AddTransientWithProxy<IAiClient, GeminiAiClient>();
     }
 
     private static void BuildDiscordServices(WebApplicationBuilder builder)

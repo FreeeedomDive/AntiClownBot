@@ -1,6 +1,6 @@
 namespace AntiClown.DiscordBot.Ai.Client;
 
-public interface IGeminiAiClient
+public interface IAiClient
 {
     Task<string> GetResponseAsync(string request);
 }

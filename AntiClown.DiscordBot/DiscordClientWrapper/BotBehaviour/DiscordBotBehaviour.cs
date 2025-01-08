@@ -21,7 +21,6 @@ using AntiClown.DiscordBot.SlashCommands.Inventory;
 using AntiClown.DiscordBot.SlashCommands.MinecraftRegister;
 using AntiClown.DiscordBot.SlashCommands.Other;
 using AntiClown.DiscordBot.SlashCommands.Other.Events;
-using AntiClown.DiscordBot.SlashCommands.Other.Ip;
 using AntiClown.DiscordBot.SlashCommands.Other.Race;
 using AntiClown.DiscordBot.SlashCommands.Random;
 using AntiClown.DiscordBot.SlashCommands.Roles;
@@ -51,7 +50,7 @@ public class DiscordBotBehaviour(
     IPartiesService partiesService,
     ILogger<DiscordBotBehaviour> logger,
     IRaceService raceService,
-    IGeminiAiClient geminiAiClient
+    IAiClient aiClient
 ) : IDiscordBotBehaviour
 {
     public async Task ConfigureAsync()
@@ -171,7 +170,7 @@ public class DiscordBotBehaviour(
 
             if (Randomizer.GetRandomNumberBetween(0, 10) == 7)
             {
-                var aiResponse = await geminiAiClient.GetResponseAsync(message);
+                var aiResponse = await aiClient.GetResponseAsync(message);
                 await discordClientWrapper.Messages.RespondAsync(
                     e.Message,
                     aiResponse
@@ -541,12 +540,12 @@ public class DiscordBotBehaviour(
         slash.RegisterCommands<WhenCommandModule>(guildId);
         slash.RegisterCommands<TransactionsCommandModule>(guildId);
         slash.RegisterCommands<RollCommandModule>(guildId);
-        slash.RegisterCommands<IpCommandModule>(guildId);
         slash.RegisterCommands<SelectCommandModule>(guildId);
         slash.RegisterCommands<F1CommandModule>(guildId);
         slash.RegisterCommands<F1StatsCommand>(guildId);
         slash.RegisterCommands<WebCommandModule>(guildId);
         slash.RegisterCommands<VoiceAiCommandModule>(guildId);
+        slash.RegisterCommands<AiCommandModule>(guildId);
 
         // admin commands
         slash.RegisterCommands<UserSocialRatingEditorCommandModule>(guildId);

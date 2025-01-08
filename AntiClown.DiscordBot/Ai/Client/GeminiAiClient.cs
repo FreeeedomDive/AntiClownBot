@@ -5,7 +5,7 @@ using RestSharp;
 
 namespace AntiClown.DiscordBot.Ai.Client;
 
-public class GeminiAiClient(IOptions<GeminiAiSettings> options, ILogger<GeminiAiClient> logger) : IGeminiAiClient
+public class GeminiAiClient(IOptions<GeminiAiSettings> options, ILogger<GeminiAiClient> logger) : IAiClient
 {
     public async Task<string> GetResponseAsync(string request)
     {

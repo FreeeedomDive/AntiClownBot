@@ -15,7 +15,7 @@ public class VoiceAiCommandModule(
     ICommandExecutor commandExecutor,
     IAntiClownDataApiClient antiClownDataApiClient,
     VoiceNextExtension voiceNextExtension,
-    IGeminiAiClient geminiAiClient,
+    IAiClient aiClient,
     ILocker locker,
     ILogger<VoiceAiCommandModule> logger
 )
@@ -28,7 +28,7 @@ public class VoiceAiCommandModule(
     )
     {
         await ExecuteAsync(
-            ctx, () => locker.DoInLockAsync(nameof(VoiceAiCommandModule), () => TextToSpeech(ctx, () => geminiAiClient.GetResponseAsync(text)))
+            ctx, () => locker.DoInLockAsync(nameof(VoiceAiCommandModule), () => TextToSpeech(ctx, () => aiClient.GetResponseAsync(text)))
         );
     }
 

@@ -186,5 +186,7 @@ public static class InteractionsIds
         
         public const string VoiceAi = "voiceAi";
         public const string VoiceTts = "voiceTts";
+
+        public const string Ai = "ai";
     }
 }
