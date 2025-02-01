@@ -41,7 +41,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Api.Client", "Ant
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Entertainment.Api.Client", "AntiClown.Entertainment.Api.Client\AntiClown.Entertainment.Api.Client.csproj", "{AF15C166-36C9-48E4-B1E0-B152A6CFAADB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Entertainment.Api.Core.IntegrationTests", "Tests\AntiClown.Entertainment.Api.Core.IntegrationTests\AntiClown.Entertainment.Api.Core.IntegrationTests.csproj", "{36A9BA7A-E331-44F9-8907-C690A95B4F66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Entertainment.Api.Core.UnitTests", "Tests\AntiClown.Entertainment.Api.Core.UnitTests\AntiClown.Entertainment.Api.Core.UnitTests.csproj", "{36A9BA7A-E331-44F9-8907-C690A95B4F66}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiClown.Tools", "AntiClown.Tools\AntiClown.Tools.csproj", "{50085F60-694C-42BB-A33C-D90E547E14A2}"
 EndProject

@@ -2,7 +2,7 @@
 using AntiClown.Tools.Utility.Extensions;
 using FluentAssertions;
 
-namespace AntiClown.Entertainment.Api.Core.IntegrationTests.Events.CommonEvents.Lottery;
+namespace AntiClown.Entertainment.Api.Core.UnitTests.Events.CommonEvents.Lottery;
 
 public class LotteryPrizeCalculatorTests
 {

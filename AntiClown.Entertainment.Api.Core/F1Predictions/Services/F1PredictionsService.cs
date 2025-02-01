@@ -10,7 +10,8 @@ public class F1PredictionsService(
     IF1RacesRepository f1RacesRepository,
     IF1PredictionResultsRepository f1PredictionResultsRepository,
     IF1PredictionsMessageProducer f1PredictionsMessageProducer,
-    IF1PredictionTeamsRepository f1PredictionTeamsRepository
+    IF1PredictionTeamsRepository f1PredictionTeamsRepository,
+    IF1PredictionsResultBuilder f1PredictionsResultBuilder
 )
     : IF1PredictionsService
 {
@@ -95,7 +96,7 @@ public class F1PredictionsService(
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
 
-        var results = F1PredictionsResultBuilder.Build(race);
+        var results = await f1PredictionsResultBuilder.Build(race);
 
         await f1PredictionResultsRepository.CreateOrUpdateAsync(results);
 
