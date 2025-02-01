@@ -1,4 +1,5 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Statistics;
 using AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;

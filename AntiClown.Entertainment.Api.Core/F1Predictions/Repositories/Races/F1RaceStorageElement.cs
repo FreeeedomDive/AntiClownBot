@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SqlRepositoryBase.Core.Models;
 
-namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
+namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 
 [Index(nameof(Name))]
 [Index(nameof(Season))]

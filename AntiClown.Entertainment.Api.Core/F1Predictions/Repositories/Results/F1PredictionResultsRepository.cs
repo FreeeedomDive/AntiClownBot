@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SqlRepositoryBase.Core.Extensions;
 using SqlRepositoryBase.Core.Repository;
 
-namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
+namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
 
 public class F1PredictionResultsRepository : IF1PredictionResultsRepository
 {

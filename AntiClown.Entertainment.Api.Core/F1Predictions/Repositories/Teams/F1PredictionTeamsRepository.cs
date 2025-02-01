@@ -1,7 +1,7 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using SqlRepositoryBase.Core.Repository;
 
-namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
+namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
 
 public class F1PredictionTeamsRepository : IF1PredictionTeamsRepository
 {

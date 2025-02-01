@@ -1,9 +1,8 @@
-﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Stats;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
+﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Stats;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
 
-namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
+namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services.Statistics;
 
 // this is completely useless, need to rewrite stats from scratch
 public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService

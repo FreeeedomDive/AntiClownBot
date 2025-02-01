@@ -4,6 +4,9 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories.ActiveEventsInd
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.ActiveEventsIndex;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
 using AntiClown.Entertainment.Api.Core.MinecraftAuth.Repositories;
 using AntiClown.Entertainment.Api.Core.Parties.Repositories;
 using Microsoft.EntityFrameworkCore;

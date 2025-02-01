@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using SqlRepositoryBase.Core.Extensions;
 using SqlRepositoryBase.Core.Repository;
 
-namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
+namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 
 public class F1RacesRepository : IF1RacesRepository
 {

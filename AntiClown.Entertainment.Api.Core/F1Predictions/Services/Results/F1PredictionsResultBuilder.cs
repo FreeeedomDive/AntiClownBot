@@ -1,9 +1,9 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
 
-namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
+namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 
 public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1PredictionTeamsRepository) : IF1PredictionsResultBuilder
 {
