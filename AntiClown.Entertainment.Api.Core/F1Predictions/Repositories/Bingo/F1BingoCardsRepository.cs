@@ -7,6 +7,12 @@ public class F1BingoCardsRepository(
     ISqlRepository<F1BingoCardStorageElement> sqlRepository
 ) : IF1BingoCardsRepository
 {
+    public async Task<F1BingoCard?> TryReadAsync(Guid id)
+    {
+        var result = await sqlRepository.TryReadAsync(id);
+        return result is null ? null : ToModel(result);
+    }
+
     public async Task<F1BingoCard[]> FindAsync(int season)
     {
         var result = await sqlRepository.FindAsync(x => x.Season == season);

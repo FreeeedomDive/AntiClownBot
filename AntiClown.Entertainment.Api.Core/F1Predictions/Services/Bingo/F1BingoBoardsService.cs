@@ -6,7 +6,7 @@ namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services.Bingo;
 public class F1BingoBoardsService(
     IF1BingoBoardsRepository bingoBoardsRepository,
     IF1BingoCardsRepository bingoCardsRepository
-)
+) : IF1BingoBoardsService
 {
     public async Task<Guid[]> GetOrCreateBingoBoard(Guid userId)
     {
