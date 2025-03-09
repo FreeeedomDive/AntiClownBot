@@ -14,6 +14,7 @@ import F1PredictionsAdminList from "./Admin/F1/F1PredictionsAdminList";
 import EditSettings from "./Admin/Settings/EditSettings";
 import F1PredictionsStandings from "./ControlPanel/F1Predictions/F1PredictionsStandings";
 import F1PredictionsTeamsEditor from "./Admin/F1/F1PredictionsTeamsEditor";
+import F1BingoBoard from "./ControlPanel/F1Bingo/F1BingoBoard";
 
 interface Props {
   user: UserDto | null | undefined;
@@ -48,6 +49,7 @@ const UserPageContent = ({ user }: Props) => {
           <Route path="/f1Predictions/current" element={<F1PredictionsList />} />
           <Route path="/f1Predictions/admin" element={<F1PredictionsAdminList />} />
           <Route path="/f1Predictions/teams" element={<F1PredictionsTeamsEditor />} />
+          <Route path="/f1Predictions/bingo" element={<F1BingoBoard />} />
           <Route path="/settings" element={<EditSettings />} />
         </Routes>
       )}

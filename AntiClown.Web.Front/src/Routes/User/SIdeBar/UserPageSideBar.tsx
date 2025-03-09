@@ -60,16 +60,7 @@ const UserPageSideBar = ({ user }: Props) => {
                 onClick={() => navigate(buildLink(userId, "economy"))}
                 selected={location.pathname === buildLink(userId, "economy")}
               >
-                <Badge
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  variant="dot"
-                  color="warning"
-                >
-                  <ListItemText primary={"Экономика"} />
-                </Badge>
+                <ListItemText primary={"Экономика"} />
               </ListItemButton>
             </ListItem>
             <ListItem key={"Inventory"} disablePadding>
@@ -123,16 +114,7 @@ const UserPageSideBar = ({ user }: Props) => {
                           buildLink(userId, "f1Predictions/standings")
                         }
                       >
-                        <Badge
-                          anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "left",
-                          }}
-                          variant="dot"
-                          color="warning"
-                        >
-                          <ListItemText primary="Таблица" />
-                        </Badge>
+                        <ListItemText primary="Таблица" />
                       </ListItemButton>
                     </ListItem>
                     <ListItem key={"F1PredictionsCurrent"} disablePadding>
@@ -147,6 +129,28 @@ const UserPageSideBar = ({ user }: Props) => {
                         }
                       >
                         <ListItemText primary="Текущие предсказания" />
+                      </ListItemButton>
+                    </ListItem>
+                    <ListItem key={"F1PredictionsBingo"} disablePadding>
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        onClick={() =>
+                          navigate(buildLink(userId, "f1Predictions/bingo"))
+                        }
+                        selected={
+                          location.pathname ===
+                          buildLink(userId, "f1Predictions/bingo")
+                        }>
+                        <Badge
+                          anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "left",
+                          }}
+                          variant="dot"
+                          color="warning"
+                        >
+                          <ListItemText primary="Бинго" />
+                        </Badge>
                       </ListItemButton>
                     </ListItem>
                     <RightsWrapper
