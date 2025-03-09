@@ -3,6 +3,7 @@
 using AntiClown.Entertainment.Api.Client.Parties;
 using AntiClown.Entertainment.Api.Client.MinecraftAccount;
 using AntiClown.Entertainment.Api.Client.MinecraftAuth;
+using AntiClown.Entertainment.Api.Client.F1Bingo;
 using AntiClown.Entertainment.Api.Client.F1Predictions;
 using AntiClown.Entertainment.Api.Client.F1PredictionsStats;
 using AntiClown.Entertainment.Api.Client.ActiveDailyEventsIndex;
@@ -27,6 +28,7 @@ public class AntiClownEntertainmentApiClient : IAntiClownEntertainmentApiClient
         Parties = new PartiesClient(client);
         MinecraftAccount = new MinecraftAccountClient(client);
         MinecraftAuth = new MinecraftAuthClient(client);
+        F1Bingo = new F1BingoClient(client);
         F1Predictions = new F1PredictionsClient(client);
         F1PredictionsStats = new F1PredictionsStatsClient(client);
         ActiveDailyEventsIndex = new ActiveDailyEventsIndexClient(client);
@@ -46,6 +48,7 @@ public class AntiClownEntertainmentApiClient : IAntiClownEntertainmentApiClient
     public IPartiesClient Parties { get; }
     public IMinecraftAccountClient MinecraftAccount { get; }
     public IMinecraftAuthClient MinecraftAuth { get; }
+    public IF1BingoClient F1Bingo { get; }
     public IF1PredictionsClient F1Predictions { get; }
     public IF1PredictionsStatsClient F1PredictionsStats { get; }
     public IActiveDailyEventsIndexClient ActiveDailyEventsIndex { get; }
