@@ -27,7 +27,7 @@ public class F1BingoClient : IF1BingoClient
         await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async Task UpdateCardAsync(System.Guid cardId, AntiClown.Entertainment.Api.Dto.F1Predictions.Bingo.F1BingoCardDto dto)
+    public async Task UpdateCardAsync(System.Guid cardId, AntiClown.Entertainment.Api.Dto.F1Predictions.Bingo.UpdateF1BingoCardDto dto)
     {
         var requestBuilder = new RequestBuilder($"entertainmentApi/f1Bingo/cards/{cardId}", HttpRequestMethod.PATCH);
         requestBuilder.WithJsonBody(dto);

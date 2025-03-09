@@ -28,7 +28,7 @@ public class F1BingoController(
     }
 
     [HttpPatch("cards/{cardId:guid}")]
-    public async Task<ActionResult> UpdateCard([FromRoute] Guid cardId, [FromBody] F1BingoCardDto dto)
+    public async Task<ActionResult> UpdateCard([FromRoute] Guid cardId, [FromBody] UpdateF1BingoCardDto dto)
     {
         await f1BingoCardsService.UpdateCardAsync(cardId, mapper.Map<UpdateF1BingoCard>(dto));
         return NoContent();
