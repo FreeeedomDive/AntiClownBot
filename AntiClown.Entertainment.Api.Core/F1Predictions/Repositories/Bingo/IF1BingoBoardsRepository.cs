@@ -2,6 +2,6 @@
 
 public interface IF1BingoBoardsRepository
 {
-    Task<Guid[]> TryReadAsync(Guid userId);
-    Task CreateAsync(Guid userId, Guid[] cards);
+    Task<Guid[]> FindAsync(Guid userId, int season);
+    Task CreateAsync(Guid userId, int season, Guid[] cards);
 }

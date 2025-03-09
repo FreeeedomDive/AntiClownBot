@@ -8,17 +8,17 @@ public class F1BingoBoardsService(
     IF1BingoCardsRepository bingoCardsRepository
 ) : IF1BingoBoardsService
 {
-    public async Task<Guid[]> GetOrCreateBingoBoard(Guid userId)
+    public async Task<Guid[]> GetOrCreateBingoBoard(Guid userId, int season)
     {
-        var existing = await bingoBoardsRepository.TryReadAsync(userId);
+        var existing = await bingoBoardsRepository.FindAsync(userId, season);
         if (existing.Length != 0)
         {
             return existing;
         }
 
-        var allCards = await bingoCardsRepository.FindAsync(DateTime.UtcNow.Year);
+        var allCards = await bingoCardsRepository.FindAsync(season);
         var userCards = allCards.Select(x => x.Id).Shuffle().ToArray();
-        await bingoBoardsRepository.CreateAsync(userId, userCards);
+        await bingoBoardsRepository.CreateAsync(userId, season, userCards);
         return userCards;
     }
 }

@@ -1,10 +1,9 @@
-﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Statistics;
+﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Statistics;
 using AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AntiClown.Entertainment.Api.Controllers.F1Predictions;
+namespace AntiClown.Entertainment.Api.Controllers.F1;
 
 [Route("entertainmentApi/f1Predictions/stats")]
 public class F1PredictionsStatsController : Controller

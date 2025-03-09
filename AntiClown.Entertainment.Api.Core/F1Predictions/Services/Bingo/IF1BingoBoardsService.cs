@@ -2,5 +2,5 @@
 
 public interface IF1BingoBoardsService
 {
-    Task<Guid[]> GetOrCreateBingoBoard(Guid userId);
+    Task<Guid[]> GetOrCreateBingoBoard(Guid userId, int season);
 }

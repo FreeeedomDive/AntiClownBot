@@ -6,7 +6,7 @@ using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AntiClown.Entertainment.Api.Controllers.F1Predictions;
+namespace AntiClown.Entertainment.Api.Controllers.F1;
 
 [Route("entertainmentApi/f1Predictions")]
 public class F1PredictionsController : Controller
