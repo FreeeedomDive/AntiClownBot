@@ -1,20 +1,20 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React, { useState } from "react";
 import {
-  Badge,
   Collapse,
   Divider,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
-  Stack,
+  Stack, Typography,
 } from "@mui/material";
 import { useStore } from "../../../Stores";
 import { UserDto } from "../../../Dto/Users/UserDto";
 import { RightsWrapper } from "../../../Components/RIghts/RightsWrapper";
 import { RightsDto } from "../../../Dto/Rights/RightsDto";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import UserPageSideBarItem from "./UserPageSideBarItem";
 
 const buildLink = (userId: string, subLink?: string): string => {
   return `/user/${userId}` + (subLink ? `/${subLink}` : "");
@@ -26,13 +26,22 @@ interface Props {
 
 const UserPageSideBar = ({ user }: Props) => {
   const { authStore } = useStore();
+  const { rightsStore } = useStore();
   const currentLoggedInUserId = authStore.loggedInUserId;
   const { userId = "" } = useParams<"userId">();
   const isMyPage = currentLoggedInUserId === userId;
   const navigate = useNavigate();
-  const location = useLocation();
   const [isF1PredictionsCollapseOpened, setIsF1PredictionsCollapseOpened] =
     useState(false);
+  const [
+    isF1AdminPredictionsCollapseOpened,
+    setIsF1AdminPredictionsCollapseOpened,
+  ] = useState(false);
+  const userHasAnyAdminRights = rightsStore.userRights.find(
+    (right) =>
+      right === RightsDto.F1PredictionsAdmin ||
+      right === RightsDto.EditSettings,
+  );
 
   return (
     <Stack
@@ -42,52 +51,31 @@ const UserPageSideBar = ({ user }: Props) => {
       }}
     >
       <List>
-        <ListItem key="Overview" disablePadding>
-          <ListItemButton
-            onClick={() => navigate(buildLink(userId))}
-            selected={location.pathname === buildLink(userId)}
-          >
-            <ListItemText primary={"Профиль"} />
-          </ListItemButton>
-        </ListItem>
+        <UserPageSideBarItem
+          key="Overview"
+          link={buildLink(userId)}
+          text="Профиль"
+        />
       </List>
       {isMyPage && (
         <>
           <Divider />
           <List>
-            <ListItem key={"Economy"} disablePadding>
-              <ListItemButton
-                onClick={() => navigate(buildLink(userId, "economy"))}
-                selected={location.pathname === buildLink(userId, "economy")}
-              >
-                <Badge
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  variant="dot"
-                  color="warning"
-                >
-                  <ListItemText primary={"Экономика"} />
-                </Badge>
-              </ListItemButton>
-            </ListItem>
-            <ListItem key={"Inventory"} disablePadding>
-              <ListItemButton
-                onClick={() => navigate(buildLink(userId, "inventory"))}
-                selected={location.pathname === buildLink(userId, "inventory")}
-              >
-                <ListItemText primary={"Инвентарь"} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem key={"Shop"} disablePadding>
-              <ListItemButton
-                onClick={() => navigate(buildLink(userId, "shop"))}
-                selected={location.pathname === buildLink(userId, "shop")}
-              >
-                <ListItemText primary={"Магазин"} />
-              </ListItemButton>
-            </ListItem>
+            <UserPageSideBarItem
+              key="Economy"
+              link={buildLink(userId, "economy")}
+              text="Экономика"
+            />
+            <UserPageSideBarItem
+              key="Inventory"
+              link={buildLink(userId, "inventory")}
+              text="Инвентарь"
+            />
+            <UserPageSideBarItem
+              key="Shop"
+              link={buildLink(userId, "shop")}
+              text="Магазин"
+            />
             <RightsWrapper requiredRights={[RightsDto.F1Predictions]}>
               <>
                 <ListItem key={"F1Predictions"} disablePadding>
@@ -112,92 +100,88 @@ const UserPageSideBar = ({ user }: Props) => {
                   unmountOnExit
                 >
                   <List disablePadding>
-                    <ListItem key={"F1PredictionsStandings"} disablePadding>
-                      <ListItemButton
-                        sx={{ pl: 4 }}
-                        onClick={() =>
-                          navigate(buildLink(userId, "f1Predictions/standings"))
-                        }
-                        selected={
-                          location.pathname ===
-                          buildLink(userId, "f1Predictions/standings")
-                        }
-                      >
-                        <Badge
-                          anchorOrigin={{
-                            vertical: "top",
-                            horizontal: "left",
-                          }}
-                          variant="dot"
-                          color="warning"
-                        >
-                          <ListItemText primary="Таблица" />
-                        </Badge>
-                      </ListItemButton>
-                    </ListItem>
-                    <ListItem key={"F1PredictionsCurrent"} disablePadding>
-                      <ListItemButton
-                        sx={{ pl: 4 }}
-                        onClick={() =>
-                          navigate(buildLink(userId, "f1Predictions/current"))
-                        }
-                        selected={
-                          location.pathname ===
-                          buildLink(userId, "f1Predictions/current")
-                        }
-                      >
-                        <ListItemText primary="Текущие предсказания" />
-                      </ListItemButton>
-                    </ListItem>
-                    <RightsWrapper
-                      requiredRights={[RightsDto.F1PredictionsAdmin]}
-                    >
-                      <ListItem key={"F1PredictionsAdmin"} disablePadding>
-                        <ListItemButton
-                          sx={{ pl: 4 }}
-                          onClick={() =>
-                            navigate(buildLink(userId, "f1Predictions/admin"))
-                          }
-                          selected={
-                            location.pathname ===
-                            buildLink(userId, "f1Predictions/admin")
-                          }
-                        >
-                          <ListItemText primary={"Админка результатов"} />
-                        </ListItemButton>
-                      </ListItem>
-                    </RightsWrapper>
-                    <RightsWrapper
-                      requiredRights={[RightsDto.F1PredictionsAdmin]}
-                    >
-                      <ListItem key={"F1PredictionsTeamsAdmin"} disablePadding>
-                        <ListItemButton
-                          sx={{ pl: 4 }}
-                          onClick={() =>
-                            navigate(buildLink(userId, "f1Predictions/teams"))
-                          }
-                          selected={
-                            location.pathname ===
-                            buildLink(userId, "f1Predictions/teams")
-                          }
-                        >
-                          <ListItemText primary={"Команды"} />
-                        </ListItemButton>
-                      </ListItem>
-                    </RightsWrapper>
+                    <UserPageSideBarItem
+                      key="F1PredictionsStandings"
+                      link={buildLink(userId, "f1Predictions/standings")}
+                      text="Таблица"
+                      nesting={2}
+                    />
+                    <UserPageSideBarItem
+                      key="F1PredictionsCurrent"
+                      link={buildLink(userId, "f1Predictions/current")}
+                      text="Текущие предсказания"
+                      nesting={2}
+                    />
+                    <UserPageSideBarItem
+                      key="F1PredictionsBingo"
+                      link={buildLink(userId, "f1Predictions/bingo")}
+                      text="Бинго"
+                      nesting={2}
+                      showBadge
+                    />
                   </List>
                 </Collapse>
               </>
             </RightsWrapper>
+          </List>
+        </>
+      )}
+      {isMyPage && userHasAnyAdminRights && (
+        <>
+          <Divider />
+          <List>
+            <ListItem key={"F1Predictions"} disablePadding>
+              <ListItemButton
+                onClick={() =>
+                  setIsF1AdminPredictionsCollapseOpened(
+                    !isF1AdminPredictionsCollapseOpened,
+                  )
+                }
+              >
+                <ListItemText primary={"Предсказания F1"} />
+                {isF1AdminPredictionsCollapseOpened ? (
+                  <ExpandLess />
+                ) : (
+                  <ExpandMore />
+                )}
+              </ListItemButton>
+            </ListItem>
+            <Collapse
+              in={isF1AdminPredictionsCollapseOpened}
+              timeout="auto"
+              unmountOnExit
+            >
+              <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
+                <UserPageSideBarItem
+                  key="F1PredictionsAdmin"
+                  link={buildLink(userId, "f1Predictions/admin")}
+                  text="Результаты гонок"
+                  nesting={2}
+                />
+              </RightsWrapper>
+              <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
+                <UserPageSideBarItem
+                  key="F1PredictionsBingoAdmin"
+                  link={buildLink(userId, "f1Predictions/bingo/admin")}
+                  text="Бинго"
+                  nesting={2}
+                />
+              </RightsWrapper>
+              <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
+                <UserPageSideBarItem
+                  key="F1PredictionsTeamsAdmin"
+                  link={buildLink(userId, "f1Predictions/teams")}
+                  text="Изменение команд"
+                  nesting={2}
+                />
+              </RightsWrapper>
+            </Collapse>
             <RightsWrapper requiredRights={[RightsDto.EditSettings]}>
-              <ListItem key={"Settings"} disablePadding>
-                <ListItemButton
-                  onClick={() => navigate(buildLink(userId, "settings"))}
-                  selected={location.pathname === buildLink(userId, "settings")}
-                >
-                  <ListItemText primary={"Настройки"} />
-                </ListItemButton>
-              </ListItem>
+              <UserPageSideBarItem
+                key="Settings"
+                link={buildLink(userId, "settings")}
+                text="Настройки"
+              />
             </RightsWrapper>
           </List>
         </>
@@ -206,14 +190,11 @@ const UserPageSideBar = ({ user }: Props) => {
         <>
           <Divider />
           <List>
-            <ListItem key={"ItemsTrade"} disablePadding>
-              <ListItemButton
-                onClick={() => navigate(buildLink(userId, "itemsTrade"))}
-                selected={location.pathname === buildLink(userId, "itemsTrade")}
-              >
-                <ListItemText primary={"Обмен предметами"} />
-              </ListItemButton>
-            </ListItem>
+            <UserPageSideBarItem
+              key="ItemsTrade"
+              link={buildLink(userId, "itemsTrade")}
+              text="Обмен предметами"
+            />
           </List>
         </>
       )}
@@ -222,26 +203,21 @@ const UserPageSideBar = ({ user }: Props) => {
           <Divider />
           <List>
             {!isMyPage && (
-              <ListItem key="BackToMyPage" disablePadding>
-                <ListItemButton
-                  onClick={async () => {
-                    navigate(buildLink(currentLoggedInUserId));
-                  }}
-                >
-                  <ListItemText primary={"Вернуться на мою страницу"} />
-                </ListItemButton>
-              </ListItem>
+              <UserPageSideBarItem
+                key="BackToMyPage"
+                link={buildLink(currentLoggedInUserId)}
+                text="Вернуться на мою страницу"
+              />
             )}
-            <ListItem key={"Logout"} disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  authStore.logOut();
-                  navigate(buildLink(userId));
-                }}
-              >
-                <ListItemText primary={"Выход"} />
-              </ListItemButton>
-            </ListItem>
+            <UserPageSideBarItem
+              key="Logout"
+              link={""}
+              text="Выход"
+              onClick={() => {
+                authStore.logOut();
+                navigate(buildLink(userId));
+              }}
+            />
           </List>
         </>
       )}
@@ -249,11 +225,7 @@ const UserPageSideBar = ({ user }: Props) => {
         <>
           <Divider />
           <List>
-            <ListItem key={"Login"} disablePadding>
-              <ListItemButton onClick={() => navigate("/auth")}>
-                <ListItemText primary={"Логин"} />
-              </ListItemButton>
-            </ListItem>
+            <UserPageSideBarItem key="Login" link={"/auth"} text="Логин" />
           </List>
         </>
       )}

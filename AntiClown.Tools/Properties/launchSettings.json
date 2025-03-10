@@ -6,7 +6,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
       },
-      "commandLineArgs": "-tool Calculate2024SeasonWithNewSprintPointsTool"
+      "commandLineArgs": "-tool Create2025BingoCards"
     }
   }
 }
