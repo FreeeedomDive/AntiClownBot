@@ -1,4 +1,4 @@
-import { F1TeamDto } from "../../../../../Dto/F1Predictions/F1TeamDto";
+import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import React, { useCallback, useState } from "react";
 import {
   Avatar,
@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Save } from "@mui/icons-material";
-import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
-import { teamNameToLogo } from "../../../../../Helpers/TeamNameToLogoHelper";
+import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import { teamNameToLogo } from "../../../../../../Helpers/TeamNameToLogoHelper";
 
 interface IProps {
   team: F1TeamDto;

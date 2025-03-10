@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { F1TeamDto } from "../../../../../Dto/F1Predictions/F1TeamDto";
-import { RightsDto } from "../../../../../Dto/Rights/RightsDto";
-import { RightsWrapper } from "../../../../../Components/RIghts/RightsWrapper";
-import { Loader } from "../../../../../Components/Loader/Loader";
-import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
+import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
+import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
+import { RightsWrapper } from "../../../../../../Components/RIghts/RightsWrapper";
+import { Loader } from "../../../../../../Components/Loader/Loader";
+import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import { Table, TableBody, TableContainer } from "@mui/material";
 import F1PredictionsTeamsEditorRow from "./F1PredictionsTeamsEditorRow";
 

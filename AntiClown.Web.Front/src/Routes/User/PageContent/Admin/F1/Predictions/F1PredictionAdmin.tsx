@@ -1,4 +1,4 @@
-import { F1RaceDto } from "../../../../../Dto/F1Predictions/F1RaceDto";
+import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import F1RaceClassifications from "./F1RaceClassifications";
 import { LoadingButton } from "@mui/lab";
-import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
-import { getDriversFromTeams } from "../../../../../Dto/F1Predictions/F1DriversHelpers";
+import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
 import { Block, Done, Save } from "@mui/icons-material";
-import { F1TeamDto } from "../../../../../Dto/F1Predictions/F1TeamDto";
+import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 
 interface Props {
   f1Race: F1RaceDto;
