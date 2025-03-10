@@ -1,4 +1,4 @@
-import { F1BingoCardDto } from "./F1BingoCardDto";
+import { F1BingoCardDto } from "../../../../../Dto/F1Bingo/F1BingoCardDto";
 import React from "react";
 import {
   Tooltip,
@@ -8,8 +8,7 @@ import {
   Box,
   IconButton,
 } from "@mui/material";
-import InfoIcon from "@mui/icons-material/HelpOutline";
-import {HelpOutline, InfoOutlined, InfoRounded} from "@mui/icons-material";
+import { InfoOutlined } from "@mui/icons-material";
 
 interface Props {
   card: F1BingoCardDto;

@@ -6,7 +6,7 @@ import { RightsDto } from "../../../../../Dto/Rights/RightsDto";
 import { RightsWrapper } from "../../../../../Components/RIghts/RightsWrapper";
 import {Grid, Stack, Typography} from "@mui/material";
 import { Loader } from "../../../../../Components/Loader/Loader";
-import F1BingoCard from "../../../../../Dto/F1Bingo/F1BingoCard";
+import F1BingoCard from "./F1BingoCard";
 
 export default function F1BingoBoard() {
   const { userId } = useParams<"userId">();
