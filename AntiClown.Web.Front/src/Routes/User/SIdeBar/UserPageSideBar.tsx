@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React, { useState } from "react";
 import {
   Collapse,
@@ -7,7 +7,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Stack,
+  Stack, Typography,
 } from "@mui/material";
 import { useStore } from "../../../Stores";
 import { UserDto } from "../../../Dto/Users/UserDto";
@@ -26,12 +26,22 @@ interface Props {
 
 const UserPageSideBar = ({ user }: Props) => {
   const { authStore } = useStore();
+  const { rightsStore } = useStore();
   const currentLoggedInUserId = authStore.loggedInUserId;
   const { userId = "" } = useParams<"userId">();
   const isMyPage = currentLoggedInUserId === userId;
   const navigate = useNavigate();
   const [isF1PredictionsCollapseOpened, setIsF1PredictionsCollapseOpened] =
     useState(false);
+  const [
+    isF1AdminPredictionsCollapseOpened,
+    setIsF1AdminPredictionsCollapseOpened,
+  ] = useState(false);
+  const userHasAnyAdminRights = rightsStore.userRights.find(
+    (right) =>
+      right === RightsDto.F1PredictionsAdmin ||
+      right === RightsDto.EditSettings,
+  );
 
   return (
     <Stack
@@ -109,40 +119,63 @@ const UserPageSideBar = ({ user }: Props) => {
                       nesting={2}
                       showBadge
                     />
-                    <RightsWrapper
-                      requiredRights={[RightsDto.F1PredictionsAdmin]}
-                    >
-                      <UserPageSideBarItem
-                        key="F1PredictionsAdmin"
-                        link={buildLink(userId, "f1Predictions/admin")}
-                        text="Админка результатов"
-                        nesting={2}
-                      />
-                    </RightsWrapper>
-                    <RightsWrapper
-                      requiredRights={[RightsDto.F1PredictionsAdmin]}
-                    >
-                      <UserPageSideBarItem
-                        key="F1PredictionsBingoAdmin"
-                        link={buildLink(userId, "f1Predictions/bingo/admin")}
-                        text="Админка бинго"
-                        nesting={2}
-                      />
-                    </RightsWrapper>
-                    <RightsWrapper
-                      requiredRights={[RightsDto.F1PredictionsAdmin]}
-                    >
-                      <UserPageSideBarItem
-                        key="F1PredictionsTeamsAdmin"
-                        link={buildLink(userId, "f1Predictions/teams")}
-                        text="Админка команд"
-                        nesting={2}
-                      />
-                    </RightsWrapper>
                   </List>
                 </Collapse>
               </>
             </RightsWrapper>
+          </List>
+        </>
+      )}
+      {isMyPage && userHasAnyAdminRights && (
+        <>
+          <Divider />
+          <List>
+            <ListItem key={"F1Predictions"} disablePadding>
+              <ListItemButton
+                onClick={() =>
+                  setIsF1AdminPredictionsCollapseOpened(
+                    !isF1AdminPredictionsCollapseOpened,
+                  )
+                }
+              >
+                <ListItemText primary={"Предсказания F1"} />
+                {isF1AdminPredictionsCollapseOpened ? (
+                  <ExpandLess />
+                ) : (
+                  <ExpandMore />
+                )}
+              </ListItemButton>
+            </ListItem>
+            <Collapse
+              in={isF1AdminPredictionsCollapseOpened}
+              timeout="auto"
+              unmountOnExit
+            >
+              <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
+                <UserPageSideBarItem
+                  key="F1PredictionsAdmin"
+                  link={buildLink(userId, "f1Predictions/admin")}
+                  text="Результаты гонок"
+                  nesting={2}
+                />
+              </RightsWrapper>
+              <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
+                <UserPageSideBarItem
+                  key="F1PredictionsBingoAdmin"
+                  link={buildLink(userId, "f1Predictions/bingo/admin")}
+                  text="Бинго"
+                  nesting={2}
+                />
+              </RightsWrapper>
+              <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
+                <UserPageSideBarItem
+                  key="F1PredictionsTeamsAdmin"
+                  link={buildLink(userId, "f1Predictions/teams")}
+                  text="Изменение команд"
+                  nesting={2}
+                />
+              </RightsWrapper>
+            </Collapse>
             <RightsWrapper requiredRights={[RightsDto.EditSettings]}>
               <UserPageSideBarItem
                 key="Settings"
@@ -192,11 +225,7 @@ const UserPageSideBar = ({ user }: Props) => {
         <>
           <Divider />
           <List>
-            <UserPageSideBarItem
-              key="Login"
-              link={"/auth"}
-              text="Логин"
-            />
+            <UserPageSideBarItem key="Login" link={"/auth"} text="Логин" />
           </List>
         </>
       )}
