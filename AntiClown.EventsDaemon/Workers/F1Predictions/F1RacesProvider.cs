@@ -11,7 +11,7 @@ public class F1RacesProvider : IF1RacesProvider
                    new F1RaceInfo
                    {
                        Name = "Австралия",
-                       PredictionsStartTime = new DateTime(2025, 03, 14),
+                       PredictionsStartTime = new DateTime(2025, 03, 14, 5, 0, 0),
                    },
                    new F1RaceInfo
                    {
