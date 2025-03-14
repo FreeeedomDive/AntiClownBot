@@ -1,9 +1,6 @@
 import { F1BingoCardDto } from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
 import {
-  Avatar,
   Button,
-  FormControl,
-  OutlinedInput,
   Stack,
   TableCell,
   TableRow,

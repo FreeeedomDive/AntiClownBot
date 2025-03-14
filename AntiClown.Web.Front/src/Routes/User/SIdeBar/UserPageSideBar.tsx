@@ -7,7 +7,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Stack, Typography,
+  Stack,
 } from "@mui/material";
 import { useStore } from "../../../Stores";
 import { UserDto } from "../../../Dto/Users/UserDto";
@@ -195,6 +195,13 @@ const UserPageSideBar = ({ user }: Props) => {
               link={buildLink(userId, "itemsTrade")}
               text="Обмен предметами"
             />
+            <RightsWrapper requiredRights={[RightsDto.F1Predictions]}>
+              <UserPageSideBarItem
+                key="F1PredictionsBingo"
+                link={buildLink(userId, "f1Predictions/bingo")}
+                text="Бинго"
+              />
+            </RightsWrapper>
           </List>
         </>
       )}
