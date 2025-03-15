@@ -58,6 +58,7 @@ const UserPageContent = ({ user }: Props) => {
       {Boolean(!isMyPage && currentLoggedInUserId && user) && (
         <Routes>
           <Route path="/itemsTrade" element={<ItemsTrade />} />
+          <Route path="/f1Predictions/bingo" element={<F1BingoBoard />} />
         </Routes>
       )}
     </>

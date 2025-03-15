@@ -1,10 +1,9 @@
 import React, {useEffect} from "react";
 import {F1BingoCardDto} from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
 import F1BingoApi from "../../../../../../Api/F1BingoApi";
-import {Stack, Table, TableBody, TableContainer} from "@mui/material";
+import {Table, TableBody, TableContainer} from "@mui/material";
 import {Loader} from "../../../../../../Components/Loader/Loader";
 import {RightsDto} from "../../../../../../Dto/Rights/RightsDto";
-import F1PredictionsTeamsEditorRow from "../Teams/F1PredictionsTeamsEditorRow";
 import {RightsWrapper} from "../../../../../../Components/RIghts/RightsWrapper";
 import F1BingoCardsEditorRow from "./F1BingoCardsEditorRow";
 

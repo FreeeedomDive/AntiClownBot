@@ -4,7 +4,7 @@ import F1BingoApi from "../../../../../Api/F1BingoApi";
 import { F1BingoCardDto } from "../../../../../Dto/F1Bingo/F1BingoCardDto";
 import { RightsDto } from "../../../../../Dto/Rights/RightsDto";
 import { RightsWrapper } from "../../../../../Components/RIghts/RightsWrapper";
-import {Grid, Stack, Typography} from "@mui/material";
+import {Grid, Stack} from "@mui/material";
 import { Loader } from "../../../../../Components/Loader/Loader";
 import F1BingoCard from "./F1BingoCard";
 
