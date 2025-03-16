@@ -79,7 +79,7 @@ public class F1CommandModule(
 
                 var userToMember = standings.Keys.ToDictionary(x => x, x => usersCache.GetMemberByApiIdAsync(x).GetAwaiter().GetResult());
                 var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
-                var stringBuilder = new StringBuilder($"Полная таблица: {webOptions.Value.FrontApplicationUrl}/f1Predictions```\n");
+                var stringBuilder = new StringBuilder($"Полная таблица: {webOptions.Value.FrontApplicationUrl}/f1Predictions\n```\n");
                 var predictionsTable = standings
                                        .Select(
                                            kv => new
