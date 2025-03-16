@@ -98,16 +98,27 @@ export default function F1PredictionsStandingsChart({
   const sliceCount =
     showLastRacesCount === ShowLastNumberOfRaces.All
       ? series[0].points.length
-      : showLastRacesCount === ShowLastNumberOfRaces.Last10
+      : showLastRacesCount === ShowLastNumberOfRaces.Last10 &&
+          series[0].points.length > 10
         ? 10
-        : 5;
+        : showLastRacesCount === ShowLastNumberOfRaces.Last5 &&
+            series[0].points.length > 5
+          ? 5
+          : series[0].points.length;
 
-  if (showLastRacesCount !== ShowLastNumberOfRaces.All) {
-    series = series.filter(
-      (x) =>
+  if (
+    (showLastRacesCount === ShowLastNumberOfRaces.Last5 &&
+      series[0].points.length > 5) ||
+    (showLastRacesCount === ShowLastNumberOfRaces.Last10 &&
+      series[0].points.length > 10)
+  ) {
+    series = series.filter((x) => {
+      console.log(x.points.length - sliceCount - 1);
+      return (
         x.points[x.points.length - sliceCount - 1] >=
-        possibleChampionPoints[possibleChampionPoints.length - sliceCount - 1],
-    );
+        possibleChampionPoints[possibleChampionPoints.length - sliceCount - 1]
+      );
+    });
   }
 
   const getMinY = () => {
@@ -116,7 +127,7 @@ export default function F1PredictionsStandingsChart({
   };
 
   const getMaxY = () => {
-    const pts = series.slice(-sliceCount).map((x) => {
+    const pts = series.map((x) => {
       const slice = x.points.slice(-sliceCount);
       return slice[slice.length - 1];
     });

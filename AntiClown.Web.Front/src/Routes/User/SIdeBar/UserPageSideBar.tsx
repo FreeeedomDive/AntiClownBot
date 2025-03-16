@@ -138,7 +138,7 @@ const UserPageSideBar = ({ user }: Props) => {
                   )
                 }
               >
-                <ListItemText primary={"Предсказания F1"} />
+                <ListItemText primary={"Админка F1"} />
                 {isF1AdminPredictionsCollapseOpened ? (
                   <ExpandLess />
                 ) : (
