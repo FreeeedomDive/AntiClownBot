@@ -18,27 +18,43 @@ public class F1PredictionsMessageProducer(IBus bus) : IF1PredictionsMessageProdu
 
     public async Task ProducePredictionUpdatedAsync(Guid userId, Guid raceId, bool isNew)
     {
-        await bus.Publish(new F1UserPredictionUpdatedMessageDto
-        {
-            UserId = userId,
-            RaceId = raceId,
-            IsNew = isNew,
-        });
+        await bus.Publish(
+            new F1UserPredictionUpdatedMessageDto
+            {
+                UserId = userId,
+                RaceId = raceId,
+                IsNew = isNew,
+            }
+        );
     }
 
     public async Task ProduceRaceResultUpdatedAsync(Guid raceId)
     {
-        await bus.Publish(new F1RaceResultUpdatedMessageDto()
-        {
-            RaceId = raceId,
-        });
+        await bus.Publish(
+            new F1RaceResultUpdatedMessageDto()
+            {
+                RaceId = raceId,
+            }
+        );
     }
 
     public async Task ProduceRaceFinishedAsync(Guid raceId)
     {
-        await bus.Publish(new F1RaceFinishedMessageDto
-        {
-            RaceId = raceId,
-        });
+        await bus.Publish(
+            new F1RaceFinishedMessageDto
+            {
+                RaceId = raceId,
+            }
+        );
+    }
+
+    public async Task ProduceBingoCompletedAsync(Guid userId)
+    {
+        await bus.Publish(
+            new F1BingoBoardCompletedMessageDto
+            {
+                UserId = userId,
+            }
+        );
     }
 }
