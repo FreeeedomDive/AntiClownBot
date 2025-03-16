@@ -4,13 +4,8 @@ using DSharpPlus.SlashCommands;
 
 namespace AntiClown.DiscordBot.SlashCommands.Base;
 
-public abstract class SlashCommandModuleWithMiddlewares : ApplicationCommandModule
+public abstract class SlashCommandModuleWithMiddlewares(ICommandExecutor commandExecutor) : ApplicationCommandModule
 {
-    protected SlashCommandModuleWithMiddlewares(ICommandExecutor commandExecutor)
-    {
-        this.commandExecutor = commandExecutor;
-    }
-
     /// <summary>
     ///     Выполнить слэш-команду со всеми зарегистрированными миддлварками
     /// </summary>
@@ -79,6 +74,4 @@ public abstract class SlashCommandModuleWithMiddlewares : ApplicationCommandModu
     {
         return await context.EditResponseAsync(webhookBuilder);
     }
-
-    private readonly ICommandExecutor commandExecutor;
 }
