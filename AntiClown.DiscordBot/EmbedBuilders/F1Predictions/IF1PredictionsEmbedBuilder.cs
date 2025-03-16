@@ -10,4 +10,5 @@ public interface IF1PredictionsEmbedBuilder
     Task<DiscordEmbed> BuildPredictionUpdatedAsync(F1UserPredictionUpdatedMessageDto message, F1RaceDto race, F1PredictionDto prediction);
     DiscordEmbed BuildResultsUpdated(F1RaceDto race);
     DiscordEmbed BuildRaceFinished(F1RaceDto race, F1PredictionUserResultDto[] results);
+    Task<DiscordEmbed> BuildBingoCompletedAsync(Guid userId);
 }

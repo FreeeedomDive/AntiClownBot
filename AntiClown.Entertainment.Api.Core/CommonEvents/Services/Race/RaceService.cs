@@ -17,27 +17,16 @@ using Hangfire;
 
 namespace AntiClown.Entertainment.Api.Core.CommonEvents.Services.Race;
 
-public class RaceService : IRaceService
+public class RaceService(
+    ICommonEventsRepository commonEventsRepository,
+    IRaceDriversRepository raceDriversRepository,
+    IRaceGenerator raceGenerator,
+    ICommonEventsMessageProducer commonEventsMessageProducer,
+    IAntiClownApiClient antiClownApiClient,
+    IAntiClownDataApiClient antiClownDataApiClient,
+    IScheduler scheduler
+) : IRaceService
 {
-    public RaceService(
-        ICommonEventsRepository commonEventsRepository,
-        IRaceDriversRepository raceDriversRepository,
-        IRaceGenerator raceGenerator,
-        ICommonEventsMessageProducer commonEventsMessageProducer,
-        IAntiClownApiClient antiClownApiClient,
-        IAntiClownDataApiClient antiClownDataApiClient,
-        IScheduler scheduler
-    )
-    {
-        this.commonEventsRepository = commonEventsRepository;
-        this.raceDriversRepository = raceDriversRepository;
-        this.raceGenerator = raceGenerator;
-        this.commonEventsMessageProducer = commonEventsMessageProducer;
-        this.antiClownApiClient = antiClownApiClient;
-        this.antiClownDataApiClient = antiClownDataApiClient;
-        this.scheduler = scheduler;
-    }
-
     public async Task<RaceEvent> ReadAsync(Guid eventId)
     {
         var @event = await commonEventsRepository.ReadAsync(eventId);
@@ -84,10 +73,10 @@ public class RaceService : IRaceService
 
         var driversByName = @event.Participants.ToDictionary(x => x.Driver.DriverName);
         var startSectorPositions = GetOrderedDriversFromSector(@event.Sectors.First())
-                                   .Select((x, i) => new { Name = x.DriverName, Position = i + 1})
+                                   .Select((x, i) => new { Name = x.DriverName, Position = i + 1 })
                                    .ToDictionary(x => x.Name, x => x.Position);
         var finishSectorPositions = GetOrderedDriversFromSector(@event.Sectors.Last())
-                                    .Select((x, i) => new { Name = x.DriverName, Position = i + 1})
+                                    .Select((x, i) => new { Name = x.DriverName, Position = i + 1 })
                                     .ToArray();
 
         foreach (var t in finishSectorPositions)
@@ -97,12 +86,14 @@ public class RaceService : IRaceService
             if (driver.UserId is not null && points > 0)
             {
                 var scamCoins = points * RaceHelper.PointsToScamCoinsMultiplier;
-                await antiClownApiClient.Economy.UpdateScamCoinsAsync(driver.UserId.Value, new UpdateScamCoinsDto
-                {
-                    UserId = driver.UserId.Value,
-                    ScamCoinsDiff = scamCoins, 
-                    Reason = $"Гонка {eventId}",
-                });
+                await antiClownApiClient.Economy.UpdateScamCoinsAsync(
+                    driver.UserId.Value, new UpdateScamCoinsDto
+                    {
+                        UserId = driver.UserId.Value,
+                        ScamCoinsDiff = scamCoins,
+                        Reason = $"Гонка {eventId}",
+                    }
+                );
             }
 
             var diff = t.Position - startSectorPositions[t.Name];
@@ -166,13 +157,4 @@ public class RaceService : IRaceService
         {
         }
     }
-
-    private readonly IAntiClownApiClient antiClownApiClient;
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
-    private readonly ICommonEventsMessageProducer commonEventsMessageProducer;
-
-    private readonly ICommonEventsRepository commonEventsRepository;
-    private readonly IRaceDriversRepository raceDriversRepository;
-    private readonly IRaceGenerator raceGenerator;
-    private readonly IScheduler scheduler;
 }

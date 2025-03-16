@@ -2,27 +2,24 @@
 using AntiClown.DiscordBot.Cache.Users;
 using AntiClown.DiscordBot.Extensions;
 using AntiClown.DiscordBot.Models.Interactions;
+using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
+using Microsoft.Extensions.Options;
 
 namespace AntiClown.DiscordBot.SlashCommands.F1Predictions;
 
 [SlashCommandGroup(InteractionsIds.CommandsNames.F1_Group, "Команды, связанные с гонками Ф1")]
-public class F1CommandModule : SlashCommandModuleWithMiddlewares
+public class F1CommandModule(
+    ICommandExecutor commandExecutor,
+    IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+    IUsersCache usersCache,
+    IOptions<WebOptions> webOptions
+) : SlashCommandModuleWithMiddlewares(commandExecutor)
 {
-    public F1CommandModule(
-        ICommandExecutor commandExecutor,
-        IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-        IUsersCache usersCache
-    ) : base(commandExecutor)
-    {
-        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
-        this.usersCache = usersCache;
-    }
-
     [SlashCommand(InteractionsIds.CommandsNames.F1_List, "Показать текущие предсказания")]
     public async Task ListPredictions(InteractionContext interactionContext)
     {
@@ -82,7 +79,7 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
 
                 var userToMember = standings.Keys.ToDictionary(x => x, x => usersCache.GetMemberByApiIdAsync(x).GetAwaiter().GetResult());
                 var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
-                var stringBuilder = new StringBuilder("```\n");
+                var stringBuilder = new StringBuilder($"Полная таблица: {webOptions.Value.FrontApplicationUrl}/f1Predictions```\n");
                 var predictionsTable = standings
                                        .Select(
                                            kv => new
@@ -119,16 +116,4 @@ public class F1CommandModule : SlashCommandModuleWithMiddlewares
             }
         );
     }
-
-    private static int SumPoints(F1PredictionUserResultDto predictionUserResult)
-    {
-        return predictionUserResult.TenthPlacePoints
-               + predictionUserResult.DnfsPoints
-               + predictionUserResult.SafetyCarsPoints
-               + predictionUserResult.FirstPlaceLeadPoints
-               + predictionUserResult.TeamMatesPoints;
-    }
-
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-    private readonly IUsersCache usersCache;
 }
