@@ -5,7 +5,7 @@ namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Bingo;
 
 public class F1BingoBoardsRepository(ISqlRepository<F1BingoBoardStorageElement> sqlRepository) : IF1BingoBoardsRepository
 {
-    public async Task<Guid[]> FindAsync(Guid userId, int season)
+    public async Task<Guid[]> FindCardsAsync(Guid userId, int season)
     {
         var result = await sqlRepository.FindAsync(x => x.UserId == userId && x.Season == season);
         return result.SelectMany(x => x.Cards).ToArray();
@@ -18,6 +18,8 @@ public class F1BingoBoardsRepository(ISqlRepository<F1BingoBoardStorageElement> 
         {
             UserId = x.UserId,
             Cards = x.Cards,
+            Season = x.Season,
+            IsCompleted = x.IsCompleted,
         }).ToArray();
     }
 

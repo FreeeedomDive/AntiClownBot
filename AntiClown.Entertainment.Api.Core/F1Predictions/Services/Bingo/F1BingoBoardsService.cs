@@ -10,7 +10,7 @@ public class F1BingoBoardsService(
 {
     public async Task<Guid[]> GetOrCreateBingoBoard(Guid userId, int season)
     {
-        var existing = await bingoBoardsRepository.FindAsync(userId, season);
+        var existing = await bingoBoardsRepository.FindCardsAsync(userId, season);
         if (existing.Length != 0)
         {
             return existing;
