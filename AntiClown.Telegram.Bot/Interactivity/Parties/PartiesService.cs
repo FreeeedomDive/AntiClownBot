@@ -23,7 +23,8 @@ public class PartiesService(
     public async Task CreateOrUpdateMessageAsync(Guid partyId)
     {
         var party = await antiClownEntertainmentApiClient.Parties.ReadAsync(partyId);
-        var members = await antiClownDiscordBotClient.DiscordMembers.GetDiscordMembersAsync(party.Participants.ToArray());
+        var partyUsersIds = party.Participants.Concat(new[] { party.CreatorId }).ToArray();
+        var members = await antiClownDiscordBotClient.DiscordMembers.GetDiscordMembersAsync(partyUsersIds);
         var messageText = CreateMessageText(party, members);
 
         var users = (await antiClownApiClient.Users.ReadAllAsync()).ToDictionary(x => x.Id);
