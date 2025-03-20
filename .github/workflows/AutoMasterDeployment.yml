@@ -15,6 +15,7 @@ jobs:
       deploy_entertainment_api: ${{ steps.check.outputs.deploy_entertainment_api }}
       deploy_discord_bot: ${{ steps.check.outputs.deploy_discord_bot }}
       deploy_events_daemon: ${{ steps.check.outputs.deploy_events_daemon }}
+      deploy_telegram_bot: ${{ steps.check.outputs.deploy_telegram_bot }}
       deploy_web_api: ${{ steps.check.outputs.deploy_web_api }}
       deploy_front: ${{ steps.check.outputs.deploy_front }}
     steps:
@@ -44,6 +45,11 @@ jobs:
           # DiscordBot
           if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.DiscordBot/'; then
             echo "deploy_discord_bot=true" >> $GITHUB_OUTPUT
+          fi
+
+          # TelegramBot
+          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.Telegram.Bot/'; then
+            echo "deploy_telegram_bot=true" >> $GITHUB_OUTPUT
           fi
 
           # EventsDaemon
@@ -122,6 +128,19 @@ jobs:
     secrets:
       DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
       EVENTSDAEMON_APPSETTINGS: ${{ secrets.EVENTSDAEMON_APPSETTINGS }}
+      DOCKER_REGISTRY_LOGIN: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
+      DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
+  deploy_telegram_bot:
+    name: Deploy TelegramBot
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deploy_telegram_bot == 'true'
+    uses: ./.github/workflows/DeployTelegramBot.yml
+    secrets:
+      DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+      TELEGRAMBOT_APPSETTINGS: ${{ secrets.TELEGRAMBOT_APPSETTINGS }}
       DOCKER_REGISTRY_LOGIN: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
       DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
       DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
