@@ -1,11 +1,11 @@
-name: Manual Deploy DiscordBot
+name: Manual Deploy TelegramBot
 
 on:
   workflow_dispatch:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: AntiClown.TelegramBot
+  PROJECT_FOLDER: AntiClown.Telegram.Bot
   DOCKERFILE: Dockerfile.AntiClown.TelegramBot
   DOCKERIMAGE: anticlowntelegrambot
   K8SFILENAME: k8s_prod/anticlown-telegram-bot-deployment.yaml
