@@ -556,6 +556,7 @@ public class DiscordBotBehaviour(
         slash.RegisterCommands<EventsCommandModule>(guildId);
         slash.RegisterCommands<F1AdminCommandModule>(guildId);
         slash.RegisterCommands<RolesAdminCommandModule>(guildId);
+        slash.RegisterCommands<UsersCommandModule>(guildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
