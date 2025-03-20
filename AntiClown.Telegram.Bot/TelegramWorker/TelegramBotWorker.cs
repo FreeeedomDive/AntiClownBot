@@ -2,8 +2,11 @@ using AntiClown.Api.Client;
 using AntiClown.Api.Dto.Users;
 using AntiClown.Core.Dto.Exceptions;
 using AntiClown.Data.Api.Client;
+using AntiClown.Data.Api.Client.Extensions;
+using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Data.Api.Dto.Tokens;
-using AntiClown.Telegram.Bot.Caches.Users;
+using AntiClown.Entertainment.Api.Client;
+using AntiClown.Entertainment.Api.Dto.Parties;
 using AntiClown.Telegram.Bot.Interactivity.Parties;
 using AntiClown.TelegramBot.TelegramWorker;
 using Telegram.Bot;
@@ -17,6 +20,7 @@ namespace AntiClown.Telegram.Bot.TelegramWorker;
 public class TelegramBotWorker(
     IAntiClownApiClient antiClownApiClient,
     IAntiClownDataApiClient antiClownDataApiClient,
+    IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
     IPartiesService partiesService,
     ITelegramBotClient telegramBotClient,
     ILogger<TelegramBotWorker> logger
@@ -51,18 +55,8 @@ public class TelegramBotWorker(
 
         if (update.CallbackQuery is not null)
         {
-            var userId = update.CallbackQuery.From.Id;
-            if (update.CallbackQuery.Data?.StartsWith("JoinParty") ?? false)
-            {
-                var partyId = Guid.Parse(update.CallbackQuery.Data.Split("_")[1]);
-                await partiesService.JoinPartyAsync(partyId, userId);
-            }
-
-            if (update.CallbackQuery.Data?.StartsWith("LeaveParty") ?? false)
-            {
-                var partyId = Guid.Parse(update.CallbackQuery.Data.Split("_")[1]);
-                await partiesService.LeavePartyAsync(partyId, userId);
-            }
+            await HandleCallbackButton(update);
+            return;
         }
 
         if (update.Message is not { Text: not null } message)
@@ -80,7 +74,12 @@ public class TelegramBotWorker(
         )).FirstOrDefault();
         if (userWithCurrentTelegramId is not null)
         {
-            // TODO: пользователь уже привязал телеграм, здесь будет обработчик будущих команд
+            // TODO: втащить красивый обработчик команд
+            if (await CreateParty(messageText, userWithCurrentTelegramId))
+            {
+                return;
+            }
+
             await telegramBotClient.SendTextMessageAsync(
                 message.Chat.Id,
                 $"Привязанный UserId: {userWithCurrentTelegramId.Id}",
@@ -166,6 +165,49 @@ public class TelegramBotWorker(
                 "Неверный токен",
                 cancellationToken: cancellationToken
             );
+        }
+    }
+
+    private async Task<bool> CreateParty(string messageText, UserDto userWithCurrentTelegramId)
+    {
+        if (!messageText.StartsWith("/cs") && !messageText.StartsWith("/dota"))
+        {
+            return false;
+        }
+
+        var isCs = messageText.StartsWith("/cs");
+        var roleIdKey = isCs ? "CsRoleId" : "DotaRoleId";
+        var name = isCs ? "Cs2" : "Dota";
+        var description = messageText[messageText.Split()[0].Length..];
+        await antiClownEntertainmentApiClient.Parties.CreateAsync(
+            new CreatePartyDto
+            {
+                CreatorId = userWithCurrentTelegramId.Id,
+                MaxPlayers = 5,
+                Name = name,
+                RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, roleIdKey),
+                Description = description,
+                AuthorAutoJoin = true,
+            }
+        );
+        return true;
+
+    }
+
+    private async Task HandleCallbackButton(Update update)
+    {
+        var userId = update.CallbackQuery!.From.Id;
+        if (update.CallbackQuery.Data?.StartsWith("JoinParty") ?? false)
+        {
+            var partyId = Guid.Parse(update.CallbackQuery.Data.Split("_")[1]);
+            await partiesService.JoinPartyAsync(partyId, userId);
+            return;
+        }
+
+        if (update.CallbackQuery.Data?.StartsWith("LeaveParty") ?? false)
+        {
+            var partyId = Guid.Parse(update.CallbackQuery.Data.Split("_")[1]);
+            await partiesService.LeavePartyAsync(partyId, userId);
         }
     }
 
