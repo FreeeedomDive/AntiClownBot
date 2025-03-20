@@ -16,7 +16,6 @@ using MassTransit;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Telegram.Bot;
-using TelemetryApp.Utilities.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,7 +69,6 @@ builder.Services.AddTransient<IAntiClownDiscordBotClient>(
     )
 );
 
-builder.Services.AddTransient<ITelegramBotWorker, TelegramBotWorker>();
 builder.Services.AddSingleton<ITelegramBotClient>(
     serviceProvider =>
     {
@@ -78,15 +76,16 @@ builder.Services.AddSingleton<ITelegramBotClient>(
         return new TelegramBotClient(telegramSettings.Value.BotToken);
     }
 );
-
-builder.Services.AddSingleton<IUsersCache, UsersCache>();
+builder.Services.AddTransient<ITelegramBotWorker, TelegramBotWorker>();
 
 builder.Services.AddSingleton<IPartiesService, PartiesService>();
 
 var app = builder.Build();
 
+/*
 var usersCache = app.Services.GetRequiredService<IUsersCache>();
 await usersCache.InitializeAsync();
+*/
 
 var telegramBotWorker = app.Services.GetRequiredService<ITelegramBotWorker>();
 await Task.WhenAll(telegramBotWorker.StartAsync(), app.RunAsync());

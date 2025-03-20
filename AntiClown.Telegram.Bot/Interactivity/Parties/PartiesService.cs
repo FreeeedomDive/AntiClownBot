@@ -1,41 +1,37 @@
 using System.Collections.Concurrent;
 using System.Text;
+using AntiClown.Api.Client;
+using AntiClown.Api.Dto.Users;
 using AntiClown.DiscordBot.Client;
+using AntiClown.DiscordBot.Dto.Members;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.Parties;
-using AntiClown.Telegram.Bot.Caches.Users;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace AntiClown.Telegram.Bot.Interactivity.Parties;
 
-public class PartiesService : IPartiesService
+public class PartiesService(
+    IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+    IAntiClownDiscordBotClient antiClownDiscordBotClient,
+    IAntiClownApiClient antiClownApiClient,
+    ITelegramBotClient telegramBotClient,
+    ILogger<PartiesService> logger
+)
+    : IPartiesService
 {
-    public PartiesService(
-        IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-        IAntiClownDiscordBotClient antiClownDiscordBotClient,
-        ITelegramBotClient telegramBotClient,
-        IUsersCache usersCache,
-        ILogger<PartiesService> logger
-    )
-    {
-        this.antiClownEntertainmentApiClient = antiClownEntertainmentApiClient;
-        this.antiClownDiscordBotClient = antiClownDiscordBotClient;
-        this.telegramBotClient = telegramBotClient;
-        this.usersCache = usersCache;
-        this.logger = logger;
-    }
-
     public async Task CreateOrUpdateMessageAsync(Guid partyId)
     {
         var party = await antiClownEntertainmentApiClient.Parties.ReadAsync(partyId);
-        var messageText = CreateMessageText(party);
+        var members = await antiClownDiscordBotClient.DiscordMembers.GetDiscordMembersAsync(party.Participants.ToArray());
+        var messageText = CreateMessageText(party, members);
 
+        var users = (await antiClownApiClient.Users.ReadAllAsync()).ToDictionary(x => x.Id);
         var discordRoleMembersUsersIds = (await antiClownDiscordBotClient.DiscordMembers.FindByRoleIdAsync(party.RoleId))
                                          .Where(x => x is not null)
                                          .Select(x => x!.UserId)
                                          .ToArray();
-        var usersToNotify = discordRoleMembersUsersIds.Select(x => usersCache.TryGetUser(x))
+        var usersToNotify = discordRoleMembersUsersIds.Select(x => users.GetValueOrDefault(x))
                                                       .Where(x => x?.TelegramId is not null)
                                                       .Select(x => x!.TelegramId!.Value)
                                                       .ToArray();
@@ -44,7 +40,8 @@ public class PartiesService : IPartiesService
 
     public async Task JoinPartyAsync(Guid partyId, long userId)
     {
-        var user = usersCache.TryGetUser(userId);
+        var users = await antiClownApiClient.Users.ReadAllAsync();
+        var user = users.FirstOrDefault(x => x.TelegramId == userId);
         if (user is null)
         {
             return;
@@ -61,7 +58,8 @@ public class PartiesService : IPartiesService
 
     public async Task LeavePartyAsync(Guid partyId, long userId)
     {
-        var user = usersCache.TryGetUser(userId);
+        var users = await antiClownApiClient.Users.ReadAllAsync();
+        var user = users.FirstOrDefault(x => x.TelegramId == userId);
         if (user is null)
         {
             return;
@@ -76,30 +74,30 @@ public class PartiesService : IPartiesService
         await antiClownEntertainmentApiClient.Parties.LeaveAsync(partyId, user.Id);
     }
 
-    private string CreateMessageText(PartyDto party)
+    private static string CreateMessageText(PartyDto party, DiscordMemberDto?[] members)
     {
         return new StringBuilder()
                .AppendLine($"Сбор пати {party.Name} {party.Description}")
                .AppendLine($"{party.Participants.Count} / {party.MaxPlayers} игроков")
                .AppendLine(
-                   party.Participants.Any()
+                   party.Participants.Count > 0
                        ? string.Join(
                            "\n", party
                                  .Participants
-                                 .Select((x, i) => $"{i + 1}. {GetMemberName(x)}")
+                                 .Select((x, i) => $"{i + 1}. {GetMemberName(x, members)}")
                        )
                        : "Пока никто не записался..."
                )
                .AppendLine()
                .AppendLine($"ID: {party.Id}")
-               .AppendLine($"Создатель: {GetMemberName(party.CreatorId)}")
+               .AppendLine($"Создатель: {GetMemberName(party.CreatorId, members)}")
                .AppendLine(party.IsOpened ? string.Empty : "СБОР ЗАКРЫТ")
                .ToString();
     }
 
-    private string GetMemberName(Guid userId)
+    private static string GetMemberName(Guid userId, DiscordMemberDto?[] members)
     {
-        var member = usersCache.TryGetDiscordMember(userId);
+        var member = members.FirstOrDefault(x => x?.UserId == userId);
         return member is not null ? member.ServerName ?? member.UserName ?? "" : "(чел, которого нет на сервере)";
     }
 
@@ -137,10 +135,6 @@ public class PartiesService : IPartiesService
         }
     }
 
-    private readonly IAntiClownDiscordBotClient antiClownDiscordBotClient;
-    private readonly IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient;
-    private readonly ILogger<PartiesService> logger;
+    private readonly IAntiClownApiClient antiClownApiClient = antiClownApiClient;
     private readonly ConcurrentDictionary<string, int> partyIdToMessageId = new();
-    private readonly ITelegramBotClient telegramBotClient;
-    private readonly IUsersCache usersCache;
 }

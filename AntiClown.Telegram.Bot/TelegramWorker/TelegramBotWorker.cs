@@ -14,25 +14,15 @@ using Xdd.HttpHelpers.Models.Exceptions;
 
 namespace AntiClown.Telegram.Bot.TelegramWorker;
 
-public class TelegramBotWorker : ITelegramBotWorker
+public class TelegramBotWorker(
+    IAntiClownApiClient antiClownApiClient,
+    IAntiClownDataApiClient antiClownDataApiClient,
+    IPartiesService partiesService,
+    ITelegramBotClient telegramBotClient,
+    ILogger<TelegramBotWorker> logger
+)
+    : ITelegramBotWorker
 {
-    public TelegramBotWorker(
-        IAntiClownApiClient antiClownApiClient,
-        IAntiClownDataApiClient antiClownDataApiClient,
-        IPartiesService partiesService,
-        IUsersCache usersCache,
-        ITelegramBotClient telegramBotClient,
-        ILogger<TelegramBotWorker> logger
-    )
-    {
-        this.antiClownApiClient = antiClownApiClient;
-        this.antiClownDataApiClient = antiClownDataApiClient;
-        this.partiesService = partiesService;
-        this.usersCache = usersCache;
-        this.telegramBotClient = telegramBotClient;
-        this.logger = logger;
-    }
-
     public async Task StartAsync()
     {
         var receiverOptions = new ReceiverOptions
@@ -166,7 +156,6 @@ public class TelegramBotWorker : ITelegramBotWorker
                 "Телеграм-аккаунт успешно привязан",
                 cancellationToken: cancellationToken
             );
-            await usersCache.BindTelegramAsync(message.Chat.Id, apiUserId);
             telegramToApiUserIds.Remove(message.Chat.Id);
             logger.LogInformation("User {userId} has bound telegram account {telegramUserId}", apiUserId, message.Chat.Id);
         }
@@ -180,11 +169,5 @@ public class TelegramBotWorker : ITelegramBotWorker
         }
     }
 
-    private readonly IAntiClownApiClient antiClownApiClient;
-    private readonly IAntiClownDataApiClient antiClownDataApiClient;
-    private readonly ILogger<TelegramBotWorker> logger;
-    private readonly IPartiesService partiesService;
-    private readonly IUsersCache usersCache;
-    private readonly ITelegramBotClient telegramBotClient;
     private readonly Dictionary<long, Guid> telegramToApiUserIds = new();
 }
