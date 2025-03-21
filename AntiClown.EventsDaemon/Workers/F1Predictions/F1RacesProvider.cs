@@ -15,7 +15,7 @@ public class F1RacesProvider : IF1RacesProvider
                    },
                    new F1RaceInfo
                    {
-                       Name = "Китай (спринт)",
+                       Name = "Китай",
                        IsSprint = true,
                        PredictionsStartTime = new DateTime(2025, 03, 21),
                    },
@@ -41,7 +41,7 @@ public class F1RacesProvider : IF1RacesProvider
                    },
                    new F1RaceInfo
                    {
-                       Name = "США Майами (спринт)",
+                       Name = "США Майами",
                        IsSprint = true,
                        PredictionsStartTime = new DateTime(2025, 05, 02),
                    },
@@ -82,7 +82,7 @@ public class F1RacesProvider : IF1RacesProvider
                    },
                    new F1RaceInfo
                    {
-                       Name = "Бельгия (спринт)",
+                       Name = "Бельгия",
                        IsSprint = true,
                        PredictionsStartTime = new DateTime(2025, 07, 25),
                    },
@@ -118,7 +118,7 @@ public class F1RacesProvider : IF1RacesProvider
                    },
                    new F1RaceInfo
                    {
-                       Name = "США Остин (спринт)",
+                       Name = "США Остин",
                        IsSprint = true,
                        PredictionsStartTime = new DateTime(2025, 10, 17),
                    },
@@ -134,7 +134,7 @@ public class F1RacesProvider : IF1RacesProvider
                    },
                    new F1RaceInfo
                    {
-                       Name = "Бразилия (спринт)",
+                       Name = "Бразилия",
                        IsSprint = true,
                        PredictionsStartTime = new DateTime(2025, 11, 07),
                    },
@@ -150,7 +150,7 @@ public class F1RacesProvider : IF1RacesProvider
                    },
                    new F1RaceInfo
                    {
-                       Name = "Катар (спринт)",
+                       Name = "Катар",
                        IsSprint = true,
                        PredictionsStartTime = new DateTime(2025, 11, 28),
                    },
