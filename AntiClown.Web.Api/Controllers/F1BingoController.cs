@@ -1,10 +1,12 @@
 ﻿using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.F1Predictions.Bingo;
+using AntiClown.Web.Api.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/f1Bingo")]
+[RequireUserToken]
 public class F1BingoController(IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient) : ControllerBase
 {
     [HttpGet("cards")]
