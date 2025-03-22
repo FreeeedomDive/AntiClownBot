@@ -10,6 +10,7 @@ const cookies = new Cookies(null, cookiesOptions);
 export class AuthStore {
   loggedInUserId: string | undefined;
   userToken: string | undefined;
+  telegramUserId: number | undefined;
 
   constructor() {
     makeAutoObservable(this);
@@ -19,6 +20,11 @@ export class AuthStore {
     this.userToken = cookies.get("token", {
       doNotParse: true,
     });
+  }
+
+  logInViaTelegram(telegramUserId: number | undefined){
+    cookies.set("telegramUserId", telegramUserId, cookiesOptions);
+    this.telegramUserId = telegramUserId;
   }
 
   logIn(userId: string, token: string) {

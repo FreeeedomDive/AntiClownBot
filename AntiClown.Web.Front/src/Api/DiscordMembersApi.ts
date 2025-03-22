@@ -14,10 +14,10 @@ export default class DiscordMembersApi {
     });
   }
 
-  static getMember = async (userId: string): Promise<DiscordMemberDto | undefined> => {
+  static getMember = async (userId: string): Promise<DiscordMemberDto | null> => {
     const result = await DiscordMembersApi.init().get(`/${userId}`);
     if (result.status !== 200){
-      return undefined;
+      return null;
     }
     return result.data;
   }
