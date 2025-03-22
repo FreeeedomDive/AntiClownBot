@@ -10,6 +10,13 @@ namespace AntiClown.Web.Api.Controllers;
 [RequireUserToken]
 public class UsersController(IAntiClownApiClient antiClownApiClient) : Controller
 {
+    [HttpPost("find")]
+    public async Task<UserDto?> Find([FromBody] UserFilterDto filter)
+    {
+        var result = await antiClownApiClient.Users.FindAsync(filter);
+        return result.FirstOrDefault();
+    }
+
     [HttpGet("{userId:guid}")]
     public async Task<UserDto?> Read([FromRoute] Guid userId)
     {

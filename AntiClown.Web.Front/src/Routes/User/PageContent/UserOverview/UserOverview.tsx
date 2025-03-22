@@ -7,7 +7,7 @@ import { Loader } from "../../../../Components/Loader/Loader";
 
 export default function UserOverview() {
   const {userId = ""} = useParams<"userId">();
-  const [member, setMember] = useState<DiscordMemberDto | undefined>(undefined);
+  const [member, setMember] = useState<DiscordMemberDto | null>(null);
   const [loading, setLoading] = useState(true);
 
   async function updateUser(): Promise<void> {
