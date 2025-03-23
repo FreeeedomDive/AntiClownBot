@@ -42,6 +42,7 @@ export default function F1BingoCard({ card }: Props) {
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
+        borderRadius: 2,
       }}
     >
       <CardContent>

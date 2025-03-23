@@ -3,16 +3,7 @@ import {
   Alert,
   Button,
   ButtonGroup,
-  Checkbox,
   Divider,
-  FormControl,
-  FormControlLabel,
-  InputAdornment,
-  MenuItem,
-  OutlinedInput,
-  Radio,
-  RadioGroup,
-  Select,
   SelectChangeEvent,
   Snackbar,
   Stack,
@@ -21,23 +12,19 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   F1SafetyCarPredictionDto,
-  F1SafetyCarsPredictionDto,
   F1SafetyCarsPredictionObject,
 } from "../../Dto/F1Predictions/F1SafetyCarsPredictionDto";
 import { useStore } from "../../Stores";
 import { F1TeamDto } from "../../Dto/F1Predictions/F1TeamDto";
 import F1PredictionsApi from "../../Api/F1PredictionsApi";
-import { getDriversFromTeams } from "../../Dto/F1Predictions/F1DriversHelpers";
 import { AddPredictionResultDto } from "../../Dto/F1Predictions/AddPredictionResultDto";
-
-const F1SafetyCarPredictionTexts: Record<F1SafetyCarPredictionDto, string> = {
-  Zero: "0",
-  One: "1",
-  Two: "2",
-  ThreePlus: "3+",
-};
-
-type DNFList = [string, string, string, string, string];
+import F1PredictionsTenthPlaceSelect from "../../Routes/User/PageContent/ControlPanel/F1Predictions/F1PredictionsTenthPlaceSelect";
+import F1PredictionsDnfSelect, {
+  DNFList,
+} from "../../Routes/User/PageContent/ControlPanel/F1Predictions/F1PredictionsDnfSelect";
+import F1PredictionsIncidentsSelect from "../../Routes/User/PageContent/ControlPanel/F1Predictions/F1PredictionsIncidentsSelect";
+import F1PredictionsFirstPlaceLeadSelect from "../../Routes/User/PageContent/ControlPanel/F1Predictions/F1PredictionsFirstPlaceLeadSelect";
+import F1PredictionsTeamsSelect from "../../Routes/User/PageContent/ControlPanel/F1Predictions/F1PredictionsTeamsSelect";
 
 interface Props {
   f1Race: F1RaceDto;
@@ -93,19 +80,6 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
       teams[0]?.firstDriver,
     ];
   });
-  const onDnfListChange =
-    (changingIndex: number) => (event: SelectChangeEvent) => {
-      setDnfList(
-        dnfList.map((dnfItem, index) => {
-          if (index === changingIndex) {
-            return event.target.value;
-          }
-
-          return dnfItem;
-        }) as DNFList,
-      );
-    };
-
   const [selectedSafetyCarPrediction, setSafetyCarPrediction] =
     useState<F1SafetyCarPredictionDto>(
       userPrediction?.safetyCarsPrediction ?? F1SafetyCarsPredictionObject.Zero,
@@ -200,185 +174,40 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
         <Alert severity="warning">Предсказания закрыты</Alert>
       )}
       {step === 1 && (
-        <>
-          <Typography variant="body1" flexShrink={0}>
-            10 место
-          </Typography>
-          <FormControl fullWidth>
-            <Select
-              labelId="10-position"
-              id="10-position-select"
-              value={selected10Position}
-              onChange={(event) => {
-                const value = event.target.value;
-                setSelected10Position(value);
-              }}
-            >
-              {getDriversFromTeams(teams).map((driver) => (
-                <MenuItem key={driver} value={driver}>
-                  {driver}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </>
+        <F1PredictionsTenthPlaceSelect
+          selected10Position={selected10Position}
+          setSelected10Position={setSelected10Position}
+          teams={teams}
+        />
       )}
       {step === 2 && (
-        <>
-          <Typography variant="body1" flexShrink={0}>
-            DNF
-          </Typography>
-          <Stack flexGrow={1} spacing={1} width={"100%"}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isDNFNobody}
-                  onChange={() => {
-                    setIsDNFNobody((checked) => !checked);
-                  }}
-                />
-              }
-              label="Никто"
-            />
-            {!isDNFNobody && (
-              <>
-                {dnfList.map((dnfItem, index) => {
-                  return (
-                    <Select
-                      key={index}
-                      labelId={`dnf-${index}`}
-                      id={`dnf-${index}-select`}
-                      value={dnfItem}
-                      onChange={onDnfListChange(index)}
-                    >
-                      {getDriversFromTeams(teams)
-                        .filter(
-                          (driver) =>
-                            !dnfList.includes(driver) || dnfItem === driver,
-                        )
-                        .map((driver) => (
-                          <MenuItem key={driver} value={driver}>
-                            {driver}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  );
-                })}
-              </>
-            )}
-          </Stack>
-        </>
+        <F1PredictionsDnfSelect
+          isDNFNobody={isDNFNobody}
+          setIsDNFNobody={setIsDNFNobody}
+          dnfList={dnfList}
+          setDnfList={setDnfList}
+          teams={teams}
+        />
       )}
       {step === 3 && (
-        <>
-          <Typography variant="body1" flexShrink={0}>
-            Инциденты (VSC, SC, Red)
-          </Typography>
-          <FormControl fullWidth>
-            <RadioGroup
-              aria-labelledby="demo-radio-buttons-group-label"
-              defaultValue="female"
-              name="radio-buttons-group"
-            >
-              {F1SafetyCarsPredictionDto.map((F1SafetyCarPredictionDto) => (
-                <FormControlLabel
-                  key={F1SafetyCarPredictionDto}
-                  value={F1SafetyCarPredictionDto}
-                  control={<Radio />}
-                  label={F1SafetyCarPredictionTexts[F1SafetyCarPredictionDto]}
-                  checked={
-                    selectedSafetyCarPrediction === F1SafetyCarPredictionDto
-                  }
-                  onChange={(_, checked) => {
-                    if (checked) {
-                      setSafetyCarPrediction(F1SafetyCarPredictionDto);
-                    }
-                  }}
-                />
-              ))}
-            </RadioGroup>
-          </FormControl>
-        </>
+        <F1PredictionsIncidentsSelect
+          selectedSafetyCarPrediction={selectedSafetyCarPrediction}
+          setSelectedSafetyCarPrediction={setSafetyCarPrediction}
+        />
       )}
       {step === 4 && (
-        <>
-          <Typography variant="body1" flexShrink={0}>
-            Отрыв 1 места
-          </Typography>
-          <FormControl fullWidth>
-            <OutlinedInput
-              id="outlined-adornment-weight"
-              endAdornment={
-                <InputAdornment position="end">в секундах</InputAdornment>
-              }
-              placeholder="5.169"
-              aria-describedby="outlined-weight-helper-text"
-              inputProps={{
-                "aria-label": "weight",
-              }}
-              value={firstPlaceLead}
-              onChange={(event) => {
-                const fixedValue = event.target.value
-                  .replace(/[^\d,.]/g, "")
-                  .replace(",", ".");
-
-                const numericValue = Number(fixedValue);
-
-                if (numericValue >= 0) {
-                  setFirstPlaceLead(fixedValue);
-                }
-              }}
-            />
-          </FormControl>
-        </>
+        <F1PredictionsFirstPlaceLeadSelect
+          firstPlaceLead={firstPlaceLead}
+          setFirstPlaceLead={setFirstPlaceLead}
+        />
       )}
       {step === 5 && (
-        <>
-          <Typography variant="body1" flexShrink={0}>
-            Команды
-          </Typography>
-          {teams.map((team) => (
-            <ButtonGroup size="large" fullWidth>
-              <Button
-                variant={
-                  selectedDriversFromTeams.has(team.firstDriver)
-                    ? "contained"
-                    : "outlined"
-                }
-                onClick={() => {
-                  selectedDriversFromTeams.delete(team.secondDriver);
-                  selectedDriversFromTeams.add(team.firstDriver);
-
-                  setSelectedDriversFromTeams(
-                    new Set(selectedDriversFromTeams),
-                  );
-                }}
-              >
-                {team.firstDriver}
-              </Button>
-              <Button
-                variant={
-                  selectedDriversFromTeams.has(team.secondDriver)
-                    ? "contained"
-                    : "outlined"
-                }
-                onClick={() => {
-                  selectedDriversFromTeams.delete(team.firstDriver);
-                  selectedDriversFromTeams.add(team.secondDriver);
-
-                  setSelectedDriversFromTeams(
-                    new Set(selectedDriversFromTeams),
-                  );
-                }}
-              >
-                {team.secondDriver}
-              </Button>
-            </ButtonGroup>
-          ))}
-        </>
+        <F1PredictionsTeamsSelect
+          selectedDriversFromTeams={selectedDriversFromTeams}
+          setSelectedDriversFromTeams={setSelectedDriversFromTeams}
+          teams={teams}
+        />
       )}
-      <Divider />
-      <Divider />
       <ButtonGroup size="large" fullWidth>
         <Button
           variant={"outlined"}

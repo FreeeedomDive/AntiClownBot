@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Box} from "@mui/material";
 import UserPageSideBar from "../SIdeBar/UserPageSideBar";
-import UserPageContent from "../PageContent/UserPageContent";
+import UserPageContentRouter from "../PageContent/UserPageContentRouter";
 import UsersApi from "../../../Api/UsersApi";
 import {UserDto} from "../../../Dto/Users/UserDto";
 import {Navigate, useParams} from "react-router-dom";
@@ -58,7 +58,7 @@ const UserMainPage = () => {
                     width: {sm: `calc(100% - ${sideBarWidth}px)`},
                 }}
             >
-                <UserPageContent user={user}/>
+                <UserPageContentRouter user={user}/>
             </Box>
         </Box>
     );

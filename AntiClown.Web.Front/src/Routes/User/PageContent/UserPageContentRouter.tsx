@@ -21,7 +21,7 @@ interface Props {
   user: UserDto | null | undefined;
 }
 
-const UserPageContent = ({ user }: Props) => {
+const UserPageContentRouter = ({ user }: Props) => {
   const { authStore } = useStore();
   const currentLoggedInUserId = authStore.loggedInUserId;
   const { userId } = useParams<"userId">();
@@ -65,4 +65,4 @@ const UserPageContent = ({ user }: Props) => {
   );
 };
 
-export default UserPageContent;
+export default UserPageContentRouter;
