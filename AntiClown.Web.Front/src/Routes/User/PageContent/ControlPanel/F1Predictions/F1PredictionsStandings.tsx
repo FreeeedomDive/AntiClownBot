@@ -48,8 +48,8 @@ export default function F1PredictionsStandings() {
       setIsLoading(false);
     }
 
-    load();
-  }, []);
+    load().catch(console.error);
+  }, [season]);
 
   const sortedStandings = Object.values(standings).sort(
     (a, b) => countTotalPoints(b) - countTotalPoints(a),

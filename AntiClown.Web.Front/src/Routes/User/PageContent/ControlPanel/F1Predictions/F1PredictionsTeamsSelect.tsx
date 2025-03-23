@@ -22,6 +22,7 @@ export default function F1PredictionsTeamsSelect({
       {teams.map((team) => (
         <ButtonGroup size="large" fullWidth>
           <Button
+            key={team.firstDriver}
             variant={
               selectedDriversFromTeams.has(team.firstDriver)
                 ? "contained"
@@ -39,6 +40,7 @@ export default function F1PredictionsTeamsSelect({
             {team.firstDriver}
           </Button>
           <Button
+            key={team.secondDriver}
             variant={
               selectedDriversFromTeams.has(team.secondDriver)
                 ? "contained"

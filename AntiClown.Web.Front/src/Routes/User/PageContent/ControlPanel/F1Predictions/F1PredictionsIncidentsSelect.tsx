@@ -1,12 +1,8 @@
 import {
-  Card,
-  CardContent,
   FormControl,
   FormControlLabel,
   Radio,
   RadioGroup,
-  Stack,
-  Typography,
 } from "@mui/material";
 import {
   F1SafetyCarPredictionDto,

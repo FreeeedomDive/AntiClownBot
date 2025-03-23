@@ -1,14 +1,10 @@
 import {
-  Card,
-  CardContent,
   Checkbox,
   FormControl,
   FormControlLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
-  Stack,
-  Typography,
 } from "@mui/material";
 import React from "react";
 import { getDriversFromTeams } from "../../../../../Dto/F1Predictions/F1DriversHelpers";

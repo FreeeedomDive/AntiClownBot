@@ -11,10 +11,8 @@ export default function F1PredictionsSelectCard({ children, title }: Props) {
     <Card
       sx={{
         width: "100%",
-        height: "100%",
+        //height: "100%",
         backgroundColor: `transparent`,
-        //position: "relative",
-        //display: "flex",
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",

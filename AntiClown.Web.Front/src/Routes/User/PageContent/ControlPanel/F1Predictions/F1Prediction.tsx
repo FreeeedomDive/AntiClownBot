@@ -2,22 +2,9 @@ import { useParams } from "react-router-dom";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Alert,
-  Button,
-  ButtonGroup,
-  Checkbox,
   Fab,
-  FormControl,
-  FormControlLabel,
-  InputAdornment,
-  MenuItem,
-  OutlinedInput,
-  Radio,
-  RadioGroup,
-  Select,
-  SelectChangeEvent,
   Snackbar,
   Stack,
-  Typography,
 } from "@mui/material";
 import {
   F1SafetyCarPredictionDto,
@@ -33,9 +20,6 @@ import F1PredictionsDnfSelect, { DNFList } from "./F1PredictionsDnfSelect";
 import F1PredictionsIncidentsSelect from "./F1PredictionsIncidentsSelect";
 import F1PredictionsFirstPlaceLeadSelect from "./F1PredictionsFirstPlaceLeadSelect";
 import F1PredictionsTeamsSelect from "./F1PredictionsTeamsSelect";
-
-const firstColumnWidth = 150;
-const teamButtonWidth = 150;
 
 const fabStyle = {
   position: "absolute",
@@ -61,7 +45,7 @@ export default function F1Prediction({ f1Race }: Props) {
       setTeams(teams);
     }
 
-    load();
+    load().catch(console.error);
   }, [f1Race.id]);
 
   const userPrediction = useMemo(() => {
