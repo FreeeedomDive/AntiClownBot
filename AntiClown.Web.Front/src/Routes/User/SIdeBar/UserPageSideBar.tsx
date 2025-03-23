@@ -52,7 +52,7 @@ const UserPageSideBar = ({ user }: Props) => {
     >
       <List>
         <UserPageSideBarItem
-          key="Overview"
+          sidebarKey="Overview"
           link={buildLink(userId)}
           text="Профиль"
         />
@@ -62,17 +62,17 @@ const UserPageSideBar = ({ user }: Props) => {
           <Divider />
           <List>
             <UserPageSideBarItem
-              key="Economy"
+              sidebarKey="Economy"
               link={buildLink(userId, "economy")}
               text="Экономика"
             />
             <UserPageSideBarItem
-              key="Inventory"
+              sidebarKey="Inventory"
               link={buildLink(userId, "inventory")}
               text="Инвентарь"
             />
             <UserPageSideBarItem
-              key="Shop"
+              sidebarKey="Shop"
               link={buildLink(userId, "shop")}
               text="Магазин"
             />
@@ -101,19 +101,19 @@ const UserPageSideBar = ({ user }: Props) => {
                 >
                   <List disablePadding>
                     <UserPageSideBarItem
-                      key="F1PredictionsStandings"
+                      sidebarKey="F1PredictionsStandings"
                       link={buildLink(userId, "f1Predictions/standings")}
                       text="Таблица"
                       nesting={2}
                     />
                     <UserPageSideBarItem
-                      key="F1PredictionsCurrent"
+                      sidebarKey="F1PredictionsCurrent"
                       link={buildLink(userId, "f1Predictions/current")}
                       text="Текущие предсказания"
                       nesting={2}
                     />
                     <UserPageSideBarItem
-                      key="F1PredictionsBingo"
+                      sidebarKey="F1PredictionsBingo"
                       link={buildLink(userId, "f1Predictions/bingo")}
                       text="Бинго"
                       nesting={2}
@@ -153,7 +153,7 @@ const UserPageSideBar = ({ user }: Props) => {
             >
               <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
                 <UserPageSideBarItem
-                  key="F1PredictionsAdmin"
+                  sidebarKey="F1PredictionsAdmin"
                   link={buildLink(userId, "f1Predictions/admin")}
                   text="Результаты гонок"
                   nesting={2}
@@ -161,7 +161,7 @@ const UserPageSideBar = ({ user }: Props) => {
               </RightsWrapper>
               <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
                 <UserPageSideBarItem
-                  key="F1PredictionsBingoAdmin"
+                  sidebarKey="F1PredictionsBingoAdmin"
                   link={buildLink(userId, "f1Predictions/bingo/admin")}
                   text="Бинго"
                   nesting={2}
@@ -169,7 +169,7 @@ const UserPageSideBar = ({ user }: Props) => {
               </RightsWrapper>
               <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
                 <UserPageSideBarItem
-                  key="F1PredictionsTeamsAdmin"
+                  sidebarKey="F1PredictionsTeamsAdmin"
                   link={buildLink(userId, "f1Predictions/teams")}
                   text="Изменение команд"
                   nesting={2}
@@ -178,7 +178,7 @@ const UserPageSideBar = ({ user }: Props) => {
             </Collapse>
             <RightsWrapper requiredRights={[RightsDto.EditSettings]}>
               <UserPageSideBarItem
-                key="Settings"
+                sidebarKey="Settings"
                 link={buildLink(userId, "settings")}
                 text="Настройки"
               />
@@ -191,13 +191,13 @@ const UserPageSideBar = ({ user }: Props) => {
           <Divider />
           <List>
             <UserPageSideBarItem
-              key="ItemsTrade"
+              sidebarKey="ItemsTrade"
               link={buildLink(userId, "itemsTrade")}
               text="Обмен предметами"
             />
             <RightsWrapper requiredRights={[RightsDto.F1Predictions]}>
               <UserPageSideBarItem
-                key="F1PredictionsBingo"
+                sidebarKey="F1PredictionsBingo"
                 link={buildLink(userId, "f1Predictions/bingo")}
                 text="Бинго"
               />
@@ -211,13 +211,13 @@ const UserPageSideBar = ({ user }: Props) => {
           <List>
             {!isMyPage && (
               <UserPageSideBarItem
-                key="BackToMyPage"
+                sidebarKey="BackToMyPage"
                 link={buildLink(currentLoggedInUserId)}
                 text="Вернуться на мою страницу"
               />
             )}
             <UserPageSideBarItem
-              key="Logout"
+              sidebarKey="Logout"
               link={""}
               text="Выход"
               onClick={() => {
@@ -232,7 +232,7 @@ const UserPageSideBar = ({ user }: Props) => {
         <>
           <Divider />
           <List>
-            <UserPageSideBarItem key="Login" link={"/auth"} text="Логин" />
+            <UserPageSideBarItem sidebarKey="Login" link={"/auth"} text="Логин" />
           </List>
         </>
       )}

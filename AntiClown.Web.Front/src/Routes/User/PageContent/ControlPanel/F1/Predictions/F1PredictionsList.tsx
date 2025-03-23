@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { F1RaceDto } from "../../Dto/F1Predictions/F1RaceDto";
-import F1PredictionsApi from "../../Api/F1PredictionsApi";
-import { RightsWrapper } from "../../Components/RIghts/RightsWrapper";
-import { RightsDto } from "../../Dto/Rights/RightsDto";
+import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import { RightsWrapper } from "../../../../../../Components/RIghts/RightsWrapper";
+import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
 import {
   Checkbox,
-  FormControl, FormControlLabel,
+  FormControl,
+  FormControlLabel,
   MenuItem,
   Select,
   Stack,
 } from "@mui/material";
-import { Loader } from "../../Components/Loader/Loader";
-import F1PredictionStepMaster from "./F1PredictionStepMaster";
+import { Loader } from "../../../../../../Components/Loader/Loader";
+import F1Prediction from "./F1Prediction";
 
 export default function F1PredictionsList() {
   const [f1Races, setF1Races] = useState<F1RaceDto[] | undefined>();
@@ -34,16 +35,7 @@ export default function F1PredictionsList() {
 
   return (
     <RightsWrapper requiredRights={[RightsDto.F1Predictions]}>
-      <Stack
-        spacing={3}
-        direction={"column"}
-        sx={{
-          marginLeft: "16px",
-          marginTop: "8px",
-          marginBottom: "8px",
-          marginRight: "16px",
-        }}
-      >
+      <Stack spacing={3} direction={"column"}>
         {f1Races ? (
           <Stack direction={"row"} spacing={1}>
             <FormControl fullWidth>
@@ -76,15 +68,15 @@ export default function F1PredictionsList() {
                   }}
                 />
               }
-              label={"Только текущие"}
+              label={"Только текущие гонки"}
             />
           </Stack>
         ) : (
           <Loader />
         )}
-        {currentF1Race && (
-          <F1PredictionStepMaster key={currentF1Race.id} f1Race={currentF1Race} />
-        )}
+        {currentF1Race ? (
+          <F1Prediction key={currentF1Race.id} f1Race={currentF1Race} />
+        ) : null}
       </Stack>
     </RightsWrapper>
   );

@@ -3,7 +3,7 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface Props {
-  key: string;
+  sidebarKey: string;
   link: string;
   text: string;
   nesting?: number;
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function UserPageSideBarItem({
-  key,
+  sidebarKey,
   link,
   text,
   nesting = 1,
@@ -23,7 +23,7 @@ export default function UserPageSideBarItem({
   const location = useLocation();
 
   return (
-    <ListItem key={key} disablePadding>
+    <ListItem key={sidebarKey} disablePadding>
       <ListItemButton
         sx={{ pl: nesting * 2 }}
         onClick={onClick ?? (() => navigate(link))}

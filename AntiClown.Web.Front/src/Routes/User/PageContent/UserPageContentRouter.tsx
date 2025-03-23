@@ -9,19 +9,19 @@ import ItemsTrade from "./Interaction/ItemsTrade";
 import {UserDto} from "../../../Dto/Users/UserDto";
 import {Typography} from "@mui/material";
 import {Loader} from "../../../Components/Loader/Loader";
-import F1PredictionsList from "./ControlPanel/F1Predictions/F1PredictionsList";
+import F1PredictionsList from "./ControlPanel/F1/Predictions/F1PredictionsList";
 import F1PredictionsAdminList from "./Admin/F1/Predictions/F1PredictionsAdminList";
 import EditSettings from "./Admin/Settings/EditSettings";
-import F1PredictionsStandings from "./ControlPanel/F1Predictions/F1PredictionsStandings";
+import F1PredictionsStandings from "./ControlPanel/F1/Standings/F1PredictionsStandings";
 import F1PredictionsTeamsEditor from "./Admin/F1/Teams/F1PredictionsTeamsEditor";
-import F1BingoBoard from "./ControlPanel/F1Bingo/F1BingoBoard";
+import F1BingoBoard from "./ControlPanel/F1/Bingo/F1BingoBoard";
 import F1BingoCardsEditor from "./Admin/F1/Bingo/F1BingoCardsEditor";
 
 interface Props {
   user: UserDto | null | undefined;
 }
 
-const UserPageContent = ({ user }: Props) => {
+const UserPageContentRouter = ({ user }: Props) => {
   const { authStore } = useStore();
   const currentLoggedInUserId = authStore.loggedInUserId;
   const { userId } = useParams<"userId">();
@@ -65,4 +65,4 @@ const UserPageContent = ({ user }: Props) => {
   );
 };
 
-export default UserPageContent;
+export default UserPageContentRouter;

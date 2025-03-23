@@ -41,8 +41,8 @@ public class AnnounceEventService : IAnnounceEventService
             {
                 DateTimeRange = new DateTimeRangeDto
                 {
-                    From = DateTime.UtcNow.AddDays(-1),
-                    To = now,
+                    From = DateTime.UtcNow.AddDays(-1).AddMinutes(-1),
+                    To = now.AddMinutes(1),
                 },
             }
         );

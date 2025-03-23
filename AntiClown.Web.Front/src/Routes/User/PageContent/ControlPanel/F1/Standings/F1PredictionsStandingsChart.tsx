@@ -6,13 +6,14 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { F1PredictionsStandingsDto } from "../../../../../Dto/F1Predictions/F1PredictionsStandingsDto";
-import { DiscordMemberDto } from "../../../../../Dto/Users/DiscordMemberDto";
+import { F1PredictionsStandingsDto } from "../../../../../../Dto/F1Predictions/F1PredictionsStandingsDto";
+import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 interface Props {
+  season: number;
   standings: F1PredictionsStandingsDto;
   members: DiscordMemberDto[];
 }
@@ -45,6 +46,7 @@ export type ShowLastNumberOfRacesType =
   (typeof ShowLastNumberOfRaces)[keyof typeof ShowLastNumberOfRaces];
 
 export default function F1PredictionsStandingsChart({
+  season,
   standings,
   members,
 }: Props) {
@@ -78,8 +80,8 @@ export default function F1PredictionsStandingsChart({
     (a, b) => b.points[b.points.length - 1] - a.points[a.points.length - 1],
   );
 
-  const totalRaces = 30;
-  const maxPointsPerRace = 55;
+  const totalRaces = season === 2023 ? 20 : 30;
+  const maxPointsPerRace = season === 2023 ? 30 : 55;
   const possibleChampionPoints = series[0].points.map(
     (currentLeaderPoints, raceNumber) =>
       Math.max(
@@ -87,6 +89,7 @@ export default function F1PredictionsStandingsChart({
         currentLeaderPoints - (totalRaces - raceNumber) * maxPointsPerRace,
       ),
   );
+  console.log(possibleChampionPoints);
   if (possibleChampionPoints.filter((x) => x > 0).length > 0) {
     series.push({
       isMe: false,
@@ -138,7 +141,6 @@ export default function F1PredictionsStandingsChart({
     <Stack direction={"column"}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography variant="h6">График чемпионата</Typography>
-
         <FormControl>
           <Select
             labelId="last-races-count-select"

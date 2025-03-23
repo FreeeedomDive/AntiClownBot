@@ -1,11 +1,11 @@
 import axios from "axios";
-import {F1PredictionDto} from "../Dto/F1Predictions/F1PredictionDto";
-import {F1RaceDto} from "../Dto/F1Predictions/F1RaceDto";
-import {AddPredictionResultDto} from "../Dto/F1Predictions/AddPredictionResultDto";
-import {F1PredictionRaceResultDto} from "../Dto/F1Predictions/F1PredictionRaceResultDto";
-import {F1RaceFilterDto} from "../Dto/F1Predictions/F1RaceFilterDto";
-import {F1PredictionsStandingsDto} from "../Dto/F1Predictions/F1PredictionsStandingsDto";
-import {F1TeamDto} from "../Dto/F1Predictions/F1TeamDto";
+import { F1PredictionDto } from "../Dto/F1Predictions/F1PredictionDto";
+import { F1RaceDto } from "../Dto/F1Predictions/F1RaceDto";
+import { AddPredictionResultDto } from "../Dto/F1Predictions/AddPredictionResultDto";
+import { F1PredictionRaceResultDto } from "../Dto/F1Predictions/F1PredictionRaceResultDto";
+import { F1RaceFilterDto } from "../Dto/F1Predictions/F1RaceFilterDto";
+import { F1PredictionsStandingsDto } from "../Dto/F1Predictions/F1PredictionsStandingsDto";
+import { F1TeamDto } from "../Dto/F1Predictions/F1TeamDto";
 
 export default class F1PredictionsApi {
   static init = () => {
@@ -24,75 +24,68 @@ export default class F1PredictionsApi {
 
   static find = async (filter: F1RaceFilterDto): Promise<F1RaceDto[]> => {
     const result = await F1PredictionsApi.init().post<F1RaceDto[]>(
-      `find`, filter
+      `find`,
+      filter,
     );
     return result.data;
-  }
+  };
 
   static read = async (raceId: string): Promise<F1RaceDto> => {
-    const result = await F1PredictionsApi.init().get<F1RaceDto>(
-      raceId
-    );
+    const result = await F1PredictionsApi.init().get<F1RaceDto>(raceId);
     return result.data;
   };
 
   static addPrediction = async (
     raceId: string,
-    prediction: F1PredictionDto
+    prediction: F1PredictionDto,
   ): Promise<AddPredictionResultDto> => {
     const result = await F1PredictionsApi.init().post(
       `${raceId}/addPrediction`,
-      prediction
+      prediction,
     );
     return result.data;
   };
 
-  static close = async (
-    raceId: string
-  ): Promise<void> => {
-    await F1PredictionsApi.init().post(
-      `${raceId}/close`
-    );
+  static close = async (raceId: string): Promise<void> => {
+    await F1PredictionsApi.init().post(`${raceId}/close`);
   };
 
   static addResult = async (
     raceId: string,
-    result: F1PredictionRaceResultDto
+    result: F1PredictionRaceResultDto,
   ): Promise<void> => {
-    await F1PredictionsApi.init().post(
-      `${raceId}/addResult`,
-      result
-    );
+    await F1PredictionsApi.init().post(`${raceId}/addResult`, result);
   };
 
-  static finish = async (
-    raceId: string
-  ): Promise<void> => {
-    await F1PredictionsApi.init().post(
-      `${raceId}/finish`
-    );
+  static finish = async (raceId: string): Promise<void> => {
+    await F1PredictionsApi.init().post(`${raceId}/finish`);
   };
 
-  static getStandings = async (season?: number): Promise<F1PredictionsStandingsDto> => {
-    const qs = require('qs');
-    const result = await F1PredictionsApi.init().get(
-      `standings`, qs.stringify({"season": season}),
-    );
+  static getStandings = async (
+    season?: number,
+  ): Promise<F1PredictionsStandingsDto> => {
+    const result = await F1PredictionsApi.init().get(`standings`, {
+      params: { season },
+    });
     return result.data;
   };
 
   static getActiveTeams = async (): Promise<F1TeamDto[]> => {
     const result = await F1PredictionsApi.init().get(`teams`);
     return result.data;
-  }
+  };
 
-  static createOrUpdateTeam = async (teamName: string, firstDriver: string, secondDriver: string): Promise<void> => {
+  static createOrUpdateTeam = async (
+    teamName: string,
+    firstDriver: string,
+    secondDriver: string,
+  ): Promise<void> => {
     const team = {
       name: teamName,
       firstDriver: firstDriver,
       secondDriver: secondDriver,
-    }
+    };
     const result = await F1PredictionsApi.init().post(`teams`, team);
     return result.data;
-  }
+  };
 }

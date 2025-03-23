@@ -1,4 +1,4 @@
-import { F1BingoCardDto } from "../../../../../Dto/F1Bingo/F1BingoCardDto";
+import { F1BingoCardDto } from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
 import React from "react";
 import {
   Tooltip,
@@ -42,6 +42,7 @@ export default function F1BingoCard({ card }: Props) {
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
+        borderRadius: 2,
       }}
     >
       <CardContent>
