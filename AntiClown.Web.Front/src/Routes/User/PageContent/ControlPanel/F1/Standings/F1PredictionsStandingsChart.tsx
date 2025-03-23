@@ -37,12 +37,6 @@ const colors: string[] = [
   "#37c2ff",
 ];
 
-const maxPointsBySeason = {
-  2023: 30,
-  2024: 55,
-  2025: 55,
-};
-
 export const ShowLastNumberOfRaces = {
   All: "Показывать все гонки",
   Last5: "Показывать последние 5 гонок",
