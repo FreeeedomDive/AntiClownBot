@@ -66,7 +66,6 @@ export default function F1PredictionsStandingsTable({
         </TableHead>
         <TableBody>
           {sortedStandings.map((results) => {
-            console.log(results);
             const resultsUserId = results.find(
               (x) => x !== null && x?.userId !== null,
             )!.userId;
