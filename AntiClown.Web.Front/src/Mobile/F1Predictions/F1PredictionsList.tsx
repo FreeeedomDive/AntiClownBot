@@ -9,7 +9,6 @@ import {
   MenuItem,
   Select,
   Stack,
-  Typography,
 } from "@mui/material";
 import { Loader } from "../../Components/Loader/Loader";
 import F1PredictionStepMaster from "./F1PredictionStepMaster";
@@ -30,8 +29,8 @@ export default function F1PredictionsList() {
   }
 
   useEffect(() => {
-    loadRaces(isActive);
-  }, []);
+    loadRaces(isActive).catch(console.error);
+  }, [isActive]);
 
   return (
     <RightsWrapper requiredRights={[RightsDto.F1Predictions]}>
@@ -73,7 +72,7 @@ export default function F1PredictionsList() {
                   onChange={(x) => {
                     const onlyActive = x.target.checked;
                     setIsActive(onlyActive);
-                    loadRaces(onlyActive);
+                    loadRaces(onlyActive).catch(console.error);
                   }}
                 />
               }

@@ -3,11 +3,8 @@ import {
   Alert,
   Button,
   ButtonGroup,
-  Divider,
-  SelectChangeEvent,
   Snackbar,
   Stack,
-  Typography,
 } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -50,7 +47,7 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
       setTeams(teams);
     }
 
-    load();
+    load().catch(console.error);
   }, [f1Race.id]);
 
   const userPrediction = useMemo(() => {
