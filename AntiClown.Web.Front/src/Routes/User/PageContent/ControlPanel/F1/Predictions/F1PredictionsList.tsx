@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
-import { F1RaceDto } from "../../../../../Dto/F1Predictions/F1RaceDto";
-import { RightsWrapper } from "../../../../../Components/RIghts/RightsWrapper";
-import { RightsDto } from "../../../../../Dto/Rights/RightsDto";
+import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import { RightsWrapper } from "../../../../../../Components/RIghts/RightsWrapper";
+import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
 import {
   Checkbox,
   FormControl,
@@ -11,7 +11,7 @@ import {
   Select,
   Stack,
 } from "@mui/material";
-import { Loader } from "../../../../../Components/Loader/Loader";
+import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1Prediction from "./F1Prediction";
 
 export default function F1PredictionsList() {

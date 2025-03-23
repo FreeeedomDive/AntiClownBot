@@ -18,13 +18,13 @@ import { useStore } from "../../Stores";
 import { F1TeamDto } from "../../Dto/F1Predictions/F1TeamDto";
 import F1PredictionsApi from "../../Api/F1PredictionsApi";
 import { AddPredictionResultDto } from "../../Dto/F1Predictions/AddPredictionResultDto";
-import F1PredictionsTenthPlaceSelect from "../../Routes/User/PageContent/ControlPanel/F1Predictions/F1PredictionsTenthPlaceSelect";
+import F1PredictionsTenthPlaceSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsTenthPlaceSelect";
 import F1PredictionsDnfSelect, {
   DNFList,
-} from "../../Routes/User/PageContent/ControlPanel/F1Predictions/F1PredictionsDnfSelect";
-import F1PredictionsIncidentsSelect from "../../Routes/User/PageContent/ControlPanel/F1Predictions/F1PredictionsIncidentsSelect";
-import F1PredictionsFirstPlaceLeadSelect from "../../Routes/User/PageContent/ControlPanel/F1Predictions/F1PredictionsFirstPlaceLeadSelect";
-import F1PredictionsTeamsSelect from "../../Routes/User/PageContent/ControlPanel/F1Predictions/F1PredictionsTeamsSelect";
+} from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsDnfSelect";
+import F1PredictionsIncidentsSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsIncidentsSelect";
+import F1PredictionsFirstPlaceLeadSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsFirstPlaceLeadSelect";
+import F1PredictionsTeamsSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsTeamsSelect";
 
 interface Props {
   f1Race: F1RaceDto;

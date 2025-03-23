@@ -7,7 +7,7 @@ import {
 import {
   F1SafetyCarPredictionDto,
   F1SafetyCarsPredictionDto,
-} from "../../../../../Dto/F1Predictions/F1SafetyCarsPredictionDto";
+} from "../../../../../../../Dto/F1Predictions/F1SafetyCarsPredictionDto";
 import React from "react";
 import F1PredictionsSelectCard from "./F1PredictionsSelectCard";
 

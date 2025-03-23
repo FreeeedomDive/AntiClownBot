@@ -6,8 +6,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { F1PredictionsStandingsDto } from "../../../../../Dto/F1Predictions/F1PredictionsStandingsDto";
-import { DiscordMemberDto } from "../../../../../Dto/Users/DiscordMemberDto";
+import { F1PredictionsStandingsDto } from "../../../../../../Dto/F1Predictions/F1PredictionsStandingsDto";
+import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useState } from "react";
 import { useParams } from "react-router-dom";

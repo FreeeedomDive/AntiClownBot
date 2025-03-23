@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import F1BingoApi from "../../../../../Api/F1BingoApi";
-import { F1BingoCardDto } from "../../../../../Dto/F1Bingo/F1BingoCardDto";
-import { RightsDto } from "../../../../../Dto/Rights/RightsDto";
-import { RightsWrapper } from "../../../../../Components/RIghts/RightsWrapper";
+import F1BingoApi from "../../../../../../Api/F1BingoApi";
+import { F1BingoCardDto } from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
+import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
+import { RightsWrapper } from "../../../../../../Components/RIghts/RightsWrapper";
 import {Grid, Stack} from "@mui/material";
-import { Loader } from "../../../../../Components/Loader/Loader";
+import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1BingoCard from "./F1BingoCard";
 
 export default function F1BingoBoard() {
@@ -26,8 +26,8 @@ export default function F1BingoBoard() {
       setIsLoading(false);
     }
 
-    load();
-  }, []);
+    load().catch(console.error);
+  }, [season, userId]);
 
   return (
     <RightsWrapper requiredRights={[RightsDto.F1Predictions]}>
@@ -35,7 +35,7 @@ export default function F1BingoBoard() {
         {isLoading && <Loader />}
         {!isLoading && <Grid container spacing={1} sx={{ width: "100%", height: "100%", margin: "auto" }}>
           {bingoUserCards.map((card, index) => (
-            <Grid item key={index} xs={12} sm={6} md={4} lg={2.4} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <Grid item key={index} xs={2.4} sm={2.4} md={2.4} lg={2.4} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
               <F1BingoCard card={card} />
             </Grid>
           ))}

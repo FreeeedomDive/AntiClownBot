@@ -1,5 +1,5 @@
-import { DiscordMemberDto } from "../../../../../Dto/Users/DiscordMemberDto";
-import { F1PredictionUserResultDto } from "../../../../../Dto/F1Predictions/F1PredictionUserResultDto";
+import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
+import { F1PredictionUserResultDto } from "../../../../../../Dto/F1Predictions/F1PredictionUserResultDto";
 import {
   Avatar,
   Box,
@@ -14,11 +14,11 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { countTotalPoints } from "../../../../../Helpers/F1PredictionUserResultDtoHelpers";
+import { countTotalPoints } from "../../../../../../Helpers/F1PredictionUserResultDtoHelpers";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { F1RaceDto } from "../../../../../Dto/F1Predictions/F1RaceDto";
-import DiscordMember from "../../../../../Components/Users/DiscordMember";
+import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import DiscordMember from "../../../../../../Components/Users/DiscordMember";
 
 interface IProps {
   discordMember: DiscordMemberDto | undefined;

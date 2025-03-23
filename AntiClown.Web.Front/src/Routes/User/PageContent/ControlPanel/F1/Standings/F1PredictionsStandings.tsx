@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import F1PredictionsApi from "../../../../../Api/F1PredictionsApi";
-import DiscordMembersApi from "../../../../../Api/DiscordMembersApi";
-import { F1RaceDto } from "../../../../../Dto/F1Predictions/F1RaceDto";
-import { F1PredictionsStandingsDto } from "../../../../../Dto/F1Predictions/F1PredictionsStandingsDto";
-import { DiscordMemberDto } from "../../../../../Dto/Users/DiscordMemberDto";
+import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import DiscordMembersApi from "../../../../../../Api/DiscordMembersApi";
+import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import { F1PredictionsStandingsDto } from "../../../../../../Dto/F1Predictions/F1PredictionsStandingsDto";
+import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { F1PredictionsStandingsRow } from "./F1PredictionsStandingsRow";
-import { countTotalPoints } from "../../../../../Helpers/F1PredictionUserResultDtoHelpers";
+import { countTotalPoints } from "../../../../../../Helpers/F1PredictionUserResultDtoHelpers";
 import {
   Avatar,
   Badge,
@@ -19,8 +19,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { convertRaceNameToFlag } from "../../../../../Helpers/RaceNameToFlagHelper";
-import { Loader } from "../../../../../Components/Loader/Loader";
+import { convertRaceNameToFlag } from "../../../../../../Helpers/RaceNameToFlagHelper";
+import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1PredictionsStandingsChart from "./F1PredictionsStandingsChart";
 
 export default function F1PredictionsStandings() {

@@ -7,8 +7,8 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import React from "react";
-import { getDriversFromTeams } from "../../../../../Dto/F1Predictions/F1DriversHelpers";
-import { F1TeamDto } from "../../../../../Dto/F1Predictions/F1TeamDto";
+import { getDriversFromTeams } from "../../../../../../../Dto/F1Predictions/F1DriversHelpers";
+import { F1TeamDto } from "../../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1PredictionsSelectCard from "./F1PredictionsSelectCard";
 
 interface Props {

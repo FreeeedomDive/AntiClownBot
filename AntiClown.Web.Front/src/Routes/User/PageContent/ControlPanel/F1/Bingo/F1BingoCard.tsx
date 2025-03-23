@@ -1,4 +1,4 @@
-import { F1BingoCardDto } from "../../../../../Dto/F1Bingo/F1BingoCardDto";
+import { F1BingoCardDto } from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
 import React from "react";
 import {
   Tooltip,

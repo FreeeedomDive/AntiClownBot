@@ -3,7 +3,7 @@ import {
   ButtonGroup,
 } from "@mui/material";
 import React from "react";
-import {F1TeamDto} from "../../../../../Dto/F1Predictions/F1TeamDto";
+import {F1TeamDto} from "../../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1PredictionsSelectCard from "./F1PredictionsSelectCard";
 
 interface Props {
@@ -20,7 +20,7 @@ export default function F1PredictionsTeamsSelect({
   return (
     <F1PredictionsSelectCard title="Команды">
       {teams.map((team) => (
-        <ButtonGroup size="large" fullWidth>
+        <ButtonGroup key={team.name} size="large" fullWidth>
           <Button
             key={team.firstDriver}
             variant={

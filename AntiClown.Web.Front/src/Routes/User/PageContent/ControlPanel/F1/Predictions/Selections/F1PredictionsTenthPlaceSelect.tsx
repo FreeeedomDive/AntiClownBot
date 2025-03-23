@@ -1,7 +1,7 @@
 import { FormControl, MenuItem, Select } from "@mui/material";
-import { getDriversFromTeams } from "../../../../../Dto/F1Predictions/F1DriversHelpers";
+import { getDriversFromTeams } from "../../../../../../../Dto/F1Predictions/F1DriversHelpers";
 import React from "react";
-import { F1TeamDto } from "../../../../../Dto/F1Predictions/F1TeamDto";
+import { F1TeamDto } from "../../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1PredictionsSelectCard from "./F1PredictionsSelectCard";
 
 interface Props {
