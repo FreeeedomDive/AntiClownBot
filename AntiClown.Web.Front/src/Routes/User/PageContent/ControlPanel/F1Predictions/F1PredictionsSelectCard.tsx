@@ -1,4 +1,4 @@
-import {Card, CardContent, Stack, Typography} from "@mui/material";
+import { Card, CardContent, Stack, Typography } from "@mui/material";
 import React from "react";
 
 interface Props {
@@ -11,7 +11,6 @@ export default function F1PredictionsSelectCard({ children, title }: Props) {
     <Card
       sx={{
         width: "100%",
-        //height: "100%",
         backgroundColor: `transparent`,
         alignItems: "center",
         justifyContent: "center",

@@ -1,11 +1,6 @@
 import { useParams } from "react-router-dom";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Alert,
-  Fab,
-  Snackbar,
-  Stack,
-} from "@mui/material";
+import { Alert, Fab, Grid, Snackbar, Stack } from "@mui/material";
 import {
   F1SafetyCarPredictionDto,
   F1SafetyCarsPredictionObject,
@@ -141,40 +136,75 @@ export default function F1Prediction({ f1Race }: Props) {
 
   return (
     <Stack direction={"row"} width={"100%"}>
-      <Stack padding={1} spacing={2}>
-        <F1PredictionsTenthPlaceSelect
-          selected10Position={selected10Position}
-          setSelected10Position={setSelected10Position}
-          teams={teams}
-        />
+      <Grid
+        container
+        spacing={1}
+        sx={{ width: "100%", height: "100%", margin: "auto" }}
+      >
+        <Grid
+          item
+          key="F1PredictionsColumn1"
+          xs={12}
+          sm={12}
+          md={12}
+          lg={4}
+          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
+        >
+          <Stack direction={"column"} spacing={1} width={"100%"}>
+            <F1PredictionsTenthPlaceSelect
+              selected10Position={selected10Position}
+              setSelected10Position={setSelected10Position}
+              teams={teams}
+            />
+            <F1PredictionsDnfSelect
+              isDNFNobody={isDNFNobody}
+              setIsDNFNobody={setIsDNFNobody}
+              dnfList={dnfList}
+              setDnfList={setDnfList}
+              teams={teams}
+            />
+          </Stack>
+        </Grid>
 
-        <F1PredictionsDnfSelect
-          isDNFNobody={isDNFNobody}
-          setIsDNFNobody={setIsDNFNobody}
-          dnfList={dnfList}
-          setDnfList={setDnfList}
-          teams={teams}
-        />
-      </Stack>
-      <Stack flexGrow={1} padding={1} spacing={2}>
-        <F1PredictionsIncidentsSelect
-          selectedSafetyCarPrediction={selectedSafetyCarPrediction}
-          setSelectedSafetyCarPrediction={setSafetyCarPrediction}
-        />
+        <Grid
+          item
+          key="F1PredictionsColumn2"
+          xs={12}
+          sm={12}
+          md={12}
+          lg={4}
+          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
+        >
+          <Stack direction={"column"} spacing={1} width={"100%"}>
+            <F1PredictionsIncidentsSelect
+              selectedSafetyCarPrediction={selectedSafetyCarPrediction}
+              setSelectedSafetyCarPrediction={setSafetyCarPrediction}
+            />
+            <F1PredictionsFirstPlaceLeadSelect
+              firstPlaceLead={firstPlaceLead}
+              setFirstPlaceLead={setFirstPlaceLead}
+            />
+          </Stack>
+        </Grid>
 
-        <F1PredictionsFirstPlaceLeadSelect
-          firstPlaceLead={firstPlaceLead}
-          setFirstPlaceLead={setFirstPlaceLead}
-        />
-      </Stack>
-
-      <Stack flexGrow={2} padding={1} spacing={2}>
-        <F1PredictionsTeamsSelect
-          selectedDriversFromTeams={selectedDriversFromTeams}
-          setSelectedDriversFromTeams={setSelectedDriversFromTeams}
-          teams={teams}
-        />
-      </Stack>
+        <Grid
+          item
+          key="F1PredictionsColumn3"
+          xs={12}
+          sm={12}
+          md={12}
+          lg={4}
+          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
+        >
+          <Stack direction={"column"} spacing={1} width={"100%"}>
+            <F1PredictionsTeamsSelect
+              selectedDriversFromTeams={selectedDriversFromTeams}
+              setSelectedDriversFromTeams={setSelectedDriversFromTeams}
+              teams={teams}
+            />
+          </Stack>
+        </Grid>
+      </Grid>
       <Snackbar
         open={savePredictionResult !== null}
         autoHideDuration={3000}
