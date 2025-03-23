@@ -89,7 +89,6 @@ export default function F1PredictionsStandingsChart({
         currentLeaderPoints - (totalRaces - raceNumber) * maxPointsPerRace,
       ),
   );
-  console.log(possibleChampionPoints);
   if (possibleChampionPoints.filter((x) => x > 0).length > 0) {
     series.push({
       isMe: false,
@@ -116,7 +115,6 @@ export default function F1PredictionsStandingsChart({
       series[0].points.length > 10)
   ) {
     series = series.filter((x) => {
-      console.log(x.points.length - sliceCount - 1);
       return (
         x.points[x.points.length - sliceCount - 1] >=
         possibleChampionPoints[possibleChampionPoints.length - sliceCount - 1]
