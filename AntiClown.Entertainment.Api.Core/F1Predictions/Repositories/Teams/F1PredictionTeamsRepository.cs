@@ -3,13 +3,8 @@ using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
 
-public class F1PredictionTeamsRepository : IF1PredictionTeamsRepository
+public class F1PredictionTeamsRepository(ISqlRepository<F1PredictionTeamStorageElement> sqlRepository) : IF1PredictionTeamsRepository
 {
-    public F1PredictionTeamsRepository(ISqlRepository<F1PredictionTeamStorageElement> sqlRepository)
-    {
-        this.sqlRepository = sqlRepository;
-    }
-
     public async Task<F1Team[]> ReadAllAsync()
     {
         var result = await sqlRepository.ReadAllAsync();
@@ -20,7 +15,7 @@ public class F1PredictionTeamsRepository : IF1PredictionTeamsRepository
                 FirstDriver = x.FirstDriver,
                 SecondDriver = x.SecondDriver,
             }
-        ).ToArray();
+        ).OrderBy(x => x.Name).ToArray();
     }
 
     public async Task CreateOrUpdateAsync(F1Team team)
@@ -48,6 +43,4 @@ public class F1PredictionTeamsRepository : IF1PredictionTeamsRepository
             }
         );
     }
-
-    private readonly ISqlRepository<F1PredictionTeamStorageElement> sqlRepository;
 }
