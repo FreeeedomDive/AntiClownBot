@@ -170,28 +170,52 @@ public class TelegramBotWorker(
 
     private async Task<bool> CreateParty(string messageText, UserDto userWithCurrentTelegramId)
     {
-        if (!messageText.StartsWith("/cs") && !messageText.StartsWith("/dota"))
+        var allowedPrefixes = new[]
+        {
+            "/cs",
+            "/dota",
+            "/repo",
+        };
+
+        if (!allowedPrefixes.Any(messageText.StartsWith))
         {
             return false;
         }
 
-        var isCs = messageText.StartsWith("/cs");
-        var roleIdKey = isCs ? "CsRoleId" : "DotaRoleId";
-        var name = isCs ? "Cs2" : "Dota";
-        var description = messageText[messageText.Split()[0].Length..];
+        var args = messageText.Split(' ');
+        var commandName = args[0];
+        var description = args.Length > 1 ? string.Join(' ', args.Skip(1)) : string.Empty;
+        var roleIdKey = string.Empty;
+        var partyName = string.Empty;
+
+        if (commandName.Equals(allowedPrefixes[0]))
+        {
+            roleIdKey = "CsRoleId";
+            partyName = "CS2";
+        }
+        else if (commandName.Equals(allowedPrefixes[1]))
+        {
+            roleIdKey = "DotaRoleId";
+            partyName = "Dota";
+        }
+        else if (commandName.Equals(allowedPrefixes[2]))
+        {
+            roleIdKey = "RepoRoleId";
+            partyName = "R.E.P.O.";
+        }
+
         await antiClownEntertainmentApiClient.Parties.CreateAsync(
             new CreatePartyDto
             {
                 CreatorId = userWithCurrentTelegramId.Id,
                 MaxPlayers = 5,
-                Name = name,
+                Name = partyName,
                 RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, roleIdKey),
                 Description = description,
                 AuthorAutoJoin = true,
             }
         );
         return true;
-
     }
 
     private async Task HandleCallbackButton(Update update)

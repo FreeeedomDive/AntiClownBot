@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text;
 using AntiClown.Api.Client;
-using AntiClown.Api.Dto.Users;
 using AntiClown.DiscordBot.Client;
 using AntiClown.DiscordBot.Dto.Members;
 using AntiClown.Entertainment.Api.Client;
@@ -17,8 +16,7 @@ public class PartiesService(
     IAntiClownApiClient antiClownApiClient,
     ITelegramBotClient telegramBotClient,
     ILogger<PartiesService> logger
-)
-    : IPartiesService
+) : IPartiesService
 {
     public async Task CreateOrUpdateMessageAsync(Guid partyId)
     {
@@ -120,12 +118,21 @@ public class PartiesService(
                 },
             };
             var markup = party.IsOpened ? new InlineKeyboardMarkup(inlineButtons) : null;
+
+            // нашли сообщение - изменяем его
             if (partyIdToMessageId.TryGetValue(messageKey, out var messageId))
             {
                 await telegramBotClient.EditMessageTextAsync(chatId, messageId, messageText, replyMarkup: markup);
                 return;
             }
 
+            // если не нашли сообщение, но при этом пати закрыто - нет смысла создавать новое
+            if (!party.IsOpened)
+            {
+                return;
+            }
+
+            // не нашли сообщение - создаем новое
             var message = await telegramBotClient.SendTextMessageAsync(chatId, messageText, replyMarkup: markup);
             partyIdToMessageId.TryAdd(messageKey, message.MessageId);
             logger.LogInformation("Successfully sent message {chatId} with partyId {partyId}", chatId, partyId);
