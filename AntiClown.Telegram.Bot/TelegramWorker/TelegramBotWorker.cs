@@ -168,49 +168,27 @@ public class TelegramBotWorker(
         }
     }
 
-    private async Task<bool> CreateParty(string messageText, UserDto userWithCurrentTelegramId)
+    private async Task<bool> CreateParty(string messageText, UserDto userId)
     {
-        var allowedPrefixes = new[]
-        {
-            "/cs",
-            "/dota",
-            "/repo",
-        };
+        var allowedGames = PartyGameOptions.AllowedParties.ToDictionary(x => x.CommandPrefix);
 
-        if (!allowedPrefixes.Any(messageText.StartsWith))
+        var args = messageText.Split(' ');
+        var commandName = args[0];
+
+        if (!allowedGames.TryGetValue(commandName, out var partyGameOptions))
         {
             return false;
         }
 
-        var args = messageText.Split(' ');
-        var commandName = args[0];
         var description = args.Length > 1 ? string.Join(' ', args.Skip(1)) : string.Empty;
-        var roleIdKey = string.Empty;
-        var partyName = string.Empty;
-
-        if (commandName.Equals(allowedPrefixes[0]))
-        {
-            roleIdKey = "CsRoleId";
-            partyName = "CS2";
-        }
-        else if (commandName.Equals(allowedPrefixes[1]))
-        {
-            roleIdKey = "DotaRoleId";
-            partyName = "Dota";
-        }
-        else if (commandName.Equals(allowedPrefixes[2]))
-        {
-            roleIdKey = "RepoRoleId";
-            partyName = "R.E.P.O.";
-        }
 
         await antiClownEntertainmentApiClient.Parties.CreateAsync(
             new CreatePartyDto
             {
-                CreatorId = userWithCurrentTelegramId.Id,
-                MaxPlayers = 5,
-                Name = partyName,
-                RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, roleIdKey),
+                CreatorId = userId.Id,
+                MaxPlayers = partyGameOptions.MaxPlayers,
+                Name = partyGameOptions.PartyName,
+                RoleId = await antiClownDataApiClient.Settings.ReadAsync<ulong>(SettingsCategory.DiscordGuild, partyGameOptions.RoleIdKey),
                 Description = description,
                 AuthorAutoJoin = true,
             }
