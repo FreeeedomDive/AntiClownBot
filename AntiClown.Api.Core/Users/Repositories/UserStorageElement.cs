@@ -7,4 +7,5 @@ public class UserStorageElement : SqlStorageElement
 {
     [Column] public ulong DiscordId { get; set; }
     [Column] public long? TelegramId { get; set; }
+    [Column] public string? YandexId { get; set; }
 }
