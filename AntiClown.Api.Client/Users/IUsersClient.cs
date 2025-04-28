@@ -10,4 +10,5 @@ public interface IUsersClient
     Task<AntiClown.Api.Dto.Users.UserDto[]> FindAsync(AntiClown.Api.Dto.Users.UserFilterDto filter);
     Task<System.Guid> CreateAsync(AntiClown.Api.Dto.Users.NewUserDto newUser);
     Task BindTelegramAsync(System.Guid userId, long telegramId);
+    Task BindYandexIdAsync(System.Guid userId, string yandexId);
 }

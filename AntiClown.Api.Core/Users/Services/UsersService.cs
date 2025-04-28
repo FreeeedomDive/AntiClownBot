@@ -3,13 +3,8 @@ using AntiClown.Api.Core.Users.Repositories;
 
 namespace AntiClown.Api.Core.Users.Services;
 
-public class UsersService : IUsersService
+public class UsersService(IUsersRepository usersRepository) : IUsersService
 {
-    public UsersService(IUsersRepository usersRepository)
-    {
-        this.usersRepository = usersRepository;
-    }
-
     public async Task<User[]> ReadAllAsync()
     {
         return await usersRepository.ReadAllAsync();
@@ -32,5 +27,10 @@ public class UsersService : IUsersService
         await usersRepository.UpdateAsync(user);
     }
 
-    private readonly IUsersRepository usersRepository;
+    public async Task BindYandexIdAsync(Guid id, string? yandexUserId)
+    {
+        var user = await usersRepository.ReadAsync(id);
+        user.YandexId = yandexUserId;
+        await usersRepository.UpdateAsync(user);
+    }
 }

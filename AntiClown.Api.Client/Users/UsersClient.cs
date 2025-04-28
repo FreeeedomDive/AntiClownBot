@@ -46,5 +46,12 @@ public class UsersClient : IUsersClient
         await client.MakeRequestAsync(requestBuilder.Build());
     }
 
+    public async Task BindYandexIdAsync(System.Guid userId, string yandexId)
+    {
+        var requestBuilder = new RequestBuilder($"api/users/{userId}/bindYandexId", HttpRequestMethod.PATCH);
+        requestBuilder.WithQueryParameter("yandexId", yandexId);
+        await client.MakeRequestAsync(requestBuilder.Build());
+    }
+
     private readonly RestSharp.RestClient client;
 }

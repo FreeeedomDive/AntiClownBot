@@ -48,9 +48,17 @@ public class UsersController : Controller
     }
 
     [HttpPatch("{userId:guid}/bindTelegram")]
-    public async Task BindTelegramAsync([FromRoute] Guid userId, [FromQuery] long telegramId)
+    public async Task<ActionResult> BindTelegramAsync([FromRoute] Guid userId, [FromQuery] long telegramId)
     {
         await usersService.BindTelegramUserIdAsync(userId, telegramId);
+        return NoContent();
+    }
+
+    [HttpPatch("{userId:guid}/bindYandexId")]
+    public async Task<ActionResult> BindYandexIdAsync([FromRoute] Guid userId, [FromQuery] string yandexId)
+    {
+        await usersService.BindYandexIdAsync(userId, yandexId);
+        return NoContent();
     }
 
     private readonly IMapper mapper;

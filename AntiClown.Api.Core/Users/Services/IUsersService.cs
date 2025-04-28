@@ -8,4 +8,5 @@ public interface IUsersService
     Task<User> ReadAsync(Guid id);
     Task<User[]> FindAsync(UserFilter filter);
     Task BindTelegramUserIdAsync(Guid id, long telegramUserId);
+    Task BindYandexIdAsync(Guid id, string yandexId);
 }
