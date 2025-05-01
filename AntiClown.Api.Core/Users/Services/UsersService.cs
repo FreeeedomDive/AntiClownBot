@@ -31,6 +31,11 @@ public class UsersService(IUsersRepository usersRepository, IUserIntegrationsRep
         return await ReadAsync(result.Value);
     }
 
+    public async Task CreateOrUpdateCustomIntegration(Guid userId, string integrationName, string integrationUserId)
+    {
+        await userIntegrationsRepository.CreateOrUpdateAsync(userId, integrationName, integrationUserId);
+    }
+
     public async Task BindTelegramUserIdAsync(Guid id, long telegramUserId)
     {
         var user = await usersRepository.ReadAsync(id);
