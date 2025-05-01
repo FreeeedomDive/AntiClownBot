@@ -67,5 +67,5 @@ jobs:
         echo "$KUBECONFIG_CONTENT" > ./kubeconfig.yaml
         export KUBECONFIG=./kubeconfig.yaml
         kubectl apply -f $K8SFILENAME
-        kubectl wait --for=condition=complete job/$JOBNAME
+        kubectl wait --for=condition=complete job/$JOBNAME --timeout=120s
         kubectl delete job/$JOBNAME
