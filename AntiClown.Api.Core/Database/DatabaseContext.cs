@@ -24,4 +24,5 @@ public class DatabaseContext : PostgreSqlDbContext
     public DbSet<ShopStorageElement> Shops { get; set; }
     public DbSet<ShopItemStorageElement> ShopItems { get; set; }
     public DbSet<ShopStatsStorageElement> ShopStats { get; set; }
+    public DbSet<UserIntegrationStorageElement> Integrations { get; set; }
 }

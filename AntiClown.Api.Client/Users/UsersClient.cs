@@ -32,6 +32,20 @@ public class UsersClient : IUsersClient
         return await client.MakeRequestAsync<AntiClown.Api.Dto.Users.UserDto[]>(requestBuilder.Build());
     }
 
+    public async Task<AntiClown.Api.Dto.Users.FindByIntegrationResultDto> FindByIntegrationAsync(AntiClown.Api.Dto.Users.UserIntegrationFilterDto filter)
+    {
+        var requestBuilder = new RequestBuilder($"api/users/integrations/find", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(filter);
+        return await client.MakeRequestAsync<AntiClown.Api.Dto.Users.FindByIntegrationResultDto>(requestBuilder.Build());
+    }
+
+    public async Task CreateIntegrationAsync(AntiClown.Api.Dto.Users.CreateCustomIntegrationDto createCustomIntegration)
+    {
+        var requestBuilder = new RequestBuilder($"api/users/integrations", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(createCustomIntegration);
+        await client.MakeRequestAsync(requestBuilder.Build());
+    }
+
     public async Task<System.Guid> CreateAsync(AntiClown.Api.Dto.Users.NewUserDto newUser)
     {
         var requestBuilder = new RequestBuilder($"api/users/", HttpRequestMethod.POST);

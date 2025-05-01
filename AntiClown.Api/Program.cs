@@ -83,6 +83,7 @@ builder.Services.AddTransientWithProxy<IItemsRepository, ItemsRepository>();
 builder.Services.AddTransientWithProxy<IShopsRepository, ShopsRepository>();
 builder.Services.AddTransientWithProxy<IShopItemsRepository, ShopItemsRepository>();
 builder.Services.AddTransientWithProxy<IShopStatsRepository, ShopStatsRepository>();
+builder.Services.AddTransientWithProxy<IUserIntegrationsRepository, UserIntegrationsRepository>();
 
 // configure validators
 builder.Services.AddTransientWithProxy<IItemsValidator, ItemsValidator>();

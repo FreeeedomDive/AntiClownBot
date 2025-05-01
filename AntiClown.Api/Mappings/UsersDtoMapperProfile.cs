@@ -11,5 +11,6 @@ public class UsersDtoMapperProfile : Profile
         CreateMap<UserDto, User>().ReverseMap();
         CreateMap<UserFilterDto, UserFilter>();
         CreateMap<NewUserDto, NewUser>();
+        CreateMap<UserIntegrationFilterDto, UserIntegrationFilter>();
     }
 }
