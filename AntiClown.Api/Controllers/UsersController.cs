@@ -41,6 +41,16 @@ public class UsersController : Controller
         return mapper.Map<UserDto[]>(result);
     }
 
+    [HttpPost("findByIntegration")]
+    public async Task<ActionResult<FindByIntegrationResultDto>> FindByIntegration([FromBody] UserIntegrationFilterDto filter)
+    {
+        var result = await usersService.FindByIntegrationIdAsync(mapper.Map<UserIntegrationFilter>(filter));
+        return new FindByIntegrationResultDto
+        {
+            User = result is null ? null : mapper.Map<UserDto>(result),
+        };
+    }
+
     [HttpPost]
     public async Task<ActionResult<Guid>> Create([FromBody] NewUserDto newUser)
     {

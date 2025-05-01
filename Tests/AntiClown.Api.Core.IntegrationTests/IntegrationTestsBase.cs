@@ -5,7 +5,6 @@ using AntiClown.Api.Core.IntegrationTests.Common;
 using AntiClown.Api.Core.IntegrationTests.Mocks;
 using AntiClown.Api.Core.Inventory.Repositories;
 using AntiClown.Api.Core.Inventory.Services;
-using AntiClown.Api.Core.Options;
 using AntiClown.Api.Core.Shops.Repositories.Items;
 using AntiClown.Api.Core.Shops.Repositories.Shops;
 using AntiClown.Api.Core.Shops.Repositories.Stats;
@@ -42,6 +41,9 @@ public class IntegrationTestsBase
         var usersSqlRepository = new SqlRepository<UserStorageElement>(dbContextFactory);
         var usersRepository = new UsersRepository(usersSqlRepository, mapper);
 
+        var usersSqlIntegrationsRepository = new SqlRepository<UserIntegrationStorageElement>(dbContextFactory);
+        var userIntegrationsRepository = new UserIntegrationsRepository(usersSqlIntegrationsRepository);
+
         var economiesSqlRepository = new VersionedSqlRepository<EconomyStorageElement>(dbContextFactory);
         var economiesRepository = new EconomyRepository(economiesSqlRepository, mapper);
 
@@ -63,7 +65,7 @@ public class IntegrationTestsBase
         AntiClownDataApiClient = Substitute.For<IAntiClownDataApiClient>();
         ConfigureDataApiClientMock();
 
-        UsersService = new UsersService(usersRepository);
+        UsersService = new UsersService(usersRepository, userIntegrationsRepository);
         TransactionsService = new TransactionsService(transactionsRepository);
         EconomyService = new EconomyService(economiesRepository, UsersService, TransactionsService, AntiClownDataApiClient);
         LohotronRewardGenerator = Substitute.For<ILohotronRewardGenerator>();
