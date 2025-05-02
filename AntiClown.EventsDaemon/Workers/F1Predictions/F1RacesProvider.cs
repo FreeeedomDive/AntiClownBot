@@ -22,7 +22,7 @@ public class F1RacesProvider : IF1RacesProvider
                    new F1RaceInfo
                    {
                        Name = "Китай",
-                       PredictionsStartTime = new DateTime(2025, 03, 21, 0, 1, 0),
+                       PredictionsStartTime = new DateTime(2025, 03, 21, 0, 5, 0),
                    },
                    new F1RaceInfo
                    {
@@ -48,7 +48,7 @@ public class F1RacesProvider : IF1RacesProvider
                    new F1RaceInfo
                    {
                        Name = "США Майами",
-                       PredictionsStartTime = new DateTime(2025, 05, 02, 0, 1, 0),
+                       PredictionsStartTime = new DateTime(2025, 05, 02, 0, 5, 0),
                    },
                    new F1RaceInfo
                    {
@@ -89,7 +89,7 @@ public class F1RacesProvider : IF1RacesProvider
                    new F1RaceInfo
                    {
                        Name = "Бельгия",
-                       PredictionsStartTime = new DateTime(2025, 07, 25, 0, 1, 0),
+                       PredictionsStartTime = new DateTime(2025, 07, 25, 0, 5, 0),
                    },
                    new F1RaceInfo
                    {
@@ -125,7 +125,7 @@ public class F1RacesProvider : IF1RacesProvider
                    new F1RaceInfo
                    {
                        Name = "США Остин",
-                       PredictionsStartTime = new DateTime(2025, 10, 17, 0, 1, 0),
+                       PredictionsStartTime = new DateTime(2025, 10, 17, 0, 5, 0),
                    },
                    new F1RaceInfo
                    {
@@ -141,7 +141,7 @@ public class F1RacesProvider : IF1RacesProvider
                    new F1RaceInfo
                    {
                        Name = "Бразилия",
-                       PredictionsStartTime = new DateTime(2025, 11, 07, 0, 1, 0),
+                       PredictionsStartTime = new DateTime(2025, 11, 07, 0, 5, 0),
                    },
                    new F1RaceInfo
                    {
@@ -157,7 +157,7 @@ public class F1RacesProvider : IF1RacesProvider
                    new F1RaceInfo
                    {
                        Name = "Катар",
-                       PredictionsStartTime = new DateTime(2025, 11, 28, 0, 1, 0),
+                       PredictionsStartTime = new DateTime(2025, 11, 28, 0, 5, 0),
                    },
                    new F1RaceInfo
                    {

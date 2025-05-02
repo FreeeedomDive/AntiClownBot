@@ -13,20 +13,10 @@ public class F1PredictionStartWorker(
     protected override async Task<TimeSpan?> TryGetMillisecondsBeforeNextIterationAsync()
     {
         var now = DateTime.UtcNow;
-        var currentRacesNames = (await antiClownEntertainmentApiClient.F1Predictions.FindAsync(
-            new F1RaceFilterDto
-            {
-                Season = now.Year,
-                IsActive = true,
-            }
-        )).Select(x => x.Name).ToArray();
         var nextRace = f1RacesProvider
                        .GetRaces()
                        .OrderBy(x => x.PredictionsStartTime)
-                       .FirstOrDefault(
-                           x =>
-                               x.PredictionsStartTime > now && !currentRacesNames.Contains(x.Name)
-                       );
+                       .FirstOrDefault(x => x.PredictionsStartTime > now);
         return nextRace is null
             ? null
             : nextRace.PredictionsStartTime - now;
