@@ -1,6 +1,7 @@
 ﻿using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AntiClown.Web.Api.Options;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using RestSharp;
 using Xdd.HttpHelpers.Models.Extensions;
 
@@ -26,7 +27,7 @@ public class F1FastApiClient : IF1FastApiClient
                       .AddQueryParameter("raceId", raceId)
                       .AddQueryParameter("raceType", isSprint ? "Sprint" : "Race");
         var response = await restClient.ExecuteAsync(request);
-        logger.LogInformation("F1FastApi Response:\n{response}", response);
+        logger.LogInformation("F1FastApi Response:\n{response}", JsonConvert.SerializeObject(response, Formatting.Indented));
         return response.TryDeserialize<F1PredictionRaceResultDto>();
     }
 
