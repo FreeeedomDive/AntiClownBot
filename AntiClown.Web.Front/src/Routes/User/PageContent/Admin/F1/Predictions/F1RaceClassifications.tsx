@@ -23,34 +23,32 @@ export default function F1RaceClassifications({
   };
 
   return (
-    <Stack width={"30%"}>
-      <TableContainer>
-        <Table>
-          <TableBody>
-            {drivers.map((x, i) => (
-              <F1RaceClassificationsElement
-                f1Driver={x}
-                index={i}
-                isDnf={dnfDrivers.has(x)}
-                onAddDnfDriver={() => {
-                  dnfDrivers.add(x);
-                  setDnfDrivers(new Set(dnfDrivers));
-                }}
-                onRemoveDnfDriver={() => {
-                  dnfDrivers.delete(x);
-                  setDnfDrivers(new Set(dnfDrivers));
-                }}
-                moveUp={() => {
-                  swapDrivers(i, i - 1);
-                }}
-                moveDown={() => {
-                  swapDrivers(i, i + 1);
-                }}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Stack>
+    <TableContainer>
+      <Table>
+        <TableBody>
+          {drivers.map((x, i) => (
+            <F1RaceClassificationsElement
+              f1Driver={x}
+              index={i}
+              isDnf={dnfDrivers.has(x)}
+              onAddDnfDriver={() => {
+                dnfDrivers.add(x);
+                setDnfDrivers(new Set(dnfDrivers));
+              }}
+              onRemoveDnfDriver={() => {
+                dnfDrivers.delete(x);
+                setDnfDrivers(new Set(dnfDrivers));
+              }}
+              moveUp={() => {
+                swapDrivers(i, i - 1);
+              }}
+              moveDown={() => {
+                swapDrivers(i, i + 1);
+              }}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }

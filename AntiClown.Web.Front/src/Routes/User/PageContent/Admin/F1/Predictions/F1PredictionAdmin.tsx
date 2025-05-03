@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   Button,
   FormControl,
+  Grid,
   InputAdornment,
   OutlinedInput,
   Stack,
@@ -50,7 +51,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
       setFirstPlaceLead(String(result.result?.firstPlaceLead ?? ""));
     }
 
-    load();
+    load().catch(console.error);
   }, [f1Race.id]);
 
   const saveRaceResults = useCallback(async () => {
@@ -91,114 +92,151 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
   }, [currentF1Race.id]);
 
   return (
-    <Stack direction={"row"} spacing={16}>
-      <F1RaceClassifications
-        drivers={drivers}
-        setDrivers={setDrivers}
-        dnfDrivers={dnfDrivers}
-        setDnfDrivers={setDnfDrivers}
-      />
-      <Stack direction={"column"} spacing={2}>
-        <Stack direction={"row"} spacing={4} height={"45px"}>
-          <Button
-            variant="contained"
-            color="error"
-            disabled={incidents === 0}
-            onClick={() => setIncidents(incidents - 1)}
-          >
-            <Typography variant="h4">-</Typography>
-          </Button>
-          <Typography variant="h6">
-            Инциденты (VSC, SC, Red Flag): {incidents}
-          </Typography>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => setIncidents(incidents + 1)}
-          >
-            <Typography variant="h4">+</Typography>
-          </Button>
-        </Stack>
-        <Stack
-          spacing={4}
-          direction="row"
-          alignItems={"flex-start"}
-          justifyContent={"space-between"}
+    <Stack direction="row" width={"100%"}>
+      <Grid
+        container
+        spacing={1}
+        sx={{ width: "100%", height: "100%", margin: "auto" }}
+      >
+        <Grid
+          item
+          key={`F1PredictionsAdminColumn1`}
+          xs={12}
+          sm={12}
+          md={12}
+          lg={4}
+          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
         >
-          <Typography variant="h6">Отрыв 1 места</Typography>
-          <FormControl>
-            <OutlinedInput
-              id="outlined-adornment-weight"
-              endAdornment={
-                <InputAdornment position="end">в секундах</InputAdornment>
-              }
-              placeholder="5.169"
-              aria-describedby="outlined-weight-helper-text"
-              inputProps={{
-                "aria-label": "weight",
-              }}
-              value={firstPlaceLead}
-              onChange={(event) => {
-                const fixedValue = event.target.value
-                  .replace(/[^\d,.]/g, "")
-                  .replace(",", ".");
-
-                const numericValue = Number(fixedValue);
-
-                if (numericValue >= 0) {
-                  setFirstPlaceLead(fixedValue);
-                }
-              }}
+          <Stack direction={"column"} spacing={1} width={"100%"}>
+            <F1RaceClassifications
+              drivers={drivers}
+              setDrivers={setDrivers}
+              dnfDrivers={dnfDrivers}
+              setDnfDrivers={setDnfDrivers}
             />
-          </FormControl>
-        </Stack>
-        <LoadingButton
-          loading={isClosing}
-          disabled={isClosing || isPredictionsClosed}
-          color="error"
-          size="large"
-          variant="contained"
-          startIcon={<Block />}
-          onClick={closePredictions}
+          </Stack>
+        </Grid>
+        <Grid
+          item
+          key={`F1PredictionsAdminColumnEmpty`}
+          xs={12}
+          sm={12}
+          md={12}
+          lg={4}
+          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
+        />
+        <Grid
+          item
+          key={`F1PredictionsAdminColumn2`}
+          xs={12}
+          sm={12}
+          md={12}
+          lg={4}
+          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
         >
-          {isPredictionsClosed
-            ? "Предсказания закрыты"
-            : "Закрыть предсказания"}
-        </LoadingButton>
-        <LoadingButton
-          loading={isLoadingRaceResults}
-          disabled={isLoadingRaceResults}
-          color="success"
-          size="large"
-          variant="contained"
-          startIcon={<Download />}
-          onClick={loadRaceResults}
-        >
-          Загрузить результаты гонки
-        </LoadingButton>
-        <LoadingButton
-          loading={isSaving}
-          disabled={isSaving}
-          color="success"
-          size="large"
-          variant="contained"
-          startIcon={<Save />}
-          onClick={saveRaceResults}
-        >
-          Сохранить
-        </LoadingButton>
-        <LoadingButton
-          loading={isFinishing}
-          disabled={isFinishing}
-          color="primary"
-          size="large"
-          variant="contained"
-          startIcon={<Done />}
-          onClick={finishRace}
-        >
-          Завершить гонку и рассчитать результаты
-        </LoadingButton>
-      </Stack>
+          <Stack direction={"column"} spacing={1} width={"100%"}>
+            <Stack direction={"row"} spacing={4} height={"45px"}>
+              <Button
+                variant="contained"
+                color="error"
+                disabled={incidents === 0}
+                onClick={() => setIncidents(incidents - 1)}
+              >
+                <Typography variant="h4">-</Typography>
+              </Button>
+              <Typography variant="h6">
+                Инциденты (VSC, SC, Red Flag): {incidents}
+              </Typography>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={() => setIncidents(incidents + 1)}
+              >
+                <Typography variant="h4">+</Typography>
+              </Button>
+            </Stack>
+            <Stack
+              spacing={4}
+              direction="row"
+              alignItems={"flex-start"}
+              justifyContent={"space-between"}
+            >
+              <Typography variant="h6">Отрыв 1 места</Typography>
+              <FormControl>
+                <OutlinedInput
+                  id="outlined-adornment-weight"
+                  endAdornment={
+                    <InputAdornment position="end">в секундах</InputAdornment>
+                  }
+                  placeholder="5.169"
+                  aria-describedby="outlined-weight-helper-text"
+                  inputProps={{
+                    "aria-label": "weight",
+                  }}
+                  value={firstPlaceLead}
+                  onChange={(event) => {
+                    const fixedValue = event.target.value
+                      .replace(/[^\d,.]/g, "")
+                      .replace(",", ".");
+
+                    const numericValue = Number(fixedValue);
+
+                    if (numericValue >= 0) {
+                      setFirstPlaceLead(fixedValue);
+                    }
+                  }}
+                />
+              </FormControl>
+            </Stack>
+            <LoadingButton
+              loading={isClosing}
+              disabled={isClosing || isPredictionsClosed}
+              color="error"
+              size="large"
+              variant="contained"
+              startIcon={<Block />}
+              onClick={closePredictions}
+            >
+              {isPredictionsClosed
+                ? "Предсказания закрыты"
+                : "Закрыть предсказания"}
+            </LoadingButton>
+            <LoadingButton
+              loading={isLoadingRaceResults}
+              disabled={isLoadingRaceResults}
+              color="success"
+              size="large"
+              variant="contained"
+              startIcon={<Download />}
+              onClick={loadRaceResults}
+            >
+              Загрузить результаты гонки
+            </LoadingButton>
+            <LoadingButton
+              loading={isSaving}
+              disabled={isSaving}
+              color="success"
+              size="large"
+              variant="contained"
+              startIcon={<Save />}
+              onClick={saveRaceResults}
+            >
+              Сохранить
+            </LoadingButton>
+            <LoadingButton
+              loading={isFinishing}
+              disabled={isFinishing}
+              color="primary"
+              size="large"
+              variant="contained"
+              startIcon={<Done />}
+              onClick={finishRace}
+            >
+              Завершить гонку и рассчитать результаты
+            </LoadingButton>
+          </Stack>
+        </Grid>
+      </Grid>
     </Stack>
   );
 }
