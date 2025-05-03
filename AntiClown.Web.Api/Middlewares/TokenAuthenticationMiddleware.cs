@@ -11,8 +11,15 @@ public class TokenAuthenticationMiddleware(RequestDelegate next)
 {
     public async Task InvokeAsync(HttpContext context, IAntiClownApiClient antiClownApiClient, IAntiClownDataApiClient antiClownDataApiClient)
     {
-        var endpointMetadataCollection = context.GetEndpoint()!.Metadata;
-        var isRequireAuth = endpointMetadataCollection.OfType<RequireUserTokenAttribute>().FirstOrDefault() is not null;
+        var endpointMetadata = context.GetEndpoint()?.Metadata;
+        // if we didn't find an endpoint, ASP.NET will handle it as 404 later
+        if (endpointMetadata is null)
+        {
+            await next(context);
+            return;
+        }
+
+        var isRequireAuth = endpointMetadata.OfType<RequireUserTokenAttribute>().FirstOrDefault() is not null;
         if (!isRequireAuth)
         {
             await next(context);
