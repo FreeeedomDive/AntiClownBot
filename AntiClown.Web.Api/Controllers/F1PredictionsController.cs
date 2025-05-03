@@ -43,7 +43,7 @@ public class F1PredictionsController(
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Exception when trying to get classifications from F1FastApi");
+            logger.LogWarning(e, "Exception when trying to get classifications from F1FastApi");
             return new F1RaceResultDto
             {
                 Success = false,

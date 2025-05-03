@@ -12,7 +12,7 @@ import F1RaceClassifications from "./F1RaceClassifications";
 import { LoadingButton } from "@mui/lab";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
-import {Block, Done, Download, Save} from "@mui/icons-material";
+import { Block, Done, Download, Save } from "@mui/icons-material";
 import F1FastApi from "../../../../../../Api/F1FastApi";
 
 interface Props {
@@ -30,11 +30,13 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingRaceResults, setIsLoadingRaceResults] = useState(false);
   const [isFinishing, setIsFinishing] = useState(false);
+  const [isPredictionsClosed, setIsPredictionsClosed] = useState(false);
 
   useEffect(() => {
     async function load() {
       const result = await F1PredictionsApi.read(f1Race.id);
       setCurrentF1Race(result);
+      setIsPredictionsClosed(!result.isOpened);
 
       const teams = await F1PredictionsApi.getActiveTeams();
 
@@ -67,7 +69,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
     setIsLoadingRaceResults(true);
     const raceResult = await F1FastApi.getRaceResult(currentF1Race.id);
     if (raceResult.success && !!raceResult.result) {
-      setDrivers(raceResult.result.classification,);
+      setDrivers(raceResult.result.classification);
       setDnfDrivers(new Set(raceResult.result.dnfDrivers));
       setIncidents(raceResult.result.safetyCars);
       setFirstPlaceLead(String(raceResult.result.firstPlaceLead));
@@ -78,6 +80,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
   const closePredictions = useCallback(async () => {
     setIsClosing(true);
     await F1PredictionsApi.close(currentF1Race.id);
+    setIsPredictionsClosed(true);
     setIsClosing(false);
   }, [currentF1Race.id]);
 
@@ -151,14 +154,16 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
         </Stack>
         <LoadingButton
           loading={isClosing}
-          disabled={isClosing}
+          disabled={isClosing || isPredictionsClosed}
           color="error"
           size="large"
           variant="contained"
           startIcon={<Block />}
           onClick={closePredictions}
         >
-          Закрыть предсказания
+          {isPredictionsClosed
+            ? "Предсказания закрыты"
+            : "Закрыть предсказания"}
         </LoadingButton>
         <LoadingButton
           loading={isLoadingRaceResults}
