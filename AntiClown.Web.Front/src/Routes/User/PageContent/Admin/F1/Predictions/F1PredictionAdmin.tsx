@@ -12,7 +12,8 @@ import F1RaceClassifications from "./F1RaceClassifications";
 import { LoadingButton } from "@mui/lab";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
-import { Block, Done, Save } from "@mui/icons-material";
+import {Block, Done, Download, Save} from "@mui/icons-material";
+import F1FastApi from "../../../../../../Api/F1FastApi";
 
 interface Props {
   f1Race: F1RaceDto;
@@ -27,6 +28,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>();
   const [isClosing, setIsClosing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingRaceResults, setIsLoadingRaceResults] = useState(false);
   const [isFinishing, setIsFinishing] = useState(false);
 
   useEffect(() => {
@@ -36,12 +38,14 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
 
       const teams = await F1PredictionsApi.getActiveTeams();
 
-      setDrivers(result.result?.classification.length === 0
-        ? getDriversFromTeams(teams)
-        : result.result.classification);
-      setDnfDrivers(new Set(result.result?.dnfDrivers ?? []))
+      setDrivers(
+        result.result?.classification.length === 0
+          ? getDriversFromTeams(teams)
+          : result.result.classification,
+      );
+      setDnfDrivers(new Set(result.result?.dnfDrivers ?? []));
       setIncidents(result.result?.safetyCars ?? 0);
-      setFirstPlaceLead(String(result.result?.firstPlaceLead ?? ""))
+      setFirstPlaceLead(String(result.result?.firstPlaceLead ?? ""));
     }
 
     load();
@@ -58,6 +62,18 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
     });
     setIsSaving(false);
   }, [currentF1Race.id, dnfDrivers, drivers, firstPlaceLead, incidents]);
+
+  const loadRaceResults = useCallback(async () => {
+    setIsLoadingRaceResults(true);
+    const raceResult = await F1FastApi.getRaceResult(currentF1Race.id);
+    if (raceResult.success && !!raceResult.result) {
+      setDrivers(raceResult.result.classification,);
+      setDnfDrivers(new Set(raceResult.result.dnfDrivers));
+      setIncidents(raceResult.result.safetyCars);
+      setFirstPlaceLead(String(raceResult.result.firstPlaceLead));
+    }
+    setIsLoadingRaceResults(false);
+  }, [currentF1Race.id]);
 
   const closePredictions = useCallback(async () => {
     setIsClosing(true);
@@ -143,6 +159,17 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
           onClick={closePredictions}
         >
           Закрыть предсказания
+        </LoadingButton>
+        <LoadingButton
+          loading={isLoadingRaceResults}
+          disabled={isLoadingRaceResults}
+          color="success"
+          size="large"
+          variant="contained"
+          startIcon={<Download />}
+          onClick={loadRaceResults}
+        >
+          Загрузить результаты гонки
         </LoadingButton>
         <LoadingButton
           loading={isSaving}
