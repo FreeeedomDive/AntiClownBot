@@ -104,7 +104,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
           xs={12}
           sm={12}
           md={12}
-          lg={4}
+          lg={5}
           sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
         >
           <Stack direction={"column"} spacing={1} width={"100%"}>
@@ -122,7 +122,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
           xs={12}
           sm={12}
           md={12}
-          lg={4}
+          lg={2}
           sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
         />
         <Grid
@@ -131,7 +131,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
           xs={12}
           sm={12}
           md={12}
-          lg={4}
+          lg={5}
           sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
         >
           <Stack direction={"column"} spacing={1} width={"100%"}>
