@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Web.Api.Controllers;
 
-[Route("webApi/f1Predictions")]
-[RequireUserToken]
+[Route("webApi/f1Predictions"), RequireUserToken]
 public class F1PredictionsController(
     IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
     IF1FastApiClient f1FastApiClient,
@@ -88,9 +87,103 @@ public class F1PredictionsController(
     }
 
     [HttpGet("standings")]
-    public async Task<Dictionary<Guid, F1PredictionUserResultDto?[]>> ReadStandingsAsync(int? season = null)
+    public async Task<ActionResult<Dictionary<Guid, F1PredictionUserResultDto?[]>>> ReadStandingsAsync(int? season = null)
     {
         return await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season);
+    }
+
+    [HttpGet("chart")]
+    public async Task<ActionResult<F1ChartsDto>> ReadChart(int? season = null)
+    {
+        season ??= DateTime.Now.Year;
+        var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season);
+        var races = await antiClownEntertainmentApiClient.F1Predictions.FindAsync(
+            new F1RaceFilterDto
+            {
+                Season = season.Value,
+                IsActive = false,
+            }
+        );
+        var charts = GetUsersCharts(standings);
+        var result = new F1ChartsDto
+        {
+            UsersCharts = charts,
+            ChampionChart = GetChampionChart(charts.FirstOrDefault(), races),
+        };
+
+        return result;
+    }
+
+    private static F1UserChartDto[] GetUsersCharts(Dictionary<Guid, F1PredictionUserResultDto?[]> standings)
+    {
+        var usersCharts = new List<F1UserChartDto>();
+        foreach (var userResults in standings)
+        {
+            var totalPoints = 0;
+            var userPoints = new List<int>([0]);
+            foreach (var userResult in userResults.Value)
+            {
+                totalPoints += userResult?.TotalPoints ?? 0;
+                userPoints.Add(totalPoints);
+            }
+
+            usersCharts.Add(
+                new F1UserChartDto
+                {
+                    UserId = userResults.Key,
+                    Points = userPoints.ToArray(),
+                }
+            );
+        }
+
+        return usersCharts.OrderByDescending(x => x.Points.Last()).ToArray();
+    }
+
+    private static F1UserChartDto GetChampionChart(
+        F1UserChartDto? leaderChart,
+        F1RaceDto[] races
+    )
+    {
+        var result = new F1UserChartDto
+        {
+            UserId = Guid.Empty,
+            Points = [],
+        };
+        var season = races.FirstOrDefault()?.Season;
+        if (leaderChart is null || season is null)
+        {
+            return result;
+        }
+
+        var totalRaces = GetTotalRacesCount(season.Value);
+        var championPoints = leaderChart
+                             .Points
+                             .Select((points, raceNumber) => Math.Max(0, points - (totalRaces - raceNumber) * GetMaxPointsPerRace(races[raceNumber])))
+                             .ToArray();
+
+        return result with { Points = championPoints };
+    }
+
+    private static int GetTotalRacesCount(int season)
+    {
+        return season switch
+        {
+            2023 => 20,
+            2024 or 2025 => 30,
+            _ => 0,
+        };
+    }
+
+    private static int GetMaxPointsPerRace(F1RaceDto race)
+    {
+        return race.Season switch
+        {
+            2023 => 30,
+            2024 => 55,
+            2025 when race.IsSprint => F1PredictionsPointsHelper.CalculateSprintPoints(55),
+            2025 when !race.IsSprint => 55,
+            _ => 0,
+        };
     }
 
     [HttpGet("teams")]

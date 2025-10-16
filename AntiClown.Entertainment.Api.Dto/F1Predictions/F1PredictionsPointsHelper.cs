@@ -1,7 +1,19 @@
-﻿namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
+﻿namespace AntiClown.Entertainment.Api.Dto.F1Predictions;
 
 public static class F1PredictionsPointsHelper
 {
+    public static int CalculateSprintPoints(int points)
+    {
+        return points / SprintRacePointsPercent * 100;
+    }
+
+    private const int SprintRacePointsPercent = 30;
+
+    public const int NoDnfPredictionPoints = 10;
+    public const int DnfPredictionPoints = 2;
+
+    public const int IncidentsPredictionPoints = 5;
+
     public static readonly Dictionary<int, int> PointsByFinishPlaceDistribution = new()
     {
         { 1, 1 },
@@ -25,11 +37,4 @@ public static class F1PredictionsPointsHelper
         { 19, 1 },
         { 20, 1 },
     };
-
-    public const int NoDnfPredictionPoints = 10;
-    public const int DnfPredictionPoints = 2;
-
-    public const int IncidentsPredictionPoints = 5;
-
-    public const int SprintRacePointsPercent = 30;
 }

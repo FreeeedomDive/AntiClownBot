@@ -2,6 +2,7 @@
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
+using AntiClown.Entertainment.Api.Dto.F1Predictions;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 
@@ -29,8 +30,7 @@ public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1Predictio
 
         var resultsByUserId = race
                               .Predictions
-                              .Select(
-                                  prediction => new F1PredictionResult
+                              .Select(prediction => new F1PredictionResult
                                   {
                                       RaceId = race.Id,
                                       UserId = prediction.UserId,
@@ -58,13 +58,12 @@ public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1Predictio
         var closestFirstPlaceLeadPredictionResult = resultsByUserId[closestPrediction.UserId];
         closestFirstPlaceLeadPredictionResult.FirstPlaceLeadPoints = 5;
 
-        var results = resultsByUserId.Values.Select(
-            x =>
+        var results = resultsByUserId.Values.Select(x =>
             {
                 x.TotalPoints = x.TenthPlacePoints + x.DnfsPoints + x.SafetyCarsPoints + x.FirstPlaceLeadPoints + x.TeamMatesPoints;
                 if (race.IsSprint)
                 {
-                    x.TotalPoints = x.TotalPoints * F1PredictionsPointsHelper.SprintRacePointsPercent / 100;
+                    x.TotalPoints = F1PredictionsPointsHelper.CalculateSprintPoints(x.TotalPoints);
                 }
 
                 return x;
