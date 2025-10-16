@@ -6,16 +6,15 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { F1PredictionsStandingsDto } from "../../../../../../Dto/F1Predictions/F1PredictionsStandingsDto";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { F1ChartsDto } from "../../../../../../Dto/F1Predictions/F1ChartsDto";
 
 interface Props {
-  season: number;
-  standings: F1PredictionsStandingsDto;
   members: DiscordMemberDto[];
+  charts: F1ChartsDto;
 }
 
 interface PredictionsSeries {
@@ -46,54 +45,27 @@ export type ShowLastNumberOfRacesType =
   (typeof ShowLastNumberOfRaces)[keyof typeof ShowLastNumberOfRaces];
 
 export default function F1PredictionsStandingsChart({
-  season,
-  standings,
   members,
+  charts,
 }: Props) {
   const [showLastRacesCount, setShowLastRacesCount] =
     useState<ShowLastNumberOfRacesType>(ShowLastNumberOfRaces.All);
 
   const { userId } = useParams<"userId">();
   let series = Array.of<PredictionsSeries>();
-  for (let standingsUserId in standings) {
-    const userResults = standings[standingsUserId];
-    let currentSum = 0;
-    const points = [currentSum];
-    for (const raceResult of userResults) {
-      if (raceResult === null || raceResult === undefined) {
-        points.push(currentSum);
-        continue;
-      }
-
-      currentSum += raceResult.totalPoints;
-      points.push(currentSum);
-    }
-
-    const user = members.find((x) => x.userId === standingsUserId);
+  for (const chart of charts.usersCharts) {
+    const user = members.find((x) => x.userId === chart.userId);
     series.push({
-      isMe: standingsUserId === userId,
+      isMe: chart.userId === userId,
       userName: user?.serverName ?? user?.userName ?? "",
-      points: points,
+      points: chart.points,
     });
   }
-  series.sort(
-    (a, b) => b.points[b.points.length - 1] - a.points[a.points.length - 1],
-  );
-
-  const totalRaces = season === 2023 ? 20 : 30;
-  const maxPointsPerRace = season === 2023 ? 30 : 55;
-  const possibleChampionPoints = series[0].points.map(
-    (currentLeaderPoints, raceNumber) =>
-      Math.max(
-        0,
-        currentLeaderPoints - (totalRaces - raceNumber) * maxPointsPerRace,
-      ),
-  );
-  if (possibleChampionPoints.filter((x) => x > 0).length > 0) {
+  if (charts.championChart.points.filter((x) => x > 0).length > 0) {
     series.push({
       isMe: false,
-      userName: "Необходимое количество очков для чемпионства",
-      points: possibleChampionPoints,
+      userName: "Чемпион",
+      points: charts.championChart.points,
     });
   }
 
@@ -117,7 +89,9 @@ export default function F1PredictionsStandingsChart({
     series = series.filter((x) => {
       return (
         x.points[x.points.length - sliceCount - 1] >=
-        possibleChampionPoints[possibleChampionPoints.length - sliceCount - 1]
+        charts.championChart.points[
+          charts.championChart.points.length - sliceCount - 1
+        ]
       );
     });
   }
