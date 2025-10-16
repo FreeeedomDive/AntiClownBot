@@ -6,6 +6,7 @@ import { F1PredictionRaceResultDto } from "../Dto/F1Predictions/F1PredictionRace
 import { F1RaceFilterDto } from "../Dto/F1Predictions/F1RaceFilterDto";
 import { F1PredictionsStandingsDto } from "../Dto/F1Predictions/F1PredictionsStandingsDto";
 import { F1TeamDto } from "../Dto/F1Predictions/F1TeamDto";
+import { F1ChartsDto } from "../Dto/F1Predictions/F1ChartsDto";
 
 export default class F1PredictionsApi {
   static init = () => {
@@ -65,6 +66,13 @@ export default class F1PredictionsApi {
     season?: number,
   ): Promise<F1PredictionsStandingsDto> => {
     const result = await F1PredictionsApi.init().get(`standings`, {
+      params: { season },
+    });
+    return result.data;
+  };
+
+  static getCharts = async (season?: number): Promise<F1ChartsDto> => {
+    const result = await F1PredictionsApi.init().get(`charts`, {
       params: { season },
     });
     return result.data;
