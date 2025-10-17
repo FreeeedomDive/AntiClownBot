@@ -92,8 +92,8 @@ public class F1PredictionsController(
         return await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season);
     }
 
-    [HttpGet("chart")]
-    public async Task<ActionResult<F1ChartsDto>> ReadChart(int? season = null)
+    [HttpGet("charts")]
+    public async Task<ActionResult<F1ChartsDto>> ReadCharts(int? season = null)
     {
         season ??= DateTime.Now.Year;
         var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season);
@@ -158,7 +158,10 @@ public class F1PredictionsController(
         var totalRaces = GetTotalRacesCount(season.Value);
         var championPoints = leaderChart
                              .Points
-                             .Select((points, raceNumber) => Math.Max(0, points - (totalRaces - raceNumber) * GetMaxPointsPerRace(races[raceNumber])))
+                             .Select((points, raceNumber) => raceNumber == 0
+                                 ? 0
+                                 : Math.Max(0, points - (totalRaces - raceNumber) * GetMaxPointsPerRace(races[raceNumber - 1]))
+                             )
                              .ToArray();
 
         return result with { Points = championPoints };
