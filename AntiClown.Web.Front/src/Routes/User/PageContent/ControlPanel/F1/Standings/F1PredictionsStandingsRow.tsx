@@ -11,6 +11,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React from "react";
@@ -19,6 +20,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import DiscordMember from "../../../../../../Components/Users/DiscordMember";
+import { InfoOutlined } from "@mui/icons-material";
 
 interface IProps {
   discordMember: DiscordMemberDto | undefined;
@@ -106,6 +108,17 @@ export function F1PredictionsStandingsRow({
                     </TableCell>
                     <TableCell key={"head_sum"} align="center">
                       Сумма
+                      <Tooltip title="За спринт начисляется 30% очков" arrow>
+                        <IconButton
+                          sx={{
+                            minWidth: "auto",
+                            borderRadius: "50%",
+                            backgroundColor: "transparent",
+                          }}
+                        >
+                          <InfoOutlined sx={{ fontSize: 18 }} />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 </TableHead>

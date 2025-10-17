@@ -25,6 +25,7 @@ export default function F1PredictionsStandings() {
 
   useEffect(() => {
     async function load() {
+      setIsLoading(true);
       const allFinishedRaces = await F1PredictionsApi.find({
         isActive: false,
         season,
@@ -51,13 +52,11 @@ export default function F1PredictionsStandings() {
 
   return (
     <Stack direction={"column"} spacing={2}>
+      <F1PredictionsStandingsSeasonSelect
+        season={season}
+        setSeason={setSeason}
+      />
       {isLoading && <Loader />}
-      {!isLoading && (
-        <F1PredictionsStandingsSeasonSelect
-          season={season}
-          setSeason={setSeason}
-        />
-      )}
       {!isLoading && sortedStandings && sortedStandings.length === 0 && (
         <Typography variant={"h5"}>Сезон {season} еще не стартовал</Typography>
       )}
