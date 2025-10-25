@@ -14,6 +14,8 @@ public static class F1PredictionsPointsHelper
 
     public const int IncidentsPredictionPoints = 5;
 
+    public const int MaxPointsForTenthPlacePrediction = 25;
+
     public static readonly Dictionary<int, int> PointsByFinishPlaceDistribution = new()
     {
         { 1, 1 },
@@ -25,7 +27,7 @@ public static class F1PredictionsPointsHelper
         { 7, 12 },
         { 8, 15 },
         { 9, 18 },
-        { 10, 25 },
+        { 10, MaxPointsForTenthPlacePrediction },
         { 11, 18 },
         { 12, 15 },
         { 13, 12 },

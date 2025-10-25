@@ -81,17 +81,16 @@ public class F1CommandModule(
                 var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
                 var stringBuilder = new StringBuilder($"Полная таблица: {webOptions.Value.FrontApplicationUrl}/f1Predictions\n```\n");
                 var predictionsTable = standings
-                                       .Select(
-                                           kv => new
+                                       .Select(kv => new
                                            {
                                                UserId = kv.Key,
                                                Predictions = kv.Value,
-                                               TotalPoints = kv.Value.Select(
-                                                   p => p?.TotalPoints ?? 0
+                                               TotalPoints = kv.Value.Select(p => p?.TotalPoints ?? 0
                                                ).Sum(),
                                            }
                                        )
-                                       .OrderByDescending(x => x.TotalPoints);
+                                       .OrderByDescending(x => x.TotalPoints)
+                                       .ThenByDescending(x => x.Predictions.Count(p => p?.TenthPlacePoints == F1PredictionsPointsHelper.MaxPointsForTenthPlacePrediction));
                 var position = 1;
                 foreach (var userPredictions in predictionsTable)
                 {

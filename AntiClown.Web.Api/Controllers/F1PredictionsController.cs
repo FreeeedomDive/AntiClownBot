@@ -136,7 +136,12 @@ public class F1PredictionsController(
             );
         }
 
-        return usersCharts.OrderByDescending(x => x.Points.Last()).ToArray();
+        var ordered = usersCharts
+                      .OrderByDescending(x => x.Points.Last())
+                      .ThenByDescending(x => standings[x.UserId].Count(p => p?.TenthPlacePoints == F1PredictionsPointsHelper.MaxPointsForTenthPlacePrediction))
+                      .ToArray();
+
+        return ordered;
     }
 
     private static F1UserChartDto GetChampionChart(
