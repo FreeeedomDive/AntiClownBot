@@ -108,7 +108,7 @@ public class F1PredictionsController(
         var result = new F1ChartsDto
         {
             UsersCharts = charts,
-            ChampionChart = GetChampionChart(charts.FirstOrDefault(), races),
+            ChampionChart = GetChampionChart(season.Value, charts.FirstOrDefault(), races),
         };
 
         return result;
@@ -145,6 +145,7 @@ public class F1PredictionsController(
     }
 
     private static F1UserChartDto GetChampionChart(
+        int season,
         F1UserChartDto? leaderChart,
         F1RaceDto[] races
     )
@@ -154,42 +155,49 @@ public class F1PredictionsController(
             UserId = Guid.Empty,
             Points = [],
         };
-        var season = races.FirstOrDefault()?.Season;
-        if (leaderChart is null || season is null)
+        if (leaderChart is null)
         {
             return result;
         }
 
-        var totalRaces = GetTotalRacesCount(season.Value);
+        var (racesCount, sprintsCount) = GetTotalRacesCount(season);
+        var totalPointsLeft =
+            racesCount * GetMaxPointsPerRace(season)
+            + sprintsCount * F1PredictionsPointsHelper.CalculateSprintPoints(GetMaxPointsPerRace(season));
         var championPoints = leaderChart
                              .Points
-                             .Select((points, raceNumber) => raceNumber == 0
-                                 ? 0
-                                 : Math.Max(0, points - (totalRaces - raceNumber) * GetMaxPointsPerRace(races[raceNumber - 1]))
+                             .Select((points, raceNumber) =>
+                                 {
+                                     var championPointsForRace = points - totalPointsLeft;
+                                     var race = races[raceNumber];
+                                     totalPointsLeft -= race.IsSprint && sprintsCount > 0
+                                         ? GetMaxPointsPerRace(season) * F1PredictionsPointsHelper.CalculateSprintPoints(GetMaxPointsPerRace(season))
+                                         : GetMaxPointsPerRace(season);
+                                     return Math.Max(0, championPointsForRace);
+                                 }
                              )
                              .ToArray();
 
         return result with { Points = championPoints };
     }
 
-    private static int GetTotalRacesCount(int season)
+    private static (int RacesCount, int SprintsCount) GetTotalRacesCount(int season)
     {
         return season switch
         {
-            2023 => 20,
-            2024 or 2025 => 30,
-            _ => 0,
+            2023 => (20, 0), /* sprints doesn't count */
+            2024 => (30, 0), /* sprints give as many points as normal race */ 
+            2025 => (24, 6), /* sprints worth 30% of normal race points */
+            _ => (0, 0),
         };
     }
 
-    private static int GetMaxPointsPerRace(F1RaceDto race)
+    private static int GetMaxPointsPerRace(int season)
     {
-        return race.Season switch
+        return season switch
         {
             2023 => 30,
-            2024 => 55,
-            2025 when race.IsSprint => F1PredictionsPointsHelper.CalculateSprintPoints(55),
-            2025 when !race.IsSprint => 55,
+            2024 or 2025 => 55,
             _ => 0,
         };
     }
