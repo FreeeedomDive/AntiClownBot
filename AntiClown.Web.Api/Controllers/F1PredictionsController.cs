@@ -169,7 +169,7 @@ public class F1PredictionsController(
                              .Select((points, raceNumber) =>
                                  {
                                      var championPointsForRace = points - totalPointsLeft;
-                                     var race = races[raceNumber];
+                                     var race = races[raceNumber - 1];
                                      totalPointsLeft -= race.IsSprint && sprintsCount > 0
                                          ? GetMaxPointsPerRace(season) * F1PredictionsPointsHelper.CalculateSprintPoints(GetMaxPointsPerRace(season))
                                          : GetMaxPointsPerRace(season);
