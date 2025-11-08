@@ -170,7 +170,7 @@ public class F1PredictionsController(
                                  {
                                      if (raceNumber == 0)
                                      {
-                                         return Math.Max(0, points - totalPointsLeft);
+                                         return 0;
                                      }
 
                                      var race = races[raceNumber - 1];

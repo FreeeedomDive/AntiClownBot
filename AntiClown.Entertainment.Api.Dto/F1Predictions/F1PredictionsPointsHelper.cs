@@ -4,7 +4,7 @@ public static class F1PredictionsPointsHelper
 {
     public static int CalculateSprintPoints(int points)
     {
-        return points / SprintRacePointsPercent * 100;
+        return points * SprintRacePointsPercent / 100;
     }
 
     private const int SprintRacePointsPercent = 30;
