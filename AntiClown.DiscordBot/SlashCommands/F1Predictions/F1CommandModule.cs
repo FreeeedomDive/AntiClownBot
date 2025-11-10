@@ -80,6 +80,7 @@ public class F1CommandModule(
                 var userToMember = standings.Keys.ToDictionary(x => x, x => usersCache.GetMemberByApiIdAsync(x).GetAwaiter().GetResult());
                 var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
                 var stringBuilder = new StringBuilder($"Полная таблица: {webOptions.Value.FrontApplicationUrl}/f1Predictions\n```\n");
+                const int maxPossiblePoints = F1PredictionsPointsHelper.MaxPointsForTenthPlacePrediction;
                 var predictionsTable = standings
                                        .Select(kv => new
                                            {
@@ -90,7 +91,7 @@ public class F1CommandModule(
                                            }
                                        )
                                        .OrderByDescending(x => x.TotalPoints)
-                                       .ThenByDescending(x => x.Predictions.Count(p => p?.TenthPlacePoints == F1PredictionsPointsHelper.MaxPointsForTenthPlacePrediction));
+                                       .ThenByDescending(x => x.Predictions.Count(p => p?.TenthPlacePoints == maxPossiblePoints));
                 var position = 1;
                 foreach (var userPredictions in predictionsTable)
                 {
@@ -106,7 +107,7 @@ public class F1CommandModule(
                             )
                         )
                         .Append($" | {userPredictions.TotalPoints.AddSpaces(3)}")
-                        .Append($" | {userPredictions.Predictions.Count(x => x?.TenthPlacePoints == 25)}x25")
+                        .Append($" | {userPredictions.Predictions.Count(x => x?.TenthPlacePoints == maxPossiblePoints)}x{maxPossiblePoints}")
                         .AppendLine();
                 }
 
