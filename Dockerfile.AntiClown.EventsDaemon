@@ -2,9 +2,6 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 WORKDIR /src
 COPY ["AntiClown.EventsDaemon/AntiClown.EventsDaemon.csproj", "AntiClown.EventsDaemon/"]
-COPY ["AntiClown.Entertainment.Api.Client/AntiClown.Entertainment.Api.Client.csproj", "AntiClown.Entertainment.Api.Client/"]
-COPY ["AntiClown.Entertainment.Api.Dto/AntiClown.Entertainment.Api.Dto.csproj", "AntiClown.Entertainment.Api.Dto/"]
-COPY ["Utility/Utility.csproj", "Utility/"]
 RUN dotnet restore "AntiClown.EventsDaemon/AntiClown.EventsDaemon.csproj"
 COPY . .
 

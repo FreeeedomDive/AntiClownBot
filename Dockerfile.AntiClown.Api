@@ -8,11 +8,6 @@ RUN dotnet dev-certs https --trust
 
 WORKDIR /src
 COPY ["AntiClown.Api/AntiClown.Api.csproj", "AntiClown.Api/"]
-COPY ["AntiClown.Api.Core/AntiClown.Api.Core.csproj", "AntiClown.Api.Core/"]
-COPY ["AntiClown.Api.Dto/AntiClown.Api.Dto.csproj", "AntiClown.Api.Dto/"]
-COPY ["AntiClown.Core/AntiClown.Core.csproj", "AntiClown.Core/"]
-COPY ["AntiClown.Messages.Dto/AntiClown.Messages.Dto.csproj", "AntiClown.Messages.Dto/"]
-COPY ["Utility/Utility.csproj", "Utility/"]
 RUN dotnet restore "AntiClown.Api/AntiClown.Api.csproj"
 COPY . .
 

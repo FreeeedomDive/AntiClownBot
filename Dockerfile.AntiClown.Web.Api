@@ -7,15 +7,6 @@ RUN dotnet dev-certs https -ep ./https/certificate.pfx -p aspnet
 RUN dotnet dev-certs https --trust
 
 WORKDIR /src
-COPY ["AntiClown.Core.Dto/AntiClown.Core.Dto.csproj", "AntiClown.Api.Core/"]
-COPY ["AntiClown.Api.Dto/AntiClown.Api.Dto.csproj", "AntiClown.Api.Dto/"]
-COPY ["AntiClown.Api.Client/AntiClown.Api.Client.csproj", "AntiClown.Api.Client/"]
-COPY ["AntiClown.Entertainment.Api.Dto/AntiClown.Entertainment.Api.Dto.csproj", "AntiClown.Entertainment.Api.Dto/"]
-COPY ["AntiClown.Entertainment.Api.Client/AntiClown.Entertainment.Api.Client.csproj", "AntiClown.Entertainment.Api.Client/"]
-COPY ["AntiClown.Data.Api.Dto/AntiClown.Data.Api.Dto.csproj", "AntiClown.Data.Api.Dto/"]
-COPY ["AntiClown.Data.Api.Client/AntiClown.Data.Api.Client.csproj", "AntiClown.Data.Api.Client/"]
-COPY ["AntiClown.DiscordBot.Dto/AntiClown.DiscordBot.Dto.csproj", "AntiClown.DiscordBot.Dto/"]
-COPY ["AntiClown.DiscordBot.Client/AntiClown.DiscordBot.Client.csproj", "AntiClown.DiscordBot.Client/"]
 COPY ["AntiClown.Web.Api/AntiClown.Web.Api.csproj", "AntiClown.Web.Api/"]
 RUN dotnet restore "AntiClown.Web.Api/AntiClown.Web.Api.csproj"
 COPY . .

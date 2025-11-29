@@ -8,8 +8,6 @@ RUN dotnet dev-certs https --trust
 
 WORKDIR /src
 COPY ["AntiClown.Data.Api/AntiClown.Data.Api.csproj", "AntiClown.Data.Api/"]
-COPY ["AntiClown.Data.Api.Core/AntiClown.Data.Api.Core.csproj", "AntiClown.Data.Api.Core/"]
-RUN dotnet restore "AntiClown.Data.Api/AntiClown.Data.Api.csproj"
 COPY . .
 
 FROM build AS publish

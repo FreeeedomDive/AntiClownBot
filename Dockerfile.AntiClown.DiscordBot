@@ -10,9 +10,6 @@ RUN dotnet dev-certs https --trust
 
 WORKDIR /src
 COPY ["AntiClown.DiscordBot/AntiClown.DiscordBot.csproj", "AntiClown.DiscordBot/"]
-COPY ["AntiClown.Api.Client/AntiClown.Api.Client.csproj", "AntiClown.Api.Client/"]
-COPY ["AntiClown.Entertainment.Api.Client/AntiClown.Entertainment.Api.Client.csproj", "AntiClown.Entertainment.Api.Client/"]
-COPY ["AntiClown.Messages.Dto/AntiClown.Messages.Dto.csproj", "AntiClown.Messages.Dto/"]
 RUN dotnet restore "AntiClown.DiscordBot/AntiClown.DiscordBot.csproj"
 COPY . .
 
