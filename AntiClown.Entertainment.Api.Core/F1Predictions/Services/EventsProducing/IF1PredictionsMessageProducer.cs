@@ -2,7 +2,7 @@
 
 public interface IF1PredictionsMessageProducer
 {
-    Task ProducePredictionStartedAsync(Guid raceId, string name);
+    Task ProducePredictionStartedAsync(Guid raceId);
     Task ProducePredictionUpdatedAsync(Guid userId, Guid raceId, bool isNew);
     Task ProduceRaceResultUpdatedAsync(Guid raceId);
     Task ProduceRaceFinishedAsync(Guid raceId);

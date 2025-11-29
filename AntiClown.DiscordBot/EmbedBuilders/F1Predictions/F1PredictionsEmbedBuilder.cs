@@ -28,14 +28,14 @@ public class F1PredictionsEmbedBuilder(
         var member = await usersCache.GetMemberByApiIdAsync(prediction.UserId);
         var embedBuilder = new DiscordEmbedBuilder()
                            .WithColor(DiscordColor.MidnightBlue)
-                           .WithTitle($"{member.ServerOrUserName()} {(message.IsNew ? "добавил" : "обновил")} свое предсказание на гонку {race.Name} {race.Season}");
+                           .WithTitle($"{member.ServerOrUserName()} {(message.IsNew ? "добавил" : "обновил")} свое предсказание на гонку {race.FullName()} {race.Season}");
         return embedBuilder.Build();
     }
 
     public DiscordEmbed BuildResultsUpdated(F1RaceDto race)
     {
         return new DiscordEmbedBuilder()
-               .WithTitle($"Внесены результаты для гонки {race.Name} {race.Season}")
+               .WithTitle($"Внесены результаты для гонки {race.FullName()} {race.Season}")
                .WithColor(DiscordColor.DarkGreen)
                .AddField(
                    "Классификация",
@@ -58,7 +58,7 @@ public class F1PredictionsEmbedBuilder(
         );
         var embedBuilder = new DiscordEmbedBuilder()
                            .WithColor(DiscordColor.Gold)
-                           .WithTitle($"Результаты предсказаний на гонку {race.Name} {race.Season}");
+                           .WithTitle($"Результаты предсказаний на гонку {race.FullName()} {race.Season}");
         results.ForEach(
             userResult =>
             {

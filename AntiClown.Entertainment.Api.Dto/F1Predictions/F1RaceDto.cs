@@ -10,4 +10,6 @@ public class F1RaceDto
     public bool IsSprint { get; set; }
     public List<F1PredictionDto> Predictions { get; set; }
     public F1PredictionRaceResultDto Result { get; set; }
+
+    public string FullName() => $"{Name}{(IsSprint ? " (спринт)" : string.Empty)}";
 }

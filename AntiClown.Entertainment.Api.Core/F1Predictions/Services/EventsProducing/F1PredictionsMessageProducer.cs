@@ -5,13 +5,12 @@ namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services.EventsProducin
 
 public class F1PredictionsMessageProducer(IBus bus) : IF1PredictionsMessageProducer
 {
-    public async Task ProducePredictionStartedAsync(Guid raceId, string name)
+    public async Task ProducePredictionStartedAsync(Guid raceId)
     {
         await bus.Publish(
             new F1PredictionStartedMessageDto
             {
                 RaceId = raceId,
-                Name = name,
             }
         );
     }

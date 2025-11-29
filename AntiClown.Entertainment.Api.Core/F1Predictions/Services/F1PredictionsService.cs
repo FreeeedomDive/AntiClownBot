@@ -62,7 +62,7 @@ public class F1PredictionsService(
             Predictions = new List<F1Prediction>(),
         };
         await f1RacesRepository.CreateAsync(newRace);
-        await f1PredictionsMessageProducer.ProducePredictionStartedAsync(raceId, name);
+        await f1PredictionsMessageProducer.ProducePredictionStartedAsync(raceId);
 
         return raceId;
     }
