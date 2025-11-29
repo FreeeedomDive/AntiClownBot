@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 RUN apt-get update && apt-get install -y libopus-dev libopus0 libsodium23 libsodium-dev
 
@@ -20,7 +20,7 @@ FROM build AS publish
 WORKDIR "/src/AntiClown.DiscordBot"
 RUN dotnet publish "AntiClown.DiscordBot.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 
 WORKDIR /app
 COPY --from=build /usr/lib/x86_64-linux-gnu/libopus.* .
