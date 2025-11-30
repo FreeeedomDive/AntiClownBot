@@ -1,81 +1,57 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  Button,
-  ButtonGroup,
   Checkbox,
   FormControlLabel,
   TableCell,
   TableRow,
   Typography,
+  IconButton,
 } from "@mui/material";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { DraggableProvided } from "@hello-pangea/dnd";
 
 interface Props {
   f1Driver: string;
   index: number;
   isDnf: boolean;
-  onAddDnfDriver: () => void;
-  onRemoveDnfDriver: () => void;
-  moveUp: () => void;
-  moveDown: () => void;
+  onToggleDnf: (checked: boolean) => void;
+  provided: DraggableProvided;
 }
 
 export default function F1RaceClassificationsElement({
   f1Driver,
   index,
   isDnf,
-  onAddDnfDriver,
-  onRemoveDnfDriver,
-  moveUp,
-  moveDown,
+  onToggleDnf,
+  provided,
 }: Props) {
-  const [isChecked, setIsChecked] = useState(isDnf);
   const position = index + 1;
 
   return (
-    <TableRow>
-      <TableCell sx={{ padding: "1px" }}>
+    <TableRow ref={provided.innerRef} {...provided.draggableProps}>
+      <TableCell
+        sx={{ padding: "1px", width: "10%" }}
+        {...provided.dragHandleProps}
+      >
+        <IconButton size="small" sx={{ cursor: "grab" }}>
+          <DragIndicatorIcon />
+        </IconButton>
+      </TableCell>
+
+      <TableCell sx={{ padding: "1px", width: "5%" }}>
         <Typography>{position}</Typography>
       </TableCell>
-      <TableCell sx={{ padding: "1px" }}>
-        <ButtonGroup size="medium">
-          <Button
-            variant="contained"
-            color="success"
-            disabled={position === 1}
-            onClick={() => moveUp()}
-          >
-            <ArrowUpwardIcon />
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            disabled={position === 20}
-            sx={{ marginLeft: "4px" }}
-            onClick={() => moveDown()}
-          >
-            <ArrowDownwardIcon />
-          </Button>
-        </ButtonGroup>
-      </TableCell>
-      <TableCell sx={{ padding: "1px" }}>
+
+      <TableCell sx={{ padding: "1px", width: "100%" }}>
         <Typography>{f1Driver}</Typography>
       </TableCell>
-      <TableCell sx={{ padding: "1px" }}>
+
+      <TableCell sx={{ padding: "1px", width: "20%" }}>
         <FormControlLabel
           control={
             <Checkbox
-              checked={isChecked}
-              onChange={(x) => {
-                const isDnf = x.target.checked;
-                if (isDnf) {
-                  onAddDnfDriver();
-                } else {
-                  onRemoveDnfDriver();
-                }
-                setIsChecked(x.target.checked);
-              }}
+              checked={isDnf}
+              onChange={(x) => onToggleDnf(x.target.checked)}
             />
           }
           label={"DNF"}

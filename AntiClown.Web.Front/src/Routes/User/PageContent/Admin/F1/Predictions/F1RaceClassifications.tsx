@@ -1,5 +1,12 @@
+import React from "react";
 import F1RaceClassificationsElement from "./F1RaceClassificationsElement";
-import { Stack, Table, TableBody, TableContainer } from "@mui/material";
+import { Table, TableBody, TableContainer } from "@mui/material";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
 
 interface Props {
   drivers: string[];
@@ -14,41 +21,58 @@ export default function F1RaceClassifications({
   dnfDrivers,
   setDnfDrivers,
 }: Props) {
-  const swapDrivers = (firstDriverIndex: number, secondDriverIndex: number) => {
-    const updatedDrivers = [...drivers];
-    const firstDriver = updatedDrivers[firstDriverIndex];
-    updatedDrivers[firstDriverIndex] = updatedDrivers[secondDriverIndex];
-    updatedDrivers[secondDriverIndex] = firstDriver;
-    setDrivers(updatedDrivers);
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const newDrivers = Array.from(drivers);
+    const [reorderedItem] = newDrivers.splice(result.source.index, 1);
+    newDrivers.splice(result.destination.index, 0, reorderedItem);
+
+    setDrivers(newDrivers);
+  };
+
+  const handleToggleDnf = (driver: string, isChecked: boolean) => {
+    const newDnfs = new Set(dnfDrivers);
+    if (isChecked) {
+      newDnfs.add(driver);
+    } else {
+      newDnfs.delete(driver);
+    }
+    setDnfDrivers(newDnfs);
   };
 
   return (
-    <TableContainer>
-      <Table>
-        <TableBody>
-          {drivers.map((x, i) => (
-            <F1RaceClassificationsElement
-              f1Driver={x}
-              index={i}
-              isDnf={dnfDrivers.has(x)}
-              onAddDnfDriver={() => {
-                dnfDrivers.add(x);
-                setDnfDrivers(new Set(dnfDrivers));
-              }}
-              onRemoveDnfDriver={() => {
-                dnfDrivers.delete(x);
-                setDnfDrivers(new Set(dnfDrivers));
-              }}
-              moveUp={() => {
-                swapDrivers(i, i - 1);
-              }}
-              moveDown={() => {
-                swapDrivers(i, i + 1);
-              }}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <TableContainer>
+        <Table>
+          <Droppable droppableId="admin-f1-drivers-dnd-list">
+            {(provided) => (
+              <>
+                <TableBody ref={provided.innerRef} {...provided.droppableProps}>
+                  {drivers.map((driver, index) => (
+                    <Draggable key={driver} draggableId={driver} index={index}>
+                      {(provided) => (
+                        <F1RaceClassificationsElement
+                          provided={provided}
+                          f1Driver={driver}
+                          index={index}
+                          isDnf={dnfDrivers.has(driver)}
+                          onToggleDnf={(checked) =>
+                            handleToggleDnf(driver, checked)
+                          }
+                        />
+                      )}
+                    </Draggable>
+                  ))}
+                </TableBody>
+                {provided.placeholder}
+              </>
+            )}
+          </Droppable>
+        </Table>
+      </TableContainer>
+    </DragDropContext>
   );
 }
