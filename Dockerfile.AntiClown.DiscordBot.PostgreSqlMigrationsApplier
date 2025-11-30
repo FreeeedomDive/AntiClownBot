@@ -1,10 +1,7 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 WORKDIR /src
 COPY ["AntiClown.DiscordBot.PostgreSqlMigrationsApplier/AntiClown.DiscordBot.PostgreSqlMigrationsApplier.csproj", "AntiClown.DiscordBot.PostgreSqlMigrationsApplier/"]
-COPY ["AntiClown.Api.Client/AntiClown.Api.Client.csproj", "AntiClown.Api.Client/"]
-COPY ["AntiClown.Entertainment.Api.Client/AntiClown.Entertainment.Api.Client.csproj", "AntiClown.Entertainment.Api.Client/"]
-COPY ["AntiClown.Messages.Dto/AntiClown.Messages.Dto.csproj", "AntiClown.Messages.Dto/"]
 RUN dotnet restore "AntiClown.DiscordBot.PostgreSqlMigrationsApplier/AntiClown.DiscordBot.PostgreSqlMigrationsApplier.csproj"
 COPY . .
 
@@ -12,7 +9,7 @@ FROM build AS publish
 WORKDIR "/src/AntiClown.DiscordBot.PostgreSqlMigrationsApplier"
 RUN dotnet publish "AntiClown.DiscordBot.PostgreSqlMigrationsApplier.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AntiClown.DiscordBot.PostgreSqlMigrationsApplier.dll"]

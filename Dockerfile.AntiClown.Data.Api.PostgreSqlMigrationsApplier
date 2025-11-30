@@ -1,8 +1,7 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 WORKDIR /src
 COPY ["AntiClown.Data.Api.PostgreSqlMigrationsApplier/AntiClown.Data.Api.PostgreSqlMigrationsApplier.csproj", "AntiClown.Data.Api.PostgreSqlMigrationsApplier/"]
-COPY ["AntiClown.Data.Api.Core/AntiClown.Data.Api.Core.csproj", "AntiClown.Data.Api.Core/"]
 RUN dotnet restore "AntiClown.Data.Api.PostgreSqlMigrationsApplier/AntiClown.Data.Api.PostgreSqlMigrationsApplier.csproj"
 COPY . .
 
@@ -10,7 +9,7 @@ FROM build AS publish
 WORKDIR "/src/AntiClown.Data.Api.PostgreSqlMigrationsApplier"
 RUN dotnet publish "AntiClown.Data.Api.PostgreSqlMigrationsApplier.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AntiClown.Data.Api.PostgreSqlMigrationsApplier.dll"]
