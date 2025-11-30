@@ -43,6 +43,8 @@ export function F1PredictionsStandingsRow({
     const race = races.find((x) => x.id === id)!;
     return race.name + (race.isSprint ? " (спринт)" : "");
   };
+  const season =
+    races.length === 0 ? new Date().getFullYear() : races[0].season;
 
   return (
     <React.Fragment>
@@ -88,71 +90,11 @@ export function F1PredictionsStandingsRow({
                 История предсказаний {userName}
               </Typography>
               <Table size="small">
-                <TableHead>
-                  <TableRow key={"mainRow"}>
-                    <TableCell key={"head_name"}>Гонка</TableCell>
-                    <TableCell key={"head_10th"} align="center">
-                      10 место
-                    </TableCell>
-                    <TableCell key={"head_dnf"} align="center">
-                      DNF
-                    </TableCell>
-                    <TableCell key={"head_incidents"} align="center">
-                      Инциденты
-                    </TableCell>
-                    <TableCell key={"head_1st"} align="center">
-                      Отрыв 1 места
-                    </TableCell>
-                    <TableCell key={"head_teams"} align="center">
-                      Команда
-                    </TableCell>
-                    <TableCell key={"head_sum"} align="center">
-                      Сумма
-                      <Tooltip title="За спринт начисляется 30% очков" arrow>
-                        <IconButton
-                          sx={{
-                            minWidth: "auto",
-                            borderRadius: "50%",
-                            backgroundColor: "transparent",
-                          }}
-                        >
-                          <InfoOutlined sx={{ fontSize: 18 }} />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
+                <TableHead>{getTableHeaderRows(season)}</TableHead>
                 <TableBody>
                   {results
                     .filter((race) => race !== null)
-                    .map((race) => (
-                      <TableRow key={race!.raceId}>
-                        <TableCell key={`${race!.raceId}_name`}>
-                          {getRaceName(race!.raceId)}
-                        </TableCell>
-                        <TableCell key={`${race!.raceId}_10th`} align="center">
-                          {race!.tenthPlacePoints}
-                        </TableCell>
-                        <TableCell key={`${race!.raceId}_dnf`} align="center">
-                          {race!.dnfsPoints}
-                        </TableCell>
-                        <TableCell
-                          key={`${race!.raceId}_incidents`}
-                          align="center"
-                        >
-                          {race!.safetyCarsPoints}
-                        </TableCell>
-                        <TableCell key={`${race!.raceId}_1st`} align="center">
-                          {race!.firstPlaceLeadPoints}
-                        </TableCell>
-                        <TableCell key={`${race!.raceId}_teams`} align="center">
-                          {race!.teamMatesPoints}
-                        </TableCell>
-                        <TableCell key={`${race!.raceId}_sum`} align="center">
-                          {race!.totalPoints}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    .map((race) => getTableRow(race, getRaceName, season))}
                 </TableBody>
               </Table>
             </Box>
@@ -160,5 +102,103 @@ export function F1PredictionsStandingsRow({
         </TableCell>
       </TableRow>
     </React.Fragment>
+  );
+}
+
+function getTableHeaderRows(season: number) {
+  return (
+    <TableRow key={"mainRow"}>
+      <TableCell key={"head_name"}>Гонка</TableCell>
+      {/*За 10 место голосование есть всегда*/}
+      <TableCell key={"head_10th"} align="center">
+        10 место
+      </TableCell>
+      {/*В 2023 голосовали за первый DNF в гонке, затем выбирали 5 гонщиков*/}
+      <TableCell key={"head_dnf"} align="center">
+        {season === 2023 ? "Первый DNF" : "DNF"}
+      </TableCell>
+      {/*Голосование за количество инцидентов началось с 2024 года*/}
+      {season > 2023 && (
+        <TableCell key={"head_incidents"} align="center">
+          Инциденты
+        </TableCell>
+      )}
+      {/*Голосование за отрыв 1 места началось с 2024 года*/}
+      {season > 2023 && (
+        <TableCell key={"head_1st"} align="center">
+          Отрыв 1 места
+        </TableCell>
+      )}
+      {/*Голосование за победителей внутри команд было с 2024 по 2025 год*/}
+      {(season === 2024 || season === 2025) && (
+        <TableCell key={"head_teams"} align="center">
+          Команды
+        </TableCell>
+      )}
+      {/*
+      В 2023 году не было предсказаний спринтов
+      В 2024 году предсказания спринтов были и начисляли полные очки
+      В 2025 году предсказания спринтов приносили 30% очков
+      */}
+      <TableCell key={"head_sum"} align="center">
+        Сумма
+        {season === 2025 && (
+          <Tooltip title="За спринт начисляется 30% очков" arrow>
+            <IconButton
+              sx={{
+                minWidth: "auto",
+                borderRadius: "50%",
+                backgroundColor: "transparent",
+              }}
+            >
+              <InfoOutlined sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Tooltip>
+        )}
+      </TableCell>
+    </TableRow>
+  );
+}
+
+function getTableRow(
+  race: F1PredictionUserResultDto | null,
+  getRaceName: (id: string) => string,
+  season: number,
+) {
+  return (
+    <TableRow key={race!.raceId}>
+      <TableCell key={`${race!.raceId}_name`}>
+        {getRaceName(race!.raceId)}
+      </TableCell>
+      {/*За 10 место голосование есть всегда*/}
+      <TableCell key={`${race!.raceId}_10th`} align="center">
+        {race!.tenthPlacePoints}
+      </TableCell>
+      {/*В 2023 голосовали за первый DNF в гонке, затем выбирали 5 гонщиков*/}
+      <TableCell key={`${race!.raceId}_dnf`} align="center">
+        {race!.dnfsPoints}
+      </TableCell>
+      {/*Голосование за количество инцидентов началось с 2024 года*/}
+      {season > 2023 && (
+        <TableCell key={`${race!.raceId}_incidents`} align="center">
+          {race!.safetyCarsPoints}
+        </TableCell>
+      )}
+      {/*Голосование за отрыв 1 места началось с 2024 года*/}
+      {season > 2023 && (
+        <TableCell key={`${race!.raceId}_1st`} align="center">
+          {race!.firstPlaceLeadPoints}
+        </TableCell>
+      )}
+      {/*Голосование за победителей внутри команд было с 2024 по 2025 год*/}
+      {(season === 2024 || season === 2025) && (
+        <TableCell key={`${race!.raceId}_teams`} align="center">
+          {race!.teamMatesPoints}
+        </TableCell>
+      )}
+      <TableCell key={`${race!.raceId}_sum`} align="center">
+        {race!.totalPoints}
+      </TableCell>
+    </TableRow>
   );
 }
