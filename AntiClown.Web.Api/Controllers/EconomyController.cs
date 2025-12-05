@@ -2,6 +2,7 @@
 using AntiClown.Api.Dto.Economies;
 using AntiClown.Web.Api.Attributes;
 using AntiClown.Web.Api.Dto;
+using AntiClown.Web.Api.Dto.Transactions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Web.Api.Controllers;

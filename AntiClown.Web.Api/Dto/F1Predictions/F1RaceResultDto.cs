@@ -1,8 +1,8 @@
 ﻿using AntiClown.Entertainment.Api.Dto.F1Predictions;
 
-namespace AntiClown.Web.Api.Dto;
+namespace AntiClown.Web.Api.Dto.F1Predictions;
 
-public class F1RaceResultDto
+public record F1RaceResultDto
 {
     public bool Success { get; set; }
     public F1PredictionRaceResultDto? Result { get; set; }
