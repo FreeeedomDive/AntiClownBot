@@ -103,7 +103,7 @@ public class F1PredictionsController(
                                             Results = x.Value,
                                         }
                                     )
-                                    .OrderBy(x => x.TotalPoints)
+                                    .OrderByDescending(x => x.TotalPoints)
                                     .ThenBy(x => x.Results.Count(r => r?.TenthPlacePoints == F1PredictionsPointsHelper.MaxPointsForTenthPlacePrediction))
                                     .ToArray();
 
