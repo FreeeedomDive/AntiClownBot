@@ -11,21 +11,18 @@ import {
 import { convertRaceNameToFlag } from "../../../../../../Helpers/RaceNameToFlagHelper";
 import { F1PredictionsStandingsRow } from "./F1PredictionsStandingsRow";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
-import { F1PredictionUserResultDto } from "../../../../../../Dto/F1Predictions/F1PredictionUserResultDto";
 import { useParams } from "react-router-dom";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
-import { F1PredictionsStandingsDto } from "../../../../../../Dto/F1Predictions/F1PredictionsStandingsDto";
+import { F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1StandingsDto";
 
 interface Props {
   finishedRaces: F1RaceDto[];
-  sortedStandings: F1PredictionUserResultDto[][];
   members: DiscordMemberDto[];
-  standings: F1PredictionsStandingsDto;
+  standings: F1StandingsDto;
 }
 
 export default function F1PredictionsStandingsTable({
   finishedRaces,
-  sortedStandings,
   members,
   standings,
 }: Props) {
@@ -65,19 +62,19 @@ export default function F1PredictionsStandingsTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {sortedStandings.map((results) => {
-            const resultsUserId = results.find(
-              (x) => x !== null && x?.userId !== null,
-            )!.userId;
+          {standings.standings.map((standingsRow, index) => {
             return (
               <F1PredictionsStandingsRow
-                key={resultsUserId}
+                key={standingsRow.userId}
                 discordMember={members.find(
-                  (member) => member.userId === resultsUserId,
+                  (member) => member.userId === standingsRow.userId,
                 )}
-                results={standings[resultsUserId]}
-                isMe={resultsUserId === userId}
+                results={standingsRow}
+                isMe={standingsRow.userId === userId}
                 races={finishedRaces}
+                position={index + 1}
+                pointsLeft={standings.pointsLeft}
+                leaderPoints={standings.currentLeaderPoints}
               />
             );
           })}

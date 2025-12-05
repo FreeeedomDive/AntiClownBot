@@ -15,18 +15,21 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { countTotalPoints } from "../../../../../../Helpers/F1PredictionUserResultDtoHelpers";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import DiscordMember from "../../../../../../Components/Users/DiscordMember";
 import { InfoOutlined } from "@mui/icons-material";
+import { F1StandingsRowDto } from "../../../../../../Dto/F1Predictions/F1StandingsRowDto";
 
 interface IProps {
   discordMember: DiscordMemberDto | undefined;
-  results: (F1PredictionUserResultDto | null)[];
+  results: F1StandingsRowDto;
   isMe: boolean;
   races: F1RaceDto[];
+  position: number;
+  pointsLeft: number;
+  leaderPoints: number;
 }
 
 export function F1PredictionsStandingsRow({
@@ -34,17 +37,30 @@ export function F1PredictionsStandingsRow({
   results,
   isMe,
   races,
+  position,
+  pointsLeft,
+  leaderPoints,
 }: IProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const sumPoints = countTotalPoints(results);
+  /*const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handleEnter = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleLeave = () => {
+    setAnchorEl(null);
+  };*/
+
   const userName = discordMember?.serverName ?? discordMember?.userName;
 
-  const getRaceName = (id: string) => {
-    const race = races.find((x) => x.id === id)!;
-    return race.name + (race.isSprint ? " (спринт)" : "");
+  const getRace = (id: string) => {
+    return races.find((x) => x.id === id)!;
   };
+
   const season =
     races.length === 0 ? new Date().getFullYear() : races[0].season;
+  const stillInChampionship = leaderPoints - results.totalPoints < pointsLeft;
 
   return (
     <React.Fragment>
@@ -71,14 +87,46 @@ export function F1PredictionsStandingsRow({
           )}
         </TableCell>
         <TableCell key={"points_sum"} align={"center"} sx={{ padding: "8px" }}>
-          <Typography>{sumPoints}</Typography>
+          <Typography>
+            {results.totalPoints}
+            {position > 1 && (
+              <Tooltip
+                title={
+                  stillInChampionship
+                    ? "В борьбе за титул"
+                    : "Больше нет шансов на титул"
+                }
+                arrow
+              >
+                <Typography color={stillInChampionship ? "red" : "gray"}>
+                  {results.totalPoints - leaderPoints}
+                </Typography>
+              </Tooltip>
+            )}
+          </Typography>
         </TableCell>
-        {results.map((x) => (
+        {results.results.map((x) => (
           <TableCell
             key={`${discordMember?.userId}_${x?.raceId}_points`}
             sx={{ padding: "4px" }}
           >
-            <Typography>{!!x ? x.totalPoints : ""}</Typography>
+            <Typography
+              /*onMouseEnter={handleEnter}
+              onMouseLeave={handleLeave}*/
+            >
+              {!!x ? x.totalPoints : ""}
+            </Typography>
+            {/*{!!x && (
+              <Popper
+                open={Boolean(anchorEl)}
+                anchorEl={anchorEl}
+                placement="right-start"
+              >
+                <Paper sx={{ p: 1, whiteSpace: "pre-line" }}>
+                  {getPointsDetails(x, getRace(x.raceId), season)}
+                </Paper>
+              </Popper>
+            )}*/}
           </TableCell>
         ))}
       </TableRow>
@@ -92,9 +140,15 @@ export function F1PredictionsStandingsRow({
               <Table size="small">
                 <TableHead>{getTableHeaderRows(season)}</TableHead>
                 <TableBody>
-                  {results
-                    .filter((race) => race !== null)
-                    .map((race) => getTableRow(race, getRaceName, season))}
+                  {results.results
+                    .filter((raceResult) => raceResult !== null)
+                    .map((raceResult) =>
+                      getTableRow(
+                        raceResult,
+                        getRace(raceResult.raceId),
+                        season,
+                      ),
+                    )}
                 </TableBody>
               </Table>
             </Box>
@@ -161,44 +215,88 @@ function getTableHeaderRows(season: number) {
 }
 
 function getTableRow(
-  race: F1PredictionUserResultDto | null,
-  getRaceName: (id: string) => string,
+  raceResult: F1PredictionUserResultDto,
+  race: F1RaceDto,
   season: number,
 ) {
+  const raceName = race.name + (race.isSprint ? " (спринт)" : "");
   return (
-    <TableRow key={race!.raceId}>
-      <TableCell key={`${race!.raceId}_name`}>
-        {getRaceName(race!.raceId)}
+    <TableRow key={`${raceResult.userId}_${raceResult.raceId}`}>
+      <TableCell key={`${raceResult.userId}_${raceResult.raceId}_name`}>
+        {raceName}
       </TableCell>
       {/*За 10 место голосование есть всегда*/}
-      <TableCell key={`${race!.raceId}_10th`} align="center">
-        {race!.tenthPlacePoints}
+      <TableCell
+        key={`${raceResult.userId}_${raceResult.raceId}_10th`}
+        align="center"
+      >
+        {raceResult.tenthPlacePoints}
       </TableCell>
       {/*В 2023 голосовали за первый DNF в гонке, затем выбирали 5 гонщиков*/}
-      <TableCell key={`${race!.raceId}_dnf`} align="center">
-        {race!.dnfsPoints}
+      <TableCell
+        key={`${raceResult.userId}_${raceResult.raceId}_dnf`}
+        align="center"
+      >
+        {raceResult.dnfsPoints}
       </TableCell>
       {/*Голосование за количество инцидентов началось с 2024 года*/}
       {season > 2023 && (
-        <TableCell key={`${race!.raceId}_incidents`} align="center">
-          {race!.safetyCarsPoints}
+        <TableCell
+          key={`${raceResult.userId}_${raceResult.raceId}_incidents`}
+          align="center"
+        >
+          {raceResult.safetyCarsPoints}
         </TableCell>
       )}
       {/*Голосование за отрыв 1 места началось с 2024 года*/}
       {season > 2023 && (
-        <TableCell key={`${race!.raceId}_1st`} align="center">
-          {race!.firstPlaceLeadPoints}
+        <TableCell
+          key={`${raceResult.userId}_${raceResult.raceId}_1st`}
+          align="center"
+        >
+          {raceResult.firstPlaceLeadPoints}
         </TableCell>
       )}
       {/*Голосование за победителей внутри команд было с 2024 по 2025 год*/}
       {(season === 2024 || season === 2025) && (
-        <TableCell key={`${race!.raceId}_teams`} align="center">
-          {race!.teamMatesPoints}
+        <TableCell
+          key={`${raceResult.userId}_${raceResult.raceId}_teams`}
+          align="center"
+        >
+          {raceResult.teamMatesPoints}
         </TableCell>
       )}
-      <TableCell key={`${race!.raceId}_sum`} align="center">
-        {race!.totalPoints}
+      <TableCell
+        key={`${raceResult.userId}_${raceResult.raceId}_sum`}
+        align="center"
+      >
+        {raceResult.totalPoints}
       </TableCell>
     </TableRow>
   );
 }
+
+/*function getPointsDetails(
+  raceResult: F1PredictionUserResultDto,
+  race: F1RaceDto,
+  season: number,
+) {
+  const parts: string[] = [];
+  parts.push(`10 место: ${raceResult.tenthPlacePoints}`);
+  parts.push(
+    (season === 2023 ? "Первый DNF" : "DNF") + `: ${raceResult.dnfsPoints}`,
+  );
+  if (season > 2023) {
+    parts.push(`Инциденты: ${raceResult.safetyCarsPoints}`);
+    parts.push(`Отрыв 1 места: ${raceResult.firstPlaceLeadPoints}`);
+    if (season === 2024 || season === 2025) {
+      parts.push(`Команды: ${raceResult.teamMatesPoints}`);
+    }
+  }
+  parts.push(
+    `Сумма: ${raceResult.totalPoints}` +
+      (race.isSprint ? " (30% за спринт)" : ""),
+  );
+
+  return parts.join("\n");
+}*/

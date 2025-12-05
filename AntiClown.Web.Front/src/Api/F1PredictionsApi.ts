@@ -4,9 +4,9 @@ import { F1RaceDto } from "../Dto/F1Predictions/F1RaceDto";
 import { AddPredictionResultDto } from "../Dto/F1Predictions/AddPredictionResultDto";
 import { F1PredictionRaceResultDto } from "../Dto/F1Predictions/F1PredictionRaceResultDto";
 import { F1RaceFilterDto } from "../Dto/F1Predictions/F1RaceFilterDto";
-import { F1PredictionsStandingsDto } from "../Dto/F1Predictions/F1PredictionsStandingsDto";
 import { F1TeamDto } from "../Dto/F1Predictions/F1TeamDto";
 import { F1ChartsDto } from "../Dto/F1Predictions/F1ChartsDto";
+import { F1StandingsDto } from "../Dto/F1Predictions/F1StandingsDto";
 
 export default class F1PredictionsApi {
   static init = () => {
@@ -62,10 +62,8 @@ export default class F1PredictionsApi {
     await F1PredictionsApi.init().post(`${raceId}/finish`);
   };
 
-  static getStandings = async (
-    season?: number,
-  ): Promise<F1PredictionsStandingsDto> => {
-    const result = await F1PredictionsApi.init().get(`standings`, {
+  static getStandings = async (season?: number): Promise<F1StandingsDto> => {
+    const result = await F1PredictionsApi.init().get(`standingsV2`, {
       params: { season },
     });
     return result.data;
