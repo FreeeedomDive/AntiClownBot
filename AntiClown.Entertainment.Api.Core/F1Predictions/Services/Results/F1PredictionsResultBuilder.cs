@@ -34,17 +34,17 @@ public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1Predictio
                                   {
                                       RaceId = race.Id,
                                       UserId = prediction.UserId,
-                                      TenthPlacePoints = F1PredictionsPointsHelper.PointsByFinishPlaceDistribution.GetValueOrDefault(
+                                      TenthPlacePoints = F1PredictionsHelper.PointsByFinishPlaceDistribution.GetValueOrDefault(
                                           driverToPosition.GetValueOrDefault(prediction.TenthPlacePickedDriver, 0), 0
                                       ),
                                       DnfsPoints = race.Result.DnfDrivers.Length == 0 && prediction.DnfPrediction.NoDnfPredicted
-                                          ? F1PredictionsPointsHelper.NoDnfPredictionPoints
+                                          ? F1PredictionsHelper.NoDnfPredictionPoints
                                           : prediction.DnfPrediction.NoDnfPredicted
                                               ? 0
                                               : prediction.DnfPrediction.DnfPickedDrivers!.Intersect(race.Result.DnfDrivers).Count()
-                                                * F1PredictionsPointsHelper.DnfPredictionPoints,
+                                                * F1PredictionsHelper.DnfPredictionPoints,
                                       SafetyCarsPoints = prediction.SafetyCarsPrediction == ToSafetyCarsEnum(race.Result.SafetyCars)
-                                          ? F1PredictionsPointsHelper.IncidentsPredictionPoints
+                                          ? F1PredictionsHelper.IncidentsPredictionPoints
                                           : 0,
                                       TeamMatesPoints = prediction.TeamsPickedDrivers.Intersect(teamMatesWinners).Count(),
                                   }
@@ -61,10 +61,7 @@ public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1Predictio
         var results = resultsByUserId.Values.Select(x =>
             {
                 x.TotalPoints = x.TenthPlacePoints + x.DnfsPoints + x.SafetyCarsPoints + x.FirstPlaceLeadPoints + x.TeamMatesPoints;
-                if (race.IsSprint)
-                {
-                    x.TotalPoints = F1PredictionsPointsHelper.CalculateSprintPoints(x.TotalPoints);
-                }
+                x.TotalPoints = F1PredictionsHelper.CalculatePoints(x.TotalPoints, race.Season, race.IsSprint);
 
                 return x;
             }

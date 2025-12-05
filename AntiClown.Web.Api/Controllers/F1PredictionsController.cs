@@ -104,10 +104,10 @@ public class F1PredictionsController(
                                         }
                                     )
                                     .OrderByDescending(x => x.TotalPoints)
-                                    .ThenBy(x => x.Results.Count(r => r?.TenthPlacePoints == F1PredictionsPointsHelper.MaxPointsForTenthPlacePrediction))
+                                    .ThenBy(x => x.Results.Count(r => r?.TenthPlacePoints == F1PredictionsHelper.MaxPointsForTenthPlacePrediction))
                                     .ToArray();
 
-        var (totalRacesCount, totalSprintsCount) = GetTotalRacesCount(season);
+        var (totalRacesCount, totalSprintsCount) = F1PredictionsHelper.GetTotalRacesCount(season);
         var totalPointsForSeason = GetMaxPoints(totalRacesCount, totalSprintsCount, season);
         var races = await antiClownEntertainmentApiClient.F1Predictions.FindAsync(
             new F1RaceFilterDto
@@ -172,7 +172,7 @@ public class F1PredictionsController(
 
         var ordered = usersCharts
                       .OrderByDescending(x => x.Points.Last())
-                      .ThenByDescending(x => standings[x.UserId].Count(p => p?.TenthPlacePoints == F1PredictionsPointsHelper.MaxPointsForTenthPlacePrediction))
+                      .ThenByDescending(x => standings[x.UserId].Count(p => p?.TenthPlacePoints == F1PredictionsHelper.MaxPointsForTenthPlacePrediction))
                       .ToArray();
 
         return ordered;
@@ -194,7 +194,7 @@ public class F1PredictionsController(
             return result;
         }
 
-        var (racesCount, sprintsCount) = GetTotalRacesCount(season);
+        var (racesCount, sprintsCount) = F1PredictionsHelper.GetTotalRacesCount(season);
         var totalPointsLeft = GetMaxPoints(racesCount, sprintsCount, season);
         var championPoints = leaderChart
                              .Points
@@ -206,9 +206,9 @@ public class F1PredictionsController(
                                      }
 
                                      var race = races[raceNumber - 1];
-                                     totalPointsLeft -= race.IsSprint && sprintsCount > 0
-                                         ? F1PredictionsPointsHelper.CalculateSprintPoints(GetMaxPointsPerRace(season))
-                                         : GetMaxPointsPerRace(season);
+                                     totalPointsLeft -= F1PredictionsHelper.CalculatePoints(
+                                         F1PredictionsHelper.GetMaxPointsPerRace(season), season, race.IsSprint && sprintsCount > 0
+                                     );
 
                                      return Math.Max(0, points - totalPointsLeft);
                                  }
@@ -220,29 +220,8 @@ public class F1PredictionsController(
 
     private static int GetMaxPoints(int racesCount, int sprintsCount, int season)
     {
-        return racesCount * GetMaxPointsPerRace(season) + sprintsCount * F1PredictionsPointsHelper.CalculateSprintPoints(GetMaxPointsPerRace(season));
-    }
-
-    private static (int RacesCount, int SprintsCount) GetTotalRacesCount(int season)
-    {
-        return season switch
-        {
-            2023 => (20, 0), /* sprints doesn't count */
-            2024 => (30, 0), /* sprints give as many points as normal race */
-            2025 => (24, 6), /* sprints worth 30% of normal race points */
-            2026 => (24, 0), /* sprints doesn't count */
-            _ => (0, 0),
-        };
-    }
-
-    private static int GetMaxPointsPerRace(int season)
-    {
-        return season switch
-        {
-            2023 => 30,
-            2024 or 2025 or 2026 => 55,
-            _ => 0,
-        };
+        return racesCount * F1PredictionsHelper.CalculatePoints(F1PredictionsHelper.GetMaxPointsPerRace(season), season, false)
+               + sprintsCount * F1PredictionsHelper.CalculatePoints(F1PredictionsHelper.GetMaxPointsPerRace(season), season, true);
     }
 
     [HttpGet("teams")]
