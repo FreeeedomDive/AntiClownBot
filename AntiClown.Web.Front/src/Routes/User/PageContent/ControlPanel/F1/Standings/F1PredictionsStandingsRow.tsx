@@ -5,6 +5,8 @@ import {
   Box,
   Collapse,
   IconButton,
+  Paper,
+  Popper,
   Stack,
   Table,
   TableBody,
@@ -42,15 +44,10 @@ export function F1PredictionsStandingsRow({
   leaderPoints,
 }: IProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  /*const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
-  const handleEnter = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(e.currentTarget);
-  };
-
-  const handleLeave = () => {
-    setAnchorEl(null);
-  };*/
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [currentHoveredRace, setCurrentHoveredRace] = React.useState<
+    string | null
+  >(null);
 
   const userName = discordMember?.serverName ?? discordMember?.userName;
 
@@ -111,14 +108,20 @@ export function F1PredictionsStandingsRow({
             sx={{ padding: "4px" }}
           >
             <Typography
-              /*onMouseEnter={handleEnter}
-              onMouseLeave={handleLeave}*/
+              onMouseEnter={(e) => {
+                setAnchorEl(e.currentTarget);
+                setCurrentHoveredRace(x.raceId);
+              }}
+              onMouseLeave={() => {
+                setAnchorEl(null);
+                setCurrentHoveredRace(null);
+              }}
             >
               {!!x ? x.totalPoints : ""}
             </Typography>
-            {/*{!!x && (
+            {!!x && (
               <Popper
-                open={Boolean(anchorEl)}
+                open={Boolean(anchorEl && currentHoveredRace === x.raceId)}
                 anchorEl={anchorEl}
                 placement="right-start"
               >
@@ -126,7 +129,7 @@ export function F1PredictionsStandingsRow({
                   {getPointsDetails(x, getRace(x.raceId), season)}
                 </Paper>
               </Popper>
-            )}*/}
+            )}
           </TableCell>
         ))}
       </TableRow>
@@ -276,7 +279,7 @@ function getTableRow(
   );
 }
 
-/*function getPointsDetails(
+function getPointsDetails(
   raceResult: F1PredictionUserResultDto,
   race: F1RaceDto,
   season: number,
@@ -299,4 +302,4 @@ function getTableRow(
   );
 
   return parts.join("\n");
-}*/
+}
