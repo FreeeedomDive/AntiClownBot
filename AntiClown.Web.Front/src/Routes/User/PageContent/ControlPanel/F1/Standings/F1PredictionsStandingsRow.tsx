@@ -86,7 +86,12 @@ export function F1PredictionsStandingsRow({
         <TableCell key={"points_sum"} align={"center"} sx={{ padding: "8px" }}>
           <Typography>
             {results.totalPoints}
-            {position > 1 && (
+            {position === 1 && pointsLeft === 0 && (
+              <Typography color="gold">
+                Чемпион
+              </Typography>
+            )}
+            {position > 1 && pointsLeft > 0 && (
               <Tooltip
                 title={
                   stillInChampionship
@@ -99,6 +104,11 @@ export function F1PredictionsStandingsRow({
                   {results.totalPoints - leaderPoints}
                 </Typography>
               </Tooltip>
+            )}
+            {position > 1 && pointsLeft === 0 && (
+              <Typography color="gray">
+                {results.totalPoints - leaderPoints}
+              </Typography>
             )}
           </Typography>
         </TableCell>
