@@ -104,7 +104,7 @@ public class F1PredictionsController(
                                         }
                                     )
                                     .OrderByDescending(x => x.TotalPoints)
-                                    .ThenBy(x => x.Results.Count(r => r?.TenthPlacePoints == F1PredictionsHelper.MaxPointsForTenthPlacePrediction))
+                                    .ThenByDescending(x => x.Results.Count(r => r?.TenthPlacePoints == F1PredictionsHelper.MaxPointsForTenthPlacePrediction))
                                     .ToArray();
 
         var (totalRacesCount, totalSprintsCount) = F1PredictionsHelper.GetTotalRacesCount(season);
