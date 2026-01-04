@@ -1,13 +1,13 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.EventsProducing;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
+using AntiClown.Tools.Utility.Extensions;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 
@@ -43,6 +43,9 @@ public class F1PredictionsService(
     public async Task<Guid> StartNewRaceAsync(string name, bool isSprint)
     {
         var raceId = Guid.NewGuid();
+        var positionPredictionDriver = (await GetActiveTeamsAsync())
+                                       .SelectMany(x => new[] { x.FirstDriver, x.SecondDriver })
+                                       .SelectRandomItem();
         var newRace = new F1Race
         {
             Id = raceId,
@@ -51,15 +54,19 @@ public class F1PredictionsService(
             IsSprint = isSprint,
             IsActive = true,
             IsOpened = true,
+            Conditions = new PredictionConditions
+            {
+                PositionPredictionDriver = positionPredictionDriver,
+            },
             Result = new F1PredictionRaceResult
             {
                 RaceId = raceId,
-                Classification = Array.Empty<string>(),
-                DnfDrivers = Array.Empty<string>(),
+                Classification = [],
+                DnfDrivers = [],
                 SafetyCars = 0,
                 FirstPlaceLead = 0,
             },
-            Predictions = new List<F1Prediction>(),
+            Predictions = [],
         };
         await f1RacesRepository.CreateAsync(newRace);
         await f1PredictionsMessageProducer.ProducePredictionStartedAsync(raceId);
@@ -101,7 +108,7 @@ public class F1PredictionsService(
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
 
-        var results = await f1PredictionsResultBuilder.Build(race);
+        var results = f1PredictionsResultBuilder.Build(race);
 
         await f1PredictionResultsRepository.CreateOrUpdateAsync(results);
 

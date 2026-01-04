@@ -1,18 +1,17 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 
-public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1PredictionTeamsRepository) : IF1PredictionsResultBuilder
+public class F1PredictionsResultBuilder : IF1PredictionsResultBuilder
 {
-    public async Task<F1PredictionResult[]> Build(F1Race race)
+    public F1PredictionResult[] Build(F1Race race)
     {
-        if (!race.Predictions.Any())
+        if (race.Predictions.Count == 0)
         {
-            return Array.Empty<F1PredictionResult>();
+            return [];
         }
 
         var position = 1;
@@ -23,10 +22,6 @@ public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1Predictio
                 return pos;
             }
         );
-        var teams = await f1PredictionTeamsRepository.ReadAllAsync();
-        var teamMatesWinners = teams
-                               .Select(x => SelectHighestTeamMate(driverToPosition, x.FirstDriver, x.SecondDriver))
-                               .ToArray();
 
         var resultsByUserId = race
                               .Predictions
@@ -35,7 +30,7 @@ public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1Predictio
                                       RaceId = race.Id,
                                       UserId = prediction.UserId,
                                       TenthPlacePoints = F1PredictionsHelper.PointsByFinishPlaceDistribution.GetValueOrDefault(
-                                          driverToPosition.GetValueOrDefault(prediction.TenthPlacePickedDriver, 0), 0
+                                          driverToPosition.GetValueOrDefault(prediction.TenthPlacePickedDriver)
                                       ),
                                       DnfsPoints = race.Result.DnfDrivers.Length == 0 && prediction.DnfPrediction.NoDnfPredicted
                                           ? F1PredictionsHelper.NoDnfPredictionPoints
@@ -46,7 +41,10 @@ public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1Predictio
                                       SafetyCarsPoints = prediction.SafetyCarsPrediction == ToSafetyCarsEnum(race.Result.SafetyCars)
                                           ? F1PredictionsHelper.IncidentsPredictionPoints
                                           : 0,
-                                      TeamMatesPoints = prediction.TeamsPickedDrivers.Intersect(teamMatesWinners).Count(),
+                                      DriverPositionPoints = F1PredictionsHelper.GetPositionPredictionPoints(
+                                          prediction.DriverPositionPrediction,
+                                          driverToPosition.GetValueOrDefault(race.Conditions.PositionPredictionDriver)
+                                      ),
                                   }
                               )
                               .ToDictionary(x => x.UserId);
@@ -60,7 +58,7 @@ public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1Predictio
 
         var results = resultsByUserId.Values.Select(x =>
             {
-                x.TotalPoints = x.TenthPlacePoints + x.DnfsPoints + x.SafetyCarsPoints + x.FirstPlaceLeadPoints + x.TeamMatesPoints;
+                x.TotalPoints = x.TenthPlacePoints + x.DnfsPoints + x.SafetyCarsPoints + x.FirstPlaceLeadPoints + x.DriverPositionPoints;
                 x.TotalPoints = F1PredictionsHelper.CalculatePoints(x.TotalPoints, race.Season, race.IsSprint);
 
                 return x;
@@ -70,22 +68,15 @@ public class F1PredictionsResultBuilder(IF1PredictionTeamsRepository f1Predictio
         return results;
     }
 
-    public static F1SafetyCars ToSafetyCarsEnum(int safetyCarsCount)
+    public static SafetyCarsCount ToSafetyCarsEnum(int safetyCarsCount)
     {
         return safetyCarsCount switch
         {
-            0 => F1SafetyCars.Zero,
-            1 => F1SafetyCars.One,
-            2 => F1SafetyCars.Two,
-            >= 3 => F1SafetyCars.ThreePlus,
+            0 => SafetyCarsCount.Zero,
+            1 => SafetyCarsCount.One,
+            2 => SafetyCarsCount.Two,
+            >= 3 => SafetyCarsCount.ThreePlus,
             _ => throw new ArgumentOutOfRangeException(nameof(safetyCarsCount), safetyCarsCount, null),
         };
-    }
-
-    private static string SelectHighestTeamMate(Dictionary<string, int> positions, string firstDriver, string secondDriver)
-    {
-        return positions.GetValueOrDefault(firstDriver, 999) < positions.GetValueOrDefault(secondDriver, 999)
-            ? firstDriver
-            : secondDriver;
     }
 }

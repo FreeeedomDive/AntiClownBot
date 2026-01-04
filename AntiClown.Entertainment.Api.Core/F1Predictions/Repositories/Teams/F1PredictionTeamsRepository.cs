@@ -9,12 +9,7 @@ public class F1PredictionTeamsRepository(ISqlRepository<F1PredictionTeamStorageE
     {
         var result = await sqlRepository.ReadAllAsync();
         return result.Select(
-            x => new F1Team
-            {
-                Name = x.Name,
-                FirstDriver = x.FirstDriver,
-                SecondDriver = x.SecondDriver,
-            }
+            x => new F1Team(x.Name, x.FirstDriver, x.SecondDriver)
         ).OrderBy(x => x.Name).ToArray();
     }
 

@@ -12,11 +12,12 @@ public class F1PredictionsMapperProfile : Profile
 {
     public F1PredictionsMapperProfile()
     {
-        CreateMap<F1SafetyCars, F1SafetyCarsPredictionDto>().ReverseMap();
-        CreateMap<F1DnfPrediction, F1DnfPredictionDto>().ReverseMap();
+        CreateMap<SafetyCarsCount, F1SafetyCarsPredictionDto>().ReverseMap();
+        CreateMap<DnfPrediction, F1DnfPredictionDto>().ReverseMap();
         CreateMap<F1Prediction, F1PredictionDto>().ReverseMap();
         CreateMap<F1PredictionRaceResult, F1PredictionRaceResultDto>().ReverseMap();
         CreateMap<F1PredictionResult, F1PredictionUserResultDto>();
+        CreateMap<PredictionConditions, F1RacePredictionConditionsDto>().ReverseMap();
         CreateMap<F1Race, F1RaceDto>();
         CreateMap<F1RaceFilterDto, F1RaceFilter>();
         CreateMap<DriverStatistics, DriverStatisticsDto>();

@@ -8,6 +8,7 @@ public class F1RaceDto
     public bool IsActive { get; set; }
     public bool IsOpened { get; set; }
     public bool IsSprint { get; set; }
+    public F1RacePredictionConditionsDto Conditions { get; set; }
     public List<F1PredictionDto> Predictions { get; set; }
     public F1PredictionRaceResultDto Result { get; set; }
 

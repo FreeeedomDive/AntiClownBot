@@ -5,5 +5,5 @@ namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 
 public interface IF1PredictionsResultBuilder
 {
-    Task<F1PredictionResult[]> Build(F1Race race);
+    F1PredictionResult[] Build(F1Race race);
 }

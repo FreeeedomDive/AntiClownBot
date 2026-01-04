@@ -2,10 +2,6 @@
 
 public class F1Team
 {
-    public F1Team()
-    {
-    }
-
     public F1Team(string name, string firstDriver, string secondDriver)
     {
         Name = name;

@@ -33,6 +33,19 @@ public static class F1PredictionsHelper
         };
     }
 
+    public static int GetPositionPredictionPoints(int predictedPosition, int actualPosition)
+    {
+        var diff = Math.Abs(actualPosition - predictedPosition);
+        return diff switch
+        {
+            0 => 10,
+            1 => 7,
+            2 => 4,
+            3 => 1,
+            _ => 0,
+        };
+    }
+
     private const int SprintRacePointsPercent = 30;
 
     public const int NoDnfPredictionPoints = 10;
@@ -64,5 +77,7 @@ public static class F1PredictionsHelper
         { 18, 2 },
         { 19, 1 },
         { 20, 1 },
+        { 21, 0 },
+        { 22, 0 },
     };
 }

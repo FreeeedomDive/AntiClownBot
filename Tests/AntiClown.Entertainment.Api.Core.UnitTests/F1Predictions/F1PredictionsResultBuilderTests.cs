@@ -1,45 +1,16 @@
 ﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 using AntiClown.Tools.Utility.Extensions;
 using FluentAssertions;
-using NSubstitute;
 
 namespace AntiClown.Entertainment.Api.Core.UnitTests.F1Predictions;
 
 public class F1PredictionsResultBuilderTests
 {
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        f1PredictionTeamsRepository = Substitute.For<IF1PredictionTeamsRepository>();
-        f1PredictionTeamsRepository.ReadAllAsync().Returns(
-            Task.FromResult(
-                new[]
-                {
-                    new F1Team("", "Verstappen", "Perez"),
-                    new F1Team("", "Leclerc", "Sainz"),
-                    new F1Team("", "Hamilton", "Russell"),
-                    new F1Team("", "Doohan", "Gasly"),
-                    new F1Team("", "Piastri", "Norris"),
-                    new F1Team("", "Bottas", "Zhou"),
-                    new F1Team("", "Stroll", "Alonso"),
-                    new F1Team("", "Magnussen", "Hulkenberg"),
-                    new F1Team("", "Lawson", "Tsunoda"),
-                    new F1Team("", "Albon", "Colapinto"),
-                }
-            )
-        );
-
-        f1PredictionsResultBuilder = new F1PredictionsResultBuilder(f1PredictionTeamsRepository);
-    }
-
     [Test]
-    public async Task EmptyPredictionsTest()
+    public void EmptyPredictionsTest()
     {
         var race = new F1Race
         {
@@ -51,12 +22,12 @@ public class F1PredictionsResultBuilderTests
             Predictions = new List<F1Prediction>(),
             Result = new F1PredictionRaceResult(),
         };
-        var result = await f1PredictionsResultBuilder.Build(race);
+        var result = f1PredictionsResultBuilder.Build(race);
         result.Should().BeEmpty();
     }
 
     [Test]
-    public async Task TenthPlacePointsTest()
+    public void TenthPlacePointsTest()
     {
         var raceId = Guid.NewGuid();
         var race = new F1Race
@@ -66,19 +37,22 @@ public class F1PredictionsResultBuilderTests
             Name = "Тест на подсчет очков за 10 место",
             IsActive = true,
             IsOpened = true,
-            Predictions = new[] { "Tsunoda", "Albon", "Leclerc", "Colapinto" }.Select(
-                x => new F1Prediction
+            Conditions = new PredictionConditions
+            {
+                PositionPredictionDriver = "Verstappen",
+            },
+            Predictions = new[] { "Tsunoda", "Albon", "Leclerc", "Colapinto" }.Select(x => new F1Prediction
                 {
                     UserId = Guid.NewGuid(),
                     RaceId = raceId,
                     TenthPlacePickedDriver = x,
-                    DnfPrediction = new F1DnfPrediction
+                    DnfPrediction = new DnfPrediction
                     {
                         NoDnfPredicted = true,
                     },
                     FirstPlaceLeadPrediction = 5.0m,
-                    SafetyCarsPrediction = F1SafetyCars.Zero,
-                    TeamsPickedDrivers = Array.Empty<string>(),
+                    SafetyCarsPrediction = SafetyCarsCount.Zero,
+                    DriverPositionPrediction = 6,
                 }
             ).ToList(),
             Result = new F1PredictionRaceResult
@@ -90,7 +64,7 @@ public class F1PredictionsResultBuilderTests
                 FirstPlaceLead = 3m,
             },
         };
-        var result = await f1PredictionsResultBuilder.Build(race);
+        var result = f1PredictionsResultBuilder.Build(race);
         CheckTenthPlacePrediction(race, "Tsunoda", 15, result);
         CheckTenthPlacePrediction(race, "Albon", 25, result);
         CheckTenthPlacePrediction(race, "Leclerc", 6, result);
@@ -104,7 +78,7 @@ public class F1PredictionsResultBuilderTests
     }
 
     [Test]
-    public async Task NoDnfPointsTest()
+    public void NoDnfPointsTest()
     {
         var raceId = Guid.NewGuid();
         var noDnfPredictUserId = Guid.NewGuid();
@@ -123,12 +97,12 @@ public class F1PredictionsResultBuilderTests
                     UserId = noDnfPredictUserId,
                     RaceId = raceId,
                     TenthPlacePickedDriver = "Verstappen",
-                    DnfPrediction = new F1DnfPrediction
+                    DnfPrediction = new DnfPrediction
                     {
                         NoDnfPredicted = true,
                     },
                     FirstPlaceLeadPrediction = 5.0m,
-                    SafetyCarsPrediction = F1SafetyCars.Zero,
+                    SafetyCarsPrediction = SafetyCarsCount.Zero,
                     TeamsPickedDrivers = Array.Empty<string>(),
                 },
                 new()
@@ -136,7 +110,7 @@ public class F1PredictionsResultBuilderTests
                     UserId = dnfPredictedUserId,
                     RaceId = raceId,
                     TenthPlacePickedDriver = "Verstappen",
-                    DnfPrediction = new F1DnfPrediction
+                    DnfPrediction = new DnfPrediction
                     {
                         NoDnfPredicted = false,
                         DnfPickedDrivers = new[]
@@ -149,7 +123,7 @@ public class F1PredictionsResultBuilderTests
                         },
                     },
                     FirstPlaceLeadPrediction = 5.0m,
-                    SafetyCarsPrediction = F1SafetyCars.Zero,
+                    SafetyCarsPrediction = SafetyCarsCount.Zero,
                     TeamsPickedDrivers = Array.Empty<string>(),
                 },
             },
@@ -162,13 +136,13 @@ public class F1PredictionsResultBuilderTests
                 FirstPlaceLead = 3m,
             },
         };
-        var result = await f1PredictionsResultBuilder.Build(race);
+        var result = f1PredictionsResultBuilder.Build(race);
         result.First(x => x.UserId == noDnfPredictUserId).DnfsPoints.Should().Be(10);
         result.First(x => x.UserId == dnfPredictedUserId).DnfsPoints.Should().Be(0);
     }
 
     [Test]
-    public async Task DnfPointsTest()
+    public void DnfPointsTest()
     {
         var raceId = Guid.NewGuid();
         var noDnfPredictUserId = Guid.NewGuid();
@@ -188,12 +162,12 @@ public class F1PredictionsResultBuilderTests
                     UserId = noDnfPredictUserId,
                     RaceId = raceId,
                     TenthPlacePickedDriver = "Verstappen",
-                    DnfPrediction = new F1DnfPrediction
+                    DnfPrediction = new DnfPrediction
                     {
                         NoDnfPredicted = true,
                     },
                     FirstPlaceLeadPrediction = 5.0m,
-                    SafetyCarsPrediction = F1SafetyCars.Zero,
+                    SafetyCarsPrediction = SafetyCarsCount.Zero,
                     TeamsPickedDrivers = Array.Empty<string>(),
                 },
                 new()
@@ -201,7 +175,7 @@ public class F1PredictionsResultBuilderTests
                     UserId = oneCorrectPredictionsUserId,
                     RaceId = raceId,
                     TenthPlacePickedDriver = "Verstappen",
-                    DnfPrediction = new F1DnfPrediction
+                    DnfPrediction = new DnfPrediction
                     {
                         NoDnfPredicted = false,
                         DnfPickedDrivers = new[]
@@ -214,7 +188,7 @@ public class F1PredictionsResultBuilderTests
                         },
                     },
                     FirstPlaceLeadPrediction = 5.0m,
-                    SafetyCarsPrediction = F1SafetyCars.Zero,
+                    SafetyCarsPrediction = SafetyCarsCount.Zero,
                     TeamsPickedDrivers = Array.Empty<string>(),
                 },
                 new()
@@ -222,7 +196,7 @@ public class F1PredictionsResultBuilderTests
                     UserId = threeCorrectPredictionsUserId,
                     RaceId = raceId,
                     TenthPlacePickedDriver = "Verstappen",
-                    DnfPrediction = new F1DnfPrediction
+                    DnfPrediction = new DnfPrediction
                     {
                         NoDnfPredicted = false,
                         DnfPickedDrivers = new[]
@@ -235,7 +209,7 @@ public class F1PredictionsResultBuilderTests
                         },
                     },
                     FirstPlaceLeadPrediction = 5.0m,
-                    SafetyCarsPrediction = F1SafetyCars.Zero,
+                    SafetyCarsPrediction = SafetyCarsCount.Zero,
                     TeamsPickedDrivers = Array.Empty<string>(),
                 },
             },
@@ -253,7 +227,7 @@ public class F1PredictionsResultBuilderTests
                 FirstPlaceLead = 3m,
             },
         };
-        var result = await f1PredictionsResultBuilder.Build(race);
+        var result = f1PredictionsResultBuilder.Build(race);
         result.First(x => x.UserId == noDnfPredictUserId).DnfsPoints.Should().Be(0);
         result.First(x => x.UserId == oneCorrectPredictionsUserId).DnfsPoints.Should().Be(2);
         result.First(x => x.UserId == threeCorrectPredictionsUserId).DnfsPoints.Should().Be(6);
@@ -262,19 +236,19 @@ public class F1PredictionsResultBuilderTests
     [Test]
     public void SafetyCarsHelperTest()
     {
-        F1PredictionsResultBuilder.ToSafetyCarsEnum(0).Should().Be(F1SafetyCars.Zero);
-        F1PredictionsResultBuilder.ToSafetyCarsEnum(1).Should().Be(F1SafetyCars.One);
-        F1PredictionsResultBuilder.ToSafetyCarsEnum(2).Should().Be(F1SafetyCars.Two);
-        F1PredictionsResultBuilder.ToSafetyCarsEnum(3).Should().Be(F1SafetyCars.ThreePlus);
-        F1PredictionsResultBuilder.ToSafetyCarsEnum(4).Should().Be(F1SafetyCars.ThreePlus);
-        F1PredictionsResultBuilder.ToSafetyCarsEnum(5).Should().Be(F1SafetyCars.ThreePlus);
+        F1PredictionsResultBuilder.ToSafetyCarsEnum(0).Should().Be(SafetyCarsCount.Zero);
+        F1PredictionsResultBuilder.ToSafetyCarsEnum(1).Should().Be(SafetyCarsCount.One);
+        F1PredictionsResultBuilder.ToSafetyCarsEnum(2).Should().Be(SafetyCarsCount.Two);
+        F1PredictionsResultBuilder.ToSafetyCarsEnum(3).Should().Be(SafetyCarsCount.ThreePlus);
+        F1PredictionsResultBuilder.ToSafetyCarsEnum(4).Should().Be(SafetyCarsCount.ThreePlus);
+        F1PredictionsResultBuilder.ToSafetyCarsEnum(5).Should().Be(SafetyCarsCount.ThreePlus);
 
         Action negativeSafetyCarsCountAction = () => F1PredictionsResultBuilder.ToSafetyCarsEnum(-1);
         negativeSafetyCarsCountAction.Should().Throw<ArgumentOutOfRangeException>();
     }
 
     [Test]
-    public async Task SafetyCarsPointsTest()
+    public void SafetyCarsPointsTest()
     {
         var raceId = Guid.NewGuid();
         var race = new F1Race
@@ -284,13 +258,12 @@ public class F1PredictionsResultBuilderTests
             Name = "Тест на подсчет очков за машины безопасности",
             IsActive = true,
             IsOpened = true,
-            Predictions = new[] { F1SafetyCars.Zero, F1SafetyCars.One, F1SafetyCars.Two, F1SafetyCars.ThreePlus }.Select(
-                x => new F1Prediction
+            Predictions = new[] { SafetyCarsCount.Zero, SafetyCarsCount.One, SafetyCarsCount.Two, SafetyCarsCount.ThreePlus }.Select(x => new F1Prediction
                 {
                     UserId = Guid.NewGuid(),
                     RaceId = raceId,
                     TenthPlacePickedDriver = "Verstappen",
-                    DnfPrediction = new F1DnfPrediction
+                    DnfPrediction = new DnfPrediction
                     {
                         NoDnfPredicted = true,
                     },
@@ -309,7 +282,7 @@ public class F1PredictionsResultBuilderTests
             },
         };
         var expectedSafetyCarsResult = F1PredictionsResultBuilder.ToSafetyCarsEnum(race.Result.SafetyCars);
-        var result = await f1PredictionsResultBuilder.Build(race);
+        var result = f1PredictionsResultBuilder.Build(race);
         var correctUserIds = race.Predictions.Where(x => x.SafetyCarsPrediction == expectedSafetyCarsResult).Select(x => x.UserId).ToArray();
         var correctResults = result.Where(x => correctUserIds.Contains(x.UserId)).ToArray();
         correctResults.ForEach(x => x.SafetyCarsPoints.Should().Be(5));
@@ -319,7 +292,7 @@ public class F1PredictionsResultBuilderTests
     }
 
     [Test]
-    public async Task FirstPlaceLeadPointsTest()
+    public void FirstPlaceLeadPointsTest()
     {
         var raceId = Guid.NewGuid();
         const decimal closestPrediction = 5.5m;
@@ -330,13 +303,12 @@ public class F1PredictionsResultBuilderTests
             Name = "Тест на подсчет очков за отрыв 1 места",
             IsActive = true,
             IsOpened = true,
-            Predictions = new[] { 1m, 3m, closestPrediction, 7m }.Select(
-                x => new F1Prediction
+            Predictions = new[] { 1m, 3m, closestPrediction, 7m }.Select(x => new F1Prediction
                 {
                     UserId = Guid.NewGuid(),
                     RaceId = raceId,
                     TenthPlacePickedDriver = "Verstappen",
-                    DnfPrediction = new F1DnfPrediction
+                    DnfPrediction = new DnfPrediction
                     {
                         NoDnfPredicted = true,
                     },
@@ -354,7 +326,7 @@ public class F1PredictionsResultBuilderTests
                 FirstPlaceLead = 5m,
             },
         };
-        var result = await f1PredictionsResultBuilder.Build(race);
+        var result = f1PredictionsResultBuilder.Build(race);
         var correctUserIds = race.Predictions.Where(x => x.FirstPlaceLeadPrediction == closestPrediction).Select(x => x.UserId).ToArray();
         var correctResults = result.Where(x => correctUserIds.Contains(x.UserId)).ToArray();
         correctResults.ForEach(x => x.FirstPlaceLeadPoints.Should().Be(5));
@@ -364,7 +336,7 @@ public class F1PredictionsResultBuilderTests
     }
 
     [Test]
-    public async Task TeamMatesTest()
+    public void TeamMatesTest()
     {
         var raceId = Guid.NewGuid();
         var userId1 = Guid.NewGuid();
@@ -383,7 +355,7 @@ public class F1PredictionsResultBuilderTests
                     UserId = userId1,
                     RaceId = raceId,
                     TenthPlacePickedDriver = "Verstappen",
-                    DnfPrediction = new F1DnfPrediction
+                    DnfPrediction = new DnfPrediction
                     {
                         NoDnfPredicted = true,
                     },
@@ -408,7 +380,7 @@ public class F1PredictionsResultBuilderTests
                     UserId = userId2,
                     RaceId = raceId,
                     TenthPlacePickedDriver = "Verstappen",
-                    DnfPrediction = new F1DnfPrediction
+                    DnfPrediction = new DnfPrediction
                     {
                         NoDnfPredicted = true,
                     },
@@ -439,13 +411,13 @@ public class F1PredictionsResultBuilderTests
             },
         };
 
-        var result = await f1PredictionsResultBuilder.Build(race);
+        var result = f1PredictionsResultBuilder.Build(race);
         result.First(x => x.UserId == userId1).TeamMatesPoints.Should().Be(4);
         result.First(x => x.UserId == userId2).TeamMatesPoints.Should().Be(6);
     }
 
     [Test]
-    public async Task ComplexPointsTest()
+    public void ComplexPointsTest()
     {
         var raceId = Guid.NewGuid();
         var race = new F1Race
@@ -479,11 +451,11 @@ public class F1PredictionsResultBuilderTests
                 RaceId = raceId,
                 UserId = userId1,
                 TenthPlacePickedDriver = "Russell", // 15 очков
-                DnfPrediction = new F1DnfPrediction // 0 очков
+                DnfPrediction = new DnfPrediction // 0 очков
                 {
                     NoDnfPredicted = true,
                 },
-                SafetyCarsPrediction = F1SafetyCars.Two, // 5 очков
+                SafetyCarsPrediction = SafetyCarsCount.Two, // 5 очков
                 FirstPlaceLeadPrediction = 7.455m, // 5 очков, так как он пока единственный и самый близкий к правильному ответу
                 TeamsPickedDrivers = new[] // 4 очка
                 {
@@ -500,7 +472,7 @@ public class F1PredictionsResultBuilderTests
                 },
             }
         );
-        var results = await f1PredictionsResultBuilder.Build(race);
+        var results = f1PredictionsResultBuilder.Build(race);
         results.First(x => x.UserId == userId1).TotalPoints.Should().Be(29);
 
         #endregion
@@ -514,7 +486,7 @@ public class F1PredictionsResultBuilderTests
                 RaceId = raceId,
                 UserId = userId2,
                 TenthPlacePickedDriver = "Doohan", // 4 очка
-                DnfPrediction = new F1DnfPrediction // 2 очка
+                DnfPrediction = new DnfPrediction // 2 очка
                 {
                     NoDnfPredicted = false,
                     DnfPickedDrivers = new[]
@@ -526,7 +498,7 @@ public class F1PredictionsResultBuilderTests
                         "Tsunoda",
                     },
                 },
-                SafetyCarsPrediction = F1SafetyCars.One, // 0 очков
+                SafetyCarsPrediction = SafetyCarsCount.One, // 0 очков
                 FirstPlaceLeadPrediction = 11.215m, // 5 очков
                 TeamsPickedDrivers = new[] // 6 очков
                 {
@@ -543,7 +515,7 @@ public class F1PredictionsResultBuilderTests
                 },
             }
         );
-        results = await f1PredictionsResultBuilder.Build(race);
+        results = f1PredictionsResultBuilder.Build(race);
         results.First(x => x.UserId == userId2).TotalPoints.Should().Be(17);
         // второй челик теперь ближе в предикте первого места, у первого -5 за это предсказание 
         results.First(x => x.UserId == userId1).TotalPoints.Should().Be(24);
@@ -559,7 +531,7 @@ public class F1PredictionsResultBuilderTests
                 RaceId = raceId,
                 UserId = userId3,
                 TenthPlacePickedDriver = "Albon", // 25 очков
-                DnfPrediction = new F1DnfPrediction // 4 очка
+                DnfPrediction = new DnfPrediction // 4 очка
                 {
                     NoDnfPredicted = false,
                     DnfPickedDrivers = new[]
@@ -571,7 +543,7 @@ public class F1PredictionsResultBuilderTests
                         "Ricciardo",
                     },
                 },
-                SafetyCarsPrediction = F1SafetyCars.Zero, // 0 очков
+                SafetyCarsPrediction = SafetyCarsCount.Zero, // 0 очков
                 FirstPlaceLeadPrediction = 3.512m, // 0 очков
                 TeamsPickedDrivers = new[] // 10 очков
                 {
@@ -588,14 +560,14 @@ public class F1PredictionsResultBuilderTests
                 },
             }
         );
-        results = await f1PredictionsResultBuilder.Build(race);
+        results = f1PredictionsResultBuilder.Build(race);
         results.First(x => x.UserId == userId3).TotalPoints.Should().Be(39);
 
         #endregion
     }
 
     [Test]
-    public async Task ComplexPointsSprintTest()
+    public void ComplexPointsSprintTest()
     {
         var raceId = Guid.NewGuid();
         var race = new F1Race
@@ -611,11 +583,7 @@ public class F1PredictionsResultBuilderTests
             {
                 RaceId = raceId,
                 Classification = TestClassification,
-                DnfDrivers = new[]
-                {
-                    "Zhou",
-                    "Colapinto",
-                },
+                DnfDrivers = ["Zhou", "Colapinto"],
                 SafetyCars = 2,
                 FirstPlaceLead = 14.350m,
             },
@@ -630,11 +598,11 @@ public class F1PredictionsResultBuilderTests
                 RaceId = raceId,
                 UserId = userId1,
                 TenthPlacePickedDriver = "Russell", // 15 очков
-                DnfPrediction = new F1DnfPrediction // 0 очков
+                DnfPrediction = new DnfPrediction // 0 очков
                 {
                     NoDnfPredicted = true,
                 },
-                SafetyCarsPrediction = F1SafetyCars.Two, // 5 очков
+                SafetyCarsPrediction = SafetyCarsCount.Two, // 5 очков
                 FirstPlaceLeadPrediction = 7.455m, // 5 очков, так как он пока единственный и самый близкий к правильному ответу
                 TeamsPickedDrivers = new[] // 4 очка
                 {
@@ -651,7 +619,7 @@ public class F1PredictionsResultBuilderTests
                 },
             }
         );
-        var results = await f1PredictionsResultBuilder.Build(race);
+        var results = f1PredictionsResultBuilder.Build(race);
         results.First(x => x.UserId == userId1).TotalPoints.Should().Be(8);
 
         #endregion
@@ -665,7 +633,7 @@ public class F1PredictionsResultBuilderTests
                 RaceId = raceId,
                 UserId = userId2,
                 TenthPlacePickedDriver = "Doohan", // 4 очка
-                DnfPrediction = new F1DnfPrediction // 2 очка
+                DnfPrediction = new DnfPrediction // 2 очка
                 {
                     NoDnfPredicted = false,
                     DnfPickedDrivers = new[]
@@ -677,7 +645,7 @@ public class F1PredictionsResultBuilderTests
                         "Tsunoda",
                     },
                 },
-                SafetyCarsPrediction = F1SafetyCars.One, // 0 очков
+                SafetyCarsPrediction = SafetyCarsCount.One, // 0 очков
                 FirstPlaceLeadPrediction = 11.215m, // 5 очков
                 TeamsPickedDrivers = new[] // 6 очков
                 {
@@ -694,7 +662,7 @@ public class F1PredictionsResultBuilderTests
                 },
             }
         );
-        results = await f1PredictionsResultBuilder.Build(race);
+        results = f1PredictionsResultBuilder.Build(race);
         results.First(x => x.UserId == userId2).TotalPoints.Should().Be(5);
         // второй челик теперь ближе в предикте первого места, у первого -5 за это предсказание 
         results.First(x => x.UserId == userId1).TotalPoints.Should().Be(7);
@@ -710,7 +678,7 @@ public class F1PredictionsResultBuilderTests
                 RaceId = raceId,
                 UserId = userId3,
                 TenthPlacePickedDriver = "Albon", // 25 очков
-                DnfPrediction = new F1DnfPrediction // 4 очка
+                DnfPrediction = new DnfPrediction // 4 очка
                 {
                     NoDnfPredicted = false,
                     DnfPickedDrivers = new[]
@@ -722,7 +690,7 @@ public class F1PredictionsResultBuilderTests
                         "Ricciardo",
                     },
                 },
-                SafetyCarsPrediction = F1SafetyCars.Zero, // 0 очков
+                SafetyCarsPrediction = SafetyCarsCount.Zero, // 0 очков
                 FirstPlaceLeadPrediction = 3.512m, // 0 очков
                 TeamsPickedDrivers = new[] // 10 очков
                 {
@@ -739,17 +707,16 @@ public class F1PredictionsResultBuilderTests
                 },
             }
         );
-        results = await f1PredictionsResultBuilder.Build(race);
+        results = f1PredictionsResultBuilder.Build(race);
         results.First(x => x.UserId == userId3).TotalPoints.Should().Be(11);
 
         #endregion
     }
 
-    private IF1PredictionsResultBuilder f1PredictionsResultBuilder;
-    private IF1PredictionTeamsRepository f1PredictionTeamsRepository;
+    private readonly IF1PredictionsResultBuilder f1PredictionsResultBuilder = new F1PredictionsResultBuilder();
 
     private static readonly string[] TestClassification =
-    {
+    [
         "Norris", // 1
         "Verstappen", // 2
         "Piastri", // 4
@@ -770,5 +737,5 @@ public class F1PredictionsResultBuilderTests
         "Hulkenberg", // 2
         "Zhou", // 1
         "Colapinto", // 1
-    };
+    ];
 }
