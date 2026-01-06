@@ -3,7 +3,6 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories.ActiveEventsIndex;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.ActiveEventsIndex;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Bingo;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
@@ -15,12 +14,8 @@ using SqlRepositoryBase.Core.ContextBuilders;
 
 namespace AntiClown.Entertainment.Api.Core.Database;
 
-public class DatabaseContext : PostgreSqlDbContext
+public class DatabaseContext(string connectionString) : PostgreSqlDbContext(connectionString)
 {
-    public DatabaseContext(string connectionString) : base(connectionString)
-    {
-    }
-
     public DbSet<CommonEventStorageElement> CommonEvents { get; set; }
     public DbSet<RaceDriverStorageElement> RaceDrivers { get; set; }
     public DbSet<RaceTrackStorageElement> RaceTracks { get; set; }
