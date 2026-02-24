@@ -6,7 +6,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
       },
-      "commandLineArgs": "-tool Create2025BingoCards"
+      "commandLineArgs": "-tool Create2026GridTool"
     }
   }
 }
