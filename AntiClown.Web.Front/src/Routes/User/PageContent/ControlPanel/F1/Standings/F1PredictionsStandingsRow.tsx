@@ -87,9 +87,7 @@ export function F1PredictionsStandingsRow({
           <Typography>
             {results.totalPoints}
             {position === 1 && pointsLeft === 0 && (
-              <Typography color="gold">
-                Чемпион
-              </Typography>
+              <Typography color="gold">Чемпион</Typography>
             )}
             {position > 1 && pointsLeft > 0 && (
               <Tooltip
@@ -202,6 +200,12 @@ function getTableHeaderRows(season: number) {
           Команды
         </TableCell>
       )}
+      {/*Голосование за итоговую позицию гонщика началось в 2026 году*/}
+      {season > 2026 && (
+        <TableCell key={"head_driver_position"} align="center">
+          Позиция гонщика
+        </TableCell>
+      )}
       {/*
       В 2023 году не было предсказаний спринтов
       В 2024 году предсказания спринтов были и начисляли полные очки
@@ -279,6 +283,15 @@ function getTableRow(
           {raceResult.teamMatesPoints}
         </TableCell>
       )}
+      {/*Голосование за итоговую позицию гонщика началось в 2026 году*/}
+      {season > 2026 && (
+        <TableCell
+          key={`${raceResult.userId}_${raceResult.raceId}_driver_position`}
+          align="center"
+        >
+          {raceResult.driverPositionPoints}
+        </TableCell>
+      )}
       <TableCell
         key={`${raceResult.userId}_${raceResult.raceId}_sum`}
         align="center"
@@ -305,6 +318,11 @@ function getPointsDetails(
     if (season === 2024 || season === 2025) {
       parts.push(`Команды: ${raceResult.teamMatesPoints}`);
     }
+  }
+  if (season > 2026 && !!race.conditions) {
+    parts.push(
+      `Позиция ${race.conditions.positionPredictionDriver}: ${raceResult.driverPositionPoints}`,
+    );
   }
   parts.push(
     `Сумма: ${raceResult.totalPoints}` +

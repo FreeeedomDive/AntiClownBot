@@ -1,5 +1,6 @@
 import { F1PredictionDto } from "./F1PredictionDto";
-import {F1PredictionRaceResultDto} from "./F1PredictionRaceResultDto";
+import { F1PredictionRaceResultDto } from "./F1PredictionRaceResultDto";
+import { F1RacePredictionConditionsDto } from "./F1RacePredictionConditionsDto";
 
 export interface F1RaceDto {
   id: string;
@@ -8,6 +9,7 @@ export interface F1RaceDto {
   isActive: boolean;
   isOpened: boolean;
   isSprint: boolean;
+  conditions?: F1RacePredictionConditionsDto;
   predictions: F1PredictionDto[];
   result: F1PredictionRaceResultDto;
 }

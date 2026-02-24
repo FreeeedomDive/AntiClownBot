@@ -5,13 +5,8 @@ using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
 
-public class F1PredictionResultsRepository : IF1PredictionResultsRepository
+public class F1PredictionResultsRepository(ISqlRepository<F1PredictionResultStorageElement> sqlRepository) : IF1PredictionResultsRepository
 {
-    public F1PredictionResultsRepository(ISqlRepository<F1PredictionResultStorageElement> sqlRepository)
-    {
-        this.sqlRepository = sqlRepository;
-    }
-
     public async Task CreateOrUpdateAsync(F1PredictionResult[] results)
     {
         var f1PredictionResultStorageElements = results.Select(ToStorageElement).ToArray();
@@ -35,6 +30,7 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
                             x.SafetyCarsPoints = storageElement.SafetyCarsPoints;
                             x.FirstPlaceLeadPoints = storageElement.FirstPlaceLeadPoints;
                             x.TeamMatesPoints = storageElement.TeamMatesPoints;
+                            x.DriverPositionPoints = storageElement.DriverPositionPoints;
                             x.TotalPoints = storageElement.TotalPoints;
                         }
                     )
@@ -70,6 +66,7 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
             SafetyCarsPoints = predictionResult.SafetyCarsPoints,
             FirstPlaceLeadPoints = predictionResult.FirstPlaceLeadPoints,
             TeamMatesPoints = predictionResult.TeamMatesPoints,
+            DriverPositionPoints = predictionResult.DriverPositionPoints,
             TotalPoints = predictionResult.TotalPoints,
         };
     }
@@ -85,9 +82,8 @@ public class F1PredictionResultsRepository : IF1PredictionResultsRepository
             SafetyCarsPoints = storageElement.SafetyCarsPoints,
             FirstPlaceLeadPoints = storageElement.FirstPlaceLeadPoints,
             TeamMatesPoints = storageElement.TeamMatesPoints,
+            DriverPositionPoints = storageElement.DriverPositionPoints,
             TotalPoints = storageElement.TotalPoints,
         };
     }
-
-    private readonly ISqlRepository<F1PredictionResultStorageElement> sqlRepository;
 }

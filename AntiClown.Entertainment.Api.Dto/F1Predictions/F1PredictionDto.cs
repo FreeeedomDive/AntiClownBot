@@ -7,6 +7,7 @@ public class F1PredictionDto
     public string TenthPlacePickedDriver { get; set; }
     public F1DnfPredictionDto DnfPrediction { get; set; }
     public F1SafetyCarsPredictionDto SafetyCarsPrediction { get; set; }
-    public string[] TeamsPickedDrivers { get; set; }
+    [Obsolete("2024-2025")] public string[] TeamsPickedDrivers { get; set; }
     public decimal FirstPlaceLeadPrediction { get; set; }
+    public int DriverPositionPrediction { get; set; }
 }

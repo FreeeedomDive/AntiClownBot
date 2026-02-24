@@ -1,6 +1,6 @@
 ﻿namespace AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 
-public enum F1SafetyCars
+public enum SafetyCarsCount
 {
     Zero,
     One,

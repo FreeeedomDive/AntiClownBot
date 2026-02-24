@@ -13,6 +13,7 @@ public class F1PredictionResultStorageElement : SqlStorageElement
     public int DnfPoints { get; set; }
     public int SafetyCarsPoints { get; set; }
     public int FirstPlaceLeadPoints { get; set; }
-    public int TeamMatesPoints { get; set; }
+    [Obsolete("2024-2025")] public int TeamMatesPoints { get; set; }
+    public int DriverPositionPoints { get; set; }
     public int TotalPoints { get; set; }
 }

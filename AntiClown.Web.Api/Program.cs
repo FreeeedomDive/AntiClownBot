@@ -61,7 +61,6 @@ app.UseRouting();
 app.UseWebSockets();
 
 app.UseSerilogRequestLogging();
-app.UseMiddleware<ServiceExceptionHandlingMiddleware>();
 app.UseMiddleware<TokenAuthenticationMiddleware>();
 app.UseEndpoints(endpoints => endpoints.MapControllers());
 

@@ -6,5 +6,6 @@ export interface F1PredictionUserResultDto {
   safetyCarsPoints: number;
   firstPlaceLeadPoints: number;
   teamMatesPoints: number;
+  driverPositionPoints: number;
   totalPoints: number;
 }

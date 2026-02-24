@@ -6,7 +6,8 @@ export interface F1PredictionDto {
   userId: string;
   tenthPlacePickedDriver: string;
   safetyCarsPrediction: F1SafetyCarPredictionDto;
-  teamsPickedDrivers: string[];
+  teamsPickedDrivers?: string[];
   firstPlaceLeadPrediction: number;
   dnfPrediction: F1DnfPredictionDto;
+  driverPositionPrediction: number;
 }

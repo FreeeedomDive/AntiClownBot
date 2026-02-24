@@ -65,20 +65,21 @@ public class F1PredictionsEmbedBuilder(
                 var userPrediction = race.Predictions.First(x => x.UserId == userResult.UserId);
                 embedBuilder.AddField(
                     apiIdToMember[userResult.UserId].ServerOrUserName(),
-                    $"10 место: {Trigram(userPrediction.TenthPlacePickedDriver)} - "
-                    + $"{userResult.TenthPlacePoints.ToPluralizedString("очко", "очка", "очков")}\n"
+                    $"10 место: {Trigram(userPrediction.TenthPlacePickedDriver)} - {PluralizePoints(userResult.TenthPlacePoints)}\n"
                     + $"DNF: {(userPrediction.DnfPrediction.NoDnfPredicted ? "Никто" : string.Join(" ", userPrediction.DnfPrediction.DnfPickedDrivers!.Select(Trigram)))} - "
-                    + $"{userResult.DnfsPoints.ToPluralizedString("очко", "очка", "очков")}\n"
-                    + $"Инциденты: {userPrediction.SafetyCarsPrediction} - "
-                    + $"{userResult.SafetyCarsPoints.ToPluralizedString("очко", "очка", "очков")}\n"
-                    + $"Отрыв лидера: {userPrediction.FirstPlaceLeadPrediction} - "
-                    + $"{userResult.FirstPlaceLeadPoints.ToPluralizedString("очко", "очка", "очков")}\n"
-                    + $"Победители внутри команд: {string.Join(" ", userPrediction.TeamsPickedDrivers.Select(Trigram))} - "
-                    + $"{userResult.TeamMatesPoints.ToPluralizedString("очко", "очка", "очков")}\n"
+                    + $"{PluralizePoints(userResult.DnfsPoints)}\n"
+                    + $"Инциденты: {userPrediction.SafetyCarsPrediction} - {PluralizePoints(userResult.SafetyCarsPoints)}\n"
+                    + $"Отрыв лидера: {userPrediction.FirstPlaceLeadPrediction} - {PluralizePoints(userResult.FirstPlaceLeadPoints)}\n"
+                    + $"Позиция {race.Conditions.PositionPredictionDriver} - {PluralizePoints(userResult.DriverPositionPoints)}\n"
                 );
             }
         );
         return embedBuilder.Build();
+    }
+
+    private static string PluralizePoints(int points)
+    {
+        return points.ToPluralizedString("очко", "очка", "очков");
     }
 
     public async Task<DiscordEmbed> BuildBingoCompletedAsync(Guid userId)

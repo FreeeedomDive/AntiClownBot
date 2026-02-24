@@ -16,8 +16,8 @@ import F1PredictionsDnfSelect, {
 } from "./Selections/F1PredictionsDnfSelect";
 import F1PredictionsIncidentsSelect from "./Selections/F1PredictionsIncidentsSelect";
 import F1PredictionsFirstPlaceLeadSelect from "./Selections/F1PredictionsFirstPlaceLeadSelect";
-import F1PredictionsTeamsSelect from "./Selections/F1PredictionsTeamsSelect";
 import F1PredictionGridColumn from "./F1PredictionGridColumn";
+import F1PredictionsDriverPositionSelect from "./Selections/F1PredictionsDriverPositionSelect";
 
 const fabStyle = {
   position: "absolute",
@@ -80,13 +80,7 @@ export default function F1Prediction({ f1Race }: Props) {
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>(
     String(userPrediction?.firstPlaceLeadPrediction ?? ""),
   );
-  const [selectedDriversFromTeams, setSelectedDriversFromTeams] = useState<
-    Set<string>
-  >(() => {
-    const initialArray = (() => userPrediction?.teamsPickedDrivers)();
-
-    return new Set(initialArray ?? []);
-  });
+  const [driverPosition, setDriverPosition] = useState<number | null>(null);
 
   const isValid = useMemo(() => {
     if (!isDNFNobody && new Set(dnfList).size !== 5) {
@@ -97,8 +91,8 @@ export default function F1Prediction({ f1Race }: Props) {
       return false;
     }
 
-    return selectedDriversFromTeams.size === 10;
-  }, [dnfList, firstPlaceLead, isDNFNobody, selectedDriversFromTeams.size]);
+    return driverPosition && 1 <= driverPosition && driverPosition <= 22;
+  }, [dnfList, firstPlaceLead, isDNFNobody, driverPosition]);
 
   const [isSaving, setIsSaving] = useState(false);
   const [savePredictionResult, setSavePredictionResult] =
@@ -115,12 +109,12 @@ export default function F1Prediction({ f1Race }: Props) {
       raceId: f1Race.id,
       firstPlaceLeadPrediction: Number(firstPlaceLead),
       safetyCarsPrediction: selectedSafetyCarPrediction,
-      teamsPickedDrivers: Array.from(selectedDriversFromTeams.values()),
       tenthPlacePickedDriver: selected10Position,
       dnfPrediction: {
         noDnfPredicted: isDNFNobody,
         dnfPickedDrivers: isDNFNobody ? null : dnfList,
       },
+      driverPositionPrediction: driverPosition!,
     });
 
     setSavePredictionResult(result);
@@ -132,9 +126,9 @@ export default function F1Prediction({ f1Race }: Props) {
     isDNFNobody,
     isValid,
     selected10Position,
-    selectedDriversFromTeams,
     selectedSafetyCarPrediction,
     userId,
+    driverPosition
   ]);
 
   return (
@@ -168,13 +162,10 @@ export default function F1Prediction({ f1Race }: Props) {
             firstPlaceLead={firstPlaceLead}
             setFirstPlaceLead={setFirstPlaceLead}
           />
-        </F1PredictionGridColumn>
-
-        <F1PredictionGridColumn index={3}>
-          <F1PredictionsTeamsSelect
-            selectedDriversFromTeams={selectedDriversFromTeams}
-            setSelectedDriversFromTeams={setSelectedDriversFromTeams}
-            teams={teams}
+          <F1PredictionsDriverPositionSelect
+            driver={f1Race.conditions?.positionPredictionDriver ?? ""}
+            selectedPosition={driverPosition}
+            setSelectedPosition={setDriverPosition}
           />
         </F1PredictionGridColumn>
       </Grid>
