@@ -14,7 +14,7 @@ export default function F1PredictionGridColumn({ index, children }: Props) {
       xs={12}
       sm={12}
       md={12}
-      lg={4}
+      lg={6}
       sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
     >
       <Stack direction={"column"} spacing={1} width={"100%"}>

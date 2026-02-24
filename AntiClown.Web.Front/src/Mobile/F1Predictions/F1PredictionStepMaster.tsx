@@ -21,7 +21,8 @@ import F1PredictionsDnfSelect, {
 } from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsDnfSelect";
 import F1PredictionsIncidentsSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsIncidentsSelect";
 import F1PredictionsFirstPlaceLeadSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsFirstPlaceLeadSelect";
-import F1PredictionsTeamsSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsTeamsSelect";
+import F1PredictionsDriverPositionSelect
+  from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsDriverPositionSelect";
 
 interface Props {
   f1Race: F1RaceDto;
@@ -35,8 +36,8 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto>(f1Race);
   const [teams, setTeams] = useState<F1TeamDto[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-  const [savePredictionResult, setSavePredictionResult] =
-    useState<AddPredictionResultDto | null>(null);
+  const [savePredictionResult, setSavePredictionResult] = useState<AddPredictionResultDto | null>(null);
+  const [driverPosition, setDriverPosition] = useState<number | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -84,13 +85,6 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>(
     String(userPrediction?.firstPlaceLeadPrediction ?? ""),
   );
-  const [selectedDriversFromTeams, setSelectedDriversFromTeams] = useState<
-    Set<string>
-  >(() => {
-    const initialArray = (() => userPrediction?.teamsPickedDrivers)();
-
-    return new Set(initialArray ?? []);
-  });
 
   const isValid = useMemo(() => {
     if (step === 1) {
@@ -109,13 +103,12 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
       return firstPlaceLead && Number(firstPlaceLead) > 0;
     }
 
-    return selectedDriversFromTeams.size === 10;
+    return driverPosition && 1 <= driverPosition && driverPosition <= 22;
   }, [
     dnfList,
     firstPlaceLead,
     isDNFNobody,
     selected10Position,
-    selectedDriversFromTeams.size,
     step,
   ]);
 
@@ -136,12 +129,12 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
       raceId: f1Race.id,
       firstPlaceLeadPrediction: Number(firstPlaceLead),
       safetyCarsPrediction: selectedSafetyCarPrediction,
-      teamsPickedDrivers: Array.from(selectedDriversFromTeams.values()),
       tenthPlacePickedDriver: selected10Position,
       dnfPrediction: {
         noDnfPredicted: isDNFNobody,
         dnfPickedDrivers: isDNFNobody ? null : dnfList,
       },
+      driverPositionPrediction: driverPosition!,
     });
 
     setSavePredictionResult(result);
@@ -153,10 +146,10 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
     isDNFNobody,
     isValid,
     selected10Position,
-    selectedDriversFromTeams,
     selectedSafetyCarPrediction,
     step,
     userId,
+    driverPosition,
   ]);
 
   return !mobileUserContextStore.isUnknown &&
@@ -199,10 +192,10 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
         />
       )}
       {step === 5 && (
-        <F1PredictionsTeamsSelect
-          selectedDriversFromTeams={selectedDriversFromTeams}
-          setSelectedDriversFromTeams={setSelectedDriversFromTeams}
-          teams={teams}
+        <F1PredictionsDriverPositionSelect
+          driver={f1Race.conditions?.positionPredictionDriver ?? ""}
+          selectedPosition={driverPosition}
+          setSelectedPosition={setDriverPosition}
         />
       )}
       <ButtonGroup size="large" fullWidth>
