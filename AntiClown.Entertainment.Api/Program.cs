@@ -25,11 +25,13 @@ using AntiClown.Entertainment.Api.Core.DailyEvents.Services.PaymentsAndResets;
 using AntiClown.Entertainment.Api.Core.Database;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Bingo;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.ChampionshipPredictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Bingo;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Services.ChampionshipPredictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.EventsProducing;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Statistics;
@@ -104,6 +106,7 @@ builder.Services.AddTransientWithProxy<IF1PredictionResultsRepository, F1Predict
 builder.Services.AddTransientWithProxy<IF1PredictionTeamsRepository, F1PredictionTeamsRepository>();
 builder.Services.AddTransientWithProxy<IF1BingoCardsRepository, F1BingoCardsRepository>();
 builder.Services.AddTransientWithProxy<IF1BingoBoardsRepository, F1BingoBoardsRepository>();
+builder.Services.AddTransientWithProxy<IF1ChampionshipPredictionsRepository, F1ChampionshipPredictionsRepository>();
 
 // configure other stuff
 builder.Services.AddTransientWithProxy<IAntiClownApiClient>(
@@ -139,6 +142,7 @@ builder.Services.AddTransientWithProxy<IMinecraftAccountRepository, MinecraftAcc
 builder.Services.AddTransientWithProxy<IMinecraftAccountService, MinecraftAccountService>();
 builder.Services.AddTransientWithProxy<IF1BingoBoardsService, F1BingoBoardsService>();
 builder.Services.AddTransientWithProxy<IF1BingoCardsService, F1BingoCardsService>();
+builder.Services.AddTransientWithProxy<IF1ChampionshipPredictionsService, F1ChampionshipPredictionsService>();
 
 // configure HangFire
 builder.Services.AddHangfire(

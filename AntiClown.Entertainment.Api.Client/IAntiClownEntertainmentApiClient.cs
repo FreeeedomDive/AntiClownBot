@@ -4,6 +4,7 @@ using AntiClown.Entertainment.Api.Client.Parties;
 using AntiClown.Entertainment.Api.Client.MinecraftAccount;
 using AntiClown.Entertainment.Api.Client.MinecraftAuth;
 using AntiClown.Entertainment.Api.Client.F1Bingo;
+using AntiClown.Entertainment.Api.Client.F1ChampionshipPredictions;
 using AntiClown.Entertainment.Api.Client.F1Predictions;
 using AntiClown.Entertainment.Api.Client.F1PredictionsStats;
 using AntiClown.Entertainment.Api.Client.ActiveDailyEventsIndex;
@@ -27,6 +28,7 @@ public interface IAntiClownEntertainmentApiClient
     IMinecraftAccountClient MinecraftAccount { get; }
     IMinecraftAuthClient MinecraftAuth { get; }
     IF1BingoClient F1Bingo { get; }
+    IF1ChampionshipPredictionsClient F1ChampionshipPredictions { get; }
     IF1PredictionsClient F1Predictions { get; }
     IF1PredictionsStatsClient F1PredictionsStats { get; }
     IActiveDailyEventsIndexClient ActiveDailyEventsIndex { get; }
