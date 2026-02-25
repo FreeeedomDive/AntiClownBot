@@ -113,6 +113,13 @@ const UserPageSideBar = ({ user }: Props) => {
                       nesting={2}
                     />
                     <UserPageSideBarItem
+                      sidebarKey="F1PredictionsChampionship"
+                      link={buildLink(userId, "f1Predictions/championship")}
+                      text="Чемпионат"
+                      nesting={2}
+                      showBadge
+                    />
+                    <UserPageSideBarItem
                       sidebarKey="F1PredictionsBingo"
                       link={buildLink(userId, "f1Predictions/bingo")}
                       text="Бинго"
