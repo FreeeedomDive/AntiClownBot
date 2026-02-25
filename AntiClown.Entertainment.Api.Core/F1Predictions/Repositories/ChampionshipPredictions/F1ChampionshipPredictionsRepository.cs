@@ -12,7 +12,7 @@ public class F1ChampionshipPredictionsRepository(
 {
     public async Task<F1ChampionshipPrediction> ReadAsync(Guid userId, int season)
     {
-        var rows = await sqlRepository.FindAsync(x => x.UserId == userId && x.Season == season);
+        var rows = await sqlRepository.FindAsync(x => x.Season == season && x.UserId == userId);
         return ToModel(userId, season, rows);
     }
 
