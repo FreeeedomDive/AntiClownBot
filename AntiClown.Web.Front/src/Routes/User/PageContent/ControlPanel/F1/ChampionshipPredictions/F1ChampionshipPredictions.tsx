@@ -47,8 +47,8 @@ export default function F1ChampionshipPredictions() {
       setResults(resultsData);
 
       const defaultDrivers = getDriversFromTeams(teams);
-      setPreSeasonDrivers(predictionData.preSeasonStandings ?? defaultDrivers);
-      setMidSeasonDrivers(predictionData.midSeasonStandings ?? defaultDrivers);
+      setPreSeasonDrivers(predictionData.preSeasonStandings?.length ? predictionData.preSeasonStandings : defaultDrivers);
+      setMidSeasonDrivers(predictionData.midSeasonStandings?.length ? predictionData.midSeasonStandings : defaultDrivers);
     }
 
     load().catch(console.error);
@@ -99,9 +99,9 @@ export default function F1ChampionshipPredictions() {
           sm={12}
           md={12}
           lg={4}
-          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
+          sx={{ display: "flex", flexDirection: "column" }}
         >
-          <Stack direction="column" spacing={1} width="100%">
+          <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipDriverDnDList
               title="Предсезонные предсказания"
               droppableId="championship-pre-season-dnd"
@@ -118,9 +118,9 @@ export default function F1ChampionshipPredictions() {
           sm={12}
           md={12}
           lg={4}
-          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
+          sx={{ display: "flex", flexDirection: "column" }}
         >
-          <Stack direction="column" spacing={1} width="100%">
+          <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipDriverDnDList
               title="Предсказания посреди сезона"
               droppableId="championship-mid-season-dnd"
@@ -137,9 +137,9 @@ export default function F1ChampionshipPredictions() {
           sm={12}
           md={12}
           lg={4}
-          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
+          sx={{ display: "flex", flexDirection: "column" }}
         >
-          <Stack direction="column" spacing={1} width="100%">
+          <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipCurrentStandings
               title="Текущий чемпионат"
               standings={results.standings}

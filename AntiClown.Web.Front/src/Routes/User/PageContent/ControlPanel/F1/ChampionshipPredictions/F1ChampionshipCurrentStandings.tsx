@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  IconButton,
   Stack,
   Table,
   TableBody,
@@ -8,6 +9,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
 interface Props {
   title: string;
@@ -26,6 +28,11 @@ export default function F1ChampionshipCurrentStandings({
           <TableBody>
             {standings.map((driver, index) => (
               <TableRow key={driver}>
+                <TableCell sx={{ padding: "1px", width: "10%" }}>
+                  <IconButton size="small" sx={{ visibility: "hidden" }}>
+                    <DragIndicatorIcon />
+                  </IconButton>
+                </TableCell>
                 <TableCell sx={{ padding: "1px", width: "5%" }}>
                   <Typography>{index + 1}</Typography>
                 </TableCell>
