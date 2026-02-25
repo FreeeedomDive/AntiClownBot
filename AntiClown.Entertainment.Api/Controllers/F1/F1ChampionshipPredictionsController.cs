@@ -27,4 +27,18 @@ public class F1ChampionshipPredictionsController(
         await f1ChampionshipPredictionsService.CreateOrUpdateAsync(prediction);
         return NoContent();
     }
+
+    [HttpGet("results")]
+    public async Task<ActionResult<F1ChampionshipResultsDto>> ReadResults([FromQuery] int season)
+    {
+        var result = await f1ChampionshipPredictionsService.ReadResultsAsync(season);
+        return mapper.Map<F1ChampionshipResultsDto>(result);
+    }
+
+    [HttpPost("results")]
+    public async Task<ActionResult> WriteResults([FromQuery] int season, [FromBody] F1ChampionshipResultsDto dto)
+    {
+        await f1ChampionshipPredictionsService.WriteResultsAsync(season, mapper.Map<F1ChampionshipResults>(dto));
+        return NoContent();
+    }
 }

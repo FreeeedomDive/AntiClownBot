@@ -1,9 +1,14 @@
+using AntiClown.Core.Serializers;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.ChampionshipPredictions;
 using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.ChampionshipPredictions;
 
-public class F1ChampionshipPredictionsRepository(ISqlRepository<F1ChampionshipPredictionStorageElement> sqlRepository) : IF1ChampionshipPredictionsRepository
+public class F1ChampionshipPredictionsRepository(
+    ISqlRepository<F1ChampionshipPredictionStorageElement> sqlRepository,
+    ISqlRepository<F1ChampionshipResultsStorageElement> resultsRepository,
+    IJsonSerializer jsonSerializer
+) : IF1ChampionshipPredictionsRepository
 {
     public async Task<F1ChampionshipPrediction> ReadAsync(Guid userId, int season)
     {
@@ -15,6 +20,37 @@ public class F1ChampionshipPredictionsRepository(ISqlRepository<F1ChampionshipPr
     {
         await UpsertRowAsync(prediction.UserId, prediction.Season, F1ChampionshipPredictionType.PreSeason, prediction.PreSeasonStandings);
         await UpsertRowAsync(prediction.UserId, prediction.Season, F1ChampionshipPredictionType.MidSeason, prediction.MidSeasonStandings);
+    }
+
+    public async Task<F1ChampionshipResults> ReadResultsAsync(int season)
+    {
+        var row = (await resultsRepository.FindAsync(x => x.Season == season)).FirstOrDefault();
+        if (row is null)
+        {
+            return new F1ChampionshipResults { HasData = false };
+        }
+
+        var results = jsonSerializer.Deserialize<F1ChampionshipResults>(row.Data);
+        results.HasData = true;
+        return results;
+    }
+
+    public async Task WriteResultsAsync(int season, F1ChampionshipResults results)
+    {
+        var existing = (await resultsRepository.FindAsync(x => x.Season == season)).FirstOrDefault();
+        if (existing is not null)
+        {
+            await resultsRepository.UpdateAsync(existing.Id, x => x.Data = jsonSerializer.Serialize(results));
+        }
+        else
+        {
+            await resultsRepository.CreateAsync(new F1ChampionshipResultsStorageElement
+            {
+                Id = Guid.NewGuid(),
+                Season = season,
+                Data = jsonSerializer.Serialize(results),
+            });
+        }
     }
 
     private async Task UpsertRowAsync(Guid userId, int season, F1ChampionshipPredictionType type, string[]? standings)

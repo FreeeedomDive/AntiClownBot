@@ -10,5 +10,7 @@ public class F1ChampionshipPredictionsMapperProfile : Profile
     public F1ChampionshipPredictionsMapperProfile()
     {
         CreateMap<F1ChampionshipPrediction, F1ChampionshipPredictionDto>().ReverseMap();
+        CreateMap<F1ChampionshipPredictionType, F1ChampionshipPredictionTypeDto>().ReverseMap();
+        CreateMap<F1ChampionshipResults, F1ChampionshipResultsDto>().ReverseMap();
     }
 }

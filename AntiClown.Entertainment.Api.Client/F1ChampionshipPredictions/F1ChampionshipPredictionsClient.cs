@@ -28,5 +28,20 @@ public class F1ChampionshipPredictionsClient : IF1ChampionshipPredictionsClient
         await client.MakeRequestAsync(requestBuilder.Build());
     }
 
+    public async Task<AntiClown.Entertainment.Api.Dto.F1Predictions.ChampionshipPredictions.F1ChampionshipResultsDto> ReadResultsAsync(int season)
+    {
+        var requestBuilder = new RequestBuilder($"entertainmentApi/f1ChampionshipPredictions/results", HttpRequestMethod.GET);
+        requestBuilder.WithQueryParameter("season", season);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.ChampionshipPredictions.F1ChampionshipResultsDto>(requestBuilder.Build());
+    }
+
+    public async Task WriteResultsAsync(int season, AntiClown.Entertainment.Api.Dto.F1Predictions.ChampionshipPredictions.F1ChampionshipResultsDto dto)
+    {
+        var requestBuilder = new RequestBuilder($"entertainmentApi/f1ChampionshipPredictions/results", HttpRequestMethod.POST);
+        requestBuilder.WithQueryParameter("season", season);
+        requestBuilder.WithJsonBody(dto);
+        await client.MakeRequestAsync(requestBuilder.Build());
+    }
+
     private readonly RestSharp.RestClient client;
 }
