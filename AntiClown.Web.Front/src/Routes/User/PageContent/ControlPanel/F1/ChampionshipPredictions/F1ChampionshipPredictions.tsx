@@ -104,7 +104,7 @@ export default function F1ChampionshipPredictions() {
           <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipDriverDnDList
               title="Предсезонные предсказания"
-              description="Активны до 5 марта"
+              description="Активны до старта первой гонки сезона 8 марта"
               droppableId="championship-pre-season-dnd"
               drivers={preSeasonDrivers}
               setDrivers={setPreSeasonDrivers}
