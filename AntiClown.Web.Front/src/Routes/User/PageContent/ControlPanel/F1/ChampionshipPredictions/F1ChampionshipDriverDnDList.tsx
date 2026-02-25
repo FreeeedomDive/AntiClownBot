@@ -4,12 +4,9 @@ import {
   Stack,
   Table,
   TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Typography,
+  TableContainer, Tooltip,
+  Typography
 } from "@mui/material";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
   DragDropContext,
   Draggable,
@@ -17,21 +14,26 @@ import {
   DropResult,
 } from "@hello-pangea/dnd";
 import F1ChampionshipDriverDnDRow from "./F1ChampionshipDriverDnDRow";
+import { InfoOutlined } from "@mui/icons-material";
 
 interface Props {
   title: string;
+  description: string;
   droppableId: string;
   drivers: string[];
   setDrivers: (drivers: string[]) => void;
-  disabled?: boolean;
+  editable: boolean;
+  disabled: boolean;
 }
 
 export default function F1ChampionshipDriverDnDList({
   title,
+  description,
   droppableId,
   drivers,
   setDrivers,
-  disabled = false,
+  editable,
+  disabled,
 }: Props) {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -47,25 +49,33 @@ export default function F1ChampionshipDriverDnDList({
 
   return (
     <Stack direction="column" spacing={1} sx={disabled ? { opacity: 0.4 } : {}}>
-      <Typography variant="h6">{title}</Typography>
-      {disabled ? (
+      <Stack direction="row" spacing={1}>
+        <Typography variant="h6">{title}</Typography>
+        <Tooltip title={description} arrow>
+          <IconButton
+            sx={{
+              padding: 1,
+              minWidth: "auto",
+              width: 30,
+              height: 30,
+              borderRadius: "50%",
+              backgroundColor: "transparent",
+            }}
+          >
+            <InfoOutlined sx={{ fontSize: 18 }} />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+      {!editable ? (
         <TableContainer>
           <Table>
             <TableBody>
               {drivers.map((driver, index) => (
-                <TableRow key={driver}>
-                  <TableCell sx={{ padding: "1px", width: "10%" }}>
-                    <IconButton size="small" disabled>
-                      <DragIndicatorIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell sx={{ padding: "1px", width: "5%" }}>
-                    <Typography>{index + 1}</Typography>
-                  </TableCell>
-                  <TableCell sx={{ padding: "1px", width: "100%" }}>
-                    <Typography>{driver}</Typography>
-                  </TableCell>
-                </TableRow>
+                <F1ChampionshipDriverDnDRow
+                  key={`${droppableId}-${driver}`}
+                  driver={driver}
+                  index={index}
+                />
               ))}
             </TableBody>
           </Table>
@@ -89,6 +99,7 @@ export default function F1ChampionshipDriverDnDList({
                         >
                           {(provided) => (
                             <F1ChampionshipDriverDnDRow
+                              key={`${droppableId}-${driver}`}
                               provided={provided}
                               driver={driver}
                               index={index}

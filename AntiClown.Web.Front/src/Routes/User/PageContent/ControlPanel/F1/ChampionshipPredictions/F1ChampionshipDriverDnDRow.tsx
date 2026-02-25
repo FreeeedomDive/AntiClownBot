@@ -6,19 +6,19 @@ import { DraggableProvided } from "@hello-pangea/dnd";
 interface Props {
   driver: string;
   index: number;
-  provided: DraggableProvided;
+  provided?: DraggableProvided | null;
 }
 
 export default function F1ChampionshipDriverDnDRow({
   driver,
   index,
-  provided,
+  provided = null,
 }: Props) {
   return (
-    <TableRow ref={provided.innerRef} {...provided.draggableProps}>
+    <TableRow ref={provided?.innerRef} {...provided?.draggableProps}>
       <TableCell
         sx={{ padding: "1px", width: "10%" }}
-        {...provided.dragHandleProps}
+        {...provided?.dragHandleProps}
       >
         <IconButton size="small" sx={{ cursor: "grab" }}>
           <DragIndicatorIcon />

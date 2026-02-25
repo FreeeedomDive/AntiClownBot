@@ -104,10 +104,12 @@ export default function F1ChampionshipPredictions() {
           <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipDriverDnDList
               title="Предсезонные предсказания"
+              description="Активны до 5 марта"
               droppableId="championship-pre-season-dnd"
               drivers={preSeasonDrivers}
               setDrivers={setPreSeasonDrivers}
-              disabled={!preSeasonEnabled}
+              disabled={false}
+              editable={preSeasonEnabled}
             />
           </Stack>
         </Grid>
@@ -123,10 +125,14 @@ export default function F1ChampionshipPredictions() {
           <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipDriverDnDList
               title="Предсказания посреди сезона"
+              description="Активны в летние каникулы с 27 июля по 20 августа"
               droppableId="championship-mid-season-dnd"
               drivers={midSeasonDrivers}
               setDrivers={setMidSeasonDrivers}
-              disabled={!midSeasonEnabled}
+              disabled={
+                results.stage === F1ChampionshipPredictionTypeDto.PreSeason
+              }
+              editable={midSeasonEnabled}
             />
           </Stack>
         </Grid>
@@ -155,7 +161,9 @@ export default function F1ChampionshipPredictions() {
       >
         <Alert
           severity={
-            saveResult === AddPredictionResultDto.Success ? "success" : "warning"
+            saveResult === AddPredictionResultDto.Success
+              ? "success"
+              : "warning"
           }
         >
           {saveResult === AddPredictionResultDto.Success
