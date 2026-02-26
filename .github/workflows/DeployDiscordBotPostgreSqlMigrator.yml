@@ -1,14 +1,17 @@
-name: Manual Deploy Front
+name: Deploy DiscordBot PostgreSql Migrator
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: AntiClown.Web.Front
-  DOCKERFILE: Dockerfile.AntiClown.Web.Front
-  DOCKERIMAGE: anticlownwebfront
-  K8SFILENAME: k8s_prod/anticlown-web-front-deployment.yaml
+  PROJECT_FOLDER: AntiClown.DiscordBot.PostgreSqlMigrationsApplier
+  DOCKERFILE: Dockerfile.AntiClown.DiscordBot.PostgreSqlMigrationsApplier
+  DOCKERIMAGE: anticlowndiscordbotpostgresql
+  K8SFILENAME: k8s_prod/anticlown-discord-bot-postgresql-job.yaml
+  APPSETTINGS_PRODUCTION_JSON: ${{ secrets.DISCORDBOT_POSTGRESQLMIGRATOR_APPSETTINGS }}
+  JOBNAME: anticlown-discord-bot-postgresql-job
 
 jobs:
   deploy:
@@ -18,6 +21,11 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
+
+    - name: Recreate appsettings.Production.json
+      # особое имя у окружения - PostgreSqlProduction
+      run: |
+        echo "$APPSETTINGS_PRODUCTION_JSON" > ./$PROJECT_FOLDER/appsettings.PostgreSqlProduction.json
 
     - name: Configure Docker for Insecure Registry
       env:
@@ -39,9 +47,7 @@ jobs:
       env:
         DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
       run: |
-        cd $PROJECT_FOLDER
         docker build . -f $DOCKERFILE -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${GITHUB_SHA}
-        cd ..
 
     - name: Push Docker Image to Registry
       env:
@@ -63,3 +69,5 @@ jobs:
         echo "$KUBECONFIG_CONTENT" > ./kubeconfig.yaml
         export KUBECONFIG=./kubeconfig.yaml
         kubectl apply -f $K8SFILENAME
+        kubectl wait --for=condition=complete job/$JOBNAME --timeout=120s
+        kubectl delete job/$JOBNAME

@@ -1,15 +1,17 @@
-name: Manual Deploy TelegramBot
+name: Deploy DataApi PostgreSql Migrator
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: AntiClown.Telegram.Bot
-  DOCKERFILE: Dockerfile.AntiClown.TelegramBot
-  DOCKERIMAGE: anticlowntelegrambot
-  K8SFILENAME: k8s_prod/anticlown-telegram-bot-deployment.yaml
-  APPSETTINGS_PRODUCTION_JSON: ${{ secrets.TELEGRAMBOT_APPSETTINGS }}
+  PROJECT_FOLDER: AntiClown.Data.Api.PostgreSqlMigrationsApplier
+  DOCKERFILE: Dockerfile.AntiClown.Data.Api.PostgreSqlMigrationsApplier
+  DOCKERIMAGE: anticlowndataapipostgresql
+  K8SFILENAME: k8s_prod/anticlown-data-api-postgresql-job.yaml
+  APPSETTINGS_PRODUCTION_JSON: ${{ secrets.DATAAPI_POSTGRESQLMIGRATOR_APPSETTINGS }}
+  JOBNAME: anticlown-data-api-postgresql-job
 
 jobs:
   deploy:
@@ -66,3 +68,5 @@ jobs:
         echo "$KUBECONFIG_CONTENT" > ./kubeconfig.yaml
         export KUBECONFIG=./kubeconfig.yaml
         kubectl apply -f $K8SFILENAME
+        kubectl wait --for=condition=complete job/$JOBNAME --timeout=120s
+        kubectl delete job/$JOBNAME

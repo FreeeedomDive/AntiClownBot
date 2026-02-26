@@ -9,6 +9,7 @@ on:
       DOCKER_REGISTRY_PASSWORD:
       DOCKER_REGISTRY_DOMAIN:
       KUBECONFIG:
+  workflow_dispatch:
 
 # Edit only names and variables below, everything is based on this variables
 env:

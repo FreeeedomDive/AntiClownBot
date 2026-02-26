@@ -1,15 +1,17 @@
-name: Manual Deploy EntertainmentApi
+name: Deploy EntertainmentApi PostgreSql Migrator
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: AntiClown.Entertainment.Api
-  DOCKERFILE: Dockerfile.AntiClown.Entertainment.Api
-  DOCKERIMAGE: anticlownentertainmentapi
-  K8SFILENAME: k8s_prod/anticlown-entertainment-api-deployment.yaml
-  APPSETTINGS_PRODUCTION_JSON: ${{ secrets.ENTERTAINMENTAPI_APPSETTINGS }}
+  PROJECT_FOLDER: AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier
+  DOCKERFILE: Dockerfile.AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier
+  DOCKERIMAGE: anticlownentertainmentapipostgresql
+  K8SFILENAME: k8s_prod/anticlown-entertainment-api-postgresql-job.yaml
+  APPSETTINGS_PRODUCTION_JSON: ${{ secrets.ENTERTAINMENTAPI_POSTGRESQLMIGRATOR_APPSETTINGS }}
+  JOBNAME: anticlown-entertainment-api-postgresql-job
 
 jobs:
   deploy:
@@ -66,3 +68,5 @@ jobs:
         echo "$KUBECONFIG_CONTENT" > ./kubeconfig.yaml
         export KUBECONFIG=./kubeconfig.yaml
         kubectl apply -f $K8SFILENAME
+        kubectl wait --for=condition=complete job/$JOBNAME --timeout=120s
+        kubectl delete job/$JOBNAME

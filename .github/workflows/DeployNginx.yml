@@ -1,7 +1,8 @@
-name: Manual Deploy Nginx
+name: Deploy Nginx
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 # Edit only names and variables below, everything is based on this variables
 env:

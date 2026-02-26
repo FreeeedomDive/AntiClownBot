@@ -1,15 +1,17 @@
-name: Manual Deploy EventsDaemon
+name: Deploy Api PostgreSql Migrator
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: AntiClown.EventsDaemon
-  DOCKERFILE: Dockerfile.AntiClown.EventsDaemon
-  DOCKERIMAGE: anticlowneventsdaemon
-  K8SFILENAME: k8s_prod/anticlown-events-daemon-deployment.yaml
-  APPSETTINGS_PRODUCTION_JSON: ${{ secrets.EVENTSDAEMON_APPSETTINGS }}
+  PROJECT_FOLDER: AntiClown.Api.PostgreSqlMigrationsApplier
+  DOCKERFILE: Dockerfile.AntiClown.Api.PostgreSqlMigrationsApplier
+  DOCKERIMAGE: anticlownapipostgresql
+  K8SFILENAME: k8s_prod/anticlown-api-postgresql-job.yaml
+  APPSETTINGS_PRODUCTION_JSON: ${{ secrets.API_POSTGRESQLMIGRATOR_APPSETTINGS }}
+  JOBNAME: anticlown-api-postgresql-job
 
 jobs:
   deploy:
@@ -66,3 +68,5 @@ jobs:
         echo "$KUBECONFIG_CONTENT" > ./kubeconfig.yaml
         export KUBECONFIG=./kubeconfig.yaml
         kubectl apply -f $K8SFILENAME
+        kubectl wait --for=condition=complete job/$JOBNAME --timeout=120s
+        kubectl delete job/$JOBNAME
