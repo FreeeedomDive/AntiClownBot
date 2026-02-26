@@ -2,6 +2,7 @@ import axios from "axios";
 import { AddPredictionResultDto } from "../Dto/F1Predictions/AddPredictionResultDto";
 import { F1ChampionshipPredictionDto } from "../Dto/F1Predictions/F1ChampionshipPredictionDto";
 import { F1ChampionshipResultsDto } from "../Dto/F1Predictions/F1ChampionshipResultsDto";
+import { F1ChampionshipUserPointsDto } from "../Dto/F1Predictions/F1ChampionshipUserPointsDto";
 
 export default class F1ChampionshipPredictionsApi {
   static init = () => {
@@ -33,10 +34,11 @@ export default class F1ChampionshipPredictionsApi {
   static createOrUpdate = async (
     prediction: F1ChampionshipPredictionDto,
   ): Promise<AddPredictionResultDto> => {
-    const result = await F1ChampionshipPredictionsApi.init().post<AddPredictionResultDto>(
-      ``,
-      prediction,
-    );
+    const result =
+      await F1ChampionshipPredictionsApi.init().post<AddPredictionResultDto>(
+        ``,
+        prediction,
+      );
     return result.data;
   };
 
@@ -58,5 +60,14 @@ export default class F1ChampionshipPredictionsApi {
     await F1ChampionshipPredictionsApi.init().post(`results`, dto, {
       params: { season },
     });
+  };
+
+  static buildPoints = async (
+    season: number,
+  ): Promise<F1ChampionshipUserPointsDto[]> => {
+    const result = await F1ChampionshipPredictionsApi.init().get<
+      F1ChampionshipUserPointsDto[]
+    >(`points`, { params: { season } });
+    return result.data;
   };
 }

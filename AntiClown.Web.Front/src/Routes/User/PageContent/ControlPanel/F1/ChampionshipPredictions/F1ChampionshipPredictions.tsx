@@ -5,12 +5,16 @@ import { Save } from "@mui/icons-material";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1ChampionshipPredictionsApi from "../../../../../../Api/F1ChampionshipPredictionsApi";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import DiscordMembersApi from "../../../../../../Api/DiscordMembersApi";
 import { F1ChampionshipResultsDto } from "../../../../../../Dto/F1Predictions/F1ChampionshipResultsDto";
 import { F1ChampionshipPredictionTypeDto } from "../../../../../../Dto/F1Predictions/F1ChampionshipPredictionTypeDto";
+import { F1ChampionshipUserPointsDto } from "../../../../../../Dto/F1Predictions/F1ChampionshipUserPointsDto";
+import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { AddPredictionResultDto } from "../../../../../../Dto/F1Predictions/AddPredictionResultDto";
 import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
 import F1ChampionshipDriverDnDList from "./F1ChampionshipDriverDnDList";
 import F1ChampionshipCurrentStandings from "./F1ChampionshipCurrentStandings";
+import F1ChampionshipUserStandings from "./F1ChampionshipUserStandings";
 
 const fabStyle = {
   position: "absolute",
@@ -25,6 +29,11 @@ export default function F1ChampionshipPredictions() {
   const [results, setResults] = useState<F1ChampionshipResultsDto | undefined>(
     undefined,
   );
+  const [userPoints, setUserPoints] = useState<
+    F1ChampionshipUserPointsDto | undefined
+  >(undefined);
+  const [allPoints, setAllPoints] = useState<F1ChampionshipUserPointsDto[]>([]);
+  const [members, setMembers] = useState<DiscordMemberDto[]>([]);
   const [preSeasonDrivers, setPreSeasonDrivers] = useState<string[]>([]);
   const [midSeasonDrivers, setMidSeasonDrivers] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -38,17 +47,34 @@ export default function F1ChampionshipPredictions() {
     }
 
     async function load() {
-      const [resultsData, predictionData, teams] = await Promise.all([
-        F1ChampionshipPredictionsApi.readResults(SEASON),
-        F1ChampionshipPredictionsApi.read(userId!, SEASON),
-        F1PredictionsApi.getActiveTeams(),
-      ]);
+      const [resultsData, predictionData, teams, pointsData] =
+        await Promise.all([
+          F1ChampionshipPredictionsApi.readResults(SEASON),
+          F1ChampionshipPredictionsApi.read(userId!, SEASON),
+          F1PredictionsApi.getActiveTeams(),
+          F1ChampionshipPredictionsApi.buildPoints(SEASON),
+        ]);
+
+      const membersData = await DiscordMembersApi.getMembers(
+        pointsData.map((p) => p.userId),
+      );
 
       setResults(resultsData);
+      setAllPoints(pointsData);
+      setUserPoints(pointsData.find((p) => p.userId === userId));
+      setMembers(membersData);
 
       const defaultDrivers = getDriversFromTeams(teams);
-      setPreSeasonDrivers(predictionData.preSeasonStandings?.length ? predictionData.preSeasonStandings : defaultDrivers);
-      setMidSeasonDrivers(predictionData.midSeasonStandings?.length ? predictionData.midSeasonStandings : defaultDrivers);
+      setPreSeasonDrivers(
+        predictionData.preSeasonStandings?.length
+          ? predictionData.preSeasonStandings
+          : defaultDrivers,
+      );
+      setMidSeasonDrivers(
+        predictionData.midSeasonStandings?.length
+          ? predictionData.midSeasonStandings
+          : defaultDrivers,
+      );
     }
 
     load().catch(console.error);
@@ -81,9 +107,11 @@ export default function F1ChampionshipPredictions() {
   }
 
   const preSeasonEnabled =
-    results.isOpen && results.stage === F1ChampionshipPredictionTypeDto.PreSeason;
+    results.isOpen &&
+    results.stage === F1ChampionshipPredictionTypeDto.PreSeason;
   const midSeasonEnabled =
-    results.isOpen && results.stage === F1ChampionshipPredictionTypeDto.MidSeason;
+    results.isOpen &&
+    results.stage === F1ChampionshipPredictionTypeDto.MidSeason;
 
   return (
     <Stack direction="row" width="100%">
@@ -97,8 +125,8 @@ export default function F1ChampionshipPredictions() {
           key="championship-pre-season"
           xs={12}
           sm={12}
-          md={12}
-          lg={4}
+          md={6}
+          lg={3}
           sx={{ display: "flex", flexDirection: "column" }}
         >
           <Stack direction="column" spacing={1} width="100%" height="100%">
@@ -110,6 +138,7 @@ export default function F1ChampionshipPredictions() {
               setDrivers={setPreSeasonDrivers}
               disabled={false}
               editable={preSeasonEnabled}
+              points={userPoints?.preSeasonPoints}
             />
           </Stack>
         </Grid>
@@ -118,8 +147,8 @@ export default function F1ChampionshipPredictions() {
           key="championship-mid-season"
           xs={12}
           sm={12}
-          md={12}
-          lg={4}
+          md={6}
+          lg={3}
           sx={{ display: "flex", flexDirection: "column" }}
         >
           <Stack direction="column" spacing={1} width="100%" height="100%">
@@ -133,6 +162,7 @@ export default function F1ChampionshipPredictions() {
                 results.stage === F1ChampionshipPredictionTypeDto.PreSeason
               }
               editable={midSeasonEnabled}
+              points={userPoints?.midSeasonPoints}
             />
           </Stack>
         </Grid>
@@ -141,14 +171,30 @@ export default function F1ChampionshipPredictions() {
           key="championship-current-standings"
           xs={12}
           sm={12}
-          md={12}
-          lg={4}
+          md={6}
+          lg={3}
           sx={{ display: "flex", flexDirection: "column" }}
         >
           <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipCurrentStandings
               title="Текущий чемпионат"
               standings={results.standings}
+            />
+          </Stack>
+        </Grid>
+        <Grid
+          item
+          key="championship-user-standings"
+          xs={12}
+          sm={12}
+          md={6}
+          lg={3}
+          sx={{ display: "flex", flexDirection: "column" }}
+        >
+          <Stack direction="column" spacing={1} width="100%" height="100%">
+            <F1ChampionshipUserStandings
+              allPoints={allPoints}
+              members={members}
             />
           </Stack>
         </Grid>

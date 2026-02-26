@@ -4,8 +4,9 @@ import {
   Stack,
   Table,
   TableBody,
-  TableContainer, Tooltip,
-  Typography
+  TableContainer,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 import {
   DragDropContext,
@@ -24,6 +25,7 @@ interface Props {
   setDrivers: (drivers: string[]) => void;
   editable: boolean;
   disabled: boolean;
+  points?: number[];
 }
 
 export default function F1ChampionshipDriverDnDList({
@@ -34,6 +36,7 @@ export default function F1ChampionshipDriverDnDList({
   setDrivers,
   editable,
   disabled,
+  points,
 }: Props) {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -76,6 +79,7 @@ export default function F1ChampionshipDriverDnDList({
                   driver={driver}
                   index={index}
                   draggable={editable}
+                  points={points?.[index]}
                 />
               ))}
             </TableBody>
@@ -105,6 +109,7 @@ export default function F1ChampionshipDriverDnDList({
                               driver={driver}
                               index={index}
                               draggable={editable}
+                              points={points?.[index]}
                             />
                           )}
                         </Draggable>

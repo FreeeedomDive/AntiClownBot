@@ -42,7 +42,11 @@ export default function F1ChampionshipPredictionsAdmin() {
 
       const defaultDrivers = getDriversFromTeams(teams);
       setStandings(results.hasData ? results.standings : defaultDrivers);
-      setStage(results.hasData ? results.stage : F1ChampionshipPredictionTypeDto.PreSeason);
+      setStage(
+        results.hasData
+          ? results.stage
+          : F1ChampionshipPredictionTypeDto.PreSeason,
+      );
       setIsOpen(results.hasData ? results.isOpen : false);
       setIsLoading(false);
     }
@@ -66,11 +70,7 @@ export default function F1ChampionshipPredictionsAdmin() {
       {isLoading ? (
         <Loader />
       ) : (
-        <Grid
-          container
-          spacing={2}
-          sx={{ width: "100%", margin: "auto" }}
-        >
+        <Grid container spacing={2} sx={{ width: "100%", margin: "auto" }}>
           <Grid
             item
             xs={12}
