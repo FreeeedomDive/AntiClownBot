@@ -75,6 +75,7 @@ export default function F1ChampionshipDriverDnDList({
                   key={`${droppableId}-${driver}`}
                   driver={driver}
                   index={index}
+                  draggable={editable}
                 />
               ))}
             </TableBody>
@@ -103,6 +104,7 @@ export default function F1ChampionshipDriverDnDList({
                               provided={provided}
                               driver={driver}
                               index={index}
+                              draggable={editable}
                             />
                           )}
                         </Draggable>

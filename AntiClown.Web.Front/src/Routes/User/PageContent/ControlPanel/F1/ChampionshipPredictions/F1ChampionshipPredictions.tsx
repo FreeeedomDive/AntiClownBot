@@ -125,7 +125,7 @@ export default function F1ChampionshipPredictions() {
           <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipDriverDnDList
               title="Предсказания посреди сезона"
-              description="Активны в летние каникулы с 27 июля по 20 августа"
+              description="Активны в летние каникулы с 27 июля по 23 августа"
               droppableId="championship-mid-season-dnd"
               drivers={midSeasonDrivers}
               setDrivers={setMidSeasonDrivers}

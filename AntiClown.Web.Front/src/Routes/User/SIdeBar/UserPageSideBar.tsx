@@ -168,6 +168,14 @@ const UserPageSideBar = ({ user }: Props) => {
               </RightsWrapper>
               <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
                 <UserPageSideBarItem
+                  sidebarKey="F1ChampionshipPredictionsAdmin"
+                  link={buildLink(userId, "f1Predictions/championship/admin")}
+                  text="Чемпионат"
+                  nesting={2}
+                />
+              </RightsWrapper>
+              <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
+                <UserPageSideBarItem
                   sidebarKey="F1PredictionsBingoAdmin"
                   link={buildLink(userId, "f1Predictions/bingo/admin")}
                   text="Бинго"
@@ -239,7 +247,11 @@ const UserPageSideBar = ({ user }: Props) => {
         <>
           <Divider />
           <List>
-            <UserPageSideBarItem sidebarKey="Login" link={"/auth"} text="Логин" />
+            <UserPageSideBarItem
+              sidebarKey="Login"
+              link={"/auth"}
+              text="Логин"
+            />
           </List>
         </>
       )}
