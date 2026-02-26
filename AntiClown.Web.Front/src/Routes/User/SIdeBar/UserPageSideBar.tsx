@@ -113,6 +113,13 @@ const UserPageSideBar = ({ user }: Props) => {
                       nesting={2}
                     />
                     <UserPageSideBarItem
+                      sidebarKey="F1PredictionsChampionship"
+                      link={buildLink(userId, "f1Predictions/championship")}
+                      text="Чемпионат"
+                      nesting={2}
+                      showBadge
+                    />
+                    <UserPageSideBarItem
                       sidebarKey="F1PredictionsBingo"
                       link={buildLink(userId, "f1Predictions/bingo")}
                       text="Бинго"
@@ -156,6 +163,14 @@ const UserPageSideBar = ({ user }: Props) => {
                   sidebarKey="F1PredictionsAdmin"
                   link={buildLink(userId, "f1Predictions/admin")}
                   text="Результаты гонок"
+                  nesting={2}
+                />
+              </RightsWrapper>
+              <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
+                <UserPageSideBarItem
+                  sidebarKey="F1ChampionshipPredictionsAdmin"
+                  link={buildLink(userId, "f1Predictions/championship/admin")}
+                  text="Чемпионат"
                   nesting={2}
                 />
               </RightsWrapper>
@@ -232,7 +247,11 @@ const UserPageSideBar = ({ user }: Props) => {
         <>
           <Divider />
           <List>
-            <UserPageSideBarItem sidebarKey="Login" link={"/auth"} text="Логин" />
+            <UserPageSideBarItem
+              sidebarKey="Login"
+              link={"/auth"}
+              text="Логин"
+            />
           </List>
         </>
       )}

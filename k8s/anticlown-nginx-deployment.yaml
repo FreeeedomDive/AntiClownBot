@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: localhost:5000/anticlownnginx
+          image: localhost:5051/anticlownnginx
 ---
 apiVersion: v1
 kind: Service
