@@ -1,6 +1,6 @@
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Domain.ChampionshipPredictions;
 
-public class F1ChampionshipUserPoints
+public record F1ChampionshipUserPoints
 {
     public Guid UserId { get; set; }
     public int[] PreSeasonPoints { get; set; } = [];

@@ -1,6 +1,6 @@
 namespace AntiClown.Entertainment.Api.Dto.F1Predictions.ChampionshipPredictions;
 
-public class F1ChampionshipPredictionDto
+public record F1ChampionshipPredictionDto
 {
     public int Season { get; set; }
     public Guid UserId { get; set; }
