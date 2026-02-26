@@ -8,4 +8,5 @@ public interface IF1ChampionshipPredictionsService
     Task CreateOrUpdateAsync(F1ChampionshipPrediction prediction);
     Task<F1ChampionshipResults> ReadResultsAsync(int season);
     Task WriteResultsAsync(int season, F1ChampionshipResults results);
+    Task<F1ChampionshipUserPoints[]> BuildPointsAsync(int season);
 }

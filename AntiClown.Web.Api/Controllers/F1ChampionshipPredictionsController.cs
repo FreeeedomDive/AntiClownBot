@@ -44,4 +44,10 @@ public class F1ChampionshipPredictionsController(
         await antiClownEntertainmentApiClient.F1ChampionshipPredictions.WriteResultsAsync(season, dto);
         return NoContent();
     }
+
+    [HttpGet("points")]
+    public async Task<ActionResult<F1ChampionshipUserPointsDto[]>> BuildPoints([FromQuery] int season)
+    {
+        return await antiClownEntertainmentApiClient.F1ChampionshipPredictions.BuildPointsAsync(season);
+    }
 }

@@ -41,4 +41,11 @@ public class F1ChampionshipPredictionsController(
         await f1ChampionshipPredictionsService.WriteResultsAsync(season, mapper.Map<F1ChampionshipResults>(dto));
         return NoContent();
     }
+
+    [HttpGet("points")]
+    public async Task<ActionResult<F1ChampionshipUserPointsDto[]>> BuildPoints([FromQuery] int season)
+    {
+        var points = await f1ChampionshipPredictionsService.BuildPointsAsync(season);
+        return mapper.Map<F1ChampionshipUserPointsDto[]>(points);
+    }
 }

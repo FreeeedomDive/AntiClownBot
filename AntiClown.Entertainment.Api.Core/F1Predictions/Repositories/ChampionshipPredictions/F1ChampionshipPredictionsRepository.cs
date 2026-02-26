@@ -16,6 +16,15 @@ public class F1ChampionshipPredictionsRepository(
         return ToModel(userId, season, rows);
     }
 
+    public async Task<F1ChampionshipPrediction[]> ReadAllAsync(int season)
+    {
+        var rows = await sqlRepository.FindAsync(x => x.Season == season);
+        return rows
+               .GroupBy(x => x.UserId)
+               .Select(g => ToModel(g.Key, season, g.ToArray()))
+               .ToArray();
+    }
+
     public async Task CreateOrUpdateAsync(F1ChampionshipPrediction prediction)
     {
         await UpsertRowAsync(prediction.UserId, prediction.Season, F1ChampionshipPredictionType.PreSeason, prediction.PreSeasonStandings);

@@ -31,4 +31,11 @@ public class F1ChampionshipPredictionsService(IF1ChampionshipPredictionsReposito
     {
         await repository.WriteResultsAsync(season, results);
     }
+
+    public async Task<F1ChampionshipUserPoints[]> BuildPointsAsync(int season)
+    {
+        var results = await repository.ReadResultsAsync(season);
+        var predictions = await repository.ReadAllAsync(season);
+        return F1ChampionshipPointsBuilder.Build(results, predictions);
+    }
 }
