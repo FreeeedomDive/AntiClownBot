@@ -8,5 +8,4 @@ read name
 dotnet tool install --global dotnet-ef
 
 dotnet ef migrations add "$name" \
-  --project AntiClown.Entertainment.Api.Core \
-  --startup-project AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier
+  --project AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier
