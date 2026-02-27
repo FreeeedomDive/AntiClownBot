@@ -11,12 +11,8 @@ using SqlRepositoryBase.Core.ContextBuilders;
 
 namespace AntiClown.Api.Core.Database;
 
-public class DatabaseContext : PostgreSqlDbContext
+public class DatabaseContext(string connectionString) : PostgreSqlDbContext(connectionString)
 {
-    public DatabaseContext(string connectionString) : base(connectionString)
-    {
-    }
-
     public DbSet<UserStorageElement> Users { get; set; }
     public DbSet<EconomyStorageElement> Economies { get; set; }
     public DbSet<TransactionStorageElement> Transactions { get; set; }
@@ -25,4 +21,9 @@ public class DatabaseContext : PostgreSqlDbContext
     public DbSet<ShopItemStorageElement> ShopItems { get; set; }
     public DbSet<ShopStatsStorageElement> ShopStats { get; set; }
     public DbSet<UserIntegrationStorageElement> Integrations { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql(connectionString, builder => builder.MigrationsAssembly("AntiClown.Api.PostgreSqlMigrationsApplier"));
+    }
 }

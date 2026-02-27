@@ -33,6 +33,26 @@ jobs:
       - name: Detect changes in specific projects
         id: check
         run: |
+          # Data.Api migrations
+          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.Data\.Api\.PostgreSqlMigrationsApplier'; then
+            echo "migrate_data_api=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Api migrations
+          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.Api\.PostgreSqlMigrationsApplier'; then
+            echo "migrate_api=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Entertainment.Api migrations
+          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.Entertainment\.Api\.PostgreSqlMigrationsApplier'; then
+            echo "migrate_entertainment_api=true" >> $GITHUB_OUTPUT
+          fi
+
+          # DiscordBot migrations
+          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.DiscordBot\.PostgreSqlMigrationsApplier'; then
+            echo "migrate_discord_bot=true" >> $GITHUB_OUTPUT
+          fi
+
           # Data.Api
           if git diff --name-only HEAD^ HEAD | grep -E '^(AntiClown\.Data\.Api|AntiClown\.Data\.Api\.Core)/'; then
             echo "deploy_data_api=true" >> $GITHUB_OUTPUT
@@ -78,26 +98,6 @@ jobs:
             echo "deploy_nginx=true" >> $GITHUB_OUTPUT
           fi
 
-          # Api migrations
-          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.Api\.Core/Migrations/'; then
-            echo "migrate_api=true" >> $GITHUB_OUTPUT
-          fi
-
-          # Data.Api migrations
-          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.Data\.Api\.Core/Migrations/'; then
-            echo "migrate_data_api=true" >> $GITHUB_OUTPUT
-          fi
-
-          # Entertainment.Api migrations
-          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.Entertainment\.Api\.Core/Migrations/'; then
-            echo "migrate_entertainment_api=true" >> $GITHUB_OUTPUT
-          fi
-
-          # DiscordBot migrations
-          if git diff --name-only HEAD^ HEAD | grep -E '^AntiClown\.DiscordBot/Migrations/'; then
-            echo "migrate_discord_bot=true" >> $GITHUB_OUTPUT
-          fi
-
   migrate_api:
     name: Migrate Api PostgreSql
     needs: detect-changes
@@ -124,13 +124,6 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.migrate_discord_bot == 'true'
     uses: ./.github/workflows/DeployDiscordBotPostgreSqlMigrator.yml
-    secrets: inherit
-
-  deploy_nginx:
-    name: Deploy Nginx
-    needs: detect-changes
-    if: needs.detect-changes.outputs.deploy_nginx == 'true'
-    uses: ./.github/workflows/DeployNginx.yml
     secrets: inherit
 
   deploy_data_api:
@@ -187,4 +180,11 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.deploy_front == 'true'
     uses: ./.github/workflows/DeployWebFront.yml
+    secrets: inherit
+
+  deploy_nginx:
+    name: Deploy Nginx
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deploy_nginx == 'true'
+    uses: ./.github/workflows/DeployNginx.yml
     secrets: inherit

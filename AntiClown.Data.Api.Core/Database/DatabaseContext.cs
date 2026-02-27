@@ -6,13 +6,14 @@ using SqlRepositoryBase.Core.ContextBuilders;
 
 namespace AntiClown.Data.Api.Core.Database;
 
-public class DatabaseContext : PostgreSqlDbContext
+public class DatabaseContext(string connectionString) : PostgreSqlDbContext(connectionString)
 {
-    public DatabaseContext(string connectionString) : base(connectionString)
-    {
-    }
-
     public DbSet<SettingStorageElement> Settings { get; set; }
     public DbSet<TokenStorageElement> Tokens { get; set; }
     public DbSet<RightsStorageElement> Rights { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql(connectionString, builder => builder.MigrationsAssembly("AntiClown.Data.Api.PostgreSqlMigrationsApplier"));
+    }
 }

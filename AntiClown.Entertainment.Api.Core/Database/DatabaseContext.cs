@@ -32,4 +32,9 @@ public class DatabaseContext(string connectionString) : PostgreSqlDbContext(conn
     public DbSet<F1BingoBoardStorageElement> F1BingoBoards { get; set; }
     public DbSet<F1ChampionshipPredictionStorageElement> F1ChampionshipPredictions { get; set; }
     public DbSet<F1ChampionshipResultsStorageElement> F1ChampionshipResults { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql(connectionString, builder => builder.MigrationsAssembly("AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier"));
+    }
 }
