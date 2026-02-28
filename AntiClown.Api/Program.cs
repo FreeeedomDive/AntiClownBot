@@ -97,9 +97,11 @@ builder.Services.AddTransientWithProxy<ILohotronRewardGenerator, LohotronRewardG
 builder.Services.AddTransientWithProxy<ILohotronService, LohotronService>();
 
 // configure HangFire
-builder.Services.AddHangfire(
-    (serviceProvider, config) =>
-        config.UsePostgreSqlStorage(serviceProvider.GetRequiredService<IOptions<AppSettingsDatabaseOptions>>().Value.ConnectionString)
+builder.Services.AddHangfire((serviceProvider, config) =>
+    {
+        var connectionString = serviceProvider.GetRequiredService<IConnectionStringProvider>().GetConnectionString();
+        config.UsePostgreSqlStorage(connectionString);
+    }
 );
 builder.Services.AddHangfireServer();
 
