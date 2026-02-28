@@ -19,10 +19,10 @@ public class ShopItemsRepository(
     public async Task<ShopItem[]> FindAsync(Guid shopId)
     {
         var queryable = await sqlRepository.BuildCustomQueryAsync();
-        var result = queryable
-                     .Where(x => x.ShopId == shopId)
-                     .OrderBy(x => x.Id)
-                     .ToArrayAsync();
+        var result = await queryable
+            .Where(x => x.ShopId == shopId)
+            .OrderBy(x => x.Id)
+            .ToArrayAsync();
         return mapper.Map<ShopItem[]>(result);
     }
 
