@@ -33,19 +33,10 @@ public class F1RacesRepository : IF1RacesRepository
         await sqlRepository.CreateAsync(storageElement);
     }
 
-    public async Task<F1Race[]> ReadAllAsync()
-    {
-        var result = await sqlRepository
-                           .BuildCustomQuery()
-                           .OrderBy(x => x.CreatedAt)
-                           .ToArrayAsync();
-        return result.Select(ToModel).ToArray();
-    }
-
     public async Task<F1Race[]> FindAsync(F1RaceFilter filter)
     {
-        var result = await sqlRepository
-                           .BuildCustomQuery()
+        var queryable = await sqlRepository.BuildCustomQueryAsync();
+        var result = await queryable
                            .WhereIf(filter.Name is not null, x => x.Name == filter.Name)
                            .WhereIf(filter.Season is not null, x => x.Season == filter.Season!.Value)
                            .WhereIf(filter.IsActive is not null, x => x.IsActive == filter.IsActive!.Value)

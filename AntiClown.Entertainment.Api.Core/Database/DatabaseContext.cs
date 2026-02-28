@@ -11,11 +11,18 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
 using AntiClown.Entertainment.Api.Core.MinecraftAuth.Repositories;
 using AntiClown.Entertainment.Api.Core.Parties.Repositories;
 using Microsoft.EntityFrameworkCore;
-using SqlRepositoryBase.Core.ContextBuilders;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using SqlRepositoryBase.Core.Contexts;
+using SqlRepositoryBase.Core.Options;
 
 namespace AntiClown.Entertainment.Api.Core.Database;
 
-public class DatabaseContext(string connectionString) : PostgreSqlDbContext(connectionString)
+public class DatabaseContext(
+    IConnectionStringProvider connectionStringProvider,
+    IOptions<AppSettingsDatabaseOptions> appSettingsDatabaseOptions,
+    ILogger<DatabaseContext> logger
+) : PostgreSqlDbContext(connectionStringProvider, appSettingsDatabaseOptions, logger)
 {
     public DbSet<CommonEventStorageElement> CommonEvents { get; set; }
     public DbSet<RaceDriverStorageElement> RaceDrivers { get; set; }
@@ -32,9 +39,4 @@ public class DatabaseContext(string connectionString) : PostgreSqlDbContext(conn
     public DbSet<F1BingoBoardStorageElement> F1BingoBoards { get; set; }
     public DbSet<F1ChampionshipPredictionStorageElement> F1ChampionshipPredictions { get; set; }
     public DbSet<F1ChampionshipResultsStorageElement> F1ChampionshipResults { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql(connectionString, builder => builder.MigrationsAssembly("AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier"));
-    }
 }

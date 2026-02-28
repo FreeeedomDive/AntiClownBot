@@ -22,9 +22,7 @@ var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
 // configure database
-builder.Services.ConfigureConnectionStringFromAppSettings(builder.Configuration.GetSection("PostgreSql"))
-        .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
-        .ConfigurePostgreSql();
+builder.Services.ConfigurePostgreSql<DatabaseContext>(builder.Configuration.GetSection("PostgreSql"));
 
 // configure repositories
 builder.Services.AddTransientWithProxy<ISettingsRepository, SettingsRepository>();

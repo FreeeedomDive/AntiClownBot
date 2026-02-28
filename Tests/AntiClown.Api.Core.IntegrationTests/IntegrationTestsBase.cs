@@ -18,8 +18,8 @@ using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Dto.Settings;
 using AutoFixture;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore.Internal;
 using NSubstitute;
-using SqlRepositoryBase.Core.ContextBuilders;
 using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api.Core.IntegrationTests;
@@ -29,66 +29,66 @@ public class IntegrationTestsBase
     [OneTimeSetUp]
     public void SetUpDependencies()
     {
-        // Build all dependencies
-        Fixture = new Fixture();
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddMaps(assemblies));
-        var mapper = mapperConfiguration.CreateMapper();
-
-        var connectionStringProvider = new TestsConnectionStringProvider();
-        var dbContextFactory = new DbContextFactory(connectionStringProvider, connectionString => new DatabaseContext(connectionString));
-
-        var usersSqlRepository = new SqlRepository<UserStorageElement>(dbContextFactory);
-        var usersRepository = new UsersRepository(usersSqlRepository, mapper);
-
-        var usersSqlIntegrationsRepository = new SqlRepository<UserIntegrationStorageElement>(dbContextFactory);
-        var userIntegrationsRepository = new UserIntegrationsRepository(usersSqlIntegrationsRepository);
-
-        var economiesSqlRepository = new VersionedSqlRepository<EconomyStorageElement>(dbContextFactory);
-        var economiesRepository = new EconomyRepository(economiesSqlRepository, mapper);
-
-        var transactionsSqlRepository = new SqlRepository<TransactionStorageElement>(dbContextFactory);
-        var transactionsRepository = new TransactionsRepository(transactionsSqlRepository, mapper);
-
-        var itemsSqlRepository = new SqlRepository<ItemStorageElement>(dbContextFactory);
-        var itemsRepository = new ItemsRepository(itemsSqlRepository, mapper);
-
-        var shopsSqlRepository = new VersionedSqlRepository<ShopStorageElement>(dbContextFactory);
-        ShopsRepository = new ShopsRepository(shopsSqlRepository, mapper);
-
-        var shopItemsSqlRepository = new SqlRepository<ShopItemStorageElement>(dbContextFactory);
-        ShopItemsRepository = new ShopItemsRepository(shopItemsSqlRepository, mapper);
-
-        var shopStatsSqlRepository = new VersionedSqlRepository<ShopStatsStorageElement>(dbContextFactory);
-        ShopStatsRepository = new ShopStatsRepository(shopStatsSqlRepository, mapper);
-
-        AntiClownDataApiClient = Substitute.For<IAntiClownDataApiClient>();
-        ConfigureDataApiClientMock();
-
-        UsersService = new UsersService(usersRepository, userIntegrationsRepository);
-        TransactionsService = new TransactionsService(transactionsRepository);
-        EconomyService = new EconomyService(economiesRepository, UsersService, TransactionsService, AntiClownDataApiClient);
-        LohotronRewardGenerator = Substitute.For<ILohotronRewardGenerator>();
-        LohotronService = new LohotronService(EconomyService, LohotronRewardGenerator);
-        ItemsService = new ItemsService(
-            new ItemsValidator(EconomyService, itemsRepository, AntiClownDataApiClient),
-            itemsRepository,
-            EconomyService,
-            AntiClownDataApiClient
-        );
-        ShopsService = new ShopsService(
-            ShopsRepository,
-            ShopItemsRepository,
-            ShopStatsRepository,
-            new ShopsValidator(EconomyService, ShopItemsRepository, AntiClownDataApiClient),
-            EconomyService,
-            ItemsService,
-            AntiClownDataApiClient,
-            mapper
-        );
-        NewUserService = new NewUserService(usersRepository, EconomyService, ShopsService, mapper);
-        Scheduler = new SchedulerMock();
-        TributeService = new TributeService(EconomyService, ItemsService, new TributeMessageProducerMock(), AntiClownDataApiClient, Scheduler);
+        // TODO: move to xUnit + TestContainers + WebApplicationFactory
+        // Fixture = new Fixture();
+        // var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        // var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddMaps(assemblies));
+        // var mapper = mapperConfiguration.CreateMapper();
+        //
+        // var connectionStringProvider = new TestsConnectionStringProvider();
+        // var dbContextFactory = new DbContextFactory<DatabaseContext>();
+        //
+        // var usersSqlRepository = new SqlRepository<UserStorageElement>(dbContextFactory);
+        // var usersRepository = new UsersRepository(usersSqlRepository, mapper);
+        //
+        // var usersSqlIntegrationsRepository = new SqlRepository<UserIntegrationStorageElement>(dbContextFactory);
+        // var userIntegrationsRepository = new UserIntegrationsRepository(usersSqlIntegrationsRepository);
+        //
+        // var economiesSqlRepository = new VersionedSqlRepository<EconomyStorageElement>(dbContextFactory);
+        // var economiesRepository = new EconomyRepository(economiesSqlRepository, mapper);
+        //
+        // var transactionsSqlRepository = new SqlRepository<TransactionStorageElement>(dbContextFactory);
+        // var transactionsRepository = new TransactionsRepository(transactionsSqlRepository, mapper);
+        //
+        // var itemsSqlRepository = new SqlRepository<ItemStorageElement>(dbContextFactory);
+        // var itemsRepository = new ItemsRepository(itemsSqlRepository, mapper);
+        //
+        // var shopsSqlRepository = new VersionedSqlRepository<ShopStorageElement>(dbContextFactory);
+        // ShopsRepository = new ShopsRepository(shopsSqlRepository, mapper);
+        //
+        // var shopItemsSqlRepository = new SqlRepository<ShopItemStorageElement>(dbContextFactory);
+        // ShopItemsRepository = new ShopItemsRepository(shopItemsSqlRepository, mapper);
+        //
+        // var shopStatsSqlRepository = new VersionedSqlRepository<ShopStatsStorageElement>(dbContextFactory);
+        // ShopStatsRepository = new ShopStatsRepository(shopStatsSqlRepository, mapper);
+        //
+        // AntiClownDataApiClient = Substitute.For<IAntiClownDataApiClient>();
+        // ConfigureDataApiClientMock();
+        //
+        // UsersService = new UsersService(usersRepository, userIntegrationsRepository);
+        // TransactionsService = new TransactionsService(transactionsRepository);
+        // EconomyService = new EconomyService(economiesRepository, UsersService, TransactionsService, AntiClownDataApiClient);
+        // LohotronRewardGenerator = Substitute.For<ILohotronRewardGenerator>();
+        // LohotronService = new LohotronService(EconomyService, LohotronRewardGenerator);
+        // ItemsService = new ItemsService(
+        //     new ItemsValidator(EconomyService, itemsRepository, AntiClownDataApiClient),
+        //     itemsRepository,
+        //     EconomyService,
+        //     AntiClownDataApiClient
+        // );
+        // ShopsService = new ShopsService(
+        //     ShopsRepository,
+        //     ShopItemsRepository,
+        //     ShopStatsRepository,
+        //     new ShopsValidator(EconomyService, ShopItemsRepository, AntiClownDataApiClient),
+        //     EconomyService,
+        //     ItemsService,
+        //     AntiClownDataApiClient,
+        //     mapper
+        // );
+        // NewUserService = new NewUserService(usersRepository, EconomyService, ShopsService, mapper);
+        // Scheduler = new SchedulerMock();
+        // TributeService = new TributeService(EconomyService, ItemsService, new TributeMessageProducerMock(), AntiClownDataApiClient, Scheduler);
     }
 
     private void ConfigureDataApiClientMock()

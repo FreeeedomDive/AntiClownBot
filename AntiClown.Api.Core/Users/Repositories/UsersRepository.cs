@@ -1,6 +1,5 @@
 ﻿using AntiClown.Api.Core.Users.Domain;
 using AntiClown.Core.Dto.Exceptions;
-using Xdd.HttpHelpers.Models.Exceptions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SqlRepositoryBase.Core.Exceptions;
@@ -9,17 +8,11 @@ using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api.Core.Users.Repositories;
 
-public class UsersRepository : IUsersRepository
+public class UsersRepository(
+    ISqlRepository<UserStorageElement> sqlRepository,
+    IMapper mapper
+) : IUsersRepository
 {
-    public UsersRepository(
-        ISqlRepository<UserStorageElement> sqlRepository,
-        IMapper mapper
-    )
-    {
-        this.sqlRepository = sqlRepository;
-        this.mapper = mapper;
-    }
-
     public async Task<User[]> ReadAllAsync()
     {
         var result = await sqlRepository.ReadAllAsync();
@@ -41,8 +34,8 @@ public class UsersRepository : IUsersRepository
 
     public async Task<User[]> FindAsync(UserFilter filter)
     {
-        var result = await sqlRepository
-                           .BuildCustomQuery()
+        var queryable = await sqlRepository.BuildCustomQueryAsync();
+        var result = await queryable
                            .WhereIf(filter.DiscordId.HasValue, x => x.DiscordId == filter.DiscordId)
                            .WhereIf(filter.TelegramId.HasValue, x => x.TelegramId == filter.TelegramId)
                            .ToArrayAsync();
@@ -59,14 +52,7 @@ public class UsersRepository : IUsersRepository
     public async Task UpdateAsync(User user)
     {
         await sqlRepository.UpdateAsync(
-            user.Id, x =>
-            {
-                x.TelegramId = user.TelegramId;
-            }
+            user.Id, x => { x.TelegramId = user.TelegramId; }
         );
     }
-
-    private readonly IMapper mapper;
-
-    private readonly ISqlRepository<UserStorageElement> sqlRepository;
 }

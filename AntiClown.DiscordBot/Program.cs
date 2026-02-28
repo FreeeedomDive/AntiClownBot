@@ -138,9 +138,7 @@ internal class Program
 
     private static void ConfigurePostgreSql(WebApplicationBuilder builder)
     {
-        builder.Services.ConfigureConnectionStringFromAppSettings(builder.Configuration.GetSection("PostgreSql"))
-               .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
-               .ConfigurePostgreSql();
+        builder.Services.ConfigurePostgreSql<DatabaseContext>(builder.Configuration.GetSection("PostgreSql"));
 
         builder.Services.AddTransientWithProxy<ILocker, Locker>();
         builder.Services.AddTransientWithProxy<IInteractivityRepository, InteractivityRepository>();

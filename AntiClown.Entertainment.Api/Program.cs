@@ -23,7 +23,6 @@ using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Announce;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Messages;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.PaymentsAndResets;
 using AntiClown.Entertainment.Api.Core.Database;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Bingo;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.ChampionshipPredictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
@@ -66,9 +65,7 @@ builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.
 builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
 
 // configure database
-builder.Services.ConfigureConnectionStringFromAppSettings(builder.Configuration.GetSection("PostgreSql"))
-        .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
-        .ConfigurePostgreSql();
+builder.Services.ConfigurePostgreSql<DatabaseContext>(builder.Configuration.GetSection("PostgreSql"));
 
 builder.Services.AddMassTransit(
     massTransitConfiguration =>

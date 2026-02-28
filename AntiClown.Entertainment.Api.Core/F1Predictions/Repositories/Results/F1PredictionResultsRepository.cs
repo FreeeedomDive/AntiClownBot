@@ -47,8 +47,8 @@ public class F1PredictionResultsRepository(ISqlRepository<F1PredictionResultStor
 
     private async Task<F1PredictionResultStorageElement[]> InnerFindAsync(F1PredictionResultsFilter filter)
     {
-        return await sqlRepository
-                     .BuildCustomQuery()
+        var queryable = await sqlRepository.BuildCustomQueryAsync();
+        return await queryable
                      .WhereIf(filter.UserId is not null, x => x.UserId == filter.UserId!.Value)
                      .WhereIf(filter.RaceId is not null, x => x.RaceId == filter.RaceId!.Value)
                      .ToArrayAsync();
