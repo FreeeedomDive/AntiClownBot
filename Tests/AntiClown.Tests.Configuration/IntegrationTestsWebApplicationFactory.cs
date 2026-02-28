@@ -37,8 +37,7 @@ public abstract class IntegrationTestsWebApplicationFactory<TEntryPoint>
             services.AddSingleton<IConnectionStringProvider>(_ =>
                 new TestContainerConnectionStringProvider(container));
 
-            RemoveMassTransitHostedService(services);
-            MockIBus(services);
+            MockMassTransit(services);
 
             ConfigureTestServices(services);
         });
@@ -57,17 +56,13 @@ public abstract class IntegrationTestsWebApplicationFactory<TEntryPoint>
         await container.DisposeAsync();
     }
 
-    private static void RemoveMassTransitHostedService(IServiceCollection services)
+    private static void MockMassTransit(IServiceCollection services)
     {
         var massTransitHostedServices = services
             .Where(d => d.ServiceType == typeof(IHostedService)
                         && (d.ImplementationType?.Namespace?.StartsWith("MassTransit") ?? false))
             .ToList();
         massTransitHostedServices.ForEach(s => services.Remove(s));
-    }
-
-    private static void MockIBus(IServiceCollection services)
-    {
         var mockBus = Substitute.For<IBus>();
         services.RemoveAll<IBus>();
         services.RemoveAll<IPublishEndpoint>();
