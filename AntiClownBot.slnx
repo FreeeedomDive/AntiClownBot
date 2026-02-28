@@ -1,4 +1,9 @@
 <Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
   <Folder Name="/Clients/">
     <Project Path="AntiClown.Api.Client/AntiClown.Api.Client.csproj" />
     <Project Path="AntiClown.Api.Dto/AntiClown.Api.Dto.csproj" />
@@ -32,6 +37,7 @@
   <Folder Name="/Tests/">
     <Project Path="Tests/AntiClown.Api.Core.IntegrationTests/AntiClown.Api.Core.IntegrationTests.csproj" />
     <Project Path="Tests/AntiClown.Entertainment.Api.Core.UnitTests/AntiClown.Entertainment.Api.Core.UnitTests.csproj" />
+    <Project Path="Tests/AntiClown.Tests.Configuration/AntiClown.Tests.Configuration.csproj" />
   </Folder>
   <Folder Name="/Tools/">
     <Project Path="AntiClown.Api.PostgreSqlMigrationsApplier/AntiClown.Api.PostgreSqlMigrationsApplier.csproj" />

@@ -2,7 +2,6 @@
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
-using AntiClown.Tools.Utility.Extensions;
 using FluentAssertions;
 
 namespace AntiClown.Entertainment.Api.Core.UnitTests.F1Predictions;

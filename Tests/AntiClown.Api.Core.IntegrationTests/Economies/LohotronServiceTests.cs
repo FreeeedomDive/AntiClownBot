@@ -1,13 +1,21 @@
 ﻿using AntiClown.Api.Core.Economies.Domain;
+using AntiClown.Api.Core.Economies.Services;
 using AntiClown.Api.Dto.Exceptions.Economy;
 using AutoFixture;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 
 namespace AntiClown.Api.Core.IntegrationTests.Economies;
 
-public class LohotronServiceTests : IntegrationTestsBase
+public class LohotronServiceTests : IntegrationTestsBase<LohotronTestsWebApplicationFactory>
 {
+    [OneTimeSetUp]
+    public void InitializeLohotronRewardGenerator()
+    {
+        LohotronRewardGenerator = Scope.ServiceProvider.GetRequiredService<ILohotronRewardGenerator>();
+    }
+
     [Test]
     public async Task LohotronService_Should_ThrowIfLohotronIsCalledSecondTime()
     {
@@ -83,4 +91,6 @@ public class LohotronServiceTests : IntegrationTestsBase
         var economyAfter = await EconomyService.ReadEconomyAsync(User.Id);
         economyAfter.LootBoxes.Should().Be(economyBefore.LootBoxes + 1);
     }
+
+    private ILohotronRewardGenerator LohotronRewardGenerator { get; set; } = null!;
 }
