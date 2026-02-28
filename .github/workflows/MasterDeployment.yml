@@ -7,6 +7,28 @@ on:
   workflow_dispatch:
 
 jobs:
+  check-hotfix:
+    name: Check for Hotfix
+    runs-on: ubuntu-latest
+    outputs:
+      is_hotfix: ${{ steps.check.outputs.is_hotfix }}
+    steps:
+      - name: Check commit message for hotfix
+        id: check
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          if echo "$COMMIT_MSG" | grep -qi "hotfix"; then
+            echo "is_hotfix=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_hotfix=false" >> $GITHUB_OUTPUT
+          fi
+
+  run-tests:
+    name: Run Tests
+    needs: check-hotfix
+    if: needs.check-hotfix.outputs.is_hotfix != 'true'
+    uses: ./.github/workflows/Tests.yml
+
   detect-changes:
     name: Detect Changes for Deployments
     runs-on: ubuntu-latest
@@ -100,91 +122,91 @@ jobs:
 
   migrate_api:
     name: Migrate Api PostgreSql
-    needs: detect-changes
-    if: needs.detect-changes.outputs.migrate_api == 'true'
+    needs: [detect-changes, run-tests]
+    if: ${{ needs.detect-changes.outputs.migrate_api == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployApiPostgreSqlMigrator.yml
     secrets: inherit
 
   migrate_data_api:
     name: Migrate Data.Api PostgreSql
-    needs: detect-changes
-    if: needs.detect-changes.outputs.migrate_data_api == 'true'
+    needs: [detect-changes, run-tests]
+    if: ${{ needs.detect-changes.outputs.migrate_data_api == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployDataApiPostgreSqlMigrator.yml
     secrets: inherit
 
   migrate_entertainment_api:
     name: Migrate Entertainment.Api PostgreSql
-    needs: detect-changes
-    if: needs.detect-changes.outputs.migrate_entertainment_api == 'true'
+    needs: [detect-changes, run-tests]
+    if: ${{ needs.detect-changes.outputs.migrate_entertainment_api == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployEntertainmentApiPostgreSqlMigrator.yml
     secrets: inherit
 
   migrate_discord_bot:
     name: Migrate DiscordBot PostgreSql
-    needs: detect-changes
-    if: needs.detect-changes.outputs.migrate_discord_bot == 'true'
+    needs: [detect-changes, run-tests]
+    if: ${{ needs.detect-changes.outputs.migrate_discord_bot == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployDiscordBotPostgreSqlMigrator.yml
     secrets: inherit
 
   deploy_data_api:
     name: Deploy Data.Api
-    needs: [detect-changes, migrate_data_api]
+    needs: [detect-changes, run-tests, migrate_data_api]
     if: ${{ needs.detect-changes.outputs.deploy_data_api == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployDataApi.yml
     secrets: inherit
 
   deploy_api:
     name: Deploy Api
-    needs: [detect-changes, migrate_api]
+    needs: [detect-changes, run-tests, migrate_api]
     if: ${{ needs.detect-changes.outputs.deploy_api == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployApi.yml
     secrets: inherit
 
   deploy_entertainment_api:
     name: Deploy Entertainment.Api
-    needs: [detect-changes, migrate_entertainment_api]
+    needs: [detect-changes, run-tests, migrate_entertainment_api]
     if: ${{ needs.detect-changes.outputs.deploy_entertainment_api == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployEntertainmentApi.yml
     secrets: inherit
 
   deploy_discord_bot:
     name: Deploy DiscordBot
-    needs: [detect-changes, migrate_discord_bot]
+    needs: [detect-changes, run-tests, migrate_discord_bot]
     if: ${{ needs.detect-changes.outputs.deploy_discord_bot == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployDiscordBot.yml
     secrets: inherit
 
   deploy_events_daemon:
     name: Deploy EventsDaemon
-    needs: detect-changes
-    if: needs.detect-changes.outputs.deploy_events_daemon == 'true'
+    needs: [detect-changes, run-tests]
+    if: ${{ needs.detect-changes.outputs.deploy_events_daemon == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployEventsDaemon.yml
     secrets: inherit
 
   deploy_telegram_bot:
     name: Deploy TelegramBot
-    needs: detect-changes
-    if: needs.detect-changes.outputs.deploy_telegram_bot == 'true'
+    needs: [detect-changes, run-tests]
+    if: ${{ needs.detect-changes.outputs.deploy_telegram_bot == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployTelegramBot.yml
     secrets: inherit
 
   deploy_web_api:
     name: Deploy Web.Api
-    needs: detect-changes
-    if: needs.detect-changes.outputs.deploy_web_api == 'true'
+    needs: [detect-changes, run-tests]
+    if: ${{ needs.detect-changes.outputs.deploy_web_api == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployWebApi.yml
     secrets: inherit
 
   deploy_front:
     name: Deploy Web.Front
-    needs: detect-changes
-    if: needs.detect-changes.outputs.deploy_front == 'true'
+    needs: [detect-changes, run-tests]
+    if: ${{ needs.detect-changes.outputs.deploy_front == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployWebFront.yml
     secrets: inherit
 
   deploy_nginx:
     name: Deploy Nginx
-    needs: detect-changes
-    if: needs.detect-changes.outputs.deploy_nginx == 'true'
+    needs: [detect-changes, run-tests]
+    if: ${{ needs.detect-changes.outputs.deploy_nginx == 'true' && !failure() && !cancelled() }}
     uses: ./.github/workflows/DeployNginx.yml
     secrets: inherit
