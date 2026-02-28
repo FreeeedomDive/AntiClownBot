@@ -1,0 +1,51 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Clients/">
+    <Project Path="AntiClown.Api.Client/AntiClown.Api.Client.csproj" />
+    <Project Path="AntiClown.Api.Dto/AntiClown.Api.Dto.csproj" />
+    <Project Path="AntiClown.Core.Dto/AntiClown.Core.Dto.csproj" />
+    <Project Path="AntiClown.Data.Api.Client/AntiClown.Data.Api.Client.csproj" />
+    <Project Path="AntiClown.Data.Api.Dto/AntiClown.Data.Api.Dto.csproj" />
+    <Project Path="AntiClown.DiscordBot.Client/AntiClown.DiscordBot.Client.csproj" />
+    <Project Path="AntiClown.DiscordBot.Dto/AntiClown.DiscordBot.Dto.csproj" />
+    <Project Path="AntiClown.Entertainment.Api.Client/AntiClown.Entertainment.Api.Client.csproj" />
+    <Project Path="AntiClown.Entertainment.Api.Dto/AntiClown.Entertainment.Api.Dto.csproj" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="AntiClown.Api.Core/AntiClown.Api.Core.csproj" />
+    <Project Path="AntiClown.Core.OpenTelemetry/AntiClown.Core.OpenTelemetry.csproj" />
+    <Project Path="AntiClown.Core/AntiClown.Core.csproj" />
+    <Project Path="AntiClown.Data.Api.Core/AntiClown.Data.Api.Core.csproj" />
+    <Project Path="AntiClown.Entertainment.Api.Core/AntiClown.Entertainment.Api.Core.csproj" />
+  </Folder>
+  <Folder Name="/EntryPoints/">
+    <Project Path="AntiClown.Api/AntiClown.Api.csproj" />
+    <Project Path="AntiClown.Data.Api/AntiClown.Data.Api.csproj" />
+    <Project Path="AntiClown.DiscordBot/AntiClown.DiscordBot.csproj" />
+    <Project Path="AntiClown.Entertainment.Api/AntiClown.Entertainment.Api.csproj" />
+    <Project Path="AntiClown.EventsDaemon/AntiClown.EventsDaemon.csproj" />
+    <Project Path="AntiClown.Telegram.Bot/AntiClown.Telegram.Bot.csproj" />
+    <Project Path="AntiClown.Web.Api/AntiClown.Web.Api.csproj" />
+  </Folder>
+  <Folder Name="/Messages/">
+    <Project Path="AntiClown.Messages.Dto/AntiClown.Messages.Dto.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/AntiClown.Api.Core.IntegrationTests/AntiClown.Api.Core.IntegrationTests.csproj" />
+    <Project Path="Tests/AntiClown.Entertainment.Api.Core.UnitTests/AntiClown.Entertainment.Api.Core.UnitTests.csproj" />
+    <Project Path="Tests/AntiClown.Tests.Configuration/AntiClown.Tests.Configuration.csproj" />
+  </Folder>
+  <Folder Name="/Tools/">
+    <Project Path="AntiClown.Api.PostgreSqlMigrationsApplier/AntiClown.Api.PostgreSqlMigrationsApplier.csproj" />
+    <Project Path="AntiClown.Data.Api.PostgreSqlMigrationsApplier/AntiClown.Data.Api.PostgreSqlMigrationsApplier.csproj" />
+    <Project Path="AntiClown.DiscordBot.PostgreSqlMigrationsApplier/AntiClown.DiscordBot.PostgreSqlMigrationsApplier.csproj" />
+    <Project Path="AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier/AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier.csproj" />
+    <Project Path="AntiClown.Tools/AntiClown.Tools.csproj" />
+    <Project Path="ClientGenerator/ClientGenerator.csproj" />
+    <Project Path="Utility/Utility.csproj" />
+  </Folder>
+</Solution>

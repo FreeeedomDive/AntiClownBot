@@ -125,3 +125,5 @@ app.UseEndpoints(endpoints => endpoints.MapControllers());
 app.UseHangfireDashboard();
 
 await app.RunAsync();
+
+public partial class Program { }
