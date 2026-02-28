@@ -8,17 +8,11 @@ using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api.Core.Inventory.Repositories;
 
-public class ItemsRepository : IItemsRepository
+public class ItemsRepository(
+    ISqlRepository<ItemStorageElement> sqlRepository,
+    IMapper mapper
+) : IItemsRepository
 {
-    public ItemsRepository(
-        ISqlRepository<ItemStorageElement> sqlRepository,
-        IMapper mapper
-    )
-    {
-        this.sqlRepository = sqlRepository;
-        this.mapper = mapper;
-    }
-
     public async Task<BaseItem> ReadAsync(Guid id)
     {
         var result = await sqlRepository.ReadAsync(id);
@@ -33,13 +27,12 @@ public class ItemsRepository : IItemsRepository
 
     public async Task<BaseItem[]> FindAsync(ItemsFilter filter)
     {
-        var result = await sqlRepository
-                           .BuildCustomQuery()
-                           .WhereIf(filter.OwnerId.HasValue, x => x.OwnerId == filter.OwnerId)
-                           .WhereIf(filter.IsActive.HasValue, x => x.IsActive == filter.IsActive)
-                           .WhereIf(filter.Name != null, x => x.Name == filter.Name)
-                           .OrderBy(x => x.Id)
-                           .ToArrayAsync();
+        var queryable = await sqlRepository.BuildCustomQueryAsync();
+        var result = await queryable.WhereIf(filter.OwnerId.HasValue, x => x.OwnerId == filter.OwnerId)
+                                    .WhereIf(filter.IsActive.HasValue, x => x.IsActive == filter.IsActive)
+                                    .WhereIf(filter.Name != null, x => x.Name == filter.Name)
+                                    .OrderBy(x => x.Id)
+                                    .ToArrayAsync();
         return result.Select(Deserialize).ToArray();
     }
 
@@ -77,8 +70,4 @@ public class ItemsRepository : IItemsRepository
             }
         )!;
     }
-
-    private readonly IMapper mapper;
-
-    private readonly ISqlRepository<ItemStorageElement> sqlRepository;
 }

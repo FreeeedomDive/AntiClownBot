@@ -26,7 +26,6 @@ using Newtonsoft.Json.Converters;
 using Serilog;
 using SqlRepositoryBase.Configuration.Extensions;
 using SqlRepositoryBase.Core.Options;
-using SqlRepositoryBase.Core.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,9 +41,7 @@ builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("Ra
 builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
 
 // configure database
-builder.Services.ConfigureConnectionStringFromAppSettings(builder.Configuration.GetSection("PostgreSql"))
-        .ConfigureDbContextFactory(connectionString => new DatabaseContext(connectionString))
-        .ConfigurePostgreSql();
+builder.Services.ConfigurePostgreSql<DatabaseContext>(builder.Configuration.GetSection("PostgreSql"));
 
 builder.Services.AddMassTransit(
     massTransitConfiguration =>
@@ -69,11 +66,6 @@ builder.Services.AddMassTransit(
 builder.Services.AddTransientWithProxy<IAntiClownDataApiClient>(
     serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
 );
-
-// temp manual build VersionedSqlRepository
-builder.Services.AddTransientWithProxy<IVersionedSqlRepository<EconomyStorageElement>, VersionedSqlRepository<EconomyStorageElement>>();
-builder.Services.AddTransientWithProxy<IVersionedSqlRepository<ShopStorageElement>, VersionedSqlRepository<ShopStorageElement>>();
-builder.Services.AddTransientWithProxy<IVersionedSqlRepository<ShopStatsStorageElement>, VersionedSqlRepository<ShopStatsStorageElement>>();
 
 // configure repositories
 builder.Services.AddTransientWithProxy<IUsersRepository, UsersRepository>();

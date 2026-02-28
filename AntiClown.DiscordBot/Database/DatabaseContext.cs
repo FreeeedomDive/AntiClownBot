@@ -3,19 +3,20 @@ using AntiClown.DiscordBot.Releases.Repositories;
 using AntiClown.DiscordBot.Roles.Repositories;
 using AntiClown.DiscordBot.Utility.Locks;
 using Microsoft.EntityFrameworkCore;
-using SqlRepositoryBase.Core.ContextBuilders;
+using Microsoft.Extensions.Options;
+using SqlRepositoryBase.Core.Contexts;
+using SqlRepositoryBase.Core.Options;
 
 namespace AntiClown.DiscordBot.Database;
 
-public class DatabaseContext(string connectionString) : PostgreSqlDbContext(connectionString)
+public class DatabaseContext(
+    IConnectionStringProvider connectionStringProvider,
+    IOptions<AppSettingsDatabaseOptions> appSettingsDatabaseOptions,
+    ILogger<DatabaseContext> logger
+) : PostgreSqlDbContext(connectionStringProvider, appSettingsDatabaseOptions, logger)
 {
     public DbSet<InteractivityStorageElement> Interactivity { get; set; }
     public DbSet<ReleaseVersionStorageElement> Releases { get; set; }
     public DbSet<RoleStorageElement> Roles { get; set; }
     public DbSet<LockStorageElement> Locks { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql(connectionString, builder => builder.MigrationsAssembly("AntiClown.DiscordBot.PostgreSqlMigrationsApplier"));
-    }
 }

@@ -6,21 +6,15 @@ using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api.Core.Transactions.Repositories;
 
-public class TransactionsRepository : ITransactionsRepository
+public class TransactionsRepository(
+    ISqlRepository<TransactionStorageElement> sqlRepository,
+    IMapper mapper
+) : ITransactionsRepository
 {
-    public TransactionsRepository(
-        ISqlRepository<TransactionStorageElement> sqlRepository,
-        IMapper mapper
-    )
-    {
-        this.sqlRepository = sqlRepository;
-        this.mapper = mapper;
-    }
-
     public async Task<Transaction[]> ReadManyAsync(Guid userId, int skip = 0, int take = 50)
     {
-        var result = await sqlRepository
-                           .BuildCustomQuery()
+        var queryable = await sqlRepository.BuildCustomQueryAsync();
+        var result = await queryable
                            .Where(x => x.UserId == userId)
                            .OrderByDescending(x => x.DateTime)
                            .Skip(skip)
@@ -32,8 +26,8 @@ public class TransactionsRepository : ITransactionsRepository
 
     public async Task<Transaction[]> FindAsync(TransactionsFilter filter)
     {
-        var result = await sqlRepository
-                           .BuildCustomQuery()
+        var queryable = await sqlRepository.BuildCustomQueryAsync();
+        var result = await queryable
                            .WhereIf(filter.UserId.HasValue, x => x.UserId == filter.UserId!.Value)
                            .WhereIf(filter.DateTimeRange?.From is not null, x => filter.DateTimeRange!.From!.Value <= x.DateTime)
                            .WhereIf(filter.DateTimeRange?.To is not null, x => x.DateTime <= filter.DateTimeRange!.To!.Value)
@@ -54,8 +48,4 @@ public class TransactionsRepository : ITransactionsRepository
         var storageElements = mapper.Map<TransactionStorageElement[]>(transactions);
         await sqlRepository.CreateAsync(storageElements);
     }
-
-    private readonly IMapper mapper;
-
-    private readonly ISqlRepository<TransactionStorageElement> sqlRepository;
 }

@@ -4,15 +4,8 @@ using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.DiscordBot.Releases.Repositories;
 
-public class ReleasesRepository : IReleasesRepository
+public class ReleasesRepository(ISqlRepository<ReleaseVersionStorageElement> sqlRepository) : IReleasesRepository
 {
-    public ReleasesRepository(
-        ISqlRepository<ReleaseVersionStorageElement> sqlRepository
-    )
-    {
-        this.sqlRepository = sqlRepository;
-    }
-
     public async Task CreateAsync(ReleaseVersion releaseVersion)
     {
         var storageElement = new ReleaseVersionStorageElement
@@ -29,8 +22,8 @@ public class ReleasesRepository : IReleasesRepository
 
     public async Task<ReleaseVersion?> ReadLastAsync()
     {
-        var result = await sqlRepository
-                           .BuildCustomQuery()
+        var queryable = await sqlRepository.BuildCustomQueryAsync();
+        var result = await queryable
                            .OrderByDescending(x => x.CreatedAt)
                            .FirstOrDefaultAsync();
         return result is null
@@ -44,6 +37,4 @@ public class ReleasesRepository : IReleasesRepository
                 CreatedAt = result.CreatedAt,
             };
     }
-
-    private readonly ISqlRepository<ReleaseVersionStorageElement> sqlRepository;
 }

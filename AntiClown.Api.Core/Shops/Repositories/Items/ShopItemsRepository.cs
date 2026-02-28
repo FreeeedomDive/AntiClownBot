@@ -5,17 +5,11 @@ using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Api.Core.Shops.Repositories.Items;
 
-public class ShopItemsRepository : IShopItemsRepository
+public class ShopItemsRepository(
+    ISqlRepository<ShopItemStorageElement> sqlRepository,
+    IMapper mapper
+) : IShopItemsRepository
 {
-    public ShopItemsRepository(
-        ISqlRepository<ShopItemStorageElement> sqlRepository,
-        IMapper mapper
-    )
-    {
-        this.sqlRepository = sqlRepository;
-        this.mapper = mapper;
-    }
-
     public async Task<ShopItem?> TryReadAsync(Guid id)
     {
         var result = await sqlRepository.TryReadAsync(id);
@@ -24,11 +18,11 @@ public class ShopItemsRepository : IShopItemsRepository
 
     public async Task<ShopItem[]> FindAsync(Guid shopId)
     {
-        var result = await sqlRepository
-                           .BuildCustomQuery()
-                           .Where(x => x.ShopId == shopId)
-                           .OrderBy(x => x.Id)
-                           .ToArrayAsync();
+        var queryable = await sqlRepository.BuildCustomQueryAsync();
+        var result = queryable
+                     .Where(x => x.ShopId == shopId)
+                     .OrderBy(x => x.Id)
+                     .ToArrayAsync();
         return mapper.Map<ShopItem[]>(result);
     }
 
@@ -53,8 +47,4 @@ public class ShopItemsRepository : IShopItemsRepository
     {
         await sqlRepository.DeleteAsync(ids);
     }
-
-    private readonly IMapper mapper;
-
-    private readonly ISqlRepository<ShopItemStorageElement> sqlRepository;
 }
