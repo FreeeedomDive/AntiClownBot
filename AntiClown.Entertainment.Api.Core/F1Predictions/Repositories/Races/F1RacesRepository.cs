@@ -3,23 +3,16 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using SqlRepositoryBase.Core.Extensions;
 using SqlRepositoryBase.Core.Repository;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 
-public class F1RacesRepository : IF1RacesRepository
+public class F1RacesRepository(
+    IVersionedSqlRepository<F1RaceStorageElement> sqlRepository,
+    IJsonSerializer jsonSerializer
+) : IF1RacesRepository
 {
-    public F1RacesRepository(
-        IVersionedSqlRepository<F1RaceStorageElement> sqlRepository,
-        IJsonSerializer jsonSerializer
-    )
-    {
-        this.sqlRepository = sqlRepository;
-        this.jsonSerializer = jsonSerializer;
-    }
-
     public async Task<F1Race> ReadAsync(Guid id)
     {
         var result = await sqlRepository.ReadAsync(id);
@@ -55,6 +48,7 @@ public class F1RacesRepository : IF1RacesRepository
                 x.IsSprint = storageElement.IsSprint;
                 x.IsActive = storageElement.IsActive;
                 x.IsOpened = storageElement.IsOpened;
+                x.SerializedConditions = storageElement.SerializedConditions;
                 x.SerializedPredictions = storageElement.SerializedPredictions;
                 x.SerializedResults = storageElement.SerializedResults;
             }
@@ -71,6 +65,7 @@ public class F1RacesRepository : IF1RacesRepository
             IsActive = race.IsActive,
             IsOpened = race.IsOpened,
             IsSprint = race.IsSprint,
+            SerializedConditions = race.Conditions is null ? null : jsonSerializer.Serialize(race.Conditions),
             SerializedPredictions = jsonSerializer.Serialize(race.Predictions),
             SerializedResults = jsonSerializer.Serialize(race.Result),
         };
@@ -86,11 +81,11 @@ public class F1RacesRepository : IF1RacesRepository
             IsActive = storageElement.IsActive,
             IsOpened = storageElement.IsOpened,
             IsSprint = storageElement.IsSprint,
-            Predictions = JsonConvert.DeserializeObject<List<F1Prediction>>(storageElement.SerializedPredictions)!,
-            Result = JsonConvert.DeserializeObject<F1PredictionRaceResult>(storageElement.SerializedResults)!,
+            Conditions = string.IsNullOrEmpty(storageElement.SerializedConditions)
+                ? null
+                : jsonSerializer.Deserialize<PredictionConditions>(storageElement.SerializedConditions),
+            Predictions = jsonSerializer.Deserialize<List<F1Prediction>>(storageElement.SerializedPredictions),
+            Result = jsonSerializer.Deserialize<F1PredictionRaceResult>(storageElement.SerializedResults),
         };
     }
-
-    private readonly IVersionedSqlRepository<F1RaceStorageElement> sqlRepository;
-    private readonly IJsonSerializer jsonSerializer;
 }

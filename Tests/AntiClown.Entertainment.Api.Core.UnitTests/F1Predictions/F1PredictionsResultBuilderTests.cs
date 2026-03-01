@@ -176,7 +176,7 @@ public class F1PredictionsResultBuilderTests
     public void SelectedDriverPositionPredictionTest(string driver, int prediction, int expectedPoints)
     {
         var race = CreateTestRace();
-        race.Conditions.PositionPredictionDriver = driver;
+        race.Conditions!.PositionPredictionDriver = driver;
 
         race.Predictions.Add(CreatePrediction(race.Id, driverPosition: prediction));
 

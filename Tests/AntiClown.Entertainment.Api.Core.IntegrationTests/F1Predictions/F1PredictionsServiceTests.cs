@@ -74,7 +74,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
 
         var race = await F1PredictionsService.ReadAsync(raceId);
 
-        race.Conditions.PositionPredictionDriver.Should().BeOneOf("Driver1", "Driver2");
+        race.Conditions!.PositionPredictionDriver.Should().BeOneOf("Driver1", "Driver2");
     }
 
     [Test]
@@ -177,7 +177,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     {
         var raceId = await F1PredictionsService.StartNewRaceAsync("Dutch GP", false);
         var race = await F1PredictionsService.ReadAsync(raceId);
-        await SetupRaceForFinish(raceId, race.Conditions.PositionPredictionDriver);
+        await SetupRaceForFinish(raceId, race.Conditions!.PositionPredictionDriver);
 
         await F1PredictionsService.FinishRaceAsync(raceId);
 
@@ -191,7 +191,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     {
         var raceId = await F1PredictionsService.StartNewRaceAsync("Abu Dhabi GP", false);
         var race = await F1PredictionsService.ReadAsync(raceId);
-        var userId = await SetupRaceForFinish(raceId, race.Conditions.PositionPredictionDriver);
+        var userId = await SetupRaceForFinish(raceId, race.Conditions!.PositionPredictionDriver);
 
         var results = await F1PredictionsService.FinishRaceAsync(raceId);
 
@@ -226,7 +226,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     {
         var raceId = await F1PredictionsService.StartNewRaceAsync("Finished Race GP", false);
         var race = await F1PredictionsService.ReadAsync(raceId);
-        await SetupRaceForFinish(raceId, race.Conditions.PositionPredictionDriver);
+        await SetupRaceForFinish(raceId, race.Conditions!.PositionPredictionDriver);
         await F1PredictionsService.FinishRaceAsync(raceId);
 
         var activeRaces = await F1PredictionsService.ReadActiveAsync();
