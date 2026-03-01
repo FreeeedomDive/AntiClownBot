@@ -1,3 +1,7 @@
+using AntiClown.Api.Client;
+using AntiClown.Core.Schedules;
+using AntiClown.Data.Api.Client;
+using AntiClown.Tests.Configuration.Mocks;
 using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -38,7 +42,10 @@ public abstract class IntegrationTestsWebApplicationFactory<TEntryPoint>
                 new TestContainerConnectionStringProvider(container));
 
             MockMassTransit(services);
-
+            RemoveHangfireHostedServices(services);
+            MockScheduler(services);
+            MockAntiClownApiClient(services);
+            MockAntiClownDataApiClient(services);
             ConfigureTestServices(services);
         });
     }
@@ -54,6 +61,33 @@ public abstract class IntegrationTestsWebApplicationFactory<TEntryPoint>
     {
         await base.DisposeAsync();
         await container.DisposeAsync();
+    }
+
+    protected static void RemoveHangfireHostedServices(IServiceCollection services)
+    {
+        var hangfireHosted = services
+            .Where(d => d.ServiceType == typeof(IHostedService)
+                        && (d.ImplementationType?.Namespace?.StartsWith("Hangfire") ?? false))
+            .ToList();
+        hangfireHosted.ForEach(s => services.Remove(s));
+    }
+
+    protected static void MockScheduler(IServiceCollection services)
+    {
+        services.RemoveAll<IScheduler>();
+        services.AddTransient<IScheduler, SchedulerMock>();
+    }
+
+    protected static void MockAntiClownApiClient(IServiceCollection services)
+    {
+        services.RemoveAll<IAntiClownApiClient>();
+        services.AddSingleton(_ => Substitute.For<IAntiClownApiClient>());
+    }
+
+    protected static void MockAntiClownDataApiClient(IServiceCollection services)
+    {
+        services.RemoveAll<IAntiClownDataApiClient>();
+        services.AddSingleton(_ => Substitute.For<IAntiClownDataApiClient>());
     }
 
     private static void MockMassTransit(IServiceCollection services)

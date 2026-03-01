@@ -41,10 +41,12 @@ public class F1PredictionsResultBuilder : IF1PredictionsResultBuilder
                                       SafetyCarsPoints = prediction.SafetyCarsPrediction == ToSafetyCarsEnum(race.Result.SafetyCars)
                                           ? F1PredictionsHelper.IncidentsPredictionPoints
                                           : 0,
-                                      DriverPositionPoints = F1PredictionsHelper.GetPositionPredictionPoints(
-                                          prediction.DriverPositionPrediction,
-                                          driverToPosition.GetValueOrDefault(race.Conditions.PositionPredictionDriver)
-                                      ),
+                                      DriverPositionPoints = race.Conditions?.PositionPredictionDriver is null
+                                          ? 0
+                                          : F1PredictionsHelper.GetPositionPredictionPoints(
+                                              prediction.DriverPositionPrediction,
+                                              driverToPosition.GetValueOrDefault(race.Conditions.PositionPredictionDriver)
+                                          ),
                                   }
                               )
                               .ToDictionary(x => x.UserId);

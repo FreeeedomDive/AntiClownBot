@@ -1,6 +1,6 @@
-﻿using AntiClown.Core.Schedules;
+using AntiClown.Core.Schedules;
 
-namespace AntiClown.Api.Core.IntegrationTests.Mocks;
+namespace AntiClown.Tests.Configuration.Mocks;
 
 public class SchedulerMock : IScheduler
 {

@@ -18,4 +18,10 @@
         <PackageReference Include="Xdd.SqlRepositoryBase.Core" Version="1.1.2"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\..\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
+        <ProjectReference Include="..\..\AntiClown.Core\AntiClown.Core.csproj"/>
+        <ProjectReference Include="..\..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj"/>
+    </ItemGroup>
+
 </Project>

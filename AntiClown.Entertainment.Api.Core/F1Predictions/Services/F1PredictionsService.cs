@@ -17,8 +17,7 @@ public class F1PredictionsService(
     IF1PredictionsMessageProducer f1PredictionsMessageProducer,
     IF1PredictionTeamsRepository f1PredictionTeamsRepository,
     IF1PredictionsResultBuilder f1PredictionsResultBuilder
-)
-    : IF1PredictionsService
+) : IF1PredictionsService
 {
     public async Task<F1Race> ReadAsync(Guid raceId)
     {

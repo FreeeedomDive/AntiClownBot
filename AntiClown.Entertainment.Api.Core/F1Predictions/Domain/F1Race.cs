@@ -12,6 +12,6 @@ public class F1Race
     public bool IsActive { get; set; }
     public bool IsOpened { get; set; }
     public List<F1Prediction> Predictions { get; set; }
-    public PredictionConditions Conditions { get; set; }
+    public PredictionConditions? Conditions { get; set; }
     public F1PredictionRaceResult Result { get; set; }
 }

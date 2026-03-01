@@ -13,6 +13,7 @@ public class F1RaceStorageElement : VersionedSqlStorageElement
     public bool IsActive { get; set; }
     public bool IsOpened { get; set; }
     public bool IsSprint { get; set; }
+    public string? SerializedConditions { get; set; }
     public string SerializedPredictions { get; set; }
     public string SerializedResults { get; set; }
     public DateTime CreatedAt { get; set; }

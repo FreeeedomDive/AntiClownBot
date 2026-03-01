@@ -67,12 +67,10 @@ builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configurat
 // configure database
 builder.Services.ConfigurePostgreSql<DatabaseContext>(builder.Configuration.GetSection("PostgreSql"));
 
-builder.Services.AddMassTransit(
-    massTransitConfiguration =>
+builder.Services.AddMassTransit(massTransitConfiguration =>
     {
         massTransitConfiguration.SetKebabCaseEndpointNameFormatter();
-        massTransitConfiguration.UsingRabbitMq(
-            (context, rabbitMqConfiguration) =>
+        massTransitConfiguration.UsingRabbitMq((context, rabbitMqConfiguration) =>
             {
                 var rabbitMqOptions = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
                 rabbitMqConfiguration.ConfigureEndpoints(context);
@@ -106,11 +104,11 @@ builder.Services.AddTransientWithProxy<IF1BingoBoardsRepository, F1BingoBoardsRe
 builder.Services.AddTransientWithProxy<IF1ChampionshipPredictionsRepository, F1ChampionshipPredictionsRepository>();
 
 // configure other stuff
-builder.Services.AddTransientWithProxy<IAntiClownApiClient>(
-    serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownApiConnectionOptions>>().Value.ServiceUrl)
+builder.Services.AddTransientWithProxy<IAntiClownApiClient>(serviceProvider
+    => AntiClownApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownApiConnectionOptions>>().Value.ServiceUrl)
 );
-builder.Services.AddTransientWithProxy<IAntiClownDataApiClient>(
-    serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
+builder.Services.AddTransientWithProxy<IAntiClownDataApiClient>(serviceProvider
+    => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
 );
 builder.Services.AddTransientWithProxy<ICommonEventsMessageProducer, CommonEventsMessageProducer>();
 builder.Services.AddTransientWithProxy<IDailyEventsMessageProducer, DailyEventsMessageProducer>();
@@ -150,8 +148,7 @@ builder.Services.AddHangfire((serviceProvider, config) =>
 );
 builder.Services.AddHangfireServer();
 
-builder.Services.AddControllers().AddNewtonsoftJson(
-    options =>
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.Converters.Add(new StringEnumConverter());
         options.SerializerSettings.TypeNameHandling = TypeNameHandling.All;
@@ -171,3 +168,7 @@ app.UseEndpoints(endpoints => endpoints.MapControllers());
 app.UseHangfireDashboard();
 
 await app.RunAsync();
+
+public partial class Program
+{
+}

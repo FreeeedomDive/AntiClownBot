@@ -29,6 +29,27 @@ jobs:
       - name: Run Tests
         run: dotnet test Tests/AntiClown.Entertainment.Api.Core.UnitTests/AntiClown.Entertainment.Api.Core.UnitTests.csproj --configuration Release --no-restore --no-build
 
+  entertainment-api-integration-tests:
+    name: AntiClown.Entertainment.Api.Core.IntegrationTests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      - name: Restore
+        run: dotnet restore ./AntiClownBot.slnx
+
+      - name: Build
+        run: dotnet build ./AntiClownBot.slnx --configuration Release --no-restore
+
+      - name: Run Tests
+        run: dotnet test Tests/AntiClown.Entertainment.Api.Core.IntegrationTests/AntiClown.Entertainment.Api.Core.IntegrationTests.csproj --configuration Release --no-restore --no-build
+
   api-integration-tests:
     name: AntiClown.Api.Core.IntegrationTests
     runs-on: ubuntu-latest
@@ -49,3 +70,24 @@ jobs:
 
       - name: Run Tests
         run: dotnet test Tests/AntiClown.Api.Core.IntegrationTests/AntiClown.Api.Core.IntegrationTests.csproj --configuration Release --no-restore --no-build
+
+  data-api-integration-tests:
+    name: AntiClown.Data.Api.Core.IntegrationTests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      - name: Restore
+        run: dotnet restore ./AntiClownBot.slnx
+
+      - name: Build
+        run: dotnet build ./AntiClownBot.slnx --configuration Release --no-restore
+
+      - name: Run Tests
+        run: dotnet test Tests/AntiClown.Data.Api.Core.IntegrationTests/AntiClown.Data.Api.Core.IntegrationTests.csproj --configuration Release --no-restore --no-build

@@ -1,11 +1,11 @@
-using AntiClown.Api.Core.Database;
+using AntiClown.Entertainment.Api.Core.Database;
 using AntiClown.Tests.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AntiClown.Api.Core.IntegrationTests;
+namespace AntiClown.Entertainment.Api.Core.IntegrationTests;
 
-public class ApiIntegrationTestsWebApplicationFactory
+public class EntertainmentApiIntegrationTestsWebApplicationFactory
     : IntegrationTestsWebApplicationFactory<Program>
 {
     protected override async Task RunMigrationsAsync(IServiceScope scope)

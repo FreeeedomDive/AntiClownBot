@@ -6,19 +6,12 @@ using Hangfire;
 
 namespace AntiClown.Entertainment.Api.Core.Parties.Services;
 
-public class PartiesService : IPartiesService
+public class PartiesService(
+    IPartiesRepository partiesRepository,
+    IPartiesMessageProducer partiesMessageProducer,
+    IScheduler scheduler
+) : IPartiesService
 {
-    public PartiesService(
-        IPartiesRepository partiesRepository,
-        IPartiesMessageProducer partiesMessageProducer,
-        IScheduler scheduler
-    )
-    {
-        this.partiesRepository = partiesRepository;
-        this.partiesMessageProducer = partiesMessageProducer;
-        this.scheduler = scheduler;
-    }
-
     public async Task<Party> ReadAsync(Guid id)
     {
         return await partiesRepository.ReadAsync(id);
@@ -120,15 +113,10 @@ public class PartiesService : IPartiesService
 
     private void ScheduleEventFinish(Guid id)
     {
-        scheduler.Schedule(
-            () => BackgroundJob.Schedule(
+        scheduler.Schedule(() => BackgroundJob.Schedule(
                 () => CloseAsync(id),
                 TimeSpan.FromDays(2)
             )
         );
     }
-
-    private readonly IPartiesMessageProducer partiesMessageProducer;
-    private readonly IPartiesRepository partiesRepository;
-    private readonly IScheduler scheduler;
 }

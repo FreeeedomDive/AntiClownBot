@@ -55,3 +55,5 @@ app.UseMiddleware<ServiceExceptionHandlingMiddleware>();
 app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 await app.RunAsync();
+
+public partial class Program { }
