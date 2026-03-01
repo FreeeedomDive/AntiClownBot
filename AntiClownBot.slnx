@@ -37,6 +37,8 @@
     <Folder Name="/Tests/">
         <Project Path="Tests/AntiClown.Api.Core.IntegrationTests/AntiClown.Api.Core.IntegrationTests.csproj"/>
         <Project
+                Path="Tests/AntiClown.Data.Api.Core.IntegrationTests/AntiClown.Data.Api.Core.IntegrationTests.csproj"/>
+        <Project
                 Path="Tests/AntiClown.Entertainment.Api.Core.IntegrationTests/AntiClown.Entertainment.Api.Core.IntegrationTests.csproj"/>
         <Project
                 Path="Tests/AntiClown.Entertainment.Api.Core.UnitTests/AntiClown.Entertainment.Api.Core.UnitTests.csproj"/>
