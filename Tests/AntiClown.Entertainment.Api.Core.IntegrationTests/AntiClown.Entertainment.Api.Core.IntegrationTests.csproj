@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoFixture.NUnit3" Version="4.18.0"/>
+        <PackageReference Include="FluentAssertions" Version="6.10.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2"/>
+        <PackageReference Include="NSubstitute" Version="5.0.0"/>
+        <PackageReference Include="NUnit" Version="3.13.3"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="4.3.0"/>
+        <PackageReference Include="NUnit.Analyzers" Version="3.5.0"/>
+        <PackageReference Include="coverlet.collector" Version="3.1.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\AntiClown.Entertainment.Api\AntiClown.Entertainment.Api.csproj"/>
+        <ProjectReference Include="..\..\AntiClown.Entertainment.Api.Core\AntiClown.Entertainment.Api.Core.csproj"/>
+        <ProjectReference Include="..\..\AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier\AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier.csproj"/>
+        <ProjectReference Include="..\..\AntiClown.Core\AntiClown.Core.csproj"/>
+        <ProjectReference Include="..\AntiClown.Tests.Configuration\AntiClown.Tests.Configuration.csproj"/>
+    </ItemGroup>
+</Project>
