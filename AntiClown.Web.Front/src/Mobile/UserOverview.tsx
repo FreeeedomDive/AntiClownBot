@@ -6,9 +6,16 @@ import UserAchievements from "../Routes/User/PageContent/UserOverview/UserAchiev
 
 export default function UserOverview() {
   const { mobileUserContextStore } = useStore();
-  const { discordMember, telegramUser } = mobileUserContextStore;
+  const { discordMember, telegramUser, user } = mobileUserContextStore;
 
-  return mobileUserContextStore.isUnknown || !telegramUser || !discordMember ? (
+  const unknownUser = Boolean(
+    mobileUserContextStore.isUnknown ||
+      !telegramUser ||
+      !discordMember ||
+      !user,
+  );
+
+  return unknownUser ? (
     <></>
   ) : (
     <Stack
@@ -22,8 +29,8 @@ export default function UserOverview() {
         marginRight: "16px",
       }}
     >
-      <MemberInfo />
-      <UserAchievements />
+      <MemberInfo userId={user!.id} />
+      <UserAchievements userId={user!.id} />
     </Stack>
   );
 }

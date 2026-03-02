@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { UserAchievementWithDetailsDto } from "../../../../Dto/Achievements/UserAchievementWithDetailsDto";
 import { Skeleton } from "@mui/material";
@@ -6,9 +5,12 @@ import { Stack, Tooltip, Typography } from "@mui/material";
 import AchievementsApi from "../../../../Api/AchievementsApi";
 import { formatDate } from "../../../../Helpers/DateHelpers";
 
+interface Props {
+  userId: string;
+}
+
 const SIZE = 64;
-export default function UserAchievements() {
-  const { userId = "" } = useParams<"userId">();
+export default function UserAchievements({userId}: Props) {
   const [loading, setLoading] = useState(true);
   const [achievements, setAchievements] = useState<
     UserAchievementWithDetailsDto[]
