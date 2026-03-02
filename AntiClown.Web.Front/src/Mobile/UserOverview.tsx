@@ -1,6 +1,6 @@
 import { useStore } from "../Stores";
 import React from "react";
-import { Avatar, Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import MemberInfo from "../Routes/User/PageContent/UserOverview/MemberInfo";
 import UserAchievements from "../Routes/User/PageContent/UserOverview/UserAchievements";
 
@@ -18,17 +18,7 @@ export default function UserOverview() {
   return unknownUser ? (
     <></>
   ) : (
-    <Stack
-      direction={"row"}
-      alignItems={"center"}
-      spacing="8px"
-      sx={{
-        marginLeft: "16px",
-        marginTop: "8px",
-        marginBottom: "8px",
-        marginRight: "16px",
-      }}
-    >
+    <Stack direction={"column"} spacing="16px">
       <MemberInfo userId={user!.id} />
       <UserAchievements userId={user!.id} />
     </Stack>
