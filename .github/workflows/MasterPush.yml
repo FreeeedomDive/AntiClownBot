@@ -1,0 +1,37 @@
+name: Master Push
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  check-hotfix:
+    name: Check for Hotfix
+    runs-on: ubuntu-latest
+    outputs:
+      is_hotfix: ${{ steps.check.outputs.is_hotfix }}
+    steps:
+      - name: Check commit message for hotfix
+        id: check
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          if echo "$COMMIT_MSG" | grep -qi "hotfix"; then
+            echo "is_hotfix=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_hotfix=false" >> $GITHUB_OUTPUT
+          fi
+
+  run-tests:
+    name: Run Tests
+    needs: check-hotfix
+    if: needs.check-hotfix.outputs.is_hotfix != 'true'
+    uses: ./.github/workflows/Tests.yml
+
+  deploy:
+    name: Deploy
+    needs: run-tests
+    if: ${{ !failure() && !cancelled() }}
+    uses: ./.github/workflows/MasterDeployment.yml
+    secrets: inherit
