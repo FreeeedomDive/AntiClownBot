@@ -50,18 +50,12 @@ public class AchievementsAdminCommandModule : SlashCommandModuleWithMiddlewares
     public async Task CreateAchievement(
         InteractionContext context,
         [Option("name", "Название")] string name,
-        [Option("logo", "Логотип (PNG)")] DiscordAttachment? logo = null
+        [Option("logo", "Логотип (PNG)")] DiscordAttachment logo
     )
     {
         await ExecuteEphemeralWithRightsAsync(
             context, async () =>
             {
-                if (logo is null)
-                {
-                    await RespondToInteractionAsync(context, "А где логотип??");
-                    return;
-                }
-
                 var fileName = logo.FileName ?? string.Empty;
                 if (!fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
                 {

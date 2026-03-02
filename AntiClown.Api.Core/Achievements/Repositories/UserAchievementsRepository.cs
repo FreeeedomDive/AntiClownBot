@@ -13,14 +13,16 @@ public class UserAchievementsRepository(
     public async Task<UserAchievement[]> GetByUserIdAsync(Guid userId)
     {
         var queryable = await sqlRepository.BuildCustomQueryAsync();
-        var result = await queryable.Where(x => x.UserId == userId).ToArrayAsync();
+        var result = await queryable
+                           .Where(x => x.UserId == userId)
+                           .OrderBy(x => x.GrantedAt)
+                           .ToArrayAsync();
         return mapper.Map<UserAchievement[]>(result);
     }
 
     public async Task<UserAchievement[]> GetByAchievementIdAsync(Guid achievementId)
     {
-        var queryable = await sqlRepository.BuildCustomQueryAsync();
-        var result = await queryable.Where(x => x.AchievementId == achievementId).ToArrayAsync();
+        var result = await sqlRepository.FindAsync(x => x.AchievementId == achievementId);
         return mapper.Map<UserAchievement[]>(result);
     }
 
