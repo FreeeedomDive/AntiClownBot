@@ -148,6 +148,8 @@ internal class Program
 
     private static void BuildApiClients(WebApplicationBuilder builder)
     {
+        builder.Services.AddHttpClient();
+
         builder.Services.AddTransientWithProxy<IAntiClownApiClient>(
             serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownApiConnectionOptions>>().Value.ServiceUrl)
         );

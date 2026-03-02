@@ -1,3 +1,5 @@
+using AntiClown.Api.Core.Achievements.Repositories;
+using AntiClown.Api.Core.Achievements.Services;
 using AntiClown.Api.Core.Database;
 using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Economies.Services;
@@ -68,6 +70,8 @@ builder.Services.AddTransientWithProxy<IAntiClownDataApiClient>(
 );
 
 // configure repositories
+builder.Services.AddTransientWithProxy<IAchievementsRepository, AchievementsRepository>();
+builder.Services.AddTransientWithProxy<IUserAchievementsRepository, UserAchievementsRepository>();
 builder.Services.AddTransientWithProxy<IUsersRepository, UsersRepository>();
 builder.Services.AddTransientWithProxy<ITransactionsRepository, TransactionsRepository>();
 builder.Services.AddTransientWithProxy<IEconomyRepository, EconomyRepository>();
@@ -86,6 +90,7 @@ builder.Services.AddTransientWithProxy<ITributeMessageProducer, TributeMessagePr
 builder.Services.AddTransientWithProxy<IScheduler, HangfireScheduler>();
 
 // configure services
+builder.Services.AddTransientWithProxy<IAchievementsService, AchievementsService>();
 builder.Services.AddTransientWithProxy<IUsersService, UsersService>();
 builder.Services.AddTransientWithProxy<INewUserService, NewUserService>();
 builder.Services.AddTransientWithProxy<ITransactionsService, TransactionsService>();

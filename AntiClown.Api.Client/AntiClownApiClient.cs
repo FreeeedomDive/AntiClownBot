@@ -1,5 +1,6 @@
 /* Generated file */
 
+using AntiClown.Api.Client.Achievements;
 using AntiClown.Api.Client.Economy;
 using AntiClown.Api.Client.Inventory;
 using AntiClown.Api.Client.Lohotron;
@@ -14,6 +15,7 @@ public class AntiClownApiClient : IAntiClownApiClient
 {
     public AntiClownApiClient(RestSharp.RestClient client)
     {
+        Achievements = new AchievementsClient(client);
         Economy = new EconomyClient(client);
         Inventory = new InventoryClient(client);
         Lohotron = new LohotronClient(client);
@@ -23,6 +25,7 @@ public class AntiClownApiClient : IAntiClownApiClient
         Users = new UsersClient(client);
     }
 
+    public IAchievementsClient Achievements { get; }
     public IEconomyClient Economy { get; }
     public IInventoryClient Inventory { get; }
     public ILohotronClient Lohotron { get; }

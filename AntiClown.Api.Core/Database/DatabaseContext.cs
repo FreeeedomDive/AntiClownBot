@@ -1,4 +1,5 @@
-﻿using AntiClown.Api.Core.Economies.Repositories;
+﻿using AntiClown.Api.Core.Achievements.Repositories;
+using AntiClown.Api.Core.Economies.Repositories;
 using AntiClown.Api.Core.Inventory.Repositories;
 using AntiClown.Api.Core.Shops.Repositories.Items;
 using AntiClown.Api.Core.Shops.Repositories.Shops;
@@ -19,6 +20,8 @@ public class DatabaseContext(
     ILogger<DatabaseContext> logger
 ) : PostgreSqlDbContext(connectionStringProvider, appSettingsDatabaseOptions, logger)
 {
+    public DbSet<AchievementStorageElement> Achievements { get; set; }
+    public DbSet<UserAchievementStorageElement> UserAchievements { get; set; }
     public DbSet<UserStorageElement> Users { get; set; }
     public DbSet<EconomyStorageElement> Economies { get; set; }
     public DbSet<TransactionStorageElement> Transactions { get; set; }

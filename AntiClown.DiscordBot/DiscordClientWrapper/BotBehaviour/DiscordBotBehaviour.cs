@@ -14,6 +14,7 @@ using AntiClown.DiscordBot.Interactivity.Services.Parties;
 using AntiClown.DiscordBot.Interactivity.Services.Race;
 using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Models.Interactions;
+using AntiClown.DiscordBot.SlashCommands.Achievements;
 using AntiClown.DiscordBot.SlashCommands.Dev;
 using AntiClown.DiscordBot.SlashCommands.F1Predictions;
 using AntiClown.DiscordBot.SlashCommands.Gaming;
@@ -557,6 +558,7 @@ public class DiscordBotBehaviour(
         slash.RegisterCommands<F1AdminCommandModule>(guildId);
         slash.RegisterCommands<RolesAdminCommandModule>(guildId);
         slash.RegisterCommands<UsersCommandModule>(guildId);
+        slash.RegisterCommands<AchievementsAdminCommandModule>(guildId);
     }
 
     private async Task ReactToAppeal(DiscordMessage message)
