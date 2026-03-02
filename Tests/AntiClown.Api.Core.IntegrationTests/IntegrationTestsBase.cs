@@ -1,3 +1,4 @@
+using AntiClown.Api.Core.Achievements.Services;
 using AntiClown.Api.Core.Economies.Services;
 using AntiClown.Api.Core.IntegrationTests.Common;
 using AntiClown.Api.Core.Inventory.Services;
@@ -21,6 +22,7 @@ public abstract class IntegrationTestsBase<TFactory>
     : IntegrationTestsBase<TFactory, Program>
     where TFactory : IntegrationTestsWebApplicationFactory<Program>, new()
 {
+    protected IAchievementsService AchievementsService { get; private set; } = null!;
     protected IUsersService UsersService { get; private set; } = null!;
     protected INewUserService NewUserService { get; private set; } = null!;
     protected ITransactionsService TransactionsService { get; private set; } = null!;
@@ -41,6 +43,7 @@ public abstract class IntegrationTestsBase<TFactory>
     {
         Fixture = new Fixture();
 
+        AchievementsService = Scope.ServiceProvider.GetRequiredService<IAchievementsService>();
         UsersService = Scope.ServiceProvider.GetRequiredService<IUsersService>();
         NewUserService = Scope.ServiceProvider.GetRequiredService<INewUserService>();
         TransactionsService = Scope.ServiceProvider.GetRequiredService<ITransactionsService>();
