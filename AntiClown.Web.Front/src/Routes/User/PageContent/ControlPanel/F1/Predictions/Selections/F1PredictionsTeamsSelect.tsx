@@ -1,9 +1,6 @@
-import {
-  Button,
-  ButtonGroup,
-} from "@mui/material";
+import { Button, ButtonGroup } from "@mui/material";
 import React from "react";
-import {F1TeamDto} from "../../../../../../../Dto/F1Predictions/F1TeamDto";
+import { F1TeamDto } from "../../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1PredictionsSelectCard from "./F1PredictionsSelectCard";
 
 interface Props {
@@ -31,10 +28,7 @@ export default function F1PredictionsTeamsSelect({
             onClick={() => {
               selectedDriversFromTeams.delete(team.secondDriver);
               selectedDriversFromTeams.add(team.firstDriver);
-
-              setSelectedDriversFromTeams(
-                new Set(selectedDriversFromTeams),
-              );
+              setSelectedDriversFromTeams(new Set(selectedDriversFromTeams));
             }}
           >
             {team.firstDriver}
@@ -50,9 +44,7 @@ export default function F1PredictionsTeamsSelect({
               selectedDriversFromTeams.delete(team.firstDriver);
               selectedDriversFromTeams.add(team.secondDriver);
 
-              setSelectedDriversFromTeams(
-                new Set(selectedDriversFromTeams),
-              );
+              setSelectedDriversFromTeams(new Set(selectedDriversFromTeams));
             }}
           >
             {team.secondDriver}

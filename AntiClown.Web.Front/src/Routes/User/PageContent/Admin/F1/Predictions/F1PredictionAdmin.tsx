@@ -35,11 +35,12 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
 
   useEffect(() => {
     async function load() {
-      const result = await F1PredictionsApi.read(f1Race.id);
+      const [result, teams] = await Promise.all([
+        F1PredictionsApi.read(f1Race.id),
+        F1PredictionsApi.getActiveTeams(),
+      ]);
       setCurrentF1Race(result);
       setIsPredictionsClosed(!result.isOpened);
-
-      const teams = await F1PredictionsApi.getActiveTeams();
 
       setDrivers(
         result.result?.classification.length === 0

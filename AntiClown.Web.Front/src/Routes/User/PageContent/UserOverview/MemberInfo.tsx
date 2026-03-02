@@ -3,23 +3,23 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { DiscordMemberDto } from "../../../../Dto/Users/DiscordMemberDto";
 import DiscordMembersApi from "../../../../Api/DiscordMembersApi";
-import { Skeleton } from "@mui/lab";
+import { Skeleton } from "@mui/material";
 
 export default function MemberInfo() {
   const { userId = "" } = useParams<"userId">();
   const [member, setMember] = useState<DiscordMemberDto | null>(null);
   const [loading, setLoading] = useState(true);
 
-  async function updateUser(): Promise<void> {
-    const member = await DiscordMembersApi.getMember(userId);
-    setMember(member);
-  }
-
   useEffect(() => {
+    async function updateUser(): Promise<void> {
+      const member = await DiscordMembersApi.getMember(userId);
+      setMember(member);
+    }
+
     updateUser()
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [userId]);
 
   return (
     <>

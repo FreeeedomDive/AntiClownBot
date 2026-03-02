@@ -30,7 +30,7 @@ export default function F1PredictionsAdminList() {
   }
 
   useEffect(() => {
-    loadRaces(isActive);
+    loadRaces(isActive).catch(console.error);
   }, []);
 
   return (
@@ -62,10 +62,10 @@ export default function F1PredictionsAdminList() {
               control={
                 <Checkbox
                   checked={isActive}
-                  onChange={(x) => {
+                  onChange={async (x) => {
                     const onlyActive = x.target.checked;
                     setIsActive(onlyActive);
-                    loadRaces(onlyActive);
+                    await loadRaces(onlyActive);
                   }}
                 />
               }

@@ -1,14 +1,14 @@
-import {Route, Routes, useParams} from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 import React from "react";
-import {useStore} from "../../../Stores";
+import { useStore } from "../../../Stores";
 import UserOverview from "./UserOverview/UserOverview";
 import UserInventory from "./ControlPanel/UserInventory";
 import UserShop from "./ControlPanel/UserShop";
 import UserEconomy from "./ControlPanel/Economy/UserEconomy";
 import ItemsTrade from "./Interaction/ItemsTrade";
-import {UserDto} from "../../../Dto/Users/UserDto";
-import {Typography} from "@mui/material";
-import {Loader} from "../../../Components/Loader/Loader";
+import { UserDto } from "../../../Dto/Users/UserDto";
+import { Typography } from "@mui/material";
+import { Loader } from "../../../Components/Loader/Loader";
 import F1PredictionsList from "./ControlPanel/F1/Predictions/F1PredictionsList";
 import F1PredictionsAdminList from "./Admin/F1/Predictions/F1PredictionsAdminList";
 import EditSettings from "./Admin/Settings/EditSettings";
@@ -48,14 +48,35 @@ const UserPageContentRouter = ({ user }: Props) => {
           <Route path="/economy" element={<UserEconomy />} />
           <Route path="/inventory" element={<UserInventory />} />
           <Route path="/shop" element={<UserShop />} />
-          <Route path="/f1Predictions/standings" element={<F1PredictionsStandings />} />
-          <Route path="/f1Predictions/current" element={<F1PredictionsList />} />
-          <Route path="/f1Predictions/admin" element={<F1PredictionsAdminList />} />
-          <Route path="/f1Predictions/teams" element={<F1PredictionsTeamsEditor />} />
+          <Route
+            path="/f1Predictions/standings"
+            element={<F1PredictionsStandings />}
+          />
+          <Route
+            path="/f1Predictions/current"
+            element={<F1PredictionsList />}
+          />
+          <Route
+            path="/f1Predictions/admin"
+            element={<F1PredictionsAdminList />}
+          />
+          <Route
+            path="/f1Predictions/teams"
+            element={<F1PredictionsTeamsEditor />}
+          />
           <Route path="/f1Predictions/bingo" element={<F1BingoBoard />} />
-          <Route path="/f1Predictions/bingo/admin" element={<F1BingoCardsEditor />} />
-          <Route path="/f1Predictions/championship" element={<F1ChampionshipPredictions />} />
-          <Route path="/f1Predictions/championship/admin" element={<F1ChampionshipPredictionsAdmin />} />
+          <Route
+            path="/f1Predictions/bingo/admin"
+            element={<F1BingoCardsEditor />}
+          />
+          <Route
+            path="/f1Predictions/championship"
+            element={<F1ChampionshipPredictions />}
+          />
+          <Route
+            path="/f1Predictions/championship/admin"
+            element={<F1ChampionshipPredictionsAdmin />}
+          />
           <Route path="/settings" element={<EditSettings />} />
         </Routes>
       )}

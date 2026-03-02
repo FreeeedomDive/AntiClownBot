@@ -4,7 +4,7 @@ import F1BingoApi from "../../../../../../Api/F1BingoApi";
 import { F1BingoCardDto } from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
 import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
 import { RightsWrapper } from "../../../../../../Components/RIghts/RightsWrapper";
-import {Grid, Stack} from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1BingoCard from "./F1BingoCard";
 
@@ -17,29 +17,50 @@ export default function F1BingoBoard() {
   useEffect(() => {
     async function load() {
       setIsLoading(true);
-      const cards = await F1BingoApi.getCards(season);
-      const boardCardsIds = await F1BingoApi.getBoard(userId!, season);
+      const [cards, boardCardsIds] = await Promise.all([
+        F1BingoApi.getCards(season),
+        F1BingoApi.getBoard(userId!, season),
+      ]);
       const board = boardCardsIds.map(
         (cardId) => cards.find((card) => card.id === cardId)!,
       );
       setBingoUserCards(board);
-      setIsLoading(false);
     }
 
-    load().catch(console.error);
+    load()
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
   }, [season, userId]);
 
   return (
     <RightsWrapper requiredRights={[RightsDto.F1Predictions]}>
       <Stack direction={"column"}>
         {isLoading && <Loader />}
-        {!isLoading && <Grid container spacing={1} sx={{ width: "100%", height: "100%", margin: "auto" }}>
-          {bingoUserCards.map((card, index) => (
-            <Grid item key={index} xs={2.4} sm={2.4} md={2.4} lg={2.4} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <F1BingoCard card={card} />
-            </Grid>
-          ))}
-        </Grid>}
+        {!isLoading && (
+          <Grid
+            container
+            spacing={1}
+            sx={{ width: "100%", height: "100%", margin: "auto" }}
+          >
+            {bingoUserCards.map((card, index) => (
+              <Grid
+                item
+                key={index}
+                xs={2.4}
+                sm={2.4}
+                md={2.4}
+                lg={2.4}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <F1BingoCard card={card} />
+              </Grid>
+            ))}
+          </Grid>
+        )}
       </Stack>
     </RightsWrapper>
   );

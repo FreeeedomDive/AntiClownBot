@@ -18,9 +18,7 @@ export default function F1PredictionsDriverPositionSelect({
       <FormControl fullWidth>
         <OutlinedInput
           id="outlined-adornment-weight"
-          endAdornment={
-            <InputAdornment position="end">1-22</InputAdornment>
-          }
+          endAdornment={<InputAdornment position="end">1-22</InputAdornment>}
           aria-describedby="outlined-weight-helper-text"
           inputProps={{
             "aria-label": "weight",

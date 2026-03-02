@@ -36,10 +36,11 @@ export default function F1Prediction({ f1Race }: Props) {
 
   useEffect(() => {
     async function load() {
-      const result = await F1PredictionsApi.read(f1Race.id);
+      const [result, teams] = await Promise.all([
+        F1PredictionsApi.read(f1Race.id),
+        F1PredictionsApi.getActiveTeams(),
+      ]);
       setCurrentF1Race(result);
-
-      const teams = await F1PredictionsApi.getActiveTeams();
       setTeams(teams);
     }
 
@@ -128,7 +129,7 @@ export default function F1Prediction({ f1Race }: Props) {
     selected10Position,
     selectedSafetyCarPrediction,
     userId,
-    driverPosition
+    driverPosition,
   ]);
 
   return (

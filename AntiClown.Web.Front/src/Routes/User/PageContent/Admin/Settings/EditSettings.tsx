@@ -51,7 +51,7 @@ const EditSettings = () => {
   }
 
   useEffect(() => {
-    loadSettings(currentCategory);
+    loadSettings(currentCategory).catch(console.error);
   }, []);
 
   return isLoading ? (

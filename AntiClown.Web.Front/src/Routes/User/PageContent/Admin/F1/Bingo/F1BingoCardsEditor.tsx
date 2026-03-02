@@ -1,10 +1,10 @@
-import React, {useEffect} from "react";
-import {F1BingoCardDto} from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
+import React, { useEffect } from "react";
+import { F1BingoCardDto } from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
 import F1BingoApi from "../../../../../../Api/F1BingoApi";
-import {Table, TableBody, TableContainer} from "@mui/material";
-import {Loader} from "../../../../../../Components/Loader/Loader";
-import {RightsDto} from "../../../../../../Dto/Rights/RightsDto";
-import {RightsWrapper} from "../../../../../../Components/RIghts/RightsWrapper";
+import { Table, TableBody, TableContainer } from "@mui/material";
+import { Loader } from "../../../../../../Components/Loader/Loader";
+import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
+import { RightsWrapper } from "../../../../../../Components/RIghts/RightsWrapper";
 import F1BingoCardsEditorRow from "./F1BingoCardsEditorRow";
 
 export default function F1BingoCardsEditor() {
@@ -16,25 +16,28 @@ export default function F1BingoCardsEditor() {
       setIsLoading(true);
       const cards = await F1BingoApi.getCards(new Date().getFullYear());
       setCards(cards);
-      setIsLoading(false);
     }
 
-    load();
+    load()
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
   }, []);
 
-  return <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
-    {isLoading ? (
-      <Loader />
-    ) : (
-      <TableContainer>
-        <Table>
-          <TableBody>
-            {cards.map((card) => (
-              <F1BingoCardsEditorRow card={card} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    )}
-  </RightsWrapper>
+  return (
+    <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <TableContainer>
+          <Table>
+            <TableBody>
+              {cards.map((card) => (
+                <F1BingoCardsEditorRow card={card} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </RightsWrapper>
+  );
 }

@@ -48,10 +48,9 @@ export default function F1ChampionshipPredictionsAdmin() {
           : F1ChampionshipPredictionTypeDto.PreSeason,
       );
       setIsOpen(results.hasData ? results.isOpen : false);
-      setIsLoading(false);
     }
 
-    load().catch(console.error);
+    load().catch(console.error).finally(() => setIsLoading(false));
   }, []);
 
   const save = useCallback(async () => {

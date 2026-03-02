@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { UserAchievementWithDetailsDto } from "../../../../Dto/Achievements/UserAchievementWithDetailsDto";
-import { Skeleton } from "@mui/lab";
+import { Skeleton } from "@mui/material";
 import { Stack, Tooltip, Typography } from "@mui/material";
 import AchievementsApi from "../../../../Api/AchievementsApi";
 import { formatDate } from "../../../../Helpers/DateHelpers";
@@ -14,16 +14,16 @@ export default function UserAchievements() {
     UserAchievementWithDetailsDto[]
   >([]);
 
-  async function updateAchievements(): Promise<void> {
-    const data = await AchievementsApi.getByUser(userId);
-    setAchievements(data);
-  }
-
   useEffect(() => {
+    async function updateAchievements(): Promise<void> {
+      const data = await AchievementsApi.getByUser(userId);
+      setAchievements(data);
+    }
+
     updateAchievements()
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [userId]);
 
   return (
     <Stack direction={"row"} spacing="8px">

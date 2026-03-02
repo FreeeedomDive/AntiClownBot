@@ -1,5 +1,5 @@
-import {TransactionDto} from "../../../../../Dto/Economy/TransactionDto";
-import {Stack, Typography} from "@mui/material";
+import { TransactionDto } from "../../../../../Dto/Economy/TransactionDto";
+import { Stack, Typography } from "@mui/material";
 import { formatDate } from "../../../../../Helpers/DateHelpers";
 
 interface Props {
@@ -8,8 +8,11 @@ interface Props {
   scamCoinsAfter: number;
 }
 
-export default function TransactionRow({transaction, scamCoinsBefore, scamCoinsAfter}: Props) {
-
+export default function TransactionRow({
+  transaction,
+  scamCoinsBefore,
+  scamCoinsAfter,
+}: Props) {
   const isTransactionPositive = transaction.scamCoinDiff >= 0;
   return (
     <Stack direction="column">

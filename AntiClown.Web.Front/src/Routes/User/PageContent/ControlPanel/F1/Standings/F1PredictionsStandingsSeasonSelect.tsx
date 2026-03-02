@@ -5,17 +5,20 @@ interface Props {
   setSeason: (season: number) => void;
 }
 
-export default function F1PredictionsStandingsSeasonSelect({ season, setSeason }: Props) {
+export default function F1PredictionsStandingsSeasonSelect({
+  season,
+  setSeason,
+}: Props) {
   const firstSeason = 2023;
   const currentSeason = new Date().getFullYear();
   const seasons = Array.from(
     { length: currentSeason - firstSeason + 1 },
-    (_, i) => firstSeason + i
+    (_, i) => firstSeason + i,
   );
 
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center">
-      <Typography variant="h6">Турнирная таблица чемпионата</Typography>
+      <Typography variant="h5">Турнирная таблица чемпионата</Typography>
 
       <FormControl>
         <Select

@@ -1,6 +1,8 @@
 import { useStore } from "../Stores";
 import React from "react";
 import { Avatar, Stack, Typography } from "@mui/material";
+import MemberInfo from "../Routes/User/PageContent/UserOverview/MemberInfo";
+import UserAchievements from "../Routes/User/PageContent/UserOverview/UserAchievements";
 
 export default function UserOverview() {
   const { mobileUserContextStore } = useStore();
@@ -20,23 +22,8 @@ export default function UserOverview() {
         marginRight: "16px",
       }}
     >
-      <Avatar
-        alt={discordMember.serverName ?? discordMember.userName ?? "Discord profile pic"}
-        src={discordMember.avatarUrl}
-        sx={{ width: 128, height: 128 }}
-      />
-      <Stack direction={"column"} spacing="8px">
-        {discordMember.serverName && (
-          <Typography variant={"body1"}>
-            <b>Имя на сервере:</b> {discordMember.serverName}
-          </Typography>
-        )}
-        {discordMember.userName && (
-          <Typography variant={"body1"}>
-            <b>Имя в дискорде:</b> {discordMember.userName}
-          </Typography>
-        )}
-      </Stack>
+      <MemberInfo />
+      <UserAchievements />
     </Stack>
   );
 }

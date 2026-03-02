@@ -15,10 +15,11 @@ export default function F1PredictionsTeamsEditor() {
     async function loadTeams() {
       const teams = await F1PredictionsApi.getActiveTeams();
       setTeams(teams);
-      setIsLoading(false);
     }
 
-    loadTeams();
+    loadTeams()
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
   }, []);
 
   return (

@@ -22,24 +22,26 @@ export default function F1PredictionsStandings() {
   useEffect(() => {
     async function load() {
       setIsLoading(true);
-      const allFinishedRaces = await F1PredictionsApi.find({
-        isActive: false,
-        season,
-      });
       const standings = await F1PredictionsApi.getStandings(season);
-      const members = await DiscordMembersApi.getMembers(
-        standings.standings.map((x) => x.userId),
-      );
-      const charts = await F1PredictionsApi.getCharts(season);
+      setStandings(standings);
+      if (!standings || standings.standings.length === 0) {
+        return;
+      }
+
+      const [allFinishedRaces, charts, members] = await Promise.all([
+        F1PredictionsApi.find({ isActive: false, season }),
+        F1PredictionsApi.getCharts(season),
+        DiscordMembersApi.getMembers(standings.standings.map((x) => x.userId)),
+      ]);
 
       setFinishedRaces(allFinishedRaces);
-      setStandings(standings);
       setCharts(charts);
       setMembers(members);
-      setIsLoading(false);
     }
 
-    load().catch(console.error);
+    load()
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
   }, [season]);
 
   return (
@@ -50,7 +52,7 @@ export default function F1PredictionsStandings() {
       />
       {isLoading && <Loader />}
       {!isLoading && standings && standings.standings.length === 0 && (
-        <Typography variant={"h5"}>Сезон {season} еще не стартовал</Typography>
+        <Typography variant={"h6"}>Сезон {season} еще не стартовал</Typography>
       )}
       {!isLoading && standings && standings.standings.length > 0 && charts && (
         <Stack direction={"column"} spacing={4}>

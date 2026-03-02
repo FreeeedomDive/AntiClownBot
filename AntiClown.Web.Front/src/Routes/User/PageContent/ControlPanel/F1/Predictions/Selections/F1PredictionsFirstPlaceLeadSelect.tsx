@@ -1,8 +1,4 @@
-import {
-  FormControl,
-  InputAdornment,
-  OutlinedInput,
-} from "@mui/material";
+import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
 import React from "react";
 import F1PredictionsSelectCard from "./F1PredictionsSelectCard";
 

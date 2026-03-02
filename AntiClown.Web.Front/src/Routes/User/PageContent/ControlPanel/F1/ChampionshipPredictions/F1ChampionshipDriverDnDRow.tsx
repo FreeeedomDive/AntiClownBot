@@ -1,5 +1,11 @@
 import React from "react";
-import { Chip, IconButton, TableCell, TableRow, Typography } from "@mui/material";
+import {
+  Chip,
+  IconButton,
+  TableCell,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { DraggableProvided } from "@hello-pangea/dnd";
 

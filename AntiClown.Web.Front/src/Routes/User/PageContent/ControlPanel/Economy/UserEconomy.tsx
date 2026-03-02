@@ -33,7 +33,7 @@ export default function UserEconomy() {
   const [isLoadMoreLoading, setIsLoadMoreLoading] = useState(false);
 
   useEffect(() => {
-    loadEconomy(transactionsLimit, true);
+    loadEconomy(transactionsLimit, true).catch(console.error);
   }, []);
 
   useEffect(() => {

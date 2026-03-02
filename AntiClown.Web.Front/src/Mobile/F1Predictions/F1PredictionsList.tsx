@@ -5,7 +5,8 @@ import { RightsWrapper } from "../../Components/RIghts/RightsWrapper";
 import { RightsDto } from "../../Dto/Rights/RightsDto";
 import {
   Checkbox,
-  FormControl, FormControlLabel,
+  FormControl,
+  FormControlLabel,
   MenuItem,
   Select,
   Stack,
@@ -83,7 +84,10 @@ export default function F1PredictionsList() {
           <Loader />
         )}
         {currentF1Race && (
-          <F1PredictionStepMaster key={currentF1Race.id} f1Race={currentF1Race} />
+          <F1PredictionStepMaster
+            key={currentF1Race.id}
+            f1Race={currentF1Race}
+          />
         )}
       </Stack>
     </RightsWrapper>

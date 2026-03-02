@@ -1,11 +1,5 @@
 import { F1RaceDto } from "../../Dto/F1Predictions/F1RaceDto";
-import {
-  Alert,
-  Button,
-  ButtonGroup,
-  Snackbar,
-  Stack,
-} from "@mui/material";
+import { Alert, Button, ButtonGroup, Snackbar, Stack } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   F1SafetyCarPredictionDto,
@@ -21,8 +15,7 @@ import F1PredictionsDnfSelect, {
 } from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsDnfSelect";
 import F1PredictionsIncidentsSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsIncidentsSelect";
 import F1PredictionsFirstPlaceLeadSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsFirstPlaceLeadSelect";
-import F1PredictionsDriverPositionSelect
-  from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsDriverPositionSelect";
+import F1PredictionsDriverPositionSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsDriverPositionSelect";
 
 interface Props {
   f1Race: F1RaceDto;
@@ -36,15 +29,18 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto>(f1Race);
   const [teams, setTeams] = useState<F1TeamDto[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-  const [savePredictionResult, setSavePredictionResult] = useState<AddPredictionResultDto | null>(null);
+  const [savePredictionResult, setSavePredictionResult] =
+    useState<AddPredictionResultDto | null>(null);
   const [driverPosition, setDriverPosition] = useState<number | null>(null);
 
   useEffect(() => {
     async function load() {
-      const result = await F1PredictionsApi.read(f1Race.id);
-      setCurrentF1Race(result);
+      const [result, teams] = await Promise.all([
+        F1PredictionsApi.read(f1Race.id),
+        F1PredictionsApi.getActiveTeams(),
+      ]);
 
-      const teams = await F1PredictionsApi.getActiveTeams();
+      setCurrentF1Race(result);
       setTeams(teams);
     }
 
@@ -110,6 +106,7 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
     isDNFNobody,
     selected10Position,
     step,
+    driverPosition,
   ]);
 
   const saveF1Prediction = useCallback(async () => {

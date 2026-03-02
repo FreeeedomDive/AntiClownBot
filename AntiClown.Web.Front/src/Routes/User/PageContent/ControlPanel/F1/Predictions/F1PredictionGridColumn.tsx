@@ -1,5 +1,5 @@
 import React from "react";
-import {Grid, Stack} from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 
 interface Props {
   index: number;

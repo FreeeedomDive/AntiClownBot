@@ -1,11 +1,11 @@
 import "./App.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import UserMainPage from "./Routes/User/MainPage/UserMainPage";
-import LoginPage from "./Routes/Auth/LoginPage";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import React, { useEffect } from "react";
 import { useStore } from "./Stores";
 import MobileMainPage from "./Mobile/MobileMainPage";
+import LoginPage from "./Routes/Auth/LoginPage";
 
 const darkTheme = createTheme({
   palette: {
@@ -31,7 +31,12 @@ function App() {
           <Route path="/" element={<Navigate to={"/auth"} />} />
           <Route path="/auth" element={<LoginPage />} />
           <Route path="/user/:userId/*" element={<UserMainPage />} />
-          <Route path="/f1Predictions" element={<Navigate to={`/user/${userId}/f1Predictions/standings`} />} />
+          <Route
+            path="/f1Predictions"
+            element={
+              <Navigate to={`/user/${userId}/f1Predictions/standings`} />
+            }
+          />
           <Route path="/mobile" element={<MobileMainPage />} />
         </Routes>
       </BrowserRouter>
