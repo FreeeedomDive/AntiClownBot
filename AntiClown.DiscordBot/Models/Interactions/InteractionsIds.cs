@@ -190,5 +190,10 @@ public static class InteractionsIds
         public const string VoiceTts = "voiceTts";
 
         public const string Ai = "ai";
+
+        public const string Achievements_Admin_Group = "achievementsadmin";
+        public const string Achievements_Admin_List = "list";
+        public const string Achievements_Admin_Create = "create";
+        public const string Achievements_Admin_Grant = "grant";
     }
 }

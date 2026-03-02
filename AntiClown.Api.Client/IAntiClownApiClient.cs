@@ -1,5 +1,6 @@
 /* Generated file */
 
+using AntiClown.Api.Client.Achievements;
 using AntiClown.Api.Client.Economy;
 using AntiClown.Api.Client.Inventory;
 using AntiClown.Api.Client.Lohotron;
@@ -12,6 +13,7 @@ namespace AntiClown.Api.Client;
 
 public interface IAntiClownApiClient
 {
+    IAchievementsClient Achievements { get; }
     IEconomyClient Economy { get; }
     IInventoryClient Inventory { get; }
     ILohotronClient Lohotron { get; }
