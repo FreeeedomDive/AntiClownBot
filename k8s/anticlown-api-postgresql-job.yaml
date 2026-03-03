@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: anticlownapipostgresql
-          image: localhost:5000/anticlownapipostgresql
+          image: localhost:5051/anticlownapipostgresql
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production

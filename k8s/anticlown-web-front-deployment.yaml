@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: anticlownwebfront
-          image: localhost:5000/anticlownwebfront
+          image: localhost:5051/anticlownwebfront
 ---
 apiVersion: v1
 kind: Service

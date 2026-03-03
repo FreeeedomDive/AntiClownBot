@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: anticlowndiscordbot
-          image: localhost:5000/anticlowndiscordbot
+          image: localhost:5051/anticlowndiscordbot
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: anticlowneventsdaemon
-          image: localhost:5000/anticlowneventsdaemon
+          image: localhost:5051/anticlowneventsdaemon
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production
