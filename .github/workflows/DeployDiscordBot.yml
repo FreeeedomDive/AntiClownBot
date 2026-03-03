@@ -14,8 +14,8 @@ on:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: AntiClown.DiscordBot
-  DOCKERFILE: Dockerfile.AntiClown.DiscordBot
+  PROJECT_FOLDER: src/AntiClown.DiscordBot
+  DOCKERFILE: src/AntiClown.DiscordBot/Dockerfile
   DOCKERIMAGE: anticlowndiscordbot
   K8SFILENAME: k8s_prod/anticlown-discord-bot-deployment.yaml
   APPSETTINGS_PRODUCTION_JSON: ${{ secrets.DISCORDBOT_APPSETTINGS }}
@@ -59,7 +59,7 @@ jobs:
       env:
         DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
       run: |
-        docker build . -f $DOCKERFILE -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${GITHUB_SHA}
+        docker build src -f $DOCKERFILE -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${GITHUB_SHA}
 
     - name: Push Docker Image to Registry
       env:
