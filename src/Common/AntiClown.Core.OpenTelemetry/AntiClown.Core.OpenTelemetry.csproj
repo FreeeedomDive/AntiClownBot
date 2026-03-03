@@ -16,6 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
+      <ProjectReference Include="..\..\DataApi\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
     </ItemGroup>
 </Project>

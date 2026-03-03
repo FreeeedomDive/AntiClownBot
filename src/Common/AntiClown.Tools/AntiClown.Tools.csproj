@@ -6,9 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
-        <ProjectReference Include="..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
-        <ProjectReference Include="..\AntiClown.Entertainment.Api.Client\AntiClown.Entertainment.Api.Client.csproj"/>
+        <ProjectReference Include="..\..\Api\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
+        <ProjectReference Include="..\..\DataApi\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
+        <ProjectReference Include="..\..\EntertainmentApi\AntiClown.Entertainment.Api.Client\AntiClown.Entertainment.Api.Client.csproj"/>
         <ProjectReference Include="..\Utility\Utility.csproj"/>
     </ItemGroup>
 

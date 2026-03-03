@@ -12,10 +12,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AntiClown.Api\AntiClown.Api.csproj" />
-      <ProjectReference Include="..\AntiClown.Data.Api\AntiClown.Data.Api.csproj" />
-      <ProjectReference Include="..\AntiClown.DiscordBot\AntiClown.DiscordBot.csproj" />
-      <ProjectReference Include="..\AntiClown.Entertainment.Api\AntiClown.Entertainment.Api.csproj" />
+      <ProjectReference Include="..\..\Api\AntiClown.Api\AntiClown.Api.csproj" />
+      <ProjectReference Include="..\..\DataApi\AntiClown.Data.Api\AntiClown.Data.Api.csproj" />
+      <ProjectReference Include="..\..\DiscordBot\AntiClown.DiscordBot\AntiClown.DiscordBot.csproj" />
+      <ProjectReference Include="..\..\EntertainmentApi\AntiClown.Entertainment.Api\AntiClown.Entertainment.Api.csproj" />
     </ItemGroup>
 
 </Project>

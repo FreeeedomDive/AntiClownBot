@@ -19,6 +19,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\AntiClown.Entertainment.Api.Core\AntiClown.Entertainment.Api.Core.csproj"/>
+        <ProjectReference Include="..\..\EntertainmentApi\AntiClown.Entertainment.Api.Core\AntiClown.Entertainment.Api.Core.csproj"/>
     </ItemGroup>
 </Project>

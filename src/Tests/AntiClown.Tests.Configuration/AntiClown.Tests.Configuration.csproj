@@ -19,9 +19,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
-        <ProjectReference Include="..\..\AntiClown.Core\AntiClown.Core.csproj"/>
-        <ProjectReference Include="..\..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj"/>
+        <ProjectReference Include="..\..\Api\AntiClown.Api.Client\AntiClown.Api.Client.csproj"/>
+        <ProjectReference Include="..\..\Common\AntiClown.Core\AntiClown.Core.csproj"/>
+        <ProjectReference Include="..\..\DataApi\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj"/>
     </ItemGroup>
 
 </Project>

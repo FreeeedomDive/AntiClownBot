@@ -20,10 +20,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\AntiClown.Entertainment.Api\AntiClown.Entertainment.Api.csproj"/>
-        <ProjectReference Include="..\..\AntiClown.Entertainment.Api.Core\AntiClown.Entertainment.Api.Core.csproj"/>
-        <ProjectReference Include="..\..\AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier\AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier.csproj"/>
-        <ProjectReference Include="..\..\AntiClown.Core\AntiClown.Core.csproj"/>
+        <ProjectReference Include="..\..\EntertainmentApi\AntiClown.Entertainment.Api\AntiClown.Entertainment.Api.csproj"/>
+        <ProjectReference Include="..\..\EntertainmentApi\AntiClown.Entertainment.Api.Core\AntiClown.Entertainment.Api.Core.csproj"/>
+        <ProjectReference Include="..\..\EntertainmentApi\AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier\AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier.csproj"/>
+        <ProjectReference Include="..\..\Common\AntiClown.Core\AntiClown.Core.csproj"/>
         <ProjectReference Include="..\AntiClown.Tests.Configuration\AntiClown.Tests.Configuration.csproj"/>
     </ItemGroup>
 </Project>

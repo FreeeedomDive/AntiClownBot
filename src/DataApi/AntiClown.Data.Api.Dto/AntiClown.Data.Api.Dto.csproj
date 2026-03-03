@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj"/>
+        <ProjectReference Include="..\..\Common\AntiClown.Core.Dto\AntiClown.Core.Dto.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -20,9 +20,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\AntiClown.Data.Api\AntiClown.Data.Api.csproj"/>
-        <ProjectReference Include="..\..\AntiClown.Data.Api.Core\AntiClown.Data.Api.Core.csproj"/>
-        <ProjectReference Include="..\..\AntiClown.Data.Api.PostgreSqlMigrationsApplier\AntiClown.Data.Api.PostgreSqlMigrationsApplier.csproj"/>
+        <ProjectReference Include="..\..\DataApi\AntiClown.Data.Api\AntiClown.Data.Api.csproj"/>
+        <ProjectReference Include="..\..\DataApi\AntiClown.Data.Api.Core\AntiClown.Data.Api.Core.csproj"/>
+        <ProjectReference Include="..\..\DataApi\AntiClown.Data.Api.PostgreSqlMigrationsApplier\AntiClown.Data.Api.PostgreSqlMigrationsApplier.csproj"/>
         <ProjectReference Include="..\AntiClown.Tests.Configuration\AntiClown.Tests.Configuration.csproj"/>
     </ItemGroup>
 </Project>

@@ -23,8 +23,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AntiClown.Core.OpenTelemetry\AntiClown.Core.OpenTelemetry.csproj" />
-        <ProjectReference Include="..\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
+        <ProjectReference Include="..\..\Common\AntiClown.Core.OpenTelemetry\AntiClown.Core.OpenTelemetry.csproj" />
+        <ProjectReference Include="..\..\DataApi\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
         <ProjectReference Include="..\AntiClown.Entertainment.Api.Core\AntiClown.Entertainment.Api.Core.csproj"/>
     </ItemGroup>
 </Project>
