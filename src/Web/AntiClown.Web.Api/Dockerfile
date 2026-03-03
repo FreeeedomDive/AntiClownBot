@@ -7,15 +7,16 @@ RUN dotnet dev-certs https -ep ./https/certificate.pfx -p aspnet
 RUN dotnet dev-certs https --trust
 
 WORKDIR /src
-COPY ["AntiClown.Data.Api/AntiClown.Data.Api.csproj", "AntiClown.Data.Api/"]
+COPY ["Web/AntiClown.Web.Api/AntiClown.Web.Api.csproj", "Web/AntiClown.Web.Api/"]
+RUN dotnet restore "Web/AntiClown.Web.Api/AntiClown.Web.Api.csproj"
 COPY . .
 
 FROM build AS publish
-WORKDIR "/src/AntiClown.Data.Api"
-RUN dotnet publish "AntiClown.Data.Api.csproj" -c Release -o /app/publish
+WORKDIR "/src/Web/AntiClown.Web.Api"
+RUN dotnet publish "AntiClown.Web.Api.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 COPY --from=build /certificate /certificate
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AntiClown.Data.Api.dll"]
+ENTRYPOINT ["dotnet", "AntiClown.Web.Api.dll"]

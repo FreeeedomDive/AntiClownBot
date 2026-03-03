@@ -12,7 +12,7 @@ on:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: src/AntiClown.Web.Front
+  PROJECT_FOLDER: src/Web/AntiClown.Web.Front
   DOCKERFILE: Dockerfile
   DOCKERIMAGE: anticlownwebfront
   K8SFILENAME: k8s_prod/anticlown-web-front-deployment.yaml

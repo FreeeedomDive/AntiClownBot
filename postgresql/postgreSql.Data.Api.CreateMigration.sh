@@ -7,6 +7,6 @@ read name
 
 dotnet tool install --global dotnet-ef
 
-cd ../src
+cd ../src/DataApi
 dotnet ef migrations add "$name" \
   --project AntiClown.Data.Api.PostgreSqlMigrationsApplier

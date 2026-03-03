@@ -6,8 +6,8 @@ on:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: src/AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier
-  DOCKERFILE: src/AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier/Dockerfile
+  PROJECT_FOLDER: src/EntertainmentApi/AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier
+  DOCKERFILE: src/EntertainmentApi/AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier/Dockerfile
   DOCKERIMAGE: anticlownentertainmentapipostgresql
   K8SFILENAME: k8s_prod/anticlown-entertainment-api-postgresql-job.yaml
   APPSETTINGS_PRODUCTION_JSON: ${{ secrets.ENTERTAINMENTAPI_POSTGRESQLMIGRATOR_APPSETTINGS }}

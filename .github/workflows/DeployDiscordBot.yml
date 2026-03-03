@@ -14,8 +14,8 @@ on:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: src/AntiClown.DiscordBot
-  DOCKERFILE: src/AntiClown.DiscordBot/Dockerfile
+  PROJECT_FOLDER: src/DiscordBot/AntiClown.DiscordBot
+  DOCKERFILE: src/DiscordBot/AntiClown.DiscordBot/Dockerfile
   DOCKERIMAGE: anticlowndiscordbot
   K8SFILENAME: k8s_prod/anticlown-discord-bot-deployment.yaml
   APPSETTINGS_PRODUCTION_JSON: ${{ secrets.DISCORDBOT_APPSETTINGS }}

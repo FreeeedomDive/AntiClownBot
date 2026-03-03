@@ -9,12 +9,12 @@ RUN dotnet dev-certs https -ep ./https/certificate.pfx -p aspnet
 RUN dotnet dev-certs https --trust
 
 WORKDIR /src
-COPY ["AntiClown.DiscordBot/AntiClown.DiscordBot.csproj", "AntiClown.DiscordBot/"]
-RUN dotnet restore "AntiClown.DiscordBot/AntiClown.DiscordBot.csproj"
+COPY ["DiscordBot/AntiClown.DiscordBot/AntiClown.DiscordBot.csproj", "DiscordBot/AntiClown.DiscordBot/"]
+RUN dotnet restore "DiscordBot/AntiClown.DiscordBot/AntiClown.DiscordBot.csproj"
 COPY . .
 
 FROM build AS publish
-WORKDIR "/src/AntiClown.DiscordBot"
+WORKDIR "/src/DiscordBot/AntiClown.DiscordBot"
 RUN dotnet publish "AntiClown.DiscordBot.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final

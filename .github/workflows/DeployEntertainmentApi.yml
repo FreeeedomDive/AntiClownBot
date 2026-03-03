@@ -13,8 +13,8 @@ on:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: src/AntiClown.Entertainment.Api
-  DOCKERFILE: src/AntiClown.Entertainment.Api/Dockerfile
+  PROJECT_FOLDER: src/EntertainmentApi/AntiClown.Entertainment.Api
+  DOCKERFILE: src/EntertainmentApi/AntiClown.Entertainment.Api/Dockerfile
   DOCKERIMAGE: anticlownentertainmentapi
   K8SFILENAME: k8s_prod/anticlown-entertainment-api-deployment.yaml
   APPSETTINGS_PRODUCTION_JSON: ${{ secrets.ENTERTAINMENTAPI_APPSETTINGS }}
