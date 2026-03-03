@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: anticlownentertainmentapi
-          image: localhost:5000/anticlownentertainmentapi
+          image: localhost:5051/anticlownentertainmentapi
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production

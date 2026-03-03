@@ -14,8 +14,8 @@ on:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: AntiClown.Telegram.Bot
-  DOCKERFILE: Dockerfile.AntiClown.TelegramBot
+  PROJECT_FOLDER: src/AntiClown.Telegram.Bot
+  DOCKERFILE: src/AntiClown.Telegram.Bot/Dockerfile
   DOCKERIMAGE: anticlowntelegrambot
   K8SFILENAME: k8s_prod/anticlown-telegram-bot-deployment.yaml
   APPSETTINGS_PRODUCTION_JSON: ${{ secrets.TELEGRAMBOT_APPSETTINGS }}
@@ -53,7 +53,7 @@ jobs:
       env:
         DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
       run: |
-        docker build . -f $DOCKERFILE -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${GITHUB_SHA}
+        docker build src -f $DOCKERFILE -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${GITHUB_SHA}
 
     - name: Push Docker Image to Registry
       env:

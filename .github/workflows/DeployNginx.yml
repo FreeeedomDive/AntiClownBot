@@ -7,7 +7,7 @@ on:
 # Edit only names and variables below, everything is based on this variables
 env:
   PROJECT_FOLDER: nginx
-  DOCKERFILE: Dockerfile.AntiClown.Nginx
+  DOCKERFILE: nginx/Dockerfile
   DOCKERIMAGE: anticlownnginx
   K8SFILENAME: k8s_prod/anticlown-nginx-deployment.yaml
 
@@ -40,7 +40,7 @@ jobs:
       env:
         DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
       run: |
-        docker build . -f $DOCKERFILE -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${GITHUB_SHA}
+        docker build nginx -f $DOCKERFILE -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${GITHUB_SHA}
 
     - name: Push Docker Image to Registry
       env:

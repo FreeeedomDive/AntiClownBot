@@ -13,8 +13,8 @@ on:
 
 # Edit only names and variables below, everything is based on this variables
 env:
-  PROJECT_FOLDER: AntiClown.Entertainment.Api
-  DOCKERFILE: Dockerfile.AntiClown.Entertainment.Api
+  PROJECT_FOLDER: src/EntertainmentApi/AntiClown.Entertainment.Api
+  DOCKERFILE: src/EntertainmentApi/AntiClown.Entertainment.Api/Dockerfile
   DOCKERIMAGE: anticlownentertainmentapi
   K8SFILENAME: k8s_prod/anticlown-entertainment-api-deployment.yaml
   APPSETTINGS_PRODUCTION_JSON: ${{ secrets.ENTERTAINMENTAPI_APPSETTINGS }}
@@ -52,7 +52,7 @@ jobs:
       env:
         DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
       run: |
-        docker build . -f $DOCKERFILE -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${GITHUB_SHA}
+        docker build src -f $DOCKERFILE -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${GITHUB_SHA}
 
     - name: Push Docker Image to Registry
       env:

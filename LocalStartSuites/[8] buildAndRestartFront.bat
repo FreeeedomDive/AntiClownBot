@@ -1,6 +1,6 @@
 @echo off
-cd ../AntiClown.Web.Front
-docker build . -f Dockerfile.AntiClown.Web.Front -t localhost:5000/anticlownwebfront
-docker push localhost:5000/anticlownwebfront
+cd ../src/Web/AntiClown.Web.Front
+docker build . -f Dockerfile -t localhost:5051/anticlownwebfront
+docker push localhost:5051/anticlownwebfront
 kubectl rollout restart deployment/anticlown-web-front-deployment
 pause
