@@ -32,9 +32,15 @@ function App() {
           <Route path="/auth" element={<LoginPage />} />
           <Route path="/user/:userId/*" element={<UserMainPage />} />
           <Route
-            path="/f1Predictions"
+            path="/f1Predictions/standings"
             element={
               <Navigate to={`/user/${userId}/f1Predictions/standings`} />
+            }
+          />
+          <Route
+            path="/f1Predictions/rulebook"
+            element={
+              <Navigate to={`/user/${userId}/f1Predictions/rulebook`} />
             }
           />
           <Route path="/mobile" element={<MobileMainPage />} />

@@ -4,6 +4,7 @@ import {
   CardContent,
   Chip,
   Divider,
+  Link,
   Stack,
   Table,
   TableBody,
@@ -18,13 +19,15 @@ const CURRENT_SEASON = new Date().getFullYear();
 
 function Section({
   title,
+  id,
   children,
 }: {
   title: string;
+  id?: string;
   children: React.ReactNode;
 }) {
   return (
-    <Box>
+    <Box id={id}>
       <Typography variant="h4" sx={{ fontWeight: "bold", mb: 3 }}>
         {title}
       </Typography>
@@ -268,9 +271,11 @@ export default function F1PredictionsRulebook() {
           <Rule>
             В любых спорных случаях статус пилота определяется по официальному
             документу{" "}
-            <strong>Final Race Classification</strong>: если там указано{" "}
-            <strong>DNF</strong> — засчитывается как DNF; любой другой статус
-            (DNS, DQ и т.&thinsp;д.) — не засчитывается.
+            <Link href="#useful-links" underline="hover" color="inherit">
+              <strong>Final Race Classification</strong>
+            </Link>
+            : если там указано <strong>DNF</strong> — засчитывается как DNF;
+            любой другой статус (DNS, DQ и т.&thinsp;д.) — не засчитывается.
           </Rule>
         </SubSection>
 
@@ -602,6 +607,60 @@ export default function F1PredictionsRulebook() {
             наступления событий.
           </Rule>
         </SubSection>
+      </Section>
+
+      <Divider />
+
+      {/* ─────────────────────────── SECTION 4 ─────────────────────────── */}
+      <Section title="Полезные ссылки" id="useful-links">
+        <Card sx={{ backgroundColor: "rgba(255,255,255,0.05)", borderRadius: 2 }}>
+          <CardContent>
+            <Stack spacing={2}>
+              <Stack spacing={0.5}>
+                <Stack direction="row" spacing={2} alignItems="baseline">
+                  <Typography variant="body1" sx={{ minWidth: 220 }}>
+                    Официальные документы FIA
+                  </Typography>
+                  <Link
+                    href="https://www.fia.com/documents/championships/fia-formula-one-world-championship-14"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    underline="hover"
+                  >
+                    fia.com — FIA Formula One World Championship documents
+                  </Link>
+                </Stack>
+                <Typography variant="body2" color="text.secondary">
+                  Официальные документы чемпионата, в том числе{" "}
+                  <strong>Final Race Classification</strong> — итоговые
+                  протоколы каждой гонки.
+                </Typography>
+              </Stack>
+
+              <Divider />
+
+              <Stack spacing={0.5}>
+                <Stack direction="row" spacing={2} alignItems="baseline">
+                  <Typography variant="body1" sx={{ minWidth: 220 }}>
+                    Liquipedia F1
+                  </Typography>
+                  <Link
+                    href="https://liquipedia.net/formula1/Main_Page"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    underline="hover"
+                  >
+                    liquipedia.net/formula1
+                  </Link>
+                </Stack>
+                <Typography variant="body2" color="text.secondary">
+                  Вики-энциклопедия по Формуле 1: расписание сезона, результаты
+                  гонок, составы команд и история чемпионата.
+                </Typography>
+              </Stack>
+            </Stack>
+          </CardContent>
+        </Card>
       </Section>
     </Stack>
   );
