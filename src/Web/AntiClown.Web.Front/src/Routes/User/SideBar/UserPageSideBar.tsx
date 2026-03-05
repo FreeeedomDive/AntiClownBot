@@ -101,6 +101,12 @@ const UserPageSideBar = ({ user }: Props) => {
                 >
                   <List disablePadding>
                     <UserPageSideBarItem
+                      sidebarKey="F1PredictionsRulebook"
+                      link={buildLink(userId, "f1Predictions/rulebook")}
+                      text="Регламент"
+                      nesting={2}
+                    />
+                    <UserPageSideBarItem
                       sidebarKey="F1PredictionsStandings"
                       link={buildLink(userId, "f1Predictions/standings")}
                       text="Таблица"

@@ -18,6 +18,7 @@ import F1BingoBoard from "./ControlPanel/F1/Bingo/F1BingoBoard";
 import F1BingoCardsEditor from "./Admin/F1/Bingo/F1BingoCardsEditor";
 import F1ChampionshipPredictions from "./ControlPanel/F1/ChampionshipPredictions/F1ChampionshipPredictions";
 import F1ChampionshipPredictionsAdmin from "./Admin/F1/ChampionshipPredictions/F1ChampionshipPredictionsAdmin";
+import F1PredictionsRulebook from "./ControlPanel/F1/Rulebook/F1PredictionsRulebook";
 
 interface Props {
   user: UserDto | null | undefined;
@@ -48,6 +49,10 @@ const UserPageContentRouter = ({ user }: Props) => {
           <Route path="/economy" element={<UserEconomy />} />
           <Route path="/inventory" element={<UserInventory />} />
           <Route path="/shop" element={<UserShop />} />
+          <Route
+            path="/f1Predictions/rulebook"
+            element={<F1PredictionsRulebook />}
+          />
           <Route
             path="/f1Predictions/standings"
             element={<F1PredictionsStandings />}
