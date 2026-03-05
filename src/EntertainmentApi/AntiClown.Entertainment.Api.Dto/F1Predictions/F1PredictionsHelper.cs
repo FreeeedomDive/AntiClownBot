@@ -40,8 +40,10 @@ public static class F1PredictionsHelper
         {
             0 => 10,
             1 => 7,
-            2 => 4,
-            3 => 1,
+            2 => 5,
+            3 => 3,
+            4 => 2,
+            5 => 1,
             _ => 0,
         };
     }

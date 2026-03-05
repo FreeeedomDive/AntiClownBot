@@ -154,25 +154,33 @@ public class F1PredictionsResultBuilderTests
         result[4].FirstPlaceLeadPoints.Should().Be(p5);
     }
 
-    [TestCase("Leclerc", 3, 0)]
-    [TestCase("Leclerc", 4, 1)]
-    [TestCase("Leclerc", 5, 4)]
+    [TestCase("Leclerc", 1, 0)]
+    [TestCase("Leclerc", 2, 1)]
+    [TestCase("Leclerc", 3, 2)]
+    [TestCase("Leclerc", 4, 3)]
+    [TestCase("Leclerc", 5, 5)]
     [TestCase("Leclerc", 6, 7)]
     [TestCase("Leclerc", 7, 10)]
     [TestCase("Leclerc", 8, 7)]
-    [TestCase("Leclerc", 9, 4)]
-    [TestCase("Leclerc", 10, 1)]
-    [TestCase("Leclerc", 11, 0)]
+    [TestCase("Leclerc", 9, 5)]
+    [TestCase("Leclerc", 10, 3)]
+    [TestCase("Leclerc", 11, 2)]
+    [TestCase("Leclerc", 12, 1)]
+    [TestCase("Leclerc", 13, 0)]
     [TestCase("Norris", 1, 10)]
     [TestCase("Norris", 2, 7)]
-    [TestCase("Norris", 3, 4)]
-    [TestCase("Norris", 4, 1)]
-    [TestCase("Norris", 5, 0)]
+    [TestCase("Norris", 3, 5)]
+    [TestCase("Norris", 4, 3)]
+    [TestCase("Norris", 5, 2)]
+    [TestCase("Norris", 6, 1)]
+    [TestCase("Norris", 7, 0)]
     [TestCase("Bottas", 22, 10)]
     [TestCase("Bottas", 21, 7)]
-    [TestCase("Bottas", 20, 4)]
-    [TestCase("Bottas", 19, 1)]
-    [TestCase("Bottas", 18, 0)]
+    [TestCase("Bottas", 20, 5)]
+    [TestCase("Bottas", 19, 3)]
+    [TestCase("Bottas", 18, 2)]
+    [TestCase("Bottas", 17, 1)]
+    [TestCase("Bottas", 16, 0)]
     public void SelectedDriverPositionPredictionTest(string driver, int prediction, int expectedPoints)
     {
         var race = CreateTestRace();
@@ -186,10 +194,10 @@ public class F1PredictionsResultBuilderTests
 
     // 15 + 0 + 5 + 5 + 7
     [TestCase("Hamilton", "", SafetyCarsCount.Two, 1, 8, 32)]
-    // 8 + 0 + 0 + 5 + 1
-    [TestCase("Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 14)]
-    // 0 + 2 + 0 + 5 + 1
-    [TestCase("Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 8)]
+    // 8 + 0 + 0 + 5 + 3
+    [TestCase("Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 16)]
+    // 0 + 2 + 0 + 5 + 3
+    [TestCase("Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 10)]
     // 25 + 4 + 5 + 5 + 10
     [TestCase("Sainz", "Colapinto,Gasly", SafetyCarsCount.Two, 1, 7, 49)]
     public void ComplexPointsTest(
@@ -230,26 +238,26 @@ public class F1PredictionsResultBuilderTests
 
     // 15 + 0 + 0 + 5 + 7
     [TestCase(2024, "Hamilton", "", SafetyCarsCount.Two, 1, 8, 27)]
-    // 8 + 0 + 5 + 5 + 1
-    [TestCase(2024, "Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 19)]
-    // 0 + 2 + 0 + 5 + 1
-    [TestCase(2024, "Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 8)]
+    // 8 + 0 + 5 + 5 + 3
+    [TestCase(2024, "Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 21)]
+    // 0 + 2 + 0 + 5 + 3
+    [TestCase(2024, "Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 10)]
     // 25 + 4 + 0 + 5 + 10
     [TestCase(2024, "Sainz", "Colapinto,Gasly", SafetyCarsCount.Two, 1, 7, 44)]
     // (15 + 0 + 0 + 5 + 7)*0.3
     [TestCase(2025, "Hamilton", "", SafetyCarsCount.Two, 1, 8, 8)]
-    // (8 + 0 + 5 + 5 + 1)*0.3
-    [TestCase(2025, "Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 5)]
-    // (0 + 2 + 0 + 5 + 1)*0.3
-    [TestCase(2025, "Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 2)]
+    // (8 + 0 + 5 + 5 + 3)*0.3
+    [TestCase(2025, "Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 6)]
+    // (0 + 2 + 0 + 5 + 3)*0.3
+    [TestCase(2025, "Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 3)]
     // (25 + 4 + 0 + 5 + 10)*0.3
     [TestCase(2025, "Sainz", "Colapinto,Gasly", SafetyCarsCount.Two, 1, 7, 13)]
     // 15 + 0 + 0 + 5 + 7
     [TestCase(2026, "Hamilton", "", SafetyCarsCount.Two, 1, 8, 27)]
-    // 8 + 0 + 5 + 5 + 1
-    [TestCase(2026, "Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 19)]
-    // 0 + 2 + 0 + 5 + 1
-    [TestCase(2026, "Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 8)]
+    // 8 + 0 + 5 + 5 + 3
+    [TestCase(2026, "Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 21)]
+    // 0 + 2 + 0 + 5 + 3
+    [TestCase(2026, "Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 10)]
     // 25 + 4 + 0 + 5 + 10
     [TestCase(2026, "Sainz", "Colapinto,Gasly", SafetyCarsCount.Two, 1, 7, 44)]
     public void ComplexOldSeasonsSprintPointsTest(
