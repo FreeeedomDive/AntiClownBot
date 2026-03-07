@@ -81,7 +81,9 @@ export default function F1Prediction({ f1Race }: Props) {
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>(
     String(userPrediction?.firstPlaceLeadPrediction ?? ""),
   );
-  const [driverPosition, setDriverPosition] = useState<number | null>(null);
+  const [driverPosition, setDriverPosition] = useState<number | null>(
+    userPrediction?.driverPositionPrediction ?? null
+  );
 
   const isValid = useMemo(() => {
     if (!isDNFNobody && new Set(dnfList).size !== 5) {
