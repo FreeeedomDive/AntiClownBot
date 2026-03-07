@@ -31,7 +31,6 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
   const [isSaving, setIsSaving] = useState(false);
   const [savePredictionResult, setSavePredictionResult] =
     useState<AddPredictionResultDto | null>(null);
-  const [driverPosition, setDriverPosition] = useState<number | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -80,6 +79,9 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
     );
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>(
     String(userPrediction?.firstPlaceLeadPrediction ?? ""),
+  );
+  const [driverPosition, setDriverPosition] = useState<number | null>(
+    userPrediction?.driverPositionPrediction ?? null
   );
 
   const isValid = useMemo(() => {
