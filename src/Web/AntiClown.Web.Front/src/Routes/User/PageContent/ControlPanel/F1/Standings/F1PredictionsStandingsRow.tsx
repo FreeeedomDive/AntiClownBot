@@ -284,7 +284,7 @@ function getTableRow(
         </TableCell>
       )}
       {/*Голосование за итоговую позицию гонщика началось в 2026 году*/}
-      {season > 2026 && (
+      {season >= 2026 && (
         <TableCell
           key={`${raceResult.userId}_${raceResult.raceId}_driver_position`}
           align="center"
