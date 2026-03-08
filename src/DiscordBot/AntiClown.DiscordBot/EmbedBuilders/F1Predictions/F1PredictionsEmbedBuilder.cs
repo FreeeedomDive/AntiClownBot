@@ -59,8 +59,7 @@ public class F1PredictionsEmbedBuilder(
         var embedBuilder = new DiscordEmbedBuilder()
                            .WithColor(DiscordColor.Gold)
                            .WithTitle($"Результаты предсказаний на гонку {race.FullName()} {race.Season}");
-        results.ForEach(
-            userResult =>
+        results.ForEach(userResult =>
             {
                 var userPrediction = race.Predictions.First(x => x.UserId == userResult.UserId);
                 embedBuilder.AddField(
@@ -70,7 +69,7 @@ public class F1PredictionsEmbedBuilder(
                     + $"{PluralizePoints(userResult.DnfsPoints)}\n"
                     + $"Инциденты: {userPrediction.SafetyCarsPrediction} - {PluralizePoints(userResult.SafetyCarsPoints)}\n"
                     + $"Отрыв лидера: {userPrediction.FirstPlaceLeadPrediction} - {PluralizePoints(userResult.FirstPlaceLeadPoints)}\n"
-                    + $"Позиция {race.Conditions.PositionPredictionDriver} - {PluralizePoints(userResult.DriverPositionPoints)}\n"
+                    + $"Позиция {race.Conditions.PositionPredictionDriver}: {userPrediction.DriverPositionPrediction} - {PluralizePoints(userResult.DriverPositionPoints)}\n"
                 );
             }
         );
