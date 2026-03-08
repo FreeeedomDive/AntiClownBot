@@ -201,7 +201,7 @@ function getTableHeaderRows(season: number) {
         </TableCell>
       )}
       {/*Голосование за итоговую позицию гонщика началось в 2026 году*/}
-      {season > 2026 && (
+      {season >= 2026 && (
         <TableCell key={"head_driver_position"} align="center">
           Позиция гонщика
         </TableCell>
