@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import {
   Collapse,
   List,
@@ -48,7 +49,7 @@ interface Props {
 const ICON_SX = { fontSize: 18 };
 const TEXT_PROPS = { fontSize: "0.82rem" };
 
-const UserPageSideBar = ({ user }: Props) => {
+const UserPageSideBar = observer(({ user }: Props) => {
   const { authStore } = useStore();
   const { rightsStore } = useStore();
   const currentLoggedInUserId = authStore.loggedInUserId;
@@ -311,6 +312,6 @@ const UserPageSideBar = ({ user }: Props) => {
       )}
     </Stack>
   );
-};
+});
 
 export default UserPageSideBar;
