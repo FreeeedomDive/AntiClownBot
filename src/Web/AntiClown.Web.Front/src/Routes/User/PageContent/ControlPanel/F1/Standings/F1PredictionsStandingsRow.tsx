@@ -5,8 +5,6 @@ import {
   Box,
   Collapse,
   IconButton,
-  Paper,
-  Popper,
   Stack,
   Table,
   TableBody,
@@ -23,6 +21,9 @@ import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import DiscordMember from "../../../../../../Components/Users/DiscordMember";
 import { InfoOutlined } from "@mui/icons-material";
 import { F1StandingsRowDto } from "../../../../../../Dto/F1Predictions/F1StandingsRowDto";
+
+const STICKY_BG_DEFAULT = "#000019";
+const STICKY_BG_ME = "#120030";
 
 interface IProps {
   discordMember: DiscordMemberDto | undefined;
@@ -44,10 +45,6 @@ export function F1PredictionsStandingsRow({
   leaderPoints,
 }: IProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const [currentHoveredRace, setCurrentHoveredRace] = React.useState<
-    string | null
-  >(null);
 
   const userName = discordMember?.serverName ?? discordMember?.userName;
 
@@ -58,91 +55,121 @@ export function F1PredictionsStandingsRow({
   const season =
     races.length === 0 ? new Date().getFullYear() : races[0].season;
   const stillInChampionship = leaderPoints - results.totalPoints < pointsLeft;
+  const stickyBg = isMe ? STICKY_BG_ME : STICKY_BG_DEFAULT;
 
   return (
     <React.Fragment>
-      <TableRow sx={isMe ? { backgroundColor: "#120030" } : {}}>
-        <TableCell key={"expand"}>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell key={"avatar"} align={"left"} sx={{ padding: "8px" }}>
-          {discordMember && (
-            <Stack direction={"row"} spacing={1}>
-              <Avatar
-                alt={userName}
-                src={discordMember.avatarUrl}
-                sx={{ width: 24, height: 24 }}
-              />
-              <DiscordMember member={discordMember} />
-            </Stack>
-          )}
-        </TableCell>
-        <TableCell key={"points_sum"} align={"center"} sx={{ padding: "8px" }}>
-          <Typography>
-            {results.totalPoints}
-            {position === 1 && pointsLeft === 0 && (
-              <Typography color="gold">Чемпион</Typography>
+      <TableRow sx={isMe ? { backgroundColor: STICKY_BG_ME } : {}}>
+        <TableCell
+          sx={{
+            position: "sticky",
+            left: 0,
+            zIndex: 2,
+            bgcolor: stickyBg,
+            borderRight: "1px solid rgba(255,255,255,0.12)",
+            p: "4px 8px",
+          }}
+        >
+          <Stack direction="row" alignItems="center" spacing={0.5}>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setIsOpen(!isOpen)}
+              sx={{ flexShrink: 0 }}
+            >
+              {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+            {discordMember && (
+              <>
+                <Avatar
+                  alt={userName}
+                  src={discordMember.avatarUrl}
+                  sx={{ width: 24, height: 24, flexShrink: 0 }}
+                />
+                <Box sx={{ flex: 1, overflow: "hidden", minWidth: 0 }}>
+                  <DiscordMember member={discordMember} />
+                </Box>
+              </>
             )}
-            {position > 1 && pointsLeft > 0 && (
-              <Tooltip
-                title={
-                  stillInChampionship
-                    ? "В борьбе за титул"
-                    : "Больше нет шансов на титул"
-                }
-                arrow
-              >
-                <Typography color={stillInChampionship ? "red" : "gray"}>
-                  {results.totalPoints - leaderPoints}
-                </Typography>
-              </Tooltip>
-            )}
-            {position > 1 && pointsLeft === 0 && (
-              <Typography color="gray">
-                {results.totalPoints - leaderPoints}
-              </Typography>
-            )}
-          </Typography>
+          </Stack>
         </TableCell>
         {results.results.map((x) => (
           <TableCell
             key={`${discordMember?.userId}_${x?.raceId}_points`}
-            sx={{ padding: "4px" }}
+            align="center"
+            sx={{ p: "4px", width: 40 }}
           >
-            <Typography
-              onMouseEnter={(e) => {
-                setAnchorEl(e.currentTarget);
-                setCurrentHoveredRace(x.raceId);
-              }}
-              onMouseLeave={() => {
-                setAnchorEl(null);
-                setCurrentHoveredRace(null);
-              }}
-            >
-              {!!x ? x.totalPoints : ""}
-            </Typography>
             {!!x && (
-              <Popper
-                open={Boolean(anchorEl && currentHoveredRace === x.raceId)}
-                anchorEl={anchorEl}
-                placement="right-start"
+              <Tooltip
+                title={
+                  <Typography
+                    sx={{ whiteSpace: "pre-line", fontSize: "0.75rem" }}
+                  >
+                    {getPointsDetails(x, getRace(x.raceId), season)}
+                  </Typography>
+                }
+                arrow
+                placement="top"
               >
-                <Paper sx={{ p: 1, whiteSpace: "pre-line" }}>
-                  {getPointsDetails(x, getRace(x.raceId), season)}
-                </Paper>
-              </Popper>
+                <Typography sx={{ cursor: "default" }}>
+                  {x.totalPoints}
+                </Typography>
+              </Tooltip>
             )}
           </TableCell>
         ))}
+        <TableCell
+          align="center"
+          sx={{
+            position: "sticky",
+            right: 0,
+            zIndex: 2,
+            bgcolor: stickyBg,
+            borderLeft: "1px solid rgba(255,255,255,0.12)",
+            p: "4px 8px",
+          }}
+        >
+          <Typography fontWeight="bold">{results.totalPoints}</Typography>
+          {position === 1 && pointsLeft === 0 && (
+            <Typography variant="caption" color="gold" display="block">
+              Чемпион
+            </Typography>
+          )}
+          {position === 1 && pointsLeft > 0 && (
+            <Typography variant="caption" color="success.main" display="block">
+              Лидер
+            </Typography>
+          )}
+          {position > 1 && pointsLeft > 0 && (
+            <Tooltip
+              title={
+                stillInChampionship
+                  ? "В борьбе за титул"
+                  : "Больше нет шансов на титул"
+              }
+              arrow
+            >
+              <Typography
+                variant="caption"
+                display="block"
+                color={stillInChampionship ? "error" : "text.disabled"}
+              >
+                {results.totalPoints - leaderPoints}
+              </Typography>
+            </Tooltip>
+          )}
+          {position > 1 && pointsLeft === 0 && (
+            <Typography variant="caption" display="block" color="text.disabled">
+              {results.totalPoints - leaderPoints}
+            </Typography>
+          )}
+        </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={64}>
+        <TableCell
+          style={{ paddingBottom: 0, paddingTop: 0 }}
+          colSpan={2 + races.length}
+        >
           <Collapse in={isOpen} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" component="div">
@@ -319,7 +346,7 @@ function getPointsDetails(
       parts.push(`Команды: ${raceResult.teamMatesPoints}`);
     }
   }
-  if (season > 2026 && !!race.conditions) {
+  if (season >= 2026 && !!race.conditions) {
     parts.push(
       `Позиция ${race.conditions.positionPredictionDriver}: ${raceResult.driverPositionPoints}`,
     );
