@@ -6,12 +6,13 @@ import React, { useEffect } from "react";
 import { useStore } from "./Stores";
 import MobileMainPage from "./Mobile/MobileMainPage";
 import LoginPage from "./Routes/Auth/LoginPage";
+import { MAIN_COLOR } from "./Helpers/Colors";
 
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: "#000019",
+      default: MAIN_COLOR,
     },
   },
 });

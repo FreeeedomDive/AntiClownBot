@@ -71,12 +71,7 @@ function SubSection({
       }}
     >
       <CardContent>
-        <Stack
-          direction="row"
-          spacing={1}
-          alignItems="center"
-          sx={{ mb: 1.5 }}
-        >
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
           <Typography variant="h6" sx={{ fontWeight: "bold", flexGrow: 1 }}>
             {title}
           </Typography>
@@ -251,14 +246,12 @@ export default function F1PredictionsRulebook() {
             и не завершившие её.
           </Rule>
           <SubRule>
-            Пилот не выехал на прогревочный круг и не занял место на
-            стартовой решётке —{" "}
-            <strong>DNS</strong>, не DNF.
+            Пилот не выехал на прогревочный круг и не занял место на стартовой
+            решётке — <strong>DNS</strong>, не DNF.
           </SubRule>
           <SubRule>
-            Пилот проехал прогревочный круг, но не смог принять участие в
-            старте гонки (например, заглох на решётке) —{" "}
-            <strong>DNS</strong>, не DNF.
+            Пилот проехал прогревочный круг, но не смог принять участие в старте
+            гонки (например, заглох на решётке) — <strong>DNS</strong>, не DNF.
           </SubRule>
           <SubRule>
             Пилот был дисквалифицирован — неважно, во время гонки или после
@@ -365,8 +358,8 @@ export default function F1PredictionsRulebook() {
             <strong>выше своего напарника</strong> в итоговом протоколе.
           </Rule>
           <Rule>
-            За каждое верно угаданное командное противостояние начисляется
-            1 очко.
+            За каждое верно угаданное командное противостояние начисляется 1
+            очко.
           </Rule>
         </SubSection>
 
@@ -442,6 +435,10 @@ export default function F1PredictionsRulebook() {
           </Rule>
           <Rule>
             После закрытия каждого этапа изменить предсказания нельзя.
+          </Rule>
+          <Rule>
+            Очки не начисляются каждую гонку! Они показывают, сколько очков вы
+            бы получили, если бы сезон завершился прямо сейчас.
           </Rule>
         </SubSection>
 
@@ -589,8 +586,8 @@ export default function F1PredictionsRulebook() {
           <Rule>Цвет рамки карточки соответствует вероятности события.</Rule>
           <Rule>
             Вероятность — исключительно информационный индикатор.{" "}
-            <strong>Цвет карточки никак не влияет на подсчёт очков</strong>:
-            все карточки, независимо от вероятности, засчитываются одинаково.
+            <strong>Цвет карточки никак не влияет на подсчёт очков</strong>: все
+            карточки, независимо от вероятности, засчитываются одинаково.
           </Rule>
         </SubSection>
 
@@ -613,7 +610,9 @@ export default function F1PredictionsRulebook() {
 
       {/* ─────────────────────────── SECTION 4 ─────────────────────────── */}
       <Section title="Полезные ссылки" id="useful-links">
-        <Card sx={{ backgroundColor: "rgba(255,255,255,0.05)", borderRadius: 2 }}>
+        <Card
+          sx={{ backgroundColor: "rgba(255,255,255,0.05)", borderRadius: 2 }}
+        >
           <CardContent>
             <Stack spacing={2}>
               <Stack spacing={0.5}>

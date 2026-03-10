@@ -1,6 +1,7 @@
 import { Badge, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { MAIN_COLOR } from "../../../Helpers/Colors";
 
 interface Props {
   sidebarKey: string;
@@ -25,7 +26,15 @@ export default function UserPageSideBarItem({
   return (
     <ListItem key={sidebarKey} disablePadding>
       <ListItemButton
-        sx={{ pl: nesting * 2 }}
+        sx={{
+          pl: nesting * 2,
+          mx: 1,
+          borderRadius: 1.5,
+          "&.Mui-selected": {
+            bgcolor: MAIN_COLOR,
+            "&:hover": { bgcolor: MAIN_COLOR },
+          },
+        }}
         onClick={onClick ?? (() => navigate(link))}
         selected={location.pathname === link}
       >

@@ -15,11 +15,12 @@ import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import { useParams } from "react-router-dom";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1StandingsDto";
+import { MAIN_COLOR } from "../../../../../../Helpers/Colors";
 
 const RACE_COL_WIDTH = 40;
 const LEFT_COL_MIN_WIDTH = 280;
 const RIGHT_COL_WIDTH = 80;
-const STICKY_BG = "#000019";
+const STICKY_BG = MAIN_COLOR;
 
 interface Props {
   finishedRaces: F1RaceDto[];

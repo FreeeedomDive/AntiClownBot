@@ -21,8 +21,9 @@ import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import DiscordMember from "../../../../../../Components/Users/DiscordMember";
 import { InfoOutlined } from "@mui/icons-material";
 import { F1StandingsRowDto } from "../../../../../../Dto/F1Predictions/F1StandingsRowDto";
+import { MAIN_COLOR } from "../../../../../../Helpers/Colors";
 
-const STICKY_BG_DEFAULT = "#000019";
+const STICKY_BG_DEFAULT = MAIN_COLOR;
 const STICKY_BG_ME = "#120030";
 
 interface IProps {

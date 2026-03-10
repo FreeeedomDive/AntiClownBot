@@ -2,7 +2,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import React, { useState } from "react";
 import {
   Collapse,
-  Divider,
   List,
   ListItem,
   ListItemButton,
@@ -59,7 +58,6 @@ const UserPageSideBar = ({ user }: Props) => {
       </List>
       {isMyPage && (
         <>
-          <Divider />
           <List>
             <UserPageSideBarItem
               sidebarKey="Economy"
@@ -80,6 +78,7 @@ const UserPageSideBar = ({ user }: Props) => {
               <>
                 <ListItem key={"F1Predictions"} disablePadding>
                   <ListItemButton
+                    sx={{ mx: 1, borderRadius: 1.5 }}
                     onClick={() =>
                       setIsF1PredictionsCollapseOpened(
                         !isF1PredictionsCollapseOpened,
@@ -141,10 +140,10 @@ const UserPageSideBar = ({ user }: Props) => {
       )}
       {isMyPage && userHasAnyAdminRights && (
         <>
-          <Divider />
           <List>
             <ListItem key={"F1Predictions"} disablePadding>
               <ListItemButton
+                sx={{ mx: 1, borderRadius: 1.5 }}
                 onClick={() =>
                   setIsF1AdminPredictionsCollapseOpened(
                     !isF1AdminPredictionsCollapseOpened,
@@ -209,7 +208,6 @@ const UserPageSideBar = ({ user }: Props) => {
       )}
       {!isMyPage && currentLoggedInUserId && user && (
         <>
-          <Divider />
           <List>
             <UserPageSideBarItem
               sidebarKey="ItemsTrade"
@@ -228,7 +226,6 @@ const UserPageSideBar = ({ user }: Props) => {
       )}
       {currentLoggedInUserId && (
         <>
-          <Divider />
           <List>
             {!isMyPage && (
               <UserPageSideBarItem
@@ -251,7 +248,6 @@ const UserPageSideBar = ({ user }: Props) => {
       )}
       {!currentLoggedInUserId && (
         <>
-          <Divider />
           <List>
             <UserPageSideBarItem
               sidebarKey="Login"
