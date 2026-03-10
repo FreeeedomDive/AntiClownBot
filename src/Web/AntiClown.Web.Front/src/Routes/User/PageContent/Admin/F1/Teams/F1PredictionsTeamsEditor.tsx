@@ -4,8 +4,26 @@ import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
 import { RightsWrapper } from "../../../../../../Components/RIghts/RightsWrapper";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
-import { Table, TableBody, TableContainer } from "@mui/material";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import F1PredictionsTeamsEditorRow from "./F1PredictionsTeamsEditorRow";
+
+const HEADER_SX = {
+  color: "text.secondary",
+  fontWeight: 600,
+  fontSize: "0.72rem",
+  textTransform: "uppercase",
+  letterSpacing: "0.06em",
+  py: 1.5,
+  px: 2,
+} as const;
 
 export default function F1PredictionsTeamsEditor() {
   const [teams, setTeams] = useState<F1TeamDto[]>([]);
@@ -27,15 +45,25 @@ export default function F1PredictionsTeamsEditor() {
       {isLoading ? (
         <Loader />
       ) : (
-        <TableContainer>
-          <Table>
-            <TableBody>
-              {teams.map((team) => (
-                <F1PredictionsTeamsEditorRow team={team} />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Paper variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={HEADER_SX}>Команда</TableCell>
+                  <TableCell sx={HEADER_SX}>Первый гонщик</TableCell>
+                  <TableCell sx={HEADER_SX}>Второй гонщик</TableCell>
+                  <TableCell sx={{ ...HEADER_SX, width: 56 }} />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {teams.map((team) => (
+                  <F1PredictionsTeamsEditorRow key={team.name} team={team} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
       )}
     </RightsWrapper>
   );

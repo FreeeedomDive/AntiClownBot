@@ -2,11 +2,10 @@ import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import React, { useCallback, useState } from "react";
 import {
   Avatar,
-  FormControl,
-  OutlinedInput,
   Stack,
   TableCell,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
@@ -34,48 +33,40 @@ export default function F1PredictionsTeamsEditorRow({ team }: IProps) {
   }, [firstDriver, secondDriver, team.name]);
 
   return (
-    <TableRow>
-      <TableCell sx={{ padding: "1px" }}>
-        <Stack direction="row" spacing={2}>
+    <TableRow sx={{ "&:hover": { bgcolor: "action.hover" } }}>
+      <TableCell sx={{ py: 1.5, px: 2 }}>
+        <Stack direction="row" spacing={1.5} alignItems="center">
           <Avatar
-            variant={"rounded"}
+            variant="rounded"
             alt={team.name}
             src={teamNameToLogo(team.name)}
-            sx={{ width: 120, height: 40 }}
+            sx={{ width: 100, height: 34 }}
           />
-          <Typography>{team.name}</Typography>
+          <Typography variant="body2" fontWeight={500}>
+            {team.name}
+          </Typography>
         </Stack>
       </TableCell>
-      <TableCell sx={{ padding: "1px" }}>
-        <FormControl>
-          <OutlinedInput
-            id="outlined-adornment-weight"
-            aria-describedby="outlined-weight-helper-text"
-            value={firstDriver}
-            onChange={(event) => {
-              setFirstDriver(event.target.value);
-            }}
-          />
-        </FormControl>
+      <TableCell sx={{ py: 1.5, px: 2 }}>
+        <TextField
+          size="small"
+          value={firstDriver}
+          onChange={(e) => setFirstDriver(e.target.value)}
+        />
       </TableCell>
-      <TableCell sx={{ padding: "1px" }}>
-        <FormControl>
-          <OutlinedInput
-            id="outlined-adornment-weight"
-            aria-describedby="outlined-weight-helper-text"
-            value={secondDriver}
-            onChange={(event) => {
-              setSecondDriver(event.target.value);
-            }}
-          />
-        </FormControl>
+      <TableCell sx={{ py: 1.5, px: 2 }}>
+        <TextField
+          size="small"
+          value={secondDriver}
+          onChange={(e) => setSecondDriver(e.target.value)}
+        />
       </TableCell>
-      <TableCell sx={{ padding: "1px" }}>
+      <TableCell sx={{ py: 1.5, px: 2, width: 56 }}>
         <LoadingButton
           loading={isSaving}
           disabled={isSaving}
           color="primary"
-          size="large"
+          size="small"
           variant="text"
           startIcon={<Save />}
           onClick={saveTeam}
