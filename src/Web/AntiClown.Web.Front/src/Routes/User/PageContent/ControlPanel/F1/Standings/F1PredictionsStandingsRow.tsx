@@ -24,7 +24,7 @@ import { F1StandingsRowDto } from "../../../../../../Dto/F1Predictions/F1Standin
 import { MAIN_COLOR } from "../../../../../../Helpers/Colors";
 
 const STICKY_BG_DEFAULT = MAIN_COLOR;
-const STICKY_BG_ME = "#120030";
+const STICKY_BG_ME = "#200056";
 
 interface IProps {
   discordMember: DiscordMemberDto | undefined;

@@ -47,7 +47,7 @@ export default function F1ChampionshipUserStandings({
               return (
                 <TableRow
                   key={entry.userId}
-                  sx={isMe ? { backgroundColor: "#120030" } : {}}
+                  sx={isMe ? { backgroundColor: "#200056" } : {}}
                 >
                   <TableCell sx={{ padding: "1px", width: "10%" }}>
                     <IconButton size="small" sx={{ visibility: "hidden" }}>
