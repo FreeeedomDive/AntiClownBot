@@ -13,6 +13,7 @@ import F1RaceClassifications from "./F1RaceClassifications";
 import { LoadingButton } from "@mui/lab";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
+import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import { Block, Done, Download, Save } from "@mui/icons-material";
 import F1FastApi from "../../../../../../Api/F1FastApi";
 
@@ -23,6 +24,7 @@ interface Props {
 export default function F1PredictionAdmin({ f1Race }: Props) {
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto>(f1Race);
 
+  const [teams, setTeams] = useState<F1TeamDto[]>([]);
   const [drivers, setDrivers] = useState<string[]>([]);
   const [dnfDrivers, setDnfDrivers] = useState<Set<string>>(new Set());
   const [incidents, setIncidents] = useState<number>(0);
@@ -41,6 +43,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
       ]);
       setCurrentF1Race(result);
       setIsPredictionsClosed(!result.isOpened);
+      setTeams(teams);
 
       setDrivers(
         result.result?.classification.length === 0
@@ -114,6 +117,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
               setDrivers={setDrivers}
               dnfDrivers={dnfDrivers}
               setDnfDrivers={setDnfDrivers}
+              teams={teams}
             />
           </Stack>
         </Grid>

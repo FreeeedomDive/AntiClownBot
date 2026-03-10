@@ -193,6 +193,7 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
       {step === 5 && (
         <F1PredictionsDriverPositionSelect
           driver={f1Race.conditions?.positionPredictionDriver ?? ""}
+          teams={teams}
           selectedPosition={driverPosition}
           setSelectedPosition={setDriverPosition}
         />

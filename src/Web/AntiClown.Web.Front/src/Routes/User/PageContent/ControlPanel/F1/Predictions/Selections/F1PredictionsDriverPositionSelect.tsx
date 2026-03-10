@@ -1,20 +1,31 @@
 import F1PredictionsSelectCard from "./F1PredictionsSelectCard";
-import { FormControl, InputAdornment, OutlinedInput } from "@mui/material";
+import { Box, FormControl, InputAdornment, OutlinedInput } from "@mui/material";
 import React from "react";
+import { F1TeamDto } from "../../../../../../../Dto/F1Predictions/F1TeamDto";
+import F1TeamBadge from "../F1TeamBadge";
 
 interface Props {
   driver: string;
+  teams: F1TeamDto[];
   selectedPosition: number | null;
   setSelectedPosition: (position: number) => void;
 }
 
 export default function F1PredictionsDriverPositionSelect({
   driver,
+  teams,
   selectedPosition,
   setSelectedPosition,
 }: Props) {
   return (
-    <F1PredictionsSelectCard title={`Позиция гонщика ${driver}`}>
+    <F1PredictionsSelectCard
+      title={
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <span>Позиция гонщика {driver}</span>
+          <F1TeamBadge driver={driver} teams={teams} />
+        </Box>
+      }
+    >
       <FormControl fullWidth>
         <OutlinedInput
           id="outlined-adornment-weight"

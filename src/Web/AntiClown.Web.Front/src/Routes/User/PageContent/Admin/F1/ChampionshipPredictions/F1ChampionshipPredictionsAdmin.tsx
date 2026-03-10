@@ -19,6 +19,7 @@ import F1ChampionshipPredictionsApi from "../../../../../../Api/F1ChampionshipPr
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import { F1ChampionshipPredictionTypeDto } from "../../../../../../Dto/F1Predictions/F1ChampionshipPredictionTypeDto";
 import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
+import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1ChampionshipDriverDnDList from "../../../ControlPanel/F1/ChampionshipPredictions/F1ChampionshipDriverDnDList";
 
 const SEASON = new Date().getFullYear();
@@ -27,6 +28,7 @@ export default function F1ChampionshipPredictionsAdmin() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
+  const [teams, setTeams] = useState<F1TeamDto[]>([]);
   const [standings, setStandings] = useState<string[]>([]);
   const [stage, setStage] = useState<F1ChampionshipPredictionTypeDto>(
     F1ChampionshipPredictionTypeDto.PreSeason,
@@ -40,6 +42,7 @@ export default function F1ChampionshipPredictionsAdmin() {
         F1PredictionsApi.getActiveTeams(),
       ]);
 
+      setTeams(teams);
       const defaultDrivers = getDriversFromTeams(teams);
       setStandings(results.hasData ? results.standings : defaultDrivers);
       setStage(
@@ -86,6 +89,7 @@ export default function F1ChampionshipPredictionsAdmin() {
               setDrivers={setStandings}
               editable={true}
               disabled={false}
+              teams={teams}
             />
           </Grid>
           <Grid

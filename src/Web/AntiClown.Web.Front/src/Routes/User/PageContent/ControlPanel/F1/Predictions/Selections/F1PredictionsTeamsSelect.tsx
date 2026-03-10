@@ -1,7 +1,8 @@
-import { Button, ButtonGroup } from "@mui/material";
+import { Box, Button, ButtonGroup } from "@mui/material";
 import React from "react";
 import { F1TeamDto } from "../../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1PredictionsSelectCard from "./F1PredictionsSelectCard";
+import F1TeamBadge from "../F1TeamBadge";
 
 interface Props {
   selectedDriversFromTeams: Set<string>;
@@ -31,7 +32,10 @@ export default function F1PredictionsTeamsSelect({
               setSelectedDriversFromTeams(new Set(selectedDriversFromTeams));
             }}
           >
-            {team.firstDriver}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+              <F1TeamBadge driver={team.firstDriver} teams={teams} />
+              {team.firstDriver}
+            </Box>
           </Button>
           <Button
             key={team.secondDriver}
@@ -47,7 +51,10 @@ export default function F1PredictionsTeamsSelect({
               setSelectedDriversFromTeams(new Set(selectedDriversFromTeams));
             }}
           >
-            {team.secondDriver}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+              <F1TeamBadge driver={team.secondDriver} teams={teams} />
+              {team.secondDriver}
+            </Box>
           </Button>
         </ButtonGroup>
       ))}

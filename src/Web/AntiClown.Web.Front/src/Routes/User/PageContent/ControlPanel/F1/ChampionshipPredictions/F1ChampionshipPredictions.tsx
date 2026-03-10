@@ -12,6 +12,7 @@ import { F1ChampionshipUserPointsDto } from "../../../../../../Dto/F1Predictions
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { AddPredictionResultDto } from "../../../../../../Dto/F1Predictions/AddPredictionResultDto";
 import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
+import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1ChampionshipDriverDnDList from "./F1ChampionshipDriverDnDList";
 import F1ChampionshipCurrentStandings from "./F1ChampionshipCurrentStandings";
 import F1ChampionshipUserStandings from "./F1ChampionshipUserStandings";
@@ -34,6 +35,7 @@ export default function F1ChampionshipPredictions() {
   >(undefined);
   const [allPoints, setAllPoints] = useState<F1ChampionshipUserPointsDto[]>([]);
   const [members, setMembers] = useState<DiscordMemberDto[]>([]);
+  const [teams, setTeams] = useState<F1TeamDto[]>([]);
   const [preSeasonDrivers, setPreSeasonDrivers] = useState<string[]>([]);
   const [midSeasonDrivers, setMidSeasonDrivers] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -63,6 +65,7 @@ export default function F1ChampionshipPredictions() {
       setAllPoints(pointsData);
       setUserPoints(pointsData.find((p) => p.userId === userId));
       setMembers(membersData);
+      setTeams(teams);
 
       const defaultDrivers = getDriversFromTeams(teams);
       setPreSeasonDrivers(
@@ -138,6 +141,7 @@ export default function F1ChampionshipPredictions() {
               setDrivers={setPreSeasonDrivers}
               disabled={false}
               editable={preSeasonEnabled}
+              teams={teams}
               points={userPoints?.preSeasonPoints}
             />
           </Stack>
@@ -162,6 +166,7 @@ export default function F1ChampionshipPredictions() {
                 results.stage === F1ChampionshipPredictionTypeDto.PreSeason
               }
               editable={midSeasonEnabled}
+              teams={teams}
               points={userPoints?.midSeasonPoints}
             />
           </Stack>
@@ -179,6 +184,7 @@ export default function F1ChampionshipPredictions() {
             <F1ChampionshipCurrentStandings
               title="Текущий чемпионат"
               standings={results.standings}
+              teams={teams}
             />
           </Stack>
         </Grid>

@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Box,
   IconButton,
   Stack,
   Table,
@@ -10,15 +11,19 @@ import {
   Typography,
 } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
+import F1TeamBadge from "../Predictions/F1TeamBadge";
 
 interface Props {
   title: string;
   standings: string[];
+  teams: F1TeamDto[];
 }
 
 export default function F1ChampionshipCurrentStandings({
   title,
   standings,
+  teams,
 }: Props) {
   return (
     <Stack direction="column" spacing={1}>
@@ -37,7 +42,10 @@ export default function F1ChampionshipCurrentStandings({
                   <Typography>{index + 1}</Typography>
                 </TableCell>
                 <TableCell sx={{ padding: "1px", width: "100%" }}>
-                  <Typography>{driver}</Typography>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <F1TeamBadge driver={driver} teams={teams} />
+                    <Typography>{driver}</Typography>
+                  </Box>
                 </TableCell>
               </TableRow>
             ))}
