@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Box,
   Checkbox,
   FormControlLabel,
   TableCell,
@@ -9,6 +10,8 @@ import {
 } from "@mui/material";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { DraggableProvided } from "@hello-pangea/dnd";
+import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
+import F1TeamBadge from "../../../ControlPanel/F1/Predictions/F1TeamBadge";
 
 interface Props {
   f1Driver: string;
@@ -16,6 +19,7 @@ interface Props {
   isDnf: boolean;
   onToggleDnf: (checked: boolean) => void;
   provided: DraggableProvided;
+  teams: F1TeamDto[];
 }
 
 export default function F1RaceClassificationsElement({
@@ -24,6 +28,7 @@ export default function F1RaceClassificationsElement({
   isDnf,
   onToggleDnf,
   provided,
+  teams,
 }: Props) {
   const position = index + 1;
 
@@ -43,7 +48,10 @@ export default function F1RaceClassificationsElement({
       </TableCell>
 
       <TableCell sx={{ padding: "1px", width: "100%" }}>
-        <Typography>{f1Driver}</Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <F1TeamBadge driver={f1Driver} teams={teams} />
+          <Typography>{f1Driver}</Typography>
+        </Box>
       </TableCell>
 
       <TableCell sx={{ padding: "1px", width: "20%" }}>

@@ -16,6 +16,7 @@ import {
 } from "@hello-pangea/dnd";
 import F1ChampionshipDriverDnDRow from "./F1ChampionshipDriverDnDRow";
 import { InfoOutlined } from "@mui/icons-material";
+import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 
 interface Props {
   title: string;
@@ -25,6 +26,7 @@ interface Props {
   setDrivers: (drivers: string[]) => void;
   editable: boolean;
   disabled: boolean;
+  teams: F1TeamDto[];
   points?: number[];
 }
 
@@ -36,6 +38,7 @@ export default function F1ChampionshipDriverDnDList({
   setDrivers,
   editable,
   disabled,
+  teams,
   points,
 }: Props) {
   const onDragEnd = (result: DropResult) => {
@@ -79,6 +82,7 @@ export default function F1ChampionshipDriverDnDList({
                   driver={driver}
                   index={index}
                   draggable={editable}
+                  teams={teams}
                   points={points?.[index]}
                 />
               ))}
@@ -109,6 +113,7 @@ export default function F1ChampionshipDriverDnDList({
                               driver={driver}
                               index={index}
                               draggable={editable}
+                              teams={teams}
                               points={points?.[index]}
                             />
                           )}

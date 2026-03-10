@@ -10,29 +10,41 @@ import {
   FormControl,
   MenuItem,
   Modal,
+  Paper,
   Select,
   Stack,
   Table,
   TableBody,
+  TableCell,
   TableContainer,
+  TableHead,
+  TableRow,
 } from "@mui/material";
 import EditSettingRow from "./EditSettingRow";
 import { Add } from "@mui/icons-material";
 import AddSettings from "./AddSettings";
 import { Loader } from "../../../../../Components/Loader/Loader";
 
+const HEADER_SX = {
+  color: "text.secondary",
+  fontWeight: 600,
+  fontSize: "0.72rem",
+  textTransform: "uppercase",
+  letterSpacing: "0.06em",
+  py: 1.5,
+  px: 2,
+} as const;
+
 const modalStyle = {
   position: "absolute" as "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 440,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  borderRadius: 2,
   boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
+  p: 3,
 };
 
 const EditSettings = () => {
@@ -58,9 +70,9 @@ const EditSettings = () => {
     <Loader />
   ) : (
     <RightsWrapper requiredRights={[RightsDto.EditSettings]}>
-      <Stack direction={"column"} spacing={4}>
-        <Stack direction={"row"} spacing={1}>
-          <FormControl fullWidth>
+      <Stack direction="column" spacing={2}>
+        <Stack direction="row" spacing={1}>
+          <FormControl fullWidth size="small">
             <Select
               labelId="category-select"
               id="category-select"
@@ -80,33 +92,41 @@ const EditSettings = () => {
           </FormControl>
           <Button
             color="primary"
-            size="large"
+            size="small"
             variant="outlined"
             startIcon={<Add />}
             onClick={() => setIsCreateSettingsModalOpen(true)}
+            sx={{ whiteSpace: "nowrap" }}
           >
             Добавить
           </Button>
         </Stack>
-        <TableContainer>
-          <Table>
-            <TableBody>
-              {settings.map((setting) => (
-                <EditSettingRow
-                  key={`${setting.category} ${setting.name}`}
-                  setting={setting}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Paper variant="outlined" sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={HEADER_SX}>Параметр</TableCell>
+                  <TableCell sx={HEADER_SX}>Значение</TableCell>
+                  <TableCell sx={{ ...HEADER_SX, width: 56 }} />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {settings.map((setting) => (
+                  <EditSettingRow
+                    key={`${setting.category} ${setting.name}`}
+                    setting={setting}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
         <Modal
           open={isCreateSettingsModalOpen}
           onClose={() => setIsCreateSettingsModalOpen(false)}
-          aria-labelledby="parent-modal-title"
-          aria-describedby="parent-modal-description"
         >
-          <Box sx={{ ...modalStyle, width: 400 }}>
+          <Box sx={modalStyle}>
             <AddSettings
               category={currentCategory}
               onSave={async () => {

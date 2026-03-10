@@ -42,9 +42,12 @@ export default function UserMainPage() {
         component="nav"
         sx={{
           width: { sm: sideBarWidth },
-          borderRight: 1,
-          borderColor: "primary.main",
           flexShrink: { sm: 0 },
+          bgcolor: "#000000",
+          position: "sticky",
+          top: 0,
+          height: "100vh",
+          overflowY: "auto",
         }}
       >
         <UserPageSideBar user={user} />

@@ -7,12 +7,14 @@ import {
   Draggable,
   DropResult,
 } from "@hello-pangea/dnd";
+import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 
 interface Props {
   drivers: string[];
   setDrivers: (x: string[]) => void;
   dnfDrivers: Set<string>;
   setDnfDrivers: (x: Set<string>) => void;
+  teams: F1TeamDto[];
 }
 
 export default function F1RaceClassifications({
@@ -20,6 +22,7 @@ export default function F1RaceClassifications({
   setDrivers,
   dnfDrivers,
   setDnfDrivers,
+  teams,
 }: Props) {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -62,6 +65,7 @@ export default function F1RaceClassifications({
                           onToggleDnf={(checked) =>
                             handleToggleDnf(driver, checked)
                           }
+                          teams={teams}
                         />
                       )}
                     </Draggable>

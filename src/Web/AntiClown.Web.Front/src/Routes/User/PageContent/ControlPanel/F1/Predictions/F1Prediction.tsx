@@ -167,6 +167,7 @@ export default function F1Prediction({ f1Race }: Props) {
           />
           <F1PredictionsDriverPositionSelect
             driver={f1Race.conditions?.positionPredictionDriver ?? ""}
+            teams={teams}
             selectedPosition={driverPosition}
             setSelectedPosition={setDriverPosition}
           />

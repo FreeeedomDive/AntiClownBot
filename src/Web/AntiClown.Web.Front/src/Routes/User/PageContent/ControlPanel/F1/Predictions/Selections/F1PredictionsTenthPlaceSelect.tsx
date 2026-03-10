@@ -1,8 +1,9 @@
-import { FormControl, MenuItem, Select } from "@mui/material";
+import { Box, FormControl, MenuItem, Select } from "@mui/material";
 import { getDriversFromTeams } from "../../../../../../../Dto/F1Predictions/F1DriversHelpers";
 import React from "react";
 import { F1TeamDto } from "../../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1PredictionsSelectCard from "./F1PredictionsSelectCard";
+import F1TeamBadge from "../F1TeamBadge";
 
 interface Props {
   selected10Position: string;
@@ -29,7 +30,10 @@ export default function F1PredictionsTenthPlaceSelect({
         >
           {getDriversFromTeams(teams).map((driver) => (
             <MenuItem key={driver} value={driver}>
-              {driver}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <F1TeamBadge driver={driver} teams={teams} />
+                {driver}
+              </Box>
             </MenuItem>
           ))}
         </Select>

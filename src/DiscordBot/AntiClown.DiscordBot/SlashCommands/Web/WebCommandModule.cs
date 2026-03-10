@@ -25,11 +25,10 @@ public class WebCommandModule(
             {
                 var apiUserId = await usersCache.GetApiIdByMemberIdAsync(context.Member.Id);
                 var token = await antiClownDataApiClient.Tokens.GetAsync(apiUserId);
+                var autoLoginUrl = $"{webOptions.Value.FrontApplicationUrl}/auth/auto?userId={apiUserId}&token={token}";
                 var embed = new DiscordEmbedBuilder()
                             .WithTitle("Доступ в веб-версию бота")
-                            .AddField("Адрес", webOptions.Value.FrontApplicationUrl)
-                            .AddField("UserId", apiUserId.ToString())
-                            .AddField("Token", token)
+                            .WithDescription($"[Открыть веб-версию]({autoLoginUrl})")
                             .Build();
 
                 await RespondToInteractionAsync(context, embed);

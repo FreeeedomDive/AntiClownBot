@@ -1,11 +1,5 @@
 import { SettingDto } from "../../../../../Dto/Settings/SettingDto";
-import {
-  FormControl,
-  OutlinedInput,
-  TableCell,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { TableCell, TableRow, TextField, Typography } from "@mui/material";
 import React, { useCallback } from "react";
 import { Save } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
@@ -30,28 +24,26 @@ const EditSettingRow = ({ setting }: Props) => {
   }, [setting.category, setting.name, settingValue]);
 
   return (
-    <TableRow>
-      <TableCell sx={{ padding: "1px" }}>
-        <Typography>{setting.name}</Typography>
+    <TableRow sx={{ "&:hover": { bgcolor: "action.hover" } }}>
+      <TableCell sx={{ py: 1.5, px: 2 }}>
+        <Typography variant="body2" fontFamily="monospace">
+          {setting.name}
+        </Typography>
       </TableCell>
-      <TableCell sx={{ padding: "1px" }}>
-        <FormControl>
-          <OutlinedInput
-            id="outlined-adornment-weight"
-            aria-describedby="outlined-weight-helper-text"
-            value={settingValue}
-            onChange={(event) => {
-              setSettingValue(event.target.value);
-            }}
-          />
-        </FormControl>
+      <TableCell sx={{ py: 1.5, px: 2 }}>
+        <TextField
+          size="small"
+          fullWidth
+          value={settingValue}
+          onChange={(e) => setSettingValue(e.target.value)}
+        />
       </TableCell>
-      <TableCell sx={{ padding: "1px" }}>
+      <TableCell sx={{ py: 1.5, px: 2, width: 56 }}>
         <LoadingButton
           loading={isSaving}
           disabled={isSaving}
           color="primary"
-          size="large"
+          size="small"
           variant="text"
           startIcon={<Save />}
           onClick={saveSettings}

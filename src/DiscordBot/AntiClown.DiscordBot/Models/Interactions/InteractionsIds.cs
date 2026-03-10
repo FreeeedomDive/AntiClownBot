@@ -195,5 +195,9 @@ public static class InteractionsIds
         public const string Achievements_Admin_List = "list";
         public const string Achievements_Admin_Create = "create";
         public const string Achievements_Admin_Grant = "grant";
+
+        public const string Members_Admin_Group = "membersadmin";
+        public const string Members_Admin_GetApiId = "getapiid";
+        public const string Members_Admin_GetMember = "getmember";
     }
 }

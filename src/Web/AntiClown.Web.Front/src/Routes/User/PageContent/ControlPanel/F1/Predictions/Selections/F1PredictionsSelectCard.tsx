@@ -2,7 +2,7 @@ import { Card, CardContent, Stack, Typography } from "@mui/material";
 import React from "react";
 
 interface Props {
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode | React.ReactNode[];
 }
 
