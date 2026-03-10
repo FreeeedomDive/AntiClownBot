@@ -1,4 +1,10 @@
-import { Badge, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import {
+  Box,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MAIN_COLOR } from "../../../Helpers/Colors";
@@ -7,6 +13,7 @@ interface Props {
   sidebarKey: string;
   link: string;
   text: string;
+  icon?: React.ReactNode;
   nesting?: number;
   showBadge?: boolean;
   onClick?: (() => void) | null;
@@ -16,9 +23,10 @@ export default function UserPageSideBarItem({
   sidebarKey,
   link,
   text,
+  icon,
   nesting = 1,
   showBadge = false,
-  onClick = null
+  onClick = null,
 }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,19 +46,26 @@ export default function UserPageSideBarItem({
         onClick={onClick ?? (() => navigate(link))}
         selected={location.pathname === link}
       >
-        {showBadge ? (
-          <Badge
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "left",
+        {icon && (
+          <ListItemIcon sx={{ minWidth: 32, "& .MuiSvgIcon-root": { fontSize: 18 } }}>
+            {icon}
+          </ListItemIcon>
+        )}
+        <ListItemText
+          primary={text}
+          primaryTypographyProps={{ fontSize: "0.82rem" }}
+        />
+        {showBadge && (
+          <Box
+            sx={{
+              width: 7,
+              height: 7,
+              borderRadius: "50%",
+              bgcolor: "warning.main",
+              flexShrink: 0,
+              ml: 1,
             }}
-            variant="dot"
-            color="warning"
-          >
-            <ListItemText primary={text} />
-          </Badge>
-        ) : (
-          <ListItemText primary={text} />
+          />
         )}
       </ListItemButton>
     </ListItem>
