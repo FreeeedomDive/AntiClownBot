@@ -17,6 +17,7 @@ interface Props {
   nesting?: number;
   showBadge?: boolean;
   onClick?: (() => void) | null;
+  isSelected?: boolean;
 }
 
 export default function UserPageSideBarItem({
@@ -27,6 +28,7 @@ export default function UserPageSideBarItem({
   nesting = 1,
   showBadge = false,
   onClick = null,
+  isSelected,
 }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,7 +46,7 @@ export default function UserPageSideBarItem({
           },
         }}
         onClick={onClick ?? (() => navigate(link))}
-        selected={location.pathname === link}
+        selected={isSelected !== undefined ? isSelected : location.pathname === link}
       >
         {icon && (
           <ListItemIcon sx={{ minWidth: 32, "& .MuiSvgIcon-root": { fontSize: 18 } }}>
