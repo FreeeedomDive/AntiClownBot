@@ -6,8 +6,9 @@ import {
   useLocation,
   useNavigate,
   useParams,
+  useSearchParams,
 } from "react-router-dom";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, FormControl, MenuItem, Select, Tab, Tabs } from "@mui/material";
 import {
   Assignment,
   Casino,
@@ -29,10 +30,23 @@ const TABS = [
   { label: "Бинго", path: "bingo", icon: <Casino /> },
 ] as const;
 
+const FIRST_SEASON = 2023;
+
 const F1PredictionsPage = () => {
   const navigate = useNavigate();
   const { userId } = useParams<"userId">();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentYear = new Date().getFullYear();
+  const seasons = Array.from(
+    { length: currentYear - FIRST_SEASON + 1 },
+    (_, i) => FIRST_SEASON + i,
+  );
+  const season = Number(searchParams.get("season") ?? currentYear);
+  const showSeasonSelector =
+    location.pathname.endsWith("/f1Predictions/standings") ||
+    location.pathname.endsWith("/f1Predictions/bingo");
 
   const activeTab = TABS.findIndex((tab) =>
     location.pathname.endsWith(`/f1Predictions/${tab.path}`),
@@ -44,27 +58,49 @@ const F1PredictionsPage = () => {
 
   return (
     <Box>
-      <Tabs
-        value={activeTab >= 0 ? activeTab : 0}
-        onChange={handleTabChange}
-        sx={{ minHeight: 32 }}
-      >
-        {TABS.map((tab, index) => (
-          <Tab
-            key={tab.path}
-            label={tab.label}
-            icon={tab.icon}
-            iconPosition="start"
-            value={index}
-            sx={{
-              minHeight: 32,
-              py: 0.5,
-              fontSize: "0.8rem",
-              "& .MuiSvgIcon-root": { fontSize: 16 },
-            }}
-          />
-        ))}
-      </Tabs>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          sx={{ minHeight: 32 }}
+        >
+          {TABS.map((tab, index) => (
+            <Tab
+              key={tab.path}
+              label={tab.label}
+              icon={tab.icon}
+              iconPosition="start"
+              value={index}
+              sx={{
+                minHeight: 32,
+                py: 0.5,
+                fontSize: "0.8rem",
+                "& .MuiSvgIcon-root": { fontSize: 16 },
+              }}
+            />
+          ))}
+        </Tabs>
+        {showSeasonSelector && (
+          <FormControl size="small" sx={{ ml: "auto", minWidth: 90 }}>
+            <Select
+              value={season}
+              onChange={(e) =>
+                setSearchParams(
+                  { season: String(e.target.value) },
+                  { replace: true },
+                )
+              }
+              sx={{ height: 32 }}
+            >
+              {seasons.map((s) => (
+                <MenuItem key={s} value={s}>
+                  {s}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+      </Box>
       <Box sx={{ mt: 2 }}>
         <Routes>
           <Route path="/" element={<Navigate to="standings" replace />} />

@@ -6,20 +6,15 @@ import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { Stack, Typography } from "@mui/material";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1PredictionsStandingsChart from "./F1PredictionsStandingsChart";
-import F1PredictionsStandingsSeasonSelect from "./F1PredictionsStandingsSeasonSelect";
 import F1PredictionsStandingsTable from "./F1PredictionsStandingsTable";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import { F1ChartsDto } from "../../../../../../Dto/F1Predictions/F1ChartsDto";
 import { F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1StandingsDto";
 
 export default function F1PredictionsStandings() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const currentYear = new Date().getFullYear();
   const season = Number(searchParams.get("season") ?? currentYear);
-
-  const setSeason = (newSeason: number) => {
-    setSearchParams({ season: String(newSeason) }, { replace: true });
-  };
 
   const [isLoading, setIsLoading] = useState(true);
   const [finishedRaces, setFinishedRaces] = useState<F1RaceDto[]>([]);
@@ -54,10 +49,6 @@ export default function F1PredictionsStandings() {
 
   return (
     <Stack direction={"column"} spacing={1}>
-      <F1PredictionsStandingsSeasonSelect
-        season={season}
-        setSeason={setSeason}
-      />
       {isLoading && <Loader />}
       {!isLoading && standings && standings.standings.length === 0 && (
         <Typography variant={"body1"}>Сезон {season} еще не стартовал</Typography>

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import F1BingoApi from "../../../../../../Api/F1BingoApi";
 import { F1BingoCardDto } from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
@@ -10,7 +10,8 @@ import F1BingoCard from "./F1BingoCard";
 
 export default function F1BingoBoard() {
   const { userId } = useParams<"userId">();
-  const season = new Date().getFullYear();
+  const [searchParams] = useSearchParams();
+  const season = Number(searchParams.get("season") ?? new Date().getFullYear());
   const [isLoading, setIsLoading] = useState(false);
   const [bingoUserCards, setBingoUserCards] = useState<F1BingoCardDto[]>([]);
 
