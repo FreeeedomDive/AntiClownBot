@@ -14,82 +14,10 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { Section } from "./Section";
+import { SubSection } from "./SubSection";
 
 const CURRENT_SEASON = new Date().getFullYear();
-
-function Section({
-  title,
-  id,
-  children,
-}: {
-  title: string;
-  id?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Box id={id}>
-      <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
-        {title}
-      </Typography>
-      <Stack spacing={2}>{children}</Stack>
-    </Box>
-  );
-}
-
-function SubSection({
-  title,
-  badge,
-  badgeColor = "primary",
-  seasons,
-  isActive = true,
-  children,
-}: {
-  title: string;
-  badge?: string;
-  badgeColor?:
-    | "default"
-    | "primary"
-    | "secondary"
-    | "error"
-    | "info"
-    | "success"
-    | "warning";
-  /** Отображаемый диапазон сезонов, например «2024+» или «2024–2025» */
-  seasons?: string;
-  /** true — правило действует в текущем сезоне */
-  isActive?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <Card
-      sx={{
-        backgroundColor: isActive
-          ? "rgba(255,255,255,0.05)"
-          : "rgba(255,255,255,0.02)",
-        borderRadius: 2,
-        opacity: isActive ? 1 : 0.72,
-      }}
-    >
-      <CardContent>
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", flexGrow: 1 }}>
-            {title}
-          </Typography>
-          {badge && <Chip label={badge} color={badgeColor} size="small" />}
-          {seasons && (
-            <Chip
-              label={seasons}
-              color={isActive ? "success" : "error"}
-              size="small"
-              variant="outlined"
-            />
-          )}
-        </Stack>
-        <Stack spacing={1}>{children}</Stack>
-      </CardContent>
-    </Card>
-  );
-}
 
 function Rule({ children }: { children: React.ReactNode }) {
   return (
@@ -147,15 +75,14 @@ export default function F1PredictionsRulebook() {
         </Typography>
         <Typography variant="body1" color="text.secondary">
           Соревнование по предсказанию результатов гонок Формулы 1. Три
-          независимых активности — обычные предсказания, предсказания на
+          независимых активности — предсказания на гонки, предсказания на
           чемпионат и бинго.
         </Typography>
       </Box>
 
       <Divider />
 
-      {/* ─────────────────────────── SECTION 1 ─────────────────────────── */}
-      <Section title="1. Обычные предсказания">
+      <Section title="1. Предсказания на каждую гонку">
         <Typography variant="body1">
           Перед каждой гонкой необходимо заполнить несколько категорий
           предсказаний. Предсказания закрываются в момент старта гонки. Все
@@ -170,12 +97,11 @@ export default function F1PredictionsRulebook() {
           беджиком сезона не активны в {CURRENT_SEASON} году.
         </Typography>
 
-        {/* 10th place */}
         <SubSection
           title="10-е место"
           badge="до 25 очков"
           badgeColor="success"
-          seasons="2023+"
+          seasons={`2023-${CURRENT_SEASON}`}
           isActive={true}
         >
           <Rule>Выберите пилота, который финиширует на 10-й позиции.</Rule>
@@ -204,12 +130,11 @@ export default function F1PredictionsRulebook() {
           </Box>
         </SubSection>
 
-        {/* DNF */}
         <SubSection
           title="DNF (Не финишировавшие)"
           badge="до 10 очков"
           badgeColor="success"
-          seasons="2024+"
+          seasons={`2024-${CURRENT_SEASON}`}
           isActive={true}
         >
           <Rule>
@@ -272,12 +197,11 @@ export default function F1PredictionsRulebook() {
           </Rule>
         </SubSection>
 
-        {/* Incidents */}
         <SubSection
           title="Инциденты (Safety Car / VSC / Red Flag)"
           badge="5 очков"
           badgeColor="success"
-          seasons="2024+"
+          seasons={`2024-${CURRENT_SEASON}`}
           isActive={true}
         >
           <Rule>
@@ -294,12 +218,11 @@ export default function F1PredictionsRulebook() {
           </Rule>
         </SubSection>
 
-        {/* First place lead */}
         <SubSection
           title="Отрыв лидера"
           badge="5 очков"
           badgeColor="success"
-          seasons="2024+"
+          seasons={`2024-${CURRENT_SEASON}`}
           isActive={true}
         >
           <Rule>
@@ -316,12 +239,11 @@ export default function F1PredictionsRulebook() {
           </Rule>
         </SubSection>
 
-        {/* Driver position (2026+) */}
         <SubSection
           title="Позиция гонщика"
           badge="до 10 очков"
           badgeColor="success"
-          seasons="2026+"
+          seasons={`2026`}
           isActive={true}
         >
           <Rule>
@@ -345,7 +267,6 @@ export default function F1PredictionsRulebook() {
           </Box>
         </SubSection>
 
-        {/* Teams (2024-2025) */}
         <SubSection
           title="Команды (внутрикомандная дуэль)"
           badge="до 10 очков"
@@ -363,7 +284,6 @@ export default function F1PredictionsRulebook() {
           </Rule>
         </SubSection>
 
-        {/* Sprint */}
         <SubSection
           title="Спринт-гонки"
           badge="×0.30"
@@ -381,7 +301,6 @@ export default function F1PredictionsRulebook() {
           </Rule>
         </SubSection>
 
-        {/* Summary table */}
         <Card
           sx={{ backgroundColor: "rgba(255,255,255,0.03)", borderRadius: 2 }}
         >
@@ -410,7 +329,6 @@ export default function F1PredictionsRulebook() {
 
       <Divider />
 
-      {/* ─────────────────────────── SECTION 2 ─────────────────────────── */}
       <Section title="2. Предсказания на чемпионат">
         <Typography variant="body1">
           Два раза за сезон вы составляете прогноз итоговой таблицы чемпионата
@@ -509,7 +427,6 @@ export default function F1PredictionsRulebook() {
 
       <Divider />
 
-      {/* ─────────────────────────── SECTION 3 ─────────────────────────── */}
       <Section title="3. Бинго">
         <Typography variant="body1">
           Бинго — коллекционная мини-игра в рамках сезона. Поле из 25 карточек с
@@ -608,7 +525,6 @@ export default function F1PredictionsRulebook() {
 
       <Divider />
 
-      {/* ─────────────────────────── SECTION 4 ─────────────────────────── */}
       <Section title="Полезные ссылки" id="useful-links">
         <Card
           sx={{ backgroundColor: "rgba(255,255,255,0.05)", borderRadius: 2 }}
