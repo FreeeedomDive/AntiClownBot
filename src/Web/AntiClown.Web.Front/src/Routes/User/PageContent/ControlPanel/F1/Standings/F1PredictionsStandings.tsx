@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import DiscordMembersApi from "../../../../../../Api/DiscordMembersApi";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
@@ -12,11 +13,18 @@ import { F1ChartsDto } from "../../../../../../Dto/F1Predictions/F1ChartsDto";
 import { F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1StandingsDto";
 
 export default function F1PredictionsStandings() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentYear = new Date().getFullYear();
+  const season = Number(searchParams.get("season") ?? currentYear);
+
+  const setSeason = (newSeason: number) => {
+    setSearchParams({ season: String(newSeason) }, { replace: true });
+  };
+
   const [isLoading, setIsLoading] = useState(true);
   const [finishedRaces, setFinishedRaces] = useState<F1RaceDto[]>([]);
   const [standings, setStandings] = useState<F1StandingsDto>();
   const [members, setMembers] = useState<DiscordMemberDto[]>([]);
-  const [season, setSeason] = useState(new Date().getFullYear());
   const [charts, setCharts] = useState<F1ChartsDto>();
 
   useEffect(() => {
@@ -52,7 +60,7 @@ export default function F1PredictionsStandings() {
       />
       {isLoading && <Loader />}
       {!isLoading && standings && standings.standings.length === 0 && (
-        <Typography variant={"h6"}>Сезон {season} еще не стартовал</Typography>
+        <Typography variant={"body1"}>Сезон {season} еще не стартовал</Typography>
       )}
       {!isLoading && standings && standings.standings.length > 0 && charts && (
         <Stack direction={"column"} spacing={4}>

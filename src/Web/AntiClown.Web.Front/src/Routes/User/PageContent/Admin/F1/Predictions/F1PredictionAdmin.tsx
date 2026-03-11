@@ -140,14 +140,14 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
           sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
         >
           <Stack direction={"column"} spacing={1} width={"100%"}>
-            <Stack direction={"row"} spacing={4} height={"45px"}>
+            <Stack direction={"row"} spacing={4} height={"40px"}>
               <Button
                 variant="contained"
                 color="error"
                 disabled={incidents === 0}
                 onClick={() => setIncidents(incidents - 1)}
               >
-                <Typography variant="h4">-</Typography>
+                <Typography variant="button">-</Typography>
               </Button>
               <Typography variant="h6">
                 Инциденты (VSC, SC, Red Flag): {incidents}
@@ -157,7 +157,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
                 color="success"
                 onClick={() => setIncidents(incidents + 1)}
               >
-                <Typography variant="h4">+</Typography>
+                <Typography variant="button">+</Typography>
               </Button>
             </Stack>
             <Stack
@@ -167,7 +167,7 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
               justifyContent={"space-between"}
             >
               <Typography variant="h6">Отрыв 1 места</Typography>
-              <FormControl>
+              <FormControl size="small">
                 <OutlinedInput
                   id="outlined-adornment-weight"
                   endAdornment={

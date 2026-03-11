@@ -22,11 +22,11 @@ import F1ChampionshipPredictions from "./ChampionshipPredictions/F1ChampionshipP
 import F1BingoBoard from "./Bingo/F1BingoBoard";
 
 const TABS = [
+  { label: "Регламент", path: "rulebook", icon: <MenuBook /> },
   { label: "Таблица", path: "standings", icon: <Leaderboard /> },
   { label: "Предсказания гонок", path: "current", icon: <Assignment /> },
   { label: "Чемпионат", path: "championship", icon: <EmojiEvents /> },
   { label: "Бинго", path: "bingo", icon: <Casino /> },
-  { label: "Регламент", path: "rulebook", icon: <MenuBook /> },
 ] as const;
 
 const F1PredictionsPage = () => {

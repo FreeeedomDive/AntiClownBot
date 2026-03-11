@@ -113,7 +113,7 @@ export default function F1PredictionsStandingsChart({
     <Stack direction={"column"}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography variant="h6">График чемпионата</Typography>
-        <FormControl>
+        <FormControl size="small">
           <Select
             labelId="last-races-count-select"
             id="last-races-count-select"

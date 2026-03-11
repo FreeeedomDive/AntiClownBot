@@ -61,7 +61,7 @@ export default function F1PredictionsDnfSelect({
         <>
           {dnfList.map((dnfItem, index) => {
             return (
-              <FormControl fullWidth>
+              <FormControl fullWidth size="small">
                 <Select
                   key={index}
                   labelId={`dnf-${index}`}
@@ -76,7 +76,9 @@ export default function F1PredictionsDnfSelect({
                     )
                     .map((driver) => (
                       <MenuItem key={driver} value={driver}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
                           <F1TeamBadge driver={driver} teams={teams} />
                           {driver}
                         </Box>

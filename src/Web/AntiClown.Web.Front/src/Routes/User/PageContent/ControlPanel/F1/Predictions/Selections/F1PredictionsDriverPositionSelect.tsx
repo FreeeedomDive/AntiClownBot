@@ -26,7 +26,7 @@ export default function F1PredictionsDriverPositionSelect({
         </Box>
       }
     >
-      <FormControl fullWidth>
+      <FormControl fullWidth size="small">
         <OutlinedInput
           id="outlined-adornment-weight"
           endAdornment={<InputAdornment position="end">1-22</InputAdornment>}

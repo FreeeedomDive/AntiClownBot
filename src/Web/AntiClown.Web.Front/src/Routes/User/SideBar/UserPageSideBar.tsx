@@ -54,12 +54,12 @@ const UserPageSideBar = observer(({ user }: Props) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isF1PredictionsSelected = F1_USER_PATHS.some((p) =>
-    location.pathname.endsWith(p),
-  );
   const isF1AdminSelected = F1_ADMIN_PATHS.some((p) =>
     location.pathname.endsWith(p),
   );
+  const isF1PredictionsSelected =
+    !isF1AdminSelected &&
+    F1_USER_PATHS.some((p) => location.pathname.endsWith(p));
   const userHasAnyAdminRights = rightsStore.userRights.find(
     (right) =>
       right === RightsDto.F1PredictionsAdmin ||

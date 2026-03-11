@@ -13,7 +13,7 @@ export default function F1PredictionsFirstPlaceLeadSelect({
 }: Props) {
   return (
     <F1PredictionsSelectCard title="Отрыв 1 места">
-      <FormControl fullWidth>
+      <FormControl fullWidth size="small">
         <OutlinedInput
           id="outlined-adornment-weight"
           endAdornment={
