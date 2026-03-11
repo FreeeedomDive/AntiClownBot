@@ -80,7 +80,7 @@ public class F1CommandModule(
                 var userToMember = standings.Keys.ToDictionary(x => x, x => usersCache.GetMemberByApiIdAsync(x).GetAwaiter().GetResult());
                 var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
                 var stringBuilder = new StringBuilder($"Полная таблица: {webOptions.Value.FrontApplicationUrl}/f1Predictions/standings")
-                    .Append($"\nРегламент:{webOptions.Value.FrontApplicationUrl}/f1Predictions/rulebook")
+                    .Append($"\nРегламент: {webOptions.Value.FrontApplicationUrl}/f1Predictions/rulebook")
                     .Append("\n```\n");
                 const int maxPossiblePoints = F1PredictionsHelper.MaxPointsForTenthPlacePrediction;
                 var predictionsTable = standings
