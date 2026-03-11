@@ -1,6 +1,7 @@
-import { Route, Routes, useParams } from "react-router-dom";
-import React from "react";
+import { Route, Routes, useLocation, useParams } from "react-router-dom";
+import React, { useEffect } from "react";
 import { useStore } from "../../../Stores";
+import { getPageTitle } from "../../../Helpers/PageTitleHelper";
 import UserOverview from "./UserOverview/UserOverview";
 import UserInventory from "./ControlPanel/UserInventory";
 import UserShop from "./ControlPanel/UserShop";
@@ -9,16 +10,10 @@ import ItemsTrade from "./Interaction/ItemsTrade";
 import { UserDto } from "../../../Dto/Users/UserDto";
 import { Typography } from "@mui/material";
 import { Loader } from "../../../Components/Loader/Loader";
-import F1PredictionsList from "./ControlPanel/F1/Predictions/F1PredictionsList";
-import F1PredictionsAdminList from "./Admin/F1/Predictions/F1PredictionsAdminList";
 import EditSettings from "./Admin/Settings/EditSettings";
-import F1PredictionsStandings from "./ControlPanel/F1/Standings/F1PredictionsStandings";
-import F1PredictionsTeamsEditor from "./Admin/F1/Teams/F1PredictionsTeamsEditor";
 import F1BingoBoard from "./ControlPanel/F1/Bingo/F1BingoBoard";
-import F1BingoCardsEditor from "./Admin/F1/Bingo/F1BingoCardsEditor";
-import F1ChampionshipPredictions from "./ControlPanel/F1/ChampionshipPredictions/F1ChampionshipPredictions";
-import F1ChampionshipPredictionsAdmin from "./Admin/F1/ChampionshipPredictions/F1ChampionshipPredictionsAdmin";
-import F1PredictionsRulebook from "./ControlPanel/F1/Rulebook/F1PredictionsRulebook";
+import F1PredictionsPage from "./ControlPanel/F1/F1PredictionsPage";
+import F1PredictionsAdminPage from "./Admin/F1/F1PredictionsAdminPage";
 
 interface Props {
   user: UserDto | null | undefined;
@@ -29,6 +24,11 @@ const UserPageContentRouter = ({ user }: Props) => {
   const currentLoggedInUserId = authStore.loggedInUserId;
   const { userId } = useParams<"userId">();
   const isMyPage = currentLoggedInUserId === userId;
+  const location = useLocation();
+
+  useEffect(() => {
+    document.title = getPageTitle(location.pathname, userId);
+  }, [location.pathname, userId]);
 
   if (user === null) {
     return <Typography variant={"h5"}>Пользователь не найден</Typography>;
@@ -49,40 +49,9 @@ const UserPageContentRouter = ({ user }: Props) => {
           <Route path="/economy" element={<UserEconomy />} />
           <Route path="/inventory" element={<UserInventory />} />
           <Route path="/shop" element={<UserShop />} />
-          <Route
-            path="/f1Predictions/rulebook"
-            element={<F1PredictionsRulebook />}
-          />
-          <Route
-            path="/f1Predictions/standings"
-            element={<F1PredictionsStandings />}
-          />
-          <Route
-            path="/f1Predictions/current"
-            element={<F1PredictionsList />}
-          />
-          <Route
-            path="/f1Predictions/admin"
-            element={<F1PredictionsAdminList />}
-          />
-          <Route
-            path="/f1Predictions/teams"
-            element={<F1PredictionsTeamsEditor />}
-          />
-          <Route path="/f1Predictions/bingo" element={<F1BingoBoard />} />
-          <Route
-            path="/f1Predictions/bingo/admin"
-            element={<F1BingoCardsEditor />}
-          />
-          <Route
-            path="/f1Predictions/championship"
-            element={<F1ChampionshipPredictions />}
-          />
-          <Route
-            path="/f1Predictions/championship/admin"
-            element={<F1ChampionshipPredictionsAdmin />}
-          />
-          <Route path="/settings" element={<EditSettings />} />
+          <Route path="/f1Predictions/*" element={<F1PredictionsPage />} />
+          <Route path="/admin/f1Predictions/*" element={<F1PredictionsAdminPage />} />
+          <Route path="/admin/settings" element={<EditSettings />} />
         </Routes>
       )}
       {Boolean(!isMyPage && currentLoggedInUserId && user) && (

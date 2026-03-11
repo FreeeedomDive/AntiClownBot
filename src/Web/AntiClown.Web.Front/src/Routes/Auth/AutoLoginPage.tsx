@@ -10,6 +10,7 @@ export default function AutoLoginPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = "Авторизация - Clown City";
     const userId = searchParams.get("userId");
     const token = searchParams.get("token");
 

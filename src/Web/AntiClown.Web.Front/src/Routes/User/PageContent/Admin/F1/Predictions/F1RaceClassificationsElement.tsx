@@ -44,25 +44,28 @@ export default function F1RaceClassificationsElement({
       </TableCell>
 
       <TableCell sx={{ padding: "1px", width: "5%" }}>
-        <Typography>{position}</Typography>
+        <Typography variant="body2">{position}</Typography>
       </TableCell>
 
       <TableCell sx={{ padding: "1px", width: "100%" }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <F1TeamBadge driver={f1Driver} teams={teams} />
-          <Typography>{f1Driver}</Typography>
+          <Typography variant="body2">{f1Driver}</Typography>
         </Box>
       </TableCell>
 
       <TableCell sx={{ padding: "1px", width: "20%" }}>
         <FormControlLabel
+          sx={{ mr: 0 }}
           control={
             <Checkbox
+              size="small"
+              sx={{ p: "4px" }}
               checked={isDnf}
               onChange={(x) => onToggleDnf(x.target.checked)}
             />
           }
-          label={"DNF"}
+          label={<Typography variant="body2">DNF</Typography>}
         />
       </TableCell>
     </TableRow>

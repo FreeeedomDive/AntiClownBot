@@ -130,40 +130,36 @@ export function F1PredictionsStandingsRow({
             p: "4px 8px",
           }}
         >
-          <Typography fontWeight="bold">{results.totalPoints}</Typography>
-          {position === 1 && pointsLeft === 0 && (
-            <Typography variant="caption" color="gold" display="block">
-              Чемпион
-            </Typography>
-          )}
-          {position === 1 && pointsLeft > 0 && (
-            <Typography variant="caption" color="success.main" display="block">
-              Лидер
-            </Typography>
-          )}
-          {position > 1 && pointsLeft > 0 && (
-            <Tooltip
-              title={
-                stillInChampionship
-                  ? "В борьбе за титул"
-                  : "Больше нет шансов на титул"
-              }
-              arrow
+            <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 0.5 }}>
+            <Typography
+              fontWeight="bold"
+              color={position === 1 && pointsLeft === 0 ? "gold" : "inherit"}
             >
-              <Typography
-                variant="caption"
-                display="block"
-                color={stillInChampionship ? "error" : "text.disabled"}
+              {results.totalPoints}
+            </Typography>
+            {position > 1 && pointsLeft > 0 && (
+              <Tooltip
+                title={
+                  stillInChampionship
+                    ? "В борьбе за титул"
+                    : "Больше нет шансов на титул"
+                }
+                arrow
               >
+                <Typography
+                  variant="caption"
+                  color={stillInChampionship ? "error" : "text.disabled"}
+                >
+                  {results.totalPoints - leaderPoints}
+                </Typography>
+              </Tooltip>
+            )}
+            {position > 1 && pointsLeft === 0 && (
+              <Typography variant="caption" color="text.disabled">
                 {results.totalPoints - leaderPoints}
               </Typography>
-            </Tooltip>
-          )}
-          {position > 1 && pointsLeft === 0 && (
-            <Typography variant="caption" display="block" color="text.disabled">
-              {results.totalPoints - leaderPoints}
-            </Typography>
-          )}
+            )}
+          </Box>
         </TableCell>
       </TableRow>
       <TableRow>

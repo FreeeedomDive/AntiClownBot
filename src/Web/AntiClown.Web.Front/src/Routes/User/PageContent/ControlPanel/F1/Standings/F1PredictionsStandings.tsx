@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import DiscordMembersApi from "../../../../../../Api/DiscordMembersApi";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { Stack, Typography } from "@mui/material";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1PredictionsStandingsChart from "./F1PredictionsStandingsChart";
-import F1PredictionsStandingsSeasonSelect from "./F1PredictionsStandingsSeasonSelect";
 import F1PredictionsStandingsTable from "./F1PredictionsStandingsTable";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import { F1ChartsDto } from "../../../../../../Dto/F1Predictions/F1ChartsDto";
 import { F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1StandingsDto";
 
 export default function F1PredictionsStandings() {
+  const [searchParams] = useSearchParams();
+  const currentYear = new Date().getFullYear();
+  const season = Number(searchParams.get("season") ?? currentYear);
+
   const [isLoading, setIsLoading] = useState(true);
   const [finishedRaces, setFinishedRaces] = useState<F1RaceDto[]>([]);
   const [standings, setStandings] = useState<F1StandingsDto>();
   const [members, setMembers] = useState<DiscordMemberDto[]>([]);
-  const [season, setSeason] = useState(new Date().getFullYear());
   const [charts, setCharts] = useState<F1ChartsDto>();
 
   useEffect(() => {
@@ -45,23 +48,19 @@ export default function F1PredictionsStandings() {
   }, [season]);
 
   return (
-    <Stack direction={"column"} spacing={2}>
-      <F1PredictionsStandingsSeasonSelect
-        season={season}
-        setSeason={setSeason}
-      />
+    <Stack direction={"column"} spacing={1}>
       {isLoading && <Loader />}
       {!isLoading && standings && standings.standings.length === 0 && (
-        <Typography variant={"h6"}>Сезон {season} еще не стартовал</Typography>
+        <Typography variant={"body1"}>Сезон {season} еще не стартовал</Typography>
       )}
       {!isLoading && standings && standings.standings.length > 0 && charts && (
-        <Stack direction={"column"} spacing={4}>
+        <Stack direction={"column"} spacing={1}>
           <F1PredictionsStandingsTable
             finishedRaces={finishedRaces}
             members={members}
             standings={standings}
           />
-          <F1PredictionsStandingsChart members={members} charts={charts} />
+          <F1PredictionsStandingsChart members={members} charts={charts} races={finishedRaces} />
         </Stack>
       )}
     </Stack>

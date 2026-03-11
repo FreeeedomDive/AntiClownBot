@@ -18,7 +18,7 @@ export default function F1PredictionsTenthPlaceSelect({
 }: Props) {
   return (
     <F1PredictionsSelectCard title="10 место">
-      <FormControl fullWidth>
+      <FormControl fullWidth size="small">
         <Select
           labelId="10-position"
           id="10-position-select"

@@ -60,7 +60,9 @@ export default function F1PredictionsStandingsTable({
                 variant="body2"
                 color="text.secondary"
                 sx={{ pl: "34px" }}
-              />
+              >
+                Участник
+              </Typography>
             </TableCell>
             {finishedRaces.map((race) => {
               const flag = (

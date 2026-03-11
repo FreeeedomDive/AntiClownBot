@@ -31,14 +31,14 @@ export default function F1PredictionsAdminList() {
 
   useEffect(() => {
     loadRaces(isActive).catch(console.error);
-  }, []);
+  }, [isActive]);
 
   return (
     <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
-      <Stack spacing={3} direction={"column"}>
+      <Stack spacing={2} direction={"column"}>
         {f1Races ? (
-          <Stack direction={"row"} spacing={1}>
-            <FormControl fullWidth>
+          <Stack direction={"row"} spacing={1} alignItems="center">
+            <FormControl fullWidth size="small">
               <Select
                 labelId="race-select"
                 id="race-select"
@@ -59,8 +59,10 @@ export default function F1PredictionsAdminList() {
               </Select>
             </FormControl>
             <FormControlLabel
+              sx={{ whiteSpace: "nowrap", mr: 0 }}
               control={
                 <Checkbox
+                  size="small"
                   checked={isActive}
                   onChange={async (x) => {
                     const onlyActive = x.target.checked;

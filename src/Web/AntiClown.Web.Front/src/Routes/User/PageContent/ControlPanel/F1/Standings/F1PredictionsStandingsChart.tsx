@@ -1,20 +1,15 @@
-import {
-  Box,
-  FormControl,
-  MenuItem,
-  Select,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { useMemo } from "react";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { LineChart } from "@mui/x-charts/LineChart";
-import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { F1ChartsDto } from "../../../../../../Dto/F1Predictions/F1ChartsDto";
+import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import SortedAxisTooltip from "./SortedAxisTooltip";
 
 interface Props {
   members: DiscordMemberDto[];
   charts: F1ChartsDto;
+  races: F1RaceDto[];
 }
 
 interface PredictionsSeries {
@@ -23,36 +18,45 @@ interface PredictionsSeries {
   points: number[];
 }
 
+const CHAMPION_COLOR = "#90a4ae";
+
 const colors: string[] = [
   "#ffd700",
   "#c0c0c0",
   "#cd7f32",
-  "#930000",
-  "#2300d6",
-  "#005a0f",
-  "#b600ad",
-  "#00cf29",
-  "#ff7c7c",
-  "#37c2ff",
+  "#f44336",
+  "#2196f3",
+  "#4caf50",
+  "#ff9800",
+  "#9c27b0",
+  "#00bcd4",
+  "#e91e63",
+  "#3f51b5",
+  "#009688",
+  "#8bc34a",
+  "#ff5722",
+  "#795548",
+  "#607d8b",
+  "#cddc39",
+  "#40c4ff",
+  "#69f0ae",
+  "#ea80fc",
 ];
-
-export const ShowLastNumberOfRaces = {
-  All: "Показывать все гонки",
-  Last5: "Показывать последние 5 гонок",
-  Last10: "Показывать последние 10 гонок",
-} as const;
-export type ShowLastNumberOfRacesType =
-  (typeof ShowLastNumberOfRaces)[keyof typeof ShowLastNumberOfRaces];
 
 export default function F1PredictionsStandingsChart({
   members,
   charts,
+  races,
 }: Props) {
-  const [showLastRacesCount, setShowLastRacesCount] =
-    useState<ShowLastNumberOfRacesType>(ShowLastNumberOfRaces.All);
-
   const { userId } = useParams<"userId">();
-  let series = Array.of<PredictionsSeries>();
+
+  const axisContent = useMemo(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    () => (props: any) => <SortedAxisTooltip {...props} races={races} />,
+    [races],
+  );
+
+  const series = Array.of<PredictionsSeries>();
   for (const chart of charts.usersCharts) {
     const user = members.find((x) => x.userId === chart.userId);
     series.push({
@@ -69,95 +73,41 @@ export default function F1PredictionsStandingsChart({
     });
   }
 
-  const sliceCount =
-    showLastRacesCount === ShowLastNumberOfRaces.All
-      ? series[0].points.length
-      : showLastRacesCount === ShowLastNumberOfRaces.Last10 &&
-          series[0].points.length > 10
-        ? 10
-        : showLastRacesCount === ShowLastNumberOfRaces.Last5 &&
-            series[0].points.length > 5
-          ? 5
-          : series[0].points.length;
-
-  if (
-    (showLastRacesCount === ShowLastNumberOfRaces.Last5 &&
-      series[0].points.length > 5) ||
-    (showLastRacesCount === ShowLastNumberOfRaces.Last10 &&
-      series[0].points.length > 10)
-  ) {
-    series = series.filter((x) => {
-      return (
-        x.points[x.points.length - sliceCount - 1] >=
-        charts.championChart.points[
-          charts.championChart.points.length - sliceCount - 1
-        ]
-      );
-    });
-  }
-
-  const getMinY = () => {
-    const pts = series.map((x) => x.points.slice(-sliceCount)[0]);
-    return Math.min(...pts);
-  };
-
-  const getMaxY = () => {
-    const pts = series.map((x) => {
-      const slice = x.points.slice(-sliceCount);
-      return slice[slice.length - 1];
-    });
-    return Math.max(...pts);
-  };
+  const allPoints = series[0].points;
+  const minY = Math.min(...series.map((x) => x.points[0]));
+  const maxY = Math.max(...series.map((x) => x.points[x.points.length - 1]));
 
   return (
-    <Stack direction={"column"}>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6">График чемпионата</Typography>
-        <FormControl>
-          <Select
-            labelId="last-races-count-select"
-            id="last-races-count-select"
-            value={showLastRacesCount}
-            onChange={async (event) => {
-              const value = event.target.value as ShowLastNumberOfRacesType;
-              setShowLastRacesCount(value);
-            }}
-          >
-            {Object.values(ShowLastNumberOfRaces).map((numberOfRaces) => (
-              <MenuItem key={numberOfRaces} value={numberOfRaces}>
-                {numberOfRaces}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-      <LineChart
-        series={series.map((x, i) => {
-          return {
-            color: x.isMe ? "#ffffff" : colors[i % colors.length],
-            curve: "linear",
-            id: `prediction_points_${x.userName}`,
-            label: x.userName,
-            area: false,
-            data: x.points.slice(-sliceCount),
-          };
-        })}
-        xAxis={[
-          {
-            data: series[0].points.map((_, i) => i).slice(-sliceCount),
-            scaleType: "linear",
-          },
-        ]}
-        yAxis={[
-          {
-            min: getMinY(),
-            max: getMaxY(),
-            scaleType: "linear",
-          },
-        ]}
-        height={600}
-        grid={{ vertical: true, horizontal: true }}
-      />
-    </Stack>
+    <LineChart
+      series={series.map((x, i) => ({
+        color: x.isMe
+          ? "#ffffff"
+          : x.userName === "Чемпион"
+            ? CHAMPION_COLOR
+            : colors[i % colors.length],
+        curve: "linear",
+        id: `prediction_points_${x.userName}`,
+        label: x.userName,
+        area: false,
+        data: x.points,
+      }))}
+      xAxis={[
+        {
+          data: allPoints.map((_, i) => i),
+          scaleType: "linear",
+          tickMinStep: 1,
+        },
+      ]}
+      yAxis={[
+        {
+          min: minY,
+          max: maxY,
+          scaleType: "linear",
+        },
+      ]}
+      height={600}
+      grid={{ vertical: true, horizontal: true }}
+      slots={{ axisContent }}
+    />
   );
 }

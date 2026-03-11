@@ -18,9 +18,8 @@ export default function F1PredictionsStandingsSeasonSelect({
 
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center">
-      <Typography variant="h5">Турнирная таблица чемпионата</Typography>
-
-      <FormControl>
+      <Typography variant="h6">Турнирная таблица чемпионата</Typography>
+      <FormControl size="small">
         <Select
           labelId="standings-season-select"
           id="standings-season-select"

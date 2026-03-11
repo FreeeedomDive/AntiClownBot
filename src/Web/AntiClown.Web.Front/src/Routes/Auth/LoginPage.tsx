@@ -1,5 +1,5 @@
 import { Alert, Snackbar, Stack, TextField } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./LoginPage.css";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useStore } from "../../Stores";
@@ -31,6 +31,10 @@ export default function LoginPage() {
     setLoading(false);
     navigate(`/user/${userId}`);
   }, [userId, token, authStore, navigate]);
+
+  useEffect(() => {
+    document.title = "Авторизация - Clown City";
+  }, []);
 
   return (
     <div className="background">
