@@ -1,10 +1,7 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import React from "react";
 import { observer } from "mobx-react-lite";
-import {
-  List,
-  Stack,
-} from "@mui/material";
+import { List, Stack } from "@mui/material";
 import {
   AccountBalanceWallet,
   AdminPanelSettings,
@@ -35,9 +32,13 @@ interface Props {
 
 const ICON_SX = { fontSize: 18 };
 
-const F1_USER_PATHS = ["standings", "rulebook", "current", "championship", "bingo"].map(
-  (p) => `f1Predictions/${p}`,
-);
+const F1_USER_PATHS = [
+  "standings",
+  "rulebook",
+  "races",
+  "championship",
+  "bingo",
+].map((p) => `f1Predictions/${p}`);
 const F1_ADMIN_PATHS = [
   "admin/f1Predictions/results",
   "admin/f1Predictions/championship",

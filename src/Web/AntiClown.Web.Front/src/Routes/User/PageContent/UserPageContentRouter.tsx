@@ -1,6 +1,7 @@
-import { Route, Routes, useParams } from "react-router-dom";
-import React from "react";
+import { Route, Routes, useLocation, useParams } from "react-router-dom";
+import React, { useEffect } from "react";
 import { useStore } from "../../../Stores";
+import { getPageTitle } from "../../../Helpers/PageTitleHelper";
 import UserOverview from "./UserOverview/UserOverview";
 import UserInventory from "./ControlPanel/UserInventory";
 import UserShop from "./ControlPanel/UserShop";
@@ -23,6 +24,11 @@ const UserPageContentRouter = ({ user }: Props) => {
   const currentLoggedInUserId = authStore.loggedInUserId;
   const { userId } = useParams<"userId">();
   const isMyPage = currentLoggedInUserId === userId;
+  const location = useLocation();
+
+  useEffect(() => {
+    document.title = getPageTitle(location.pathname, userId);
+  }, [location.pathname, userId]);
 
   if (user === null) {
     return <Typography variant={"h5"}>Пользователь не найден</Typography>;

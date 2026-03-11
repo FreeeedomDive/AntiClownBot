@@ -20,7 +20,7 @@ const darkTheme = createTheme({
 
 function App() {
   useEffect(() => {
-    document.title = "Clown City Web";
+    document.title = "Clown City";
   }, []);
   const { authStore } = useStore();
   const userId = authStore.loggedInUserId;

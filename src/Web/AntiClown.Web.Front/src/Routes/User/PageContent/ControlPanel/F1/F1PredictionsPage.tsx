@@ -25,7 +25,7 @@ import F1BingoBoard from "./Bingo/F1BingoBoard";
 const TABS = [
   { label: "Регламент", path: "rulebook", icon: <MenuBook /> },
   { label: "Таблица", path: "standings", icon: <Leaderboard /> },
-  { label: "Предсказания гонок", path: "current", icon: <Assignment /> },
+  { label: "Предсказания гонок", path: "races", icon: <Assignment /> },
   { label: "Чемпионат", path: "championship", icon: <EmojiEvents /> },
   { label: "Бинго", path: "bingo", icon: <Casino /> },
 ] as const;
@@ -106,7 +106,7 @@ const F1PredictionsPage = () => {
           <Route path="/" element={<Navigate to="standings" replace />} />
           <Route path="standings" element={<F1PredictionsStandings />} />
           <Route path="rulebook" element={<F1PredictionsRulebook />} />
-          <Route path="current" element={<F1PredictionsList />} />
+          <Route path="races" element={<F1PredictionsList />} />
           <Route path="championship" element={<F1ChampionshipPredictions />} />
           <Route path="bingo" element={<F1BingoBoard />} />
         </Routes>
