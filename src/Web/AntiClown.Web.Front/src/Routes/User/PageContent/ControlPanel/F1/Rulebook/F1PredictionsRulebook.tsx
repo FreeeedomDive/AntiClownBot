@@ -28,7 +28,7 @@ function Section({
 }) {
   return (
     <Box id={id}>
-      <Typography variant="h4" sx={{ fontWeight: "bold", mb: 3 }}>
+      <Typography variant="h5" sx={{ fontWeight: "bold", mb: 3 }}>
         {title}
       </Typography>
       <Stack spacing={2}>{children}</Stack>
@@ -142,7 +142,7 @@ export default function F1PredictionsRulebook() {
   return (
     <Stack spacing={6} sx={{ maxWidth: 860, pb: 6 }}>
       <Box>
-        <Typography variant="h3" sx={{ fontWeight: "bold", mb: 1 }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
           Регламент предсказаний F1
         </Typography>
         <Typography variant="body1" color="text.secondary">

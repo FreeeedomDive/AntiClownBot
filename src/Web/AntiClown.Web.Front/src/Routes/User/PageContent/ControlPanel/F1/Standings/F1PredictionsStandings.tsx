@@ -53,7 +53,7 @@ export default function F1PredictionsStandings() {
   }, [season]);
 
   return (
-    <Stack direction={"column"} spacing={2}>
+    <Stack direction={"column"} spacing={1}>
       <F1PredictionsStandingsSeasonSelect
         season={season}
         setSeason={setSeason}
@@ -63,7 +63,7 @@ export default function F1PredictionsStandings() {
         <Typography variant={"body1"}>Сезон {season} еще не стартовал</Typography>
       )}
       {!isLoading && standings && standings.standings.length > 0 && charts && (
-        <Stack direction={"column"} spacing={4}>
+        <Stack direction={"column"} spacing={1}>
           <F1PredictionsStandingsTable
             finishedRaces={finishedRaces}
             members={members}
