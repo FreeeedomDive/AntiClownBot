@@ -31,7 +31,7 @@ export default function F1PredictionsAdminList() {
 
   useEffect(() => {
     loadRaces(isActive).catch(console.error);
-  }, []);
+  }, [isActive]);
 
   return (
     <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>

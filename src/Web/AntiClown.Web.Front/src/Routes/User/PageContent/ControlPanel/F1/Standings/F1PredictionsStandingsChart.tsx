@@ -1,11 +1,15 @@
+import { useMemo } from "react";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useParams } from "react-router-dom";
 import { F1ChartsDto } from "../../../../../../Dto/F1Predictions/F1ChartsDto";
+import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import SortedAxisTooltip from "./SortedAxisTooltip";
 
 interface Props {
   members: DiscordMemberDto[];
   charts: F1ChartsDto;
+  races: F1RaceDto[];
 }
 
 interface PredictionsSeries {
@@ -42,8 +46,16 @@ const colors: string[] = [
 export default function F1PredictionsStandingsChart({
   members,
   charts,
+  races,
 }: Props) {
   const { userId } = useParams<"userId">();
+
+  const axisContent = useMemo(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    () => (props: any) => <SortedAxisTooltip {...props} races={races} />,
+    [races],
+  );
+
   const series = Array.of<PredictionsSeries>();
   for (const chart of charts.usersCharts) {
     const user = members.find((x) => x.userId === chart.userId);
@@ -83,6 +95,7 @@ export default function F1PredictionsStandingsChart({
         {
           data: allPoints.map((_, i) => i),
           scaleType: "linear",
+          tickMinStep: 1,
         },
       ]}
       yAxis={[
@@ -94,6 +107,7 @@ export default function F1PredictionsStandingsChart({
       ]}
       height={600}
       grid={{ vertical: true, horizontal: true }}
+      slots={{ axisContent }}
     />
   );
 }

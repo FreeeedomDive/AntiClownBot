@@ -60,7 +60,7 @@ export default function F1PredictionsStandings() {
             members={members}
             standings={standings}
           />
-          <F1PredictionsStandingsChart members={members} charts={charts} />
+          <F1PredictionsStandingsChart members={members} charts={charts} races={finishedRaces} />
         </Stack>
       )}
     </Stack>
