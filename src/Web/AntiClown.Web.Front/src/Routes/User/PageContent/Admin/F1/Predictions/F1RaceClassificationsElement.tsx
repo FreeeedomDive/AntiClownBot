@@ -20,6 +20,7 @@ interface Props {
   onToggleDnf: (checked: boolean) => void;
   provided: DraggableProvided;
   teams: F1TeamDto[];
+  showDnf?: boolean;
 }
 
 export default function F1RaceClassificationsElement({
@@ -29,6 +30,7 @@ export default function F1RaceClassificationsElement({
   onToggleDnf,
   provided,
   teams,
+  showDnf = true,
 }: Props) {
   const position = index + 1;
 
@@ -54,20 +56,22 @@ export default function F1RaceClassificationsElement({
         </Box>
       </TableCell>
 
-      <TableCell sx={{ padding: "1px", width: "20%" }}>
-        <FormControlLabel
-          sx={{ mr: 0 }}
-          control={
-            <Checkbox
-              size="small"
-              sx={{ p: "4px" }}
-              checked={isDnf}
-              onChange={(x) => onToggleDnf(x.target.checked)}
-            />
-          }
-          label={<Typography variant="body2">DNF</Typography>}
-        />
-      </TableCell>
+      {showDnf && (
+        <TableCell sx={{ padding: "1px", width: "20%" }}>
+          <FormControlLabel
+            sx={{ mr: 0 }}
+            control={
+              <Checkbox
+                size="small"
+                sx={{ p: "4px" }}
+                checked={isDnf}
+                onChange={(x) => onToggleDnf(x.target.checked)}
+              />
+            }
+            label={<Typography variant="body2">DNF</Typography>}
+          />
+        </TableCell>
+      )}
     </TableRow>
   );
 }

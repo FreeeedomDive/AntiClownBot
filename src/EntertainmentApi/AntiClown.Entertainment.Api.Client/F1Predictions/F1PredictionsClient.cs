@@ -86,5 +86,12 @@ public class F1PredictionsClient : IF1PredictionsClient
         await client.MakeRequestAsync(requestBuilder.Build());
     }
 
+    public async Task SaveQualifyingGridAsync(System.Guid raceId, string[] grid)
+    {
+        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/{raceId}/saveQualifyingGrid", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(grid);
+        await client.MakeRequestAsync(requestBuilder.Build());
+    }
+
     private readonly RestSharp.RestClient client;
 }

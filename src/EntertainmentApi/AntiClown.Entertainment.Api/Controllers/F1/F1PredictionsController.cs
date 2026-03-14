@@ -99,6 +99,13 @@ public class F1PredictionsController : Controller
         return NoContent();
     }
 
+    [HttpPost("{raceId:guid}/saveQualifyingGrid")]
+    public async Task<ActionResult> SaveQualifyingGrid([FromRoute] Guid raceId, [FromBody] string[] grid)
+    {
+        await f1PredictionsService.SaveQualifyingGridAsync(raceId, grid);
+        return NoContent();
+    }
+
     private readonly IF1PredictionsService f1PredictionsService;
     private readonly IMapper mapper;
 }

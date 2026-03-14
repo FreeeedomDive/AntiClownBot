@@ -14,8 +14,7 @@ import { LoadingButton } from "@mui/lab";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
 import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
-import { Block, Done, Download, Save } from "@mui/icons-material";
-import F1FastApi from "../../../../../../Api/F1FastApi";
+import { Block, Done, Save } from "@mui/icons-material";
 
 interface Props {
   f1Race: F1RaceDto;
@@ -26,12 +25,13 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
 
   const [teams, setTeams] = useState<F1TeamDto[]>([]);
   const [drivers, setDrivers] = useState<string[]>([]);
+  const [qualifyingGrid, setQualifyingGrid] = useState<string[]>([]);
   const [dnfDrivers, setDnfDrivers] = useState<Set<string>>(new Set());
   const [incidents, setIncidents] = useState<number>(0);
   const [firstPlaceLead, setFirstPlaceLead] = useState<string>();
   const [isClosing, setIsClosing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isLoadingRaceResults, setIsLoadingRaceResults] = useState(false);
+  const [isSavingQualifying, setIsSavingQualifying] = useState(false);
   const [isFinishing, setIsFinishing] = useState(false);
   const [isPredictionsClosed, setIsPredictionsClosed] = useState(false);
 
@@ -50,6 +50,11 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
           ? getDriversFromTeams(teams)
           : result.result.classification,
       );
+      setQualifyingGrid(
+        result.qualifyingGrid && result.qualifyingGrid.length > 0
+          ? result.qualifyingGrid
+          : getDriversFromTeams(teams),
+      );
       setDnfDrivers(new Set(result.result?.dnfDrivers ?? []));
       setIncidents(result.result?.safetyCars ?? 0);
       setFirstPlaceLead(String(result.result?.firstPlaceLead ?? ""));
@@ -57,6 +62,12 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
 
     load().catch(console.error);
   }, [f1Race.id]);
+
+  const saveQualifyingResults = useCallback(async () => {
+    setIsSavingQualifying(true);
+    await F1PredictionsApi.saveQualifyingGrid(currentF1Race.id, qualifyingGrid);
+    setIsSavingQualifying(false);
+  }, [currentF1Race.id, qualifyingGrid]);
 
   const saveRaceResults = useCallback(async () => {
     setIsSaving(true);
@@ -69,18 +80,6 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
     });
     setIsSaving(false);
   }, [currentF1Race.id, dnfDrivers, drivers, firstPlaceLead, incidents]);
-
-  const loadRaceResults = useCallback(async () => {
-    setIsLoadingRaceResults(true);
-    const raceResult = await F1FastApi.getRaceResult(currentF1Race.id);
-    if (raceResult.success && !!raceResult.result) {
-      setDrivers(raceResult.result.classification);
-      setDnfDrivers(new Set(raceResult.result.dnfDrivers));
-      setIncidents(raceResult.result.safetyCars);
-      setFirstPlaceLead(String(raceResult.result.firstPlaceLead));
-    }
-    setIsLoadingRaceResults(false);
-  }, [currentF1Race.id]);
 
   const closePredictions = useCallback(async () => {
     setIsClosing(true);
@@ -104,14 +103,36 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
       >
         <Grid
           item
-          key={`F1PredictionsAdminColumn1`}
+          key={`F1PredictionsAdminColumnQualifying`}
           xs={12}
           sm={12}
           md={12}
-          lg={5}
+          lg={4}
           sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
         >
           <Stack direction={"column"} spacing={1} width={"100%"}>
+            <Typography variant="h6" align="center">Квалификация</Typography>
+            <F1RaceClassifications
+              drivers={qualifyingGrid}
+              setDrivers={setQualifyingGrid}
+              dnfDrivers={new Set()}
+              setDnfDrivers={() => {}}
+              teams={teams}
+              showDnf={false}
+            />
+          </Stack>
+        </Grid>
+        <Grid
+          item
+          key={`F1PredictionsAdminColumnRaceResults`}
+          xs={12}
+          sm={12}
+          md={12}
+          lg={4}
+          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
+        >
+          <Stack direction={"column"} spacing={1} width={"100%"}>
+            <Typography variant="h6" align="center">Гонка</Typography>
             <F1RaceClassifications
               drivers={drivers}
               setDrivers={setDrivers}
@@ -123,20 +144,11 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
         </Grid>
         <Grid
           item
-          key={`F1PredictionsAdminColumnEmpty`}
+          key={`F1PredictionsAdminColumnButtons`}
           xs={12}
           sm={12}
           md={12}
-          lg={2}
-          sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
-        />
-        <Grid
-          item
-          key={`F1PredictionsAdminColumn2`}
-          xs={12}
-          sm={12}
-          md={12}
-          lg={5}
+          lg={4}
           sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
         >
           <Stack direction={"column"} spacing={1} width={"100%"}>
@@ -206,28 +218,32 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
                 ? "Предсказания закрыты"
                 : "Закрыть предсказания"}
             </LoadingButton>
-            <LoadingButton
-              loading={isLoadingRaceResults}
-              disabled={isLoadingRaceResults}
-              color="success"
-              size="large"
-              variant="contained"
-              startIcon={<Download />}
-              onClick={loadRaceResults}
-            >
-              Загрузить результаты гонки
-            </LoadingButton>
-            <LoadingButton
-              loading={isSaving}
-              disabled={isSaving}
-              color="success"
-              size="large"
-              variant="contained"
-              startIcon={<Save />}
-              onClick={saveRaceResults}
-            >
-              Сохранить
-            </LoadingButton>
+            <Stack direction="row" spacing={1}>
+              <LoadingButton
+                loading={isSavingQualifying}
+                disabled={isSavingQualifying}
+                color="success"
+                size="large"
+                variant="contained"
+                startIcon={<Save />}
+                onClick={saveQualifyingResults}
+                sx={{ flex: 1 }}
+              >
+                Сохранить квалификацию
+              </LoadingButton>
+              <LoadingButton
+                loading={isSaving}
+                disabled={isSaving}
+                color="success"
+                size="large"
+                variant="contained"
+                startIcon={<Save />}
+                onClick={saveRaceResults}
+                sx={{ flex: 1 }}
+              >
+                Сохранить гонку
+              </LoadingButton>
+            </Stack>
             <LoadingButton
               loading={isFinishing}
               disabled={isFinishing}

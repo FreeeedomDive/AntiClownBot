@@ -51,6 +51,7 @@ public class F1RacesRepository(
                 x.SerializedConditions = storageElement.SerializedConditions;
                 x.SerializedPredictions = storageElement.SerializedPredictions;
                 x.SerializedResults = storageElement.SerializedResults;
+                x.SerializedQualifyingGrid = storageElement.SerializedQualifyingGrid;
             }
         );
     }
@@ -68,6 +69,7 @@ public class F1RacesRepository(
             SerializedConditions = race.Conditions is null ? null : jsonSerializer.Serialize(race.Conditions),
             SerializedPredictions = jsonSerializer.Serialize(race.Predictions),
             SerializedResults = jsonSerializer.Serialize(race.Result),
+            SerializedQualifyingGrid = race.QualifyingGrid is null ? null : jsonSerializer.Serialize(race.QualifyingGrid),
         };
     }
 
@@ -86,6 +88,9 @@ public class F1RacesRepository(
                 : jsonSerializer.Deserialize<PredictionConditions>(storageElement.SerializedConditions),
             Predictions = jsonSerializer.Deserialize<List<F1Prediction>>(storageElement.SerializedPredictions),
             Result = jsonSerializer.Deserialize<F1PredictionRaceResult>(storageElement.SerializedResults),
+            QualifyingGrid = string.IsNullOrEmpty(storageElement.SerializedQualifyingGrid)
+                ? null
+                : jsonSerializer.Deserialize<string[]>(storageElement.SerializedQualifyingGrid),
         };
     }
 }

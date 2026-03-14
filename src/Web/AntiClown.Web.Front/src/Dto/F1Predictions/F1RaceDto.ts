@@ -12,4 +12,5 @@ export interface F1RaceDto {
   conditions?: F1RacePredictionConditionsDto;
   predictions: F1PredictionDto[];
   result: F1PredictionRaceResultDto;
+  qualifyingGrid?: string[];
 }

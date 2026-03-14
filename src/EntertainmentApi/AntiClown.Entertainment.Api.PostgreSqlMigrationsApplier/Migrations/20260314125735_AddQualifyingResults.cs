@@ -1,0 +1,28 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddQualifyingResults : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<string>(
+                name: "SerializedQualifyingGrid",
+                table: "F1PredictionsRaces",
+                type: "text",
+                nullable: true);
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "SerializedQualifyingGrid",
+                table: "F1PredictionsRaces");
+        }
+    }
+}
