@@ -99,6 +99,22 @@ public class F1PredictionsController : Controller
         return NoContent();
     }
 
+    [HttpGet("{raceId:guid}/qualifyingGrid")]
+    public async Task<ActionResult<QualifyingGridDto>> GetQualifyingGrid([FromRoute] Guid raceId)
+    {
+        var grid = await f1PredictionsService.GetQualifyingGridAsync(raceId);
+        return grid is null
+            ? new QualifyingGridDto(false, [])
+            : new QualifyingGridDto(true, grid);
+    }
+
+    [HttpPost("{raceId:guid}/loadQualifyingGrid")]
+    public async Task<ActionResult> LoadQualifyingGrid([FromRoute] Guid raceId)
+    {
+        await f1PredictionsService.LoadQualifyingGridAsync(raceId);
+        return NoContent();
+    }
+
     private readonly IF1PredictionsService f1PredictionsService;
     private readonly IMapper mapper;
 }

@@ -16,5 +16,6 @@ public class F1RaceStorageElement : VersionedSqlStorageElement
     public string? SerializedConditions { get; set; }
     public string SerializedPredictions { get; set; }
     public string SerializedResults { get; set; }
+    public string? SerializedQualifyingGrid { get; set; }
     public DateTime CreatedAt { get; set; }
 }

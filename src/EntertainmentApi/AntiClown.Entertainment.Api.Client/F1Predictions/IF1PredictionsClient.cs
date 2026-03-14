@@ -16,4 +16,6 @@ public interface IF1PredictionsClient
     Task<Dictionary<System.Guid, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto?[]>> ReadStandingsAsync(int? season = null);
     Task<AntiClown.Entertainment.Api.Dto.F1Predictions.F1TeamDto[]> ReadTeamsAsync();
     Task CreateOrUpdateTeamAsync(AntiClown.Entertainment.Api.Dto.F1Predictions.F1TeamDto dto);
+    Task<AntiClown.Entertainment.Api.Dto.F1Predictions.QualifyingGridDto> GetQualifyingGridAsync(System.Guid raceId);
+    Task LoadQualifyingGridAsync(System.Guid raceId);
 }

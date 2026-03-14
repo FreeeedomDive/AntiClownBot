@@ -3,17 +3,12 @@ using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
 using AntiClown.Web.Api.Attributes;
 using AntiClown.Web.Api.Dto.F1Predictions;
-using AntiClown.Web.Api.ExternalClients.F1FastApi;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/f1Predictions"), RequireUserToken]
-public class F1PredictionsController(
-    IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
-    IF1FastApiClient f1FastApiClient,
-    ILogger<F1PredictionsController> logger
-) : Controller
+public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient) : Controller
 {
     [HttpPost("find")]
     public async Task<ActionResult<F1RaceDto[]>> Find([FromBody] F1RaceFilterDto filter)
@@ -27,28 +22,17 @@ public class F1PredictionsController(
         return await antiClownEntertainmentApiClient.F1Predictions.ReadAsync(raceId);
     }
 
-    [HttpGet("{raceId:guid}/raceResult")]
-    public async Task<ActionResult<F1RaceResultDto>> GetRaceResult([FromRoute] Guid raceId)
+    [HttpGet("{raceId:guid}/qualifyingGrid")]
+    public async Task<ActionResult<QualifyingGridDto>> GetQualifyingGrid([FromRoute] Guid raceId)
     {
-        try
-        {
-            var race = await antiClownEntertainmentApiClient.F1Predictions.ReadAsync(raceId);
-            var result = await f1FastApiClient.GetF1PredictionRaceResult(raceId, race.IsSprint);
-            return new F1RaceResultDto
-            {
-                Success = true,
-                Result = result,
-            };
-        }
-        catch (Exception e)
-        {
-            logger.LogWarning(e, "Exception when trying to get classifications from F1FastApi");
-            return new F1RaceResultDto
-            {
-                Success = false,
-                Result = null,
-            };
-        }
+        return await antiClownEntertainmentApiClient.F1Predictions.GetQualifyingGridAsync(raceId);
+    }
+
+    [HttpPost("{raceId:guid}/loadQualifyingGrid")]
+    public async Task<ActionResult> LoadQualifyingGrid([FromRoute] Guid raceId)
+    {
+        await antiClownEntertainmentApiClient.F1Predictions.LoadQualifyingGridAsync(raceId);
+        return NoContent();
     }
 
     [HttpPost("{raceId:guid}/addPrediction")]
