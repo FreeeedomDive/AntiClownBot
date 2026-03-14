@@ -86,15 +86,10 @@ public class F1PredictionsClient : IF1PredictionsClient
         await client.MakeRequestAsync(requestBuilder.Build());
     }
 
-    public async Task<AntiClown.Entertainment.Api.Dto.F1Predictions.QualifyingGridDto> GetQualifyingGridAsync(System.Guid raceId)
+    public async Task SaveQualifyingGridAsync(System.Guid raceId, string[] grid)
     {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/{raceId}/qualifyingGrid", HttpRequestMethod.GET);
-        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.QualifyingGridDto>(requestBuilder.Build());
-    }
-
-    public async Task LoadQualifyingGridAsync(System.Guid raceId)
-    {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/{raceId}/loadQualifyingGrid", HttpRequestMethod.POST);
+        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/{raceId}/saveQualifyingGrid", HttpRequestMethod.POST);
+        requestBuilder.WithJsonBody(grid);
         await client.MakeRequestAsync(requestBuilder.Build());
     }
 

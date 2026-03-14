@@ -1,4 +1,5 @@
-﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+﻿using AntiClown.Core.Schedules;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
@@ -9,6 +10,7 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Services.EventsProducing;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 using AntiClown.Tools.Utility.Extensions;
+using Hangfire;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 
@@ -18,7 +20,8 @@ public class F1PredictionsService(
     IF1PredictionsMessageProducer f1PredictionsMessageProducer,
     IF1PredictionTeamsRepository f1PredictionTeamsRepository,
     IF1PredictionsResultBuilder f1PredictionsResultBuilder,
-    IJolpicaClient jolpicaClient
+    IJolpicaClient jolpicaClient,
+    IScheduler scheduler
 ) : IF1PredictionsService
 {
     public async Task<F1Race> ReadAsync(Guid raceId)
@@ -71,6 +74,13 @@ public class F1PredictionsService(
         };
         await f1RacesRepository.CreateAsync(newRace);
         await f1PredictionsMessageProducer.ProducePredictionStartedAsync(raceId);
+
+        scheduler.Schedule(
+            () => BackgroundJob.Schedule(
+                () => PollQualifyingGridAsync(raceId),
+                TimeSpan.Zero
+            )
+        );
 
         return raceId;
     }
@@ -175,28 +185,37 @@ public class F1PredictionsService(
         await f1PredictionTeamsRepository.CreateOrUpdateAsync(team);
     }
 
-    public async Task<string[]?> GetQualifyingGridAsync(Guid raceId)
+    public async Task SaveQualifyingGridAsync(Guid raceId, string[] grid)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
-        return race.QualifyingGrid;
+        race.QualifyingGrid = grid;
+        await f1RacesRepository.UpdateAsync(race);
     }
 
-    public async Task LoadQualifyingGridAsync(Guid raceId)
+    [AutomaticRetry(Attempts = 0)]
+    public async Task PollQualifyingGridAsync(Guid raceId)
+    {
+        var found = await TryLoadQualifyingGridAsync(raceId);
+        if (!found)
+        {
+            scheduler.Schedule(
+                () => BackgroundJob.Schedule(
+                    () => PollQualifyingGridAsync(raceId),
+                    TimeSpan.FromMinutes(30)
+                )
+            );
+        }
+    }
+
+    private async Task<bool> TryLoadQualifyingGridAsync(Guid raceId)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
-        var allRacesInSeason = await f1RacesRepository.FindAsync(new F1RaceFilter { Season = race.Season });
-        var nonSprintRaces = allRacesInSeason.Where(x => !x.IsSprint).ToArray();
-        var raceIndex = Array.FindIndex(nonSprintRaces, x => x.Id == raceId) + 1;
-
-        if (raceIndex == 0)
-        {
-            return;
-        }
+        var raceIndex = (await f1RacesRepository.FindAsync(new F1RaceFilter { Season = race.Season })).Count(x => !x.IsSprint);
 
         var qualifyingNames = await jolpicaClient.GetQualifyingDriverNamesAsync(race.Season, raceIndex);
         if (qualifyingNames is null || qualifyingNames.Length == 0)
         {
-            return;
+            return false;
         }
 
         var allDrivers = (await f1PredictionTeamsRepository.ReadAllAsync())
@@ -207,5 +226,6 @@ public class F1PredictionsService(
 
         race.QualifyingGrid = qualifyingNames.Concat(backOfGridDrivers).ToArray();
         await f1RacesRepository.UpdateAsync(race);
+        return true;
     }
 }

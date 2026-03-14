@@ -18,6 +18,6 @@ public interface IF1PredictionsService
     Task<Dictionary<Guid, F1PredictionResult?[]>> ReadStandingsAsync(int? season = null);
     Task<F1Team[]> GetActiveTeamsAsync();
     Task CreateOrUpdateTeamAsync(F1Team team);
-    Task<string[]?> GetQualifyingGridAsync(Guid raceId);
-    Task LoadQualifyingGridAsync(Guid raceId);
+    Task SaveQualifyingGridAsync(Guid raceId, string[] grid);
+    Task PollQualifyingGridAsync(Guid raceId);
 }

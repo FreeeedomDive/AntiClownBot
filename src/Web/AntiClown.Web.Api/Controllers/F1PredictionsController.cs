@@ -22,16 +22,10 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
         return await antiClownEntertainmentApiClient.F1Predictions.ReadAsync(raceId);
     }
 
-    [HttpGet("{raceId:guid}/qualifyingGrid")]
-    public async Task<ActionResult<QualifyingGridDto>> GetQualifyingGrid([FromRoute] Guid raceId)
+    [HttpPost("{raceId:guid}/saveQualifyingGrid")]
+    public async Task<ActionResult> SaveQualifyingGrid([FromRoute] Guid raceId, [FromBody] string[] grid)
     {
-        return await antiClownEntertainmentApiClient.F1Predictions.GetQualifyingGridAsync(raceId);
-    }
-
-    [HttpPost("{raceId:guid}/loadQualifyingGrid")]
-    public async Task<ActionResult> LoadQualifyingGrid([FromRoute] Guid raceId)
-    {
-        await antiClownEntertainmentApiClient.F1Predictions.LoadQualifyingGridAsync(raceId);
+        await antiClownEntertainmentApiClient.F1Predictions.SaveQualifyingGridAsync(raceId, grid);
         return NoContent();
     }
 
