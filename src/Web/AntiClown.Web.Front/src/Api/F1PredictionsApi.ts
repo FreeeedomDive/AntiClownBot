@@ -81,6 +81,13 @@ export default class F1PredictionsApi {
     return result.data;
   };
 
+  static saveQualifyingGrid = async (
+    raceId: string,
+    grid: string[],
+  ): Promise<void> => {
+    await F1PredictionsApi.init().post(`${raceId}/saveQualifyingGrid`, grid);
+  };
+
   static createOrUpdateTeam = async (
     teamName: string,
     firstDriver: string,

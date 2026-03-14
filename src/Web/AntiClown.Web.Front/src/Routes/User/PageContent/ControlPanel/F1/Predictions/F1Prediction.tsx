@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, Fab, Grid, Snackbar, Stack } from "@mui/material";
+import { Alert, Fab, Grid, Skeleton, Snackbar, Stack, Typography } from "@mui/material";
 import {
   F1SafetyCarPredictionDto,
   F1SafetyCarsPredictionObject,
@@ -18,6 +18,7 @@ import F1PredictionsIncidentsSelect from "./Selections/F1PredictionsIncidentsSel
 import F1PredictionsFirstPlaceLeadSelect from "./Selections/F1PredictionsFirstPlaceLeadSelect";
 import F1PredictionGridColumn from "./F1PredictionGridColumn";
 import F1PredictionsDriverPositionSelect from "./Selections/F1PredictionsDriverPositionSelect";
+import F1QualifyingGridView from "./F1QualifyingGridView";
 
 const fabStyle = {
   position: "absolute",
@@ -141,6 +142,24 @@ export default function F1Prediction({ f1Race }: Props) {
         spacing={1}
         sx={{ width: "100%", height: "100%", margin: "auto" }}
       >
+        <F1PredictionGridColumn index={0}>
+          {currentF1Race.qualifyingGrid && currentF1Race.qualifyingGrid.length > 0 ? (
+            <F1QualifyingGridView grid={currentF1Race.qualifyingGrid} teams={teams} />
+          ) : (
+            <Stack direction="column" spacing={1} sx={{ opacity: 0.4, mt: 1 }}>
+              <Typography variant="h6" align="center">
+                Стартовая решётка
+              </Typography>
+              <Typography variant="body2" color="text.secondary" align="center">
+                Результаты квалификации появятся здесь
+              </Typography>
+              {Array.from({ length: 22 }).map((_, i) => (
+                <Skeleton key={i} variant="rectangular" height={24} sx={{ borderRadius: 1 }} />
+              ))}
+            </Stack>
+          )}
+        </F1PredictionGridColumn>
+
         <F1PredictionGridColumn index={1}>
           <F1PredictionsTenthPlaceSelect
             selected10Position={selected10Position}
