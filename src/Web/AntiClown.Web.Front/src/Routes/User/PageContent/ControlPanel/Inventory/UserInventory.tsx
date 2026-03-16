@@ -14,9 +14,9 @@ import {
   InventoryDto,
   ItemName,
   Rarity,
-} from "../../../../Dto/Inventory/InventoryDto";
-import InventoryApi from "../../../../Api/InventoryApi";
-import ItemCard from "./Inventory/ItemCard";
+} from "../../../../../Dto/Inventory/InventoryDto";
+import InventoryApi from "../../../../../Api/InventoryApi";
+import ItemCard from "./ItemCard";
 
 const itemNameLabels: Record<ItemName, string> = {
   CatWife: "Кошка-жена",
