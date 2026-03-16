@@ -172,7 +172,7 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
       alignItems={"center"}
       justifyContent={"space-between"}
     >
-      <Accordion defaultExpanded>
+      <Accordion defaultExpanded sx={{ width: "100%" }}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">Стартовая решётка</Typography>
         </AccordionSummary>
