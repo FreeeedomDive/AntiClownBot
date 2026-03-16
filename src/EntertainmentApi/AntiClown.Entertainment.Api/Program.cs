@@ -131,6 +131,7 @@ builder.Services.AddTransientWithProxy<IActiveDailyEventsIndexService, ActiveDai
 builder.Services.AddTransientWithProxy<IPartiesService, PartiesService>();
 builder.Services.AddTransientWithProxy<IF1PredictionsMessageProducer, F1PredictionsMessageProducer>();
 builder.Services.AddTransientWithProxy<IF1PredictionsResultBuilder, F1PredictionsResultBuilder>();
+builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
 builder.Services.AddTransient<IJolpicaClient, JolpicaClient>();
 builder.Services.AddTransientWithProxy<IF1PredictionsService, F1PredictionsService>();
 builder.Services.AddTransientWithProxy<IF1PredictionsStatisticsService, F1PredictionsStatisticsService>();

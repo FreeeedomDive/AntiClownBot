@@ -22,5 +22,7 @@ public class EntertainmentApiIntegrationTestsWebApplicationFactory
     {
         services.RemoveAll<IJolpicaClient>();
         services.AddSingleton(_ => Substitute.For<IJolpicaClient>());
+        services.RemoveAll<TimeProvider>();
+        services.AddSingleton(_ => Substitute.For<TimeProvider>());
     }
 }

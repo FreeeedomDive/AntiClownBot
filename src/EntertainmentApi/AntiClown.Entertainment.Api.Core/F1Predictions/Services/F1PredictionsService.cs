@@ -21,7 +21,8 @@ public class F1PredictionsService(
     IF1PredictionTeamsRepository f1PredictionTeamsRepository,
     IF1PredictionsResultBuilder f1PredictionsResultBuilder,
     IJolpicaClient jolpicaClient,
-    IScheduler scheduler
+    IScheduler scheduler,
+    TimeProvider timeProvider
 ) : IF1PredictionsService
 {
     public async Task<F1Race> ReadAsync(Guid raceId)
@@ -53,7 +54,7 @@ public class F1PredictionsService(
         var newRace = new F1Race
         {
             Id = raceId,
-            Season = DateTime.UtcNow.Year,
+            Season = timeProvider.GetUtcNow().Year,
             Name = name,
             IsSprint = isSprint,
             IsActive = true,
@@ -146,7 +147,7 @@ public class F1PredictionsService(
         var finishedRacesOfThisSeason = await f1RacesRepository.FindAsync(
             new F1RaceFilter
             {
-                Season = season ?? DateTime.UtcNow.Year,
+                Season = season ?? timeProvider.GetUtcNow().Year,
                 IsActive = false,
             }
         );

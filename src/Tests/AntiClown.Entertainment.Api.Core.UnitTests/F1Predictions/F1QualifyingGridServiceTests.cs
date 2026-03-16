@@ -26,6 +26,7 @@ public class F1QualifyingGridServiceTests
         resultBuilder = Substitute.For<IF1PredictionsResultBuilder>();
         jolpicaClient = Substitute.For<IJolpicaClient>();
         scheduler = Substitute.For<IScheduler>();
+        timeProvider = Substitute.For<TimeProvider>();
 
         service = new F1PredictionsService(
             racesRepository,
@@ -34,7 +35,8 @@ public class F1QualifyingGridServiceTests
             teamsRepository,
             resultBuilder,
             jolpicaClient,
-            scheduler
+            scheduler,
+            timeProvider
         );
 
         testRaceId = Guid.NewGuid();
@@ -55,6 +57,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task SaveQualifyingGridAsync_Should_PersistProvidedGrid()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var grid = new[] { "DriverB1", "DriverA1", "DriverA2", "DriverB2" };
 
         await service.SaveQualifyingGridAsync(testRaceId, grid);
@@ -70,6 +73,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task SaveQualifyingGridAsync_Should_OverwriteExistingGrid()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2021, 1, 1, 0, 0, 0, TimeSpan.Zero));
         testRace.QualifyingGrid = ["DriverA1", "DriverA2"];
         var newGrid = new[] { "DriverB1", "DriverB2" };
 
@@ -86,6 +90,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task PollQualifyingGridAsync_Should_ScheduleRepoll_WhenJolpicaReturnsNull()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2022, 1, 1, 0, 0, 0, TimeSpan.Zero));
         jolpicaClient
             .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
             .Returns(Task.FromResult<string[]?>(null));
@@ -98,6 +103,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task PollQualifyingGridAsync_Should_ScheduleRepoll_WhenJolpicaReturnsEmpty()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero));
         jolpicaClient
             .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
             .Returns(Task.FromResult<string[]?>([]));
@@ -110,6 +116,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task PollQualifyingGridAsync_Should_NotScheduleRepoll_WhenJolpicaReturnsData()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         jolpicaClient
             .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
             .Returns(Task.FromResult<string[]?>(["DriverA1", "DriverA2", "DriverB1", "DriverB2"]));
@@ -122,6 +129,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task PollQualifyingGridAsync_Should_NotCallUpdate_WhenJolpicaReturnsNull()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
         jolpicaClient
             .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
             .Returns(Task.FromResult<string[]?>(null));
@@ -134,6 +142,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task PollQualifyingGridAsync_Should_SaveJolpicaDriversInOrder_WhenAllDriversPresent()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var jolpicaOrder = new[] { "DriverB2", "DriverA1", "DriverA2", "DriverB1" };
         jolpicaClient
             .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
@@ -152,6 +161,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task PollQualifyingGridAsync_Should_AppendMissingDrivers_WhenJolpicaGridIsPartial()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2027, 1, 1, 0, 0, 0, TimeSpan.Zero));
         jolpicaClient
             .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
             .Returns(Task.FromResult<string[]?>(["DriverA1", "DriverB1"]));
@@ -173,6 +183,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task PollQualifyingGridAsync_Should_UseRoundIndex_1_WhenOnlyOneNonSprintRaceInSeason()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2028, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var capturedIndex = -1;
         jolpicaClient
             .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
@@ -191,6 +202,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task PollQualifyingGridAsync_Should_ExcludeSprintRaces_InRoundIndexCalculation()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2029, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var nonSprintFirst = CreateRace(Guid.NewGuid(), isSprint: false);
         var sprintRace = CreateRace(Guid.NewGuid(), isSprint: true);
 
@@ -216,6 +228,7 @@ public class F1QualifyingGridServiceTests
     [Test]
     public async Task PollQualifyingGridAsync_Should_CallJolpicaWithRaceSeason()
     {
+        timeProvider.GetUtcNow().Returns(new DateTimeOffset(2030, 1, 1, 0, 0, 0, TimeSpan.Zero));
         var capturedSeason = -1;
         jolpicaClient
             .GetQualifyingDriverNamesAsync(Arg.Is<int>(_ => true), Arg.Any<int>())
@@ -262,6 +275,7 @@ public class F1QualifyingGridServiceTests
     private IScheduler scheduler = null!;
     private IF1PredictionsService service = null!;
     private IF1PredictionTeamsRepository teamsRepository = null!;
+    private TimeProvider timeProvider = null!;
     private F1Race testRace = null!;
     private Guid testRaceId;
 }
