@@ -11,6 +11,7 @@ public class F1RaceDto
     public F1RacePredictionConditionsDto Conditions { get; set; }
     public List<F1PredictionDto> Predictions { get; set; }
     public F1PredictionRaceResultDto Result { get; set; }
+    public string[]? QualifyingGrid { get; set; }
 
     public string FullName() => $"{Name}{(IsSprint ? " (спринт)" : string.Empty)}";
 }

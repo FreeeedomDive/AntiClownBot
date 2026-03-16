@@ -1,7 +1,10 @@
 using AntiClown.Entertainment.Api.Core.Database;
+using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
 using AntiClown.Tests.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using NSubstitute;
 
 namespace AntiClown.Entertainment.Api.Core.IntegrationTests;
 
@@ -17,5 +20,9 @@ public class EntertainmentApiIntegrationTestsWebApplicationFactory
 
     protected override void ConfigureTestServices(IServiceCollection services)
     {
+        services.RemoveAll<IJolpicaClient>();
+        services.AddSingleton(_ => Substitute.For<IJolpicaClient>());
+        services.RemoveAll<TimeProvider>();
+        services.AddSingleton(_ => Substitute.For<TimeProvider>());
     }
 }

@@ -3,6 +3,7 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 using FluentAssertions;
+using NSubstitute;
 
 namespace AntiClown.Entertainment.Api.Core.IntegrationTests.F1Predictions;
 
@@ -45,6 +46,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task StartNewRaceAsync_Should_CreateActiveOpenedRace()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2040, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Monaco GP", false);
 
         var race = await F1PredictionsService.ReadAsync(raceId);
@@ -54,12 +56,13 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
         race.IsActive.Should().BeTrue();
         race.IsOpened.Should().BeTrue();
         race.IsSprint.Should().BeFalse();
-        race.Season.Should().Be(DateTime.UtcNow.Year);
+        race.Season.Should().Be(2040);
     }
 
     [Test]
     public async Task StartNewRaceAsync_Should_CreateSprintRace()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2041, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Monaco Sprint", true);
 
         var race = await F1PredictionsService.ReadAsync(raceId);
@@ -70,6 +73,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task StartNewRaceAsync_Should_AssignPositionPredictionDriver()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2042, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("British GP", false);
 
         var race = await F1PredictionsService.ReadAsync(raceId);
@@ -80,6 +84,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task ReadActiveAsync_Should_ContainNewlyCreatedRace()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2043, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Active Race", false);
 
         var activeRaces = await F1PredictionsService.ReadActiveAsync();
@@ -90,12 +95,13 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task FindAsync_Should_FilterBySeason()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2044, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Singapore GP", false);
 
         var found = await F1PredictionsService.FindAsync(
             new F1RaceFilter
             {
-                Season = DateTime.UtcNow.Year,
+                Season = 2044,
                 IsActive = true,
             }
         );
@@ -106,6 +112,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task AddPredictionAsync_Should_AddPrediction()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2045, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Italian GP", false);
         var userId = Guid.NewGuid();
 
@@ -118,6 +125,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task AddPredictionAsync_Should_UpdateExistingPredictionForSameUser()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2046, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("German GP", false);
         var userId = Guid.NewGuid();
 
@@ -131,6 +139,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task AddPredictionAsync_Should_Throw_WhenPredictionsAreClosed()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2047, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Closed Race", false);
         await F1PredictionsService.ClosePredictionsAsync(raceId);
 
@@ -142,6 +151,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task ClosePredictionsAsync_Should_CloseRaceForPredictions_ButKeepItActive()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2048, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Japanese GP", false);
 
         await F1PredictionsService.ClosePredictionsAsync(raceId);
@@ -154,6 +164,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task AddRaceResultAsync_Should_PersistResult()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2049, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Austrian GP", false);
         var raceResult = new F1PredictionRaceResult
         {
@@ -175,6 +186,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task FinishRaceAsync_Should_MarkRaceAsInactive()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2050, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Dutch GP", false);
         var race = await F1PredictionsService.ReadAsync(raceId);
         await SetupRaceForFinish(raceId, race.Conditions!.PositionPredictionDriver);
@@ -189,6 +201,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task FinishRaceAsync_Should_PersistPredictionResults()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2051, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Abu Dhabi GP", false);
         var race = await F1PredictionsService.ReadAsync(raceId);
         var userId = await SetupRaceForFinish(raceId, race.Conditions!.PositionPredictionDriver);
@@ -204,6 +217,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task FinishRaceAsync_Should_ReturnEmptyResults_WhenNoPredictions()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2052, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Empty Race GP", false);
         await F1PredictionsService.AddRaceResultAsync(
             raceId, new F1PredictionRaceResult
@@ -224,6 +238,7 @@ public class F1PredictionsServiceTests : IntegrationTestsBase
     [Test]
     public async Task ReadActiveAsync_Should_NotContainFinishedRace()
     {
+        TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2053, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Finished Race GP", false);
         var race = await F1PredictionsService.ReadAsync(raceId);
         await SetupRaceForFinish(raceId, race.Conditions!.PositionPredictionDriver);

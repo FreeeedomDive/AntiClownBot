@@ -1,6 +1,8 @@
-﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+﻿using AntiClown.Core.Schedules;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
+using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
@@ -8,6 +10,7 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Services.EventsProducing;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 using AntiClown.Tools.Utility.Extensions;
+using Hangfire;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 
@@ -16,7 +19,10 @@ public class F1PredictionsService(
     IF1PredictionResultsRepository f1PredictionResultsRepository,
     IF1PredictionsMessageProducer f1PredictionsMessageProducer,
     IF1PredictionTeamsRepository f1PredictionTeamsRepository,
-    IF1PredictionsResultBuilder f1PredictionsResultBuilder
+    IF1PredictionsResultBuilder f1PredictionsResultBuilder,
+    IJolpicaClient jolpicaClient,
+    IScheduler scheduler,
+    TimeProvider timeProvider
 ) : IF1PredictionsService
 {
     public async Task<F1Race> ReadAsync(Guid raceId)
@@ -48,7 +54,7 @@ public class F1PredictionsService(
         var newRace = new F1Race
         {
             Id = raceId,
-            Season = DateTime.UtcNow.Year,
+            Season = timeProvider.GetUtcNow().Year,
             Name = name,
             IsSprint = isSprint,
             IsActive = true,
@@ -69,6 +75,13 @@ public class F1PredictionsService(
         };
         await f1RacesRepository.CreateAsync(newRace);
         await f1PredictionsMessageProducer.ProducePredictionStartedAsync(raceId);
+
+        scheduler.Schedule(
+            () => BackgroundJob.Schedule(
+                () => PollQualifyingGridAsync(raceId),
+                TimeSpan.Zero
+            )
+        );
 
         return raceId;
     }
@@ -134,7 +147,7 @@ public class F1PredictionsService(
         var finishedRacesOfThisSeason = await f1RacesRepository.FindAsync(
             new F1RaceFilter
             {
-                Season = season ?? DateTime.UtcNow.Year,
+                Season = season ?? timeProvider.GetUtcNow().Year,
                 IsActive = false,
             }
         );
@@ -171,5 +184,49 @@ public class F1PredictionsService(
     public async Task CreateOrUpdateTeamAsync(F1Team team)
     {
         await f1PredictionTeamsRepository.CreateOrUpdateAsync(team);
+    }
+
+    public async Task SaveQualifyingGridAsync(Guid raceId, string[] grid)
+    {
+        var race = await f1RacesRepository.ReadAsync(raceId);
+        race.QualifyingGrid = grid;
+        await f1RacesRepository.UpdateAsync(race);
+    }
+
+    [AutomaticRetry(Attempts = 0)]
+    public async Task PollQualifyingGridAsync(Guid raceId)
+    {
+        var found = await TryLoadQualifyingGridAsync(raceId);
+        if (!found)
+        {
+            scheduler.Schedule(
+                () => BackgroundJob.Schedule(
+                    () => PollQualifyingGridAsync(raceId),
+                    TimeSpan.FromMinutes(30)
+                )
+            );
+        }
+    }
+
+    private async Task<bool> TryLoadQualifyingGridAsync(Guid raceId)
+    {
+        var race = await f1RacesRepository.ReadAsync(raceId);
+        var raceIndex = (await f1RacesRepository.FindAsync(new F1RaceFilter { Season = race.Season })).Count(x => !x.IsSprint);
+
+        var qualifyingNames = await jolpicaClient.GetQualifyingDriverNamesAsync(race.Season, raceIndex);
+        if (qualifyingNames is null || qualifyingNames.Length == 0)
+        {
+            return false;
+        }
+
+        var allDrivers = (await f1PredictionTeamsRepository.ReadAllAsync())
+                         .SelectMany(t => new[] { t.FirstDriver, t.SecondDriver })
+                         .ToArray();
+        var qualifyingSet = qualifyingNames.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var backOfGridDrivers = allDrivers.Where(d => !qualifyingSet.Contains(d)).ToArray();
+
+        race.QualifyingGrid = qualifyingNames.Concat(backOfGridDrivers).ToArray();
+        await f1RacesRepository.UpdateAsync(race);
+        return true;
     }
 }

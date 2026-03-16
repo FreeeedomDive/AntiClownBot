@@ -1,5 +1,17 @@
 import { F1RaceDto } from "../../Dto/F1Predictions/F1RaceDto";
-import { Alert, Button, ButtonGroup, Snackbar, Stack } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Alert,
+  Button,
+  ButtonGroup,
+  Skeleton,
+  Snackbar,
+  Stack,
+  Typography,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   F1SafetyCarPredictionDto,
@@ -16,6 +28,7 @@ import F1PredictionsDnfSelect, {
 import F1PredictionsIncidentsSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsIncidentsSelect";
 import F1PredictionsFirstPlaceLeadSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsFirstPlaceLeadSelect";
 import F1PredictionsDriverPositionSelect from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/Selections/F1PredictionsDriverPositionSelect";
+import F1QualifyingGridView from "../../Routes/User/PageContent/ControlPanel/F1/Predictions/F1QualifyingGridView";
 
 interface Props {
   f1Race: F1RaceDto;
@@ -159,6 +172,30 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
       alignItems={"center"}
       justifyContent={"space-between"}
     >
+      <Accordion defaultExpanded sx={{ width: "100%" }}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6">Стартовая решётка</Typography>
+        </AccordionSummary>
+        <AccordionDetails sx={{ p: 0 }}>
+          {currentF1Race.qualifyingGrid && currentF1Race.qualifyingGrid.length > 0 ? (
+            <F1QualifyingGridView
+              grid={currentF1Race.qualifyingGrid}
+              teams={teams}
+              showTitle={false}
+            />
+          ) : (
+            <Stack spacing={0.5} sx={{ px: 2, pb: 1, opacity: 0.4 }}>
+              <Typography variant="body2" color="text.secondary" align="center">
+                Результаты квалификации появятся здесь
+              </Typography>
+              {Array.from({ length: 22 }).map((_, i) => (
+                <Skeleton key={i} variant="rectangular" height={22} sx={{ borderRadius: 1 }} />
+              ))}
+            </Stack>
+          )}
+        </AccordionDetails>
+      </Accordion>
+
       {!currentF1Race.isOpened && (
         <Alert severity="warning">Предсказания закрыты</Alert>
       )}

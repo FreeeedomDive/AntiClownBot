@@ -14,4 +14,5 @@ public class F1Race
     public List<F1Prediction> Predictions { get; set; }
     public PredictionConditions? Conditions { get; set; }
     public F1PredictionRaceResult Result { get; set; }
+    public string[]? QualifyingGrid { get; set; }
 }

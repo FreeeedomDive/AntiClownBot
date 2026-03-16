@@ -15,6 +15,7 @@ interface Props {
   dnfDrivers: Set<string>;
   setDnfDrivers: (x: Set<string>) => void;
   teams: F1TeamDto[];
+  showDnf?: boolean;
 }
 
 export default function F1RaceClassifications({
@@ -23,6 +24,7 @@ export default function F1RaceClassifications({
   dnfDrivers,
   setDnfDrivers,
   teams,
+  showDnf = true,
 }: Props) {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -66,6 +68,7 @@ export default function F1RaceClassifications({
                             handleToggleDnf(driver, checked)
                           }
                           teams={teams}
+                          showDnf={showDnf}
                         />
                       )}
                     </Draggable>
