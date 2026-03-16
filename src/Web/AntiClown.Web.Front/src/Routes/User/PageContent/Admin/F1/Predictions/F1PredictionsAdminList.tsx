@@ -26,7 +26,7 @@ export default function F1PredictionsAdminList() {
     });
 
     setF1Races(result);
-    setCurrentF1Race(result[0]);
+    setCurrentF1Race(onlyActive ? result[0] : result.at(-1));
   }
 
   useEffect(() => {
