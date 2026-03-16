@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
-import { RightsWrapper } from "../../../../../../Components/RIghts/RightsWrapper";
+import { RightsWrapper } from "../../../../../../Components/Rights/RightsWrapper";
 import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
 import {
   Checkbox,
@@ -26,7 +26,7 @@ export default function F1PredictionsAdminList() {
     });
 
     setF1Races(result);
-    setCurrentF1Race(result[0]);
+    setCurrentF1Race(onlyActive ? result[0] : result.at(-1));
   }
 
   useEffect(() => {

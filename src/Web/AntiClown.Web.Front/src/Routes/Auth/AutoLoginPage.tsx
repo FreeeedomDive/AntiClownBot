@@ -27,7 +27,7 @@ export default function AutoLoginPage() {
         navigate("/auth");
       }
     });
-  }, []);
+  }, [searchParams, authStore, navigate]);
 
   return (
     <Box

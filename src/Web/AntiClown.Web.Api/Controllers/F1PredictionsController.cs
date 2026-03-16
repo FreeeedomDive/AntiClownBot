@@ -17,9 +17,14 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
     }
 
     [HttpGet("{raceId:guid}")]
-    public async Task<ActionResult<F1RaceDto>> Read([FromRoute] Guid raceId)
+    public async Task<ActionResult<F1RaceDto>> Read([FromRoute] Guid raceId, [FromQuery] Guid? userId = null)
     {
-        return await antiClownEntertainmentApiClient.F1Predictions.ReadAsync(raceId);
+        var race = await antiClownEntertainmentApiClient.F1Predictions.ReadAsync(raceId);
+        if (userId.HasValue)
+        {
+            race.Predictions = race.Predictions.Where(p => p.UserId == userId.Value).ToList();
+        }
+        return race;
     }
 
     [HttpPost("{raceId:guid}/saveQualifyingGrid")]

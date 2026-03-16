@@ -38,7 +38,7 @@ export default function F1Prediction({ f1Race }: Props) {
   useEffect(() => {
     async function load() {
       const [result, teams] = await Promise.all([
-        F1PredictionsApi.read(f1Race.id),
+        F1PredictionsApi.read(f1Race.id, userId),
         F1PredictionsApi.getActiveTeams(),
       ]);
       setCurrentF1Race(result);
@@ -54,27 +54,24 @@ export default function F1Prediction({ f1Race }: Props) {
     );
   }, [currentF1Race, userId]);
 
-  const [selected10Position, setSelected10Position] = useState<string>(
-    userPrediction?.tenthPlacePickedDriver ?? teams[0]?.firstDriver,
-  );
+  const [selected10Position, setSelected10Position] = useState<string>("");
+  const [isDNFNobody, setIsDNFNobody] = useState<boolean>(false);
+  const [dnfList, setDnfList] = useState<DNFList>(["", "", "", "", ""] as unknown as DNFList);
 
-  const [isDNFNobody, setIsDNFNobody] = useState<boolean>(() => {
-    return userPrediction?.dnfPrediction?.noDnfPredicted ?? false;
-  });
-
-  const [dnfList, setDnfList] = useState<DNFList>(() => {
+  useEffect(() => {
+    if (teams.length === 0) return;
+    const firstDriver = teams[0].firstDriver;
+    setSelected10Position(
+      userPrediction?.tenthPlacePickedDriver ?? firstDriver,
+    );
+    setIsDNFNobody(userPrediction?.dnfPrediction?.noDnfPredicted ?? false);
     if (userPrediction?.dnfPrediction.dnfPickedDrivers?.length === 5) {
-      return userPrediction.dnfPrediction.dnfPickedDrivers as DNFList;
+      setDnfList(userPrediction.dnfPrediction.dnfPickedDrivers as DNFList);
+    } else {
+      setDnfList([firstDriver, firstDriver, firstDriver, firstDriver, firstDriver]);
     }
+  }, [teams, userPrediction]);
 
-    return [
-      teams[0]?.firstDriver,
-      teams[0]?.firstDriver,
-      teams[0]?.firstDriver,
-      teams[0]?.firstDriver,
-      teams[0]?.firstDriver,
-    ];
-  });
   const [selectedSafetyCarPrediction, setSafetyCarPrediction] =
     useState<F1SafetyCarPredictionDto>(
       userPrediction?.safetyCarsPrediction ?? F1SafetyCarsPredictionObject.Zero,

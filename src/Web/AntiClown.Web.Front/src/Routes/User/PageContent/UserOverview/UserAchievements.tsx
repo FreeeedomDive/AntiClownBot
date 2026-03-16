@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { UserAchievementWithDetailsDto } from "../../../../Dto/Achievements/UserAchievementWithDetailsDto";
-import { Skeleton } from "@mui/material";
-import { Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Skeleton, Stack, Tooltip, Typography } from "@mui/material";
 import AchievementsApi from "../../../../Api/AchievementsApi";
 import { formatDate } from "../../../../Helpers/DateHelpers";
 
@@ -28,7 +27,7 @@ export default function UserAchievements({userId}: Props) {
   }, [userId]);
 
   return (
-    <Stack direction={"row"} spacing="8px">
+    <Stack direction={"row"} spacing={1} flexWrap="wrap">
       {loading && (
         <>
           <Skeleton variant="rounded" sx={{ width: SIZE, height: SIZE }} />
@@ -51,15 +50,16 @@ export default function UserAchievements({userId}: Props) {
             }
             arrow
           >
-            <img
+            <Box
+              component="img"
               src={`data:image/png;base64,${achievement.logo}`}
               alt={achievement.name}
-              style={{
+              sx={{
                 width: SIZE,
                 height: SIZE,
                 objectFit: "contain",
                 cursor: "pointer",
-                borderRadius: 4,
+                borderRadius: "4px",
               }}
             />
           </Tooltip>

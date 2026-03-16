@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
-import { RightsWrapper } from "../../../../../../Components/RIghts/RightsWrapper";
+import { RightsWrapper } from "../../../../../../Components/Rights/RightsWrapper";
 import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
 import {
   Checkbox,
@@ -26,7 +26,7 @@ export default function F1PredictionsList() {
     });
 
     setF1Races(result);
-    setCurrentF1Race(result[0]);
+    setCurrentF1Race(onlyActive ? result[0] : result.at(-1));
   }
 
   useEffect(() => {
@@ -42,15 +42,13 @@ export default function F1PredictionsList() {
               <Select
                 labelId="race-select"
                 id="race-select"
-                value={currentF1Race}
-                key={currentF1Race?.id ?? ""}
-                onChange={(selectedRace) => {
-                  setCurrentF1Race(selectedRace.target.value as F1RaceDto);
+                value={currentF1Race?.id ?? ""}
+                onChange={(e) => {
+                  setCurrentF1Race(f1Races.find((r) => r.id === e.target.value));
                 }}
               >
                 {f1Races.map((race) => (
-                  //@ts-ignore - necessary to load object into value
-                  <MenuItem key={race.id} value={race}>
+                  <MenuItem key={race.id} value={race.id}>
                     {race.name} {race.season}
                     {race.isSprint ? " (спринт)" : ""}
                   </MenuItem>
@@ -63,11 +61,7 @@ export default function F1PredictionsList() {
                 <Checkbox
                   size="small"
                   checked={isActive}
-                  onChange={(x) => {
-                    const onlyActive = x.target.checked;
-                    setIsActive(onlyActive);
-                    loadRaces(onlyActive).catch(console.error);
-                  }}
+                  onChange={(x) => setIsActive(x.target.checked)}
                 />
               }
               label={"Только текущие гонки"}

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Save } from "@mui/icons-material";
-import { RightsWrapper } from "../../../../../../Components/RIghts/RightsWrapper";
+import { RightsWrapper } from "../../../../../../Components/Rights/RightsWrapper";
 import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1ChampionshipPredictionsApi from "../../../../../../Api/F1ChampionshipPredictionsApi";
