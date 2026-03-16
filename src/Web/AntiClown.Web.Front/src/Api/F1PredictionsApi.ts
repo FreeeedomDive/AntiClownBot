@@ -31,8 +31,10 @@ export default class F1PredictionsApi {
     return result.data;
   };
 
-  static read = async (raceId: string): Promise<F1RaceDto> => {
-    const result = await F1PredictionsApi.init().get<F1RaceDto>(raceId);
+  static read = async (raceId: string, userId?: string): Promise<F1RaceDto> => {
+    const result = await F1PredictionsApi.init().get<F1RaceDto>(raceId, {
+      params: userId ? { userId } : undefined,
+    });
     return result.data;
   };
 

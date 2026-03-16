@@ -38,7 +38,7 @@ export default function F1Prediction({ f1Race }: Props) {
   useEffect(() => {
     async function load() {
       const [result, teams] = await Promise.all([
-        F1PredictionsApi.read(f1Race.id),
+        F1PredictionsApi.read(f1Race.id, userId),
         F1PredictionsApi.getActiveTeams(),
       ]);
       setCurrentF1Race(result);
