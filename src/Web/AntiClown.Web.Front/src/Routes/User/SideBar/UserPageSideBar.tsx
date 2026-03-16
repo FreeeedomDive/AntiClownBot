@@ -18,7 +18,7 @@ import {
 } from "@mui/icons-material";
 import { useStore } from "../../../Stores";
 import { UserDto } from "../../../Dto/Users/UserDto";
-import { RightsWrapper } from "../../../Components/RIghts/RightsWrapper";
+import { RightsWrapper } from "../../../Components/Rights/RightsWrapper";
 import { RightsDto } from "../../../Dto/Rights/RightsDto";
 import UserPageSideBarItem from "./UserPageSideBarItem";
 

@@ -19,12 +19,12 @@ export function getNextTribute(nextTributeString: string): NextTribute {
     };
   }
 
-  const seconds = difference / 1000;
+  const totalSeconds = Math.abs(difference) / 1000;
   return {
     isReady: false,
-    hours: 0,
-    minutes: 0,
-    seconds: seconds
+    hours: Math.floor(totalSeconds / 3600),
+    minutes: Math.floor((totalSeconds % 3600) / 60),
+    seconds: Math.floor(totalSeconds % 60),
   };
 }
 
