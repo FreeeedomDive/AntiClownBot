@@ -3,7 +3,7 @@ import { SettingsCategory } from "../../../../../Dto/Settings/SettingsCategory";
 import SettingsApi from "../../../../../Api/SettingsApi";
 import { SettingDto } from "../../../../../Dto/Settings/SettingDto";
 import { RightsDto } from "../../../../../Dto/Rights/RightsDto";
-import { RightsWrapper } from "../../../../../Components/Rights/RightsWrapper";
+import { RightsWrapper } from "../../../../../Components/UserRights/RightsWrapper";
 import {
   Box,
   Button,

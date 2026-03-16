@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
-import { RightsWrapper } from "../../../../../../Components/Rights/RightsWrapper";
+import { RightsWrapper } from "../../../../../../Components/UserRights/RightsWrapper";
 import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
 import {
   Checkbox,
