@@ -1,4 +1,3 @@
-import "./App.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import UserMainPage from "./Routes/User/MainPage/UserMainPage";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";

@@ -61,9 +61,8 @@ export default function F1PredictionsDnfSelect({
         <>
           {dnfList.map((dnfItem, index) => {
             return (
-              <FormControl fullWidth size="small">
+              <FormControl key={index} fullWidth size="small">
                 <Select
-                  key={index}
                   labelId={`dnf-${index}`}
                   id={`dnf-${index}-select`}
                   value={dnfItem}

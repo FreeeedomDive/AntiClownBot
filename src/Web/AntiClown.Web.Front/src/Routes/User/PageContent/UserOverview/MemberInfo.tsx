@@ -1,9 +1,7 @@
-import { Avatar, Stack, Typography } from "@mui/material";
+import { Avatar, Skeleton, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { DiscordMemberDto } from "../../../../Dto/Users/DiscordMemberDto";
 import DiscordMembersApi from "../../../../Api/DiscordMembersApi";
-import { Skeleton } from "@mui/material";
 
 interface Props {
   userId: string;
@@ -27,7 +25,7 @@ export default function MemberInfo({userId}: Props) {
   return (
     <>
       {loading && (
-        <Stack direction="row" alignItems="center" spacing={16}>
+        <Stack direction="row" alignItems="center" spacing="16px">
           <Skeleton variant="rounded" sx={{ width: 128, height: 128 }} />
           <Stack direction="column" spacing="8px">
             <Skeleton sx={{ width: 256 }} />
