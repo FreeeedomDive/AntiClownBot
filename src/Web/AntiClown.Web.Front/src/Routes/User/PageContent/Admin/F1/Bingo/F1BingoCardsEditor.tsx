@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
-import { RightsWrapper } from "../../../../../../Components/Rights/RightsWrapper";
+import { RightsWrapper } from "../../../../../../Components/UserRights/RightsWrapper";
 import F1BingoCardsEditorRow from "./F1BingoCardsEditorRow";
 
 const HEADER_SX = {

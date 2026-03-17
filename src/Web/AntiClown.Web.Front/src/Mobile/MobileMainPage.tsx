@@ -14,7 +14,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import { RightsWrapper } from "../Components/Rights/RightsWrapper";
+import { RightsWrapper } from "../Components/UserRights/RightsWrapper";
 import { RightsDto } from "../Dto/Rights/RightsDto";
 import { ChakraProvider, createSystem, defineConfig } from "@chakra-ui/react";
 import F1PredictionsList from "./F1Predictions/F1PredictionsList";
