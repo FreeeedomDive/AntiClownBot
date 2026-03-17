@@ -25,16 +25,6 @@ public class F1RacesProvider : IF1RacesProvider
                    },
                    new F1RaceInfo
                    {
-                       Name = "Бахрейн",
-                       PredictionsStartTime = new DateTime(2026, 04, 11),
-                   },
-                   new F1RaceInfo
-                   {
-                       Name = "Саудовская Аравия",
-                       PredictionsStartTime = new DateTime(2026, 04, 18),
-                   },
-                   new F1RaceInfo
-                   {
                        Name = "США Майами",
                        PredictionsStartTime = new DateTime(2026, 05, 02),
                    },

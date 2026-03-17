@@ -9,7 +9,7 @@ public static class F1PredictionsHelper
             2023 => (20, 0), /* sprints doesn't count */
             2024 => (30, 0), /* sprints give as many points as normal race */
             2025 => (24, 6), /* sprints worth 30% of normal race points */
-            2026 => (24, 0), /* sprints doesn't count */
+            2026 => (22, 0), /* sprints doesn't count */
             _ => (0, 0),
         };
     }
