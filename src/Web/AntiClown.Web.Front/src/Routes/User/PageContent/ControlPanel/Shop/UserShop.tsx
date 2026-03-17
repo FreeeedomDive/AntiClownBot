@@ -16,6 +16,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { CurrentShopInfoDto, ShopItemDto, ShopStatsDto } from "../../../../../Dto/Shop/ShopDto";
+import { BaseItemDto } from "../../../../../Dto/Inventory/InventoryDto";
 import { EconomyDto } from "../../../../../Dto/Economy/EconomyDto";
 import ShopApi from "../../../../../Api/ShopApi";
 import EconomyApi from "../../../../../Api/EconomyApi";
@@ -27,6 +28,7 @@ export default function UserShop() {
   const [shop, setShop] = useState<CurrentShopInfoDto | null>(null);
   const [economy, setEconomy] = useState<EconomyDto | null>(null);
   const [stats, setStats] = useState<ShopStatsDto | null>(null);
+  const [purchasedItems, setPurchasedItems] = useState<Record<string, BaseItemDto>>({});
   const [statsOpen, setStatsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rerolling, setRerolling] = useState(false);
@@ -80,7 +82,7 @@ export default function UserShop() {
   const handleBuy = async (item: ShopItemDto) => {
     if (!userId) return;
     try {
-      await ShopApi.buy(userId, item.id);
+      const boughtItem = await ShopApi.buy(userId, item.id);
       setShop((prev) =>
         prev
           ? {
@@ -91,6 +93,7 @@ export default function UserShop() {
             }
           : prev
       );
+      setPurchasedItems((prev) => ({ ...prev, [item.id]: boughtItem }));
       await refreshEconomy();
     } catch {
       setError("Не удалось купить предмет");
@@ -168,6 +171,7 @@ export default function UserShop() {
             item={item}
             index={idx + 1}
             freeReveals={shop.freeReveals}
+            purchasedItem={purchasedItems[item.id]}
             onReveal={handleReveal}
             onBuy={handleBuy}
           />

@@ -8,8 +8,9 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Rarity, ItemName } from "../../../../../Dto/Inventory/InventoryDto";
+import { Rarity, ItemName, BaseItemDto } from "../../../../../Dto/Inventory/InventoryDto";
 import { ShopItemDto } from "../../../../../Dto/Shop/ShopDto";
+import ItemStats from "../Inventory/ItemStats";
 
 const rarityColors: Record<Rarity, string> = {
   Common: "#95a5a6",
@@ -40,6 +41,7 @@ interface ShopItemCardProps {
   item: ShopItemDto;
   index: number;
   freeReveals: number;
+  purchasedItem?: BaseItemDto;
   onReveal: (item: ShopItemDto) => Promise<void>;
   onBuy: (item: ShopItemDto) => Promise<void>;
 }
@@ -48,6 +50,7 @@ export default function ShopItemCard({
   item,
   index,
   freeReveals,
+  purchasedItem,
   onReveal,
   onBuy,
 }: ShopItemCardProps) {
@@ -135,6 +138,8 @@ export default function ShopItemCard({
           <Typography variant="body1" sx={{ fontWeight: 500 }}>
             {isNameVisible ? itemNameLabels[item.name] : "Нераспознанный предмет"}
           </Typography>
+
+          {purchasedItem && <ItemStats item={purchasedItem} />}
 
           {!item.isOwned && (
             <Stack direction="row" spacing={1}>

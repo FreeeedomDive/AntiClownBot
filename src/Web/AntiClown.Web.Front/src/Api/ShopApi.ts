@@ -1,5 +1,6 @@
 import axios from "axios";
 import { CurrentShopInfoDto, ShopItemDto, ShopStatsDto } from "../Dto/Shop/ShopDto";
+import { BaseItemDto } from "../Dto/Inventory/InventoryDto";
 
 export default class ShopApi {
   static init = () => {
@@ -28,8 +29,9 @@ export default class ShopApi {
     return result.data;
   };
 
-  static buy = async (userId: string, itemId: string): Promise<void> => {
-    await ShopApi.init().post(`${userId}/items/${itemId}/buy`);
+  static buy = async (userId: string, itemId: string): Promise<BaseItemDto> => {
+    const result = await ShopApi.init().post<BaseItemDto>(`${userId}/items/${itemId}/buy`);
+    return result.data;
   };
 
   static reroll = async (userId: string): Promise<void> => {
