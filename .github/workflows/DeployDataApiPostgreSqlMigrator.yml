@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   workflow_call:
     secrets:
-      DOCKER_REGISTRY_DOMAIN:
+      DOCKER_REGISTRY_IP:
       DOCKER_REGISTRY_LOGIN:
       DOCKER_REGISTRY_PASSWORD:
       CONFIG_REPO_TOKEN:
@@ -23,23 +23,31 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Configure Docker for Insecure Registry
+        env:
+          DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+        run: |
+          sudo mkdir -p /etc/docker
+          echo "{\"insecure-registries\": [\"$DOCKER_REGISTRY_IP\"]}" | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
+
       - name: Log in to Docker Registry
         env:
-          DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
+          DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
         run: |
-          echo "$DOCKER_PASSWORD" | docker login $DOCKER_REGISTRY_DOMAIN \
+          echo "$DOCKER_PASSWORD" | docker login $DOCKER_REGISTRY_IP \
             -u $DOCKER_USERNAME --password-stdin
 
       - name: Build and push migrator image
         env:
-          DOCKER_REGISTRY_DOMAIN: ${{ secrets.DOCKER_REGISTRY_DOMAIN }}
+          DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
         run: |
           docker build src \
             -f $DOCKERFILE \
-            -t $DOCKER_REGISTRY_DOMAIN/$DOCKERIMAGE:${{ github.sha }}
-          docker push $DOCKER_REGISTRY_DOMAIN/$DOCKERIMAGE:${{ github.sha }}
+            -t $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${{ github.sha }}
+          docker push $DOCKER_REGISTRY_IP/$DOCKERIMAGE:${{ github.sha }}
 
       - name: Update migrator image tag in config repo
         env:
