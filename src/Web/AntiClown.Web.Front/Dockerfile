@@ -9,4 +9,4 @@ FROM node:20-alpine AS runtime
 WORKDIR /app
 RUN npm install -g serve
 COPY --from=build /app/build ./build
-CMD ["serve", "-s", "build", "-l", "6820"]
+CMD ["serve", "-s", "build", "-l", "tcp://0.0.0.0:6820"]
