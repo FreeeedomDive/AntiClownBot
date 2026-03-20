@@ -186,9 +186,6 @@ public static class InteractionsIds
 
         public const string Web = "web";
         
-        public const string VoiceAi = "voiceAi";
-        public const string VoiceTts = "voiceTts";
-
         public const string Ai = "ai";
 
         public const string Achievements_Admin_Group = "achievementsadmin";
