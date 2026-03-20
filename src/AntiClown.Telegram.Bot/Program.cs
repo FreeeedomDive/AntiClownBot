@@ -88,4 +88,4 @@ await usersCache.InitializeAsync();
 */
 
 var telegramBotWorker = app.Services.GetRequiredService<ITelegramBotWorker>();
-await telegramBotWorker.StartAsync();
+await Task.WhenAll(telegramBotWorker.StartAsync(), app.RunAsync());
