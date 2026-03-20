@@ -12,7 +12,7 @@ on:
 env:
   DOCKERFILE: src/DataApi/AntiClown.Data.Api/Dockerfile
   DOCKERIMAGE: anticlowndataapi
-  VALUES_FILE: values/anticlown-data-api.yaml
+  VALUES_FILE: values/anticlown/data-api.yaml
 
 jobs:
   deploy:
