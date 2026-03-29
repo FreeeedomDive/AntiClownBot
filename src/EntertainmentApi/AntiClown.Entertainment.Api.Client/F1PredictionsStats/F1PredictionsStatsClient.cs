@@ -13,28 +13,11 @@ public class F1PredictionsStatsClient : IF1PredictionsStatsClient
         this.client = client;
     }
 
-    public async Task<AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics.MostPickedDriversStatsDto> GetMostPickedDriversAsync()
+    public async Task<AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics.F1SeasonStatsDto> GetSeasonStatsAsync(int season)
     {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/stats/mostPickedDrivers", HttpRequestMethod.GET);
-        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics.MostPickedDriversStatsDto>(requestBuilder.Build());
-    }
-
-    public async Task<AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics.MostPickedDriversStatsDto> GetMostPickedDriversAsync(System.Guid userId)
-    {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/stats/{userId}/mostPickedDrivers", HttpRequestMethod.GET);
-        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics.MostPickedDriversStatsDto>(requestBuilder.Build());
-    }
-
-    public async Task<AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics.MostProfitableDriversStatsDto> GetMostProfitableDriversAsync()
-    {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/stats/mostProfitableDrivers", HttpRequestMethod.GET);
-        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics.MostProfitableDriversStatsDto>(requestBuilder.Build());
-    }
-
-    public async Task<AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics.UserPointsStatsDto> GetUserPointsStatsAsync(System.Guid userId)
-    {
-        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/stats/{userId}/userPointsStats", HttpRequestMethod.GET);
-        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics.UserPointsStatsDto>(requestBuilder.Build());
+        var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/stats", HttpRequestMethod.GET);
+        requestBuilder.WithQueryParameter("season", season);
+        return await client.MakeRequestAsync<AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics.F1SeasonStatsDto>(requestBuilder.Build());
     }
 
     private readonly RestSharp.RestClient client;
