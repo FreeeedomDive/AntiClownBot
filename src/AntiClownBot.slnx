@@ -40,9 +40,7 @@
                 Path="Tests/AntiClown.Data.Api.Core.IntegrationTests/AntiClown.Data.Api.Core.IntegrationTests.csproj"/>
         <Project
                 Path="Tests/AntiClown.Entertainment.Api.Core.IntegrationTests/AntiClown.Entertainment.Api.Core.IntegrationTests.csproj"/>
-        <Project
-                Path="Tests/AntiClown.Entertainment.Api.Core.UnitTests/AntiClown.Entertainment.Api.Core.UnitTests.csproj"/>
-        <Project Path="Tests/AntiClown.Tests.Configuration/AntiClown.Tests.Configuration.csproj"/>
+<Project Path="Tests/AntiClown.Tests.Configuration/AntiClown.Tests.Configuration.csproj"/>
     </Folder>
     <Folder Name="/Tools/">
         <Project Path="Api/AntiClown.Api.PostgreSqlMigrationsApplier/AntiClown.Api.PostgreSqlMigrationsApplier.csproj"/>

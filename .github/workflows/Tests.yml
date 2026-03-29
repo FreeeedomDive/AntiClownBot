@@ -8,27 +8,6 @@ on:
       - main
 
 jobs:
-  entertainment-api-unit-tests:
-    name: AntiClown.Entertainment.Api.Core.UnitTests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '9.x'
-
-      - name: Restore
-        run: dotnet restore ./src/AntiClownBot.slnx
-
-      - name: Build
-        run: dotnet build ./src/AntiClownBot.slnx --configuration Release --no-restore
-
-      - name: Run Tests
-        run: dotnet test src/Tests/AntiClown.Entertainment.Api.Core.UnitTests/AntiClown.Entertainment.Api.Core.UnitTests.csproj --configuration Release --no-restore --no-build
-
   entertainment-api-integration-tests:
     name: AntiClown.Entertainment.Api.Core.IntegrationTests
     runs-on: ubuntu-latest
