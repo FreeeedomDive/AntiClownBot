@@ -11,6 +11,7 @@ import {
 import { Box, FormControl, MenuItem, Select, Tab, Tabs } from "@mui/material";
 import {
   Assignment,
+  BarChart,
   Casino,
   EmojiEvents,
   Leaderboard,
@@ -21,6 +22,7 @@ import F1PredictionsRulebook from "./Rulebook/F1PredictionsRulebook";
 import F1PredictionsList from "./Predictions/F1PredictionsList";
 import F1ChampionshipPredictions from "./ChampionshipPredictions/F1ChampionshipPredictions";
 import F1BingoBoard from "./Bingo/F1BingoBoard";
+import F1PredictionsStats from "./Statistics/F1PredictionsStats";
 
 const TABS = [
   { label: "Регламент", path: "rulebook", icon: <MenuBook /> },
@@ -28,6 +30,7 @@ const TABS = [
   { label: "Предсказания гонок", path: "races", icon: <Assignment /> },
   { label: "Чемпионат", path: "championship", icon: <EmojiEvents /> },
   { label: "Бинго", path: "bingo", icon: <Casino /> },
+  { label: "Статистика", path: "statistics", icon: <BarChart /> },
 ] as const;
 
 const FIRST_SEASON = 2023;
@@ -46,7 +49,8 @@ const F1PredictionsPage = () => {
   const season = Number(searchParams.get("season") ?? currentYear);
   const showSeasonSelector =
     location.pathname.endsWith("/f1Predictions/standings") ||
-    location.pathname.endsWith("/f1Predictions/bingo");
+    location.pathname.endsWith("/f1Predictions/bingo") ||
+    location.pathname.endsWith("/f1Predictions/statistics");
 
   const activeTab = TABS.findIndex((tab) =>
     location.pathname.endsWith(`/f1Predictions/${tab.path}`),
@@ -109,6 +113,7 @@ const F1PredictionsPage = () => {
           <Route path="races" element={<F1PredictionsList />} />
           <Route path="championship" element={<F1ChampionshipPredictions />} />
           <Route path="bingo" element={<F1BingoBoard />} />
+          <Route path="statistics" element={<F1PredictionsStats />} />
         </Routes>
       </Box>
     </Box>
