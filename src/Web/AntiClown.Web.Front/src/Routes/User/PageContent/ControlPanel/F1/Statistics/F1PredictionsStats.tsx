@@ -7,6 +7,7 @@ import { Loader } from "../../../../../../Components/Loader/Loader";
 import { F1SeasonStatsDto } from "../../../../../../Dto/F1Predictions/F1SeasonStatsDto";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import F1DriverStatsCard from "./F1DriverStatsCard";
+import F1UserStatsCard from "./F1UserStatsCard";
 import F1LeadGapStaircase from "./F1LeadGapStaircase";
 import F1StatsSection from "./F1StatsSection";
 
@@ -24,7 +25,10 @@ export default function F1PredictionsStats() {
       const loaded = await F1PredictionsApi.getSeasonStats(season);
       setStats(loaded);
 
-      const userIds = loaded.closestLeadGapPredictions.map((x) => x.userId);
+      const userIds = [
+        ...loaded.closestLeadGapPredictions.map((x) => x.userId),
+        ...loaded.tenthPlaceDnfAntiRating.map((x) => x.userId),
+      ];
       if (userIds.length > 0) {
         const loadedMembers = await DiscordMembersApi.getMembers(userIds);
         setMembers(loadedMembers);
@@ -70,6 +74,12 @@ export default function F1PredictionsStats() {
                 title="Среднее количество очков за предсказание гонщика"
                 data={stats.tenthPlacePredictionEfficiency}
                 scoreLabel={["очко", "очка", "очков"]}
+              />,
+              <F1UserStatsCard
+                title="10 место => DNF по участникам"
+                data={stats.tenthPlaceDnfAntiRating}
+                members={members}
+                scoreLabel={["раз", "раза", "раз"]}
               />,
             ]}
           </F1StatsSection>

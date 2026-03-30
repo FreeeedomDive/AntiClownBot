@@ -1,4 +1,10 @@
-import { Box, Card, CardContent, LinearProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  LinearProgress,
+  Typography,
+} from "@mui/material";
 import { DriverStatisticsDto } from "../../../../../../Dto/F1Predictions/DriverStatisticsDto";
 
 type PluralForms = [string, string, string];
@@ -16,9 +22,15 @@ interface Props {
   title: string;
   data: DriverStatisticsDto[];
   scoreLabel?: PluralForms;
+  antiRating?: boolean;
 }
 
-export default function F1DriverStatsCard({ title, data, scoreLabel }: Props) {
+export default function F1DriverStatsCard({
+  title,
+  data,
+  scoreLabel,
+  antiRating = false
+}: Props) {
   const maxScore = Math.max(...data.map((x) => x.score), 1);
 
   return (
@@ -84,6 +96,7 @@ export default function F1DriverStatsCard({ title, data, scoreLabel }: Props) {
                   variant="determinate"
                   value={(entry.score / maxScore) * 100}
                   sx={{ height: 4, borderRadius: 2 }}
+                  color={antiRating ? "error" : "primary"}
                 />
               </Box>
             ))}

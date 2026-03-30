@@ -1,4 +1,5 @@
 import { DriverStatisticsDto } from "./DriverStatisticsDto";
+import { UserStatisticsDto } from "./UserStatisticsDto";
 import { LeadGapPredictionStatsDto } from "./LeadGapPredictionStatsDto";
 
 export interface F1SeasonStatsDto {
@@ -9,6 +10,7 @@ export interface F1SeasonStatsDto {
   tenthPlacePredictionEfficiency: DriverStatisticsDto[];
   mostDnfDrivers: DriverStatisticsDto[];
   mostPickedForDnf: DriverStatisticsDto[];
+  tenthPlaceDnfAntiRating: UserStatisticsDto[];
   closestLeadGapPredictions: LeadGapPredictionStatsDto[];
   safetyCarPickCounts: DriverStatisticsDto[];
   safetyCarActualCounts: DriverStatisticsDto[];
