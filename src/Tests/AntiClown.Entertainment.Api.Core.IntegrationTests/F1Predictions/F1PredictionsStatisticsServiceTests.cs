@@ -22,9 +22,15 @@ public class F1PredictionsStatisticsServiceTests : IntegrationTestsBase
         stats.TenthPlacePointsRating.Should().BeEmpty();
         stats.MostPickedForTenthPlace.Should().BeEmpty();
         stats.TenthPickedButDnfed.Should().BeEmpty();
+        stats.DriverOwnTenthPlacePoints.Should().BeEmpty();
+        stats.TenthPlacePredictionEfficiency.Should().BeEmpty();
         stats.MostDnfDrivers.Should().BeEmpty();
         stats.MostPickedForDnf.Should().BeEmpty();
+        stats.TenthPlaceDnfAntiRating.Should().BeEmpty();
         stats.ClosestLeadGapPredictions.Should().BeEmpty();
+        stats.SafetyCarPickCounts.Should().BeEmpty();
+        stats.SafetyCarActualCounts.Should().BeEmpty();
+        stats.SafetyCarCorrectGuesses.Should().BeEmpty();
     }
 
     [Test]
@@ -464,6 +470,302 @@ public class F1PredictionsStatisticsServiceTests : IntegrationTestsBase
         stats.ClosestLeadGapPredictions.Should().HaveCount(5);
     }
 
+    [Test]
+    public async Task GetSeasonStatsAsync_DriverOwnTenthPlacePoints_Should_SumPointsByPositionAcrossRaces()
+    {
+        // Race 1: DriverA на 10-м (25 pts), DriverB на 11-м (18 pts)
+        // Race 2: DriverA снова на 10-м (25 pts)
+        // Итого: DriverA = 50, DriverB = 18 — DriverB занимает 2 место (выше разовых 15-pt филлеров)
+        var race1Classification = new[] { PositionDriver }
+            .Concat(Enumerable.Range(1, 8).Select(i => $"R9964A_F{i}"))
+            .Concat(["DriverA", "DriverB"])
+            .ToArray();
+        var race2Classification = new[] { PositionDriver }
+            .Concat(Enumerable.Range(1, 8).Select(i => $"R9964B_F{i}"))
+            .Append("DriverA")
+            .ToArray();
+
+        await CreateFinishedRace(9964, classification: race1Classification);
+        await CreateFinishedRace(9964, classification: race2Classification);
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9964);
+
+        var driverAEntry = stats.DriverOwnTenthPlacePoints.Should().Contain(x => x.Driver == "DriverA").Subject;
+        driverAEntry.Score.Should().Be(50);
+        var driverBEntry = stats.DriverOwnTenthPlacePoints.Should().Contain(x => x.Driver == "DriverB").Subject;
+        driverBEntry.Score.Should().Be(18);
+        var indexA = Array.IndexOf(stats.DriverOwnTenthPlacePoints, driverAEntry);
+        var indexB = Array.IndexOf(stats.DriverOwnTenthPlacePoints, driverBEntry);
+        indexA.Should().BeLessThan(indexB);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_DriverOwnTenthPlacePoints_Should_UseCorrectScoringByPosition()
+    {
+        var classification = new[] { "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "DriverA", "DriverB", PositionDriver };
+        await CreateFinishedRace(9965, classification: classification);
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9965);
+
+        stats.DriverOwnTenthPlacePoints[0].Driver.Should().Be("DriverB");
+        stats.DriverOwnTenthPlacePoints[0].Score.Should().Be(25);
+        stats.DriverOwnTenthPlacePoints[1].Driver.Should().Be("DriverA");
+        stats.DriverOwnTenthPlacePoints[1].Score.Should().Be(18);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_DriverOwnTenthPlacePoints_Should_ExcludeDriversWithZeroPoints()
+    {
+        var classification = new[]
+        {
+            "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10",
+            "P11", "P12", "P13", "P14", "P15", "P16", "P17", "P18", "P19", "P20",
+            "DriverZ", PositionDriver,
+        };
+        await CreateFinishedRace(9966, classification: classification);
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9966);
+
+        stats.DriverOwnTenthPlacePoints.Should().NotContain(x => x.Driver == "DriverZ");
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_DriverOwnTenthPlacePoints_Should_ReturnAtMostTop5()
+    {
+        var drivers = Enumerable.Range(1, 6).Select(i => $"OwnDriver{i}").ToArray();
+        var classification = new[] { drivers[0], drivers[1], drivers[2], drivers[3], drivers[4], drivers[5], PositionDriver };
+        await CreateFinishedRace(9967, classification: classification);
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9967);
+
+        stats.DriverOwnTenthPlacePoints.Should().HaveCount(5);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_TenthPlacePredictionEfficiency_Should_CalculateFloorOfAveragePoints()
+    {
+        var user1 = Guid.NewGuid();
+        var user2 = Guid.NewGuid();
+        var user3 = Guid.NewGuid();
+        await CreateFinishedRace(9968,
+            classification: ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "DriverA", PositionDriver],
+            predictions: [(user1, CreatePrediction(user1, "DriverA"))]
+        );
+        await CreateFinishedRace(9968,
+            classification: ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "DriverA", "DriverB", PositionDriver],
+            predictions: [
+                (user2, CreatePrediction(user2, "DriverA")),
+                (user3, CreatePrediction(user3, "DriverB")),
+            ]
+        );
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9968);
+
+        stats.TenthPlacePredictionEfficiency[0].Driver.Should().Be("DriverB");
+        stats.TenthPlacePredictionEfficiency[0].Score.Should().Be(25);
+        stats.TenthPlacePredictionEfficiency[1].Driver.Should().Be("DriverA");
+        stats.TenthPlacePredictionEfficiency[1].Score.Should().Be(21);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_TenthPlacePredictionEfficiency_Should_ExcludeDriversWithZeroTotalPoints()
+    {
+        var user1 = Guid.NewGuid();
+        var classification = new[]
+        {
+            "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10",
+            "P11", "P12", "P13", "P14", "P15", "P16", "P17", "P18", "P19", "P20",
+            "DriverZ", PositionDriver,
+        };
+        await CreateFinishedRace(9969, classification: classification,
+            predictions: [(user1, CreatePrediction(user1, "DriverZ"))]
+        );
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9969);
+
+        stats.TenthPlacePredictionEfficiency.Should().NotContain(x => x.Driver == "DriverZ");
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_TenthPlacePredictionEfficiency_Should_ReturnAtMostTop5()
+    {
+        var users = Enumerable.Range(0, 6).Select(_ => Guid.NewGuid()).ToArray();
+        var drivers = Enumerable.Range(1, 6).Select(i => $"EffDriver{i}").ToArray();
+        // Все гонщики на позициях 1–6 → ненулевые очки
+        var classification = new[] { drivers[0], drivers[1], drivers[2], drivers[3], drivers[4], drivers[5], PositionDriver };
+        var predictions = users.Zip(drivers, (u, d) => (u, CreatePrediction(u, d))).ToArray();
+        await CreateFinishedRace(9970, classification: classification, predictions: predictions);
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9970);
+
+        stats.TenthPlacePredictionEfficiency.Should().HaveCount(5);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_TenthPlaceDnfAntiRating_Should_CountUsersWhosePickDnfed()
+    {
+        var user1 = Guid.NewGuid();
+        var user2 = Guid.NewGuid();
+        await CreateFinishedRace(9971,
+            dnfDrivers: ["DnfDriver"],
+            predictions: [
+                (user1, CreatePrediction(user1, "DnfDriver")),
+                (user2, CreatePrediction(user2, "FinishedDriver")),
+            ]
+        );
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9971);
+
+        stats.TenthPlaceDnfAntiRating.Should().ContainSingle(x => x.UserId == user1 && x.Score == 1);
+        stats.TenthPlaceDnfAntiRating.Should().NotContain(x => x.UserId == user2);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_TenthPlaceDnfAntiRating_Should_AccumulateAcrossRaces()
+    {
+        var user1 = Guid.NewGuid();
+        await CreateFinishedRace(9972,
+            dnfDrivers: ["UnluckyDriver"],
+            predictions: [(user1, CreatePrediction(user1, "UnluckyDriver"))]
+        );
+        await CreateFinishedRace(9972,
+            dnfDrivers: ["UnluckyDriver"],
+            predictions: [(user1, CreatePrediction(user1, "UnluckyDriver"))]
+        );
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9972);
+
+        stats.TenthPlaceDnfAntiRating.Should().ContainSingle(x => x.UserId == user1 && x.Score == 2);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_TenthPlaceDnfAntiRating_Should_ReturnAtMostTop5()
+    {
+        var users = Enumerable.Range(0, 6).Select(_ => Guid.NewGuid()).ToArray();
+        var drivers = Enumerable.Range(1, 6).Select(i => $"AntiDriver{i}").ToArray();
+        var predictions = users.Zip(drivers, (u, d) => (u, CreatePrediction(u, d))).ToArray();
+        await CreateFinishedRace(9973, dnfDrivers: drivers, predictions: predictions);
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9973);
+
+        stats.TenthPlaceDnfAntiRating.Should().HaveCount(5);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_SafetyCarPickCounts_Should_CountPicksPerVariant()
+    {
+        var user1 = Guid.NewGuid();
+        var user2 = Guid.NewGuid();
+        var user3 = Guid.NewGuid();
+        await CreateFinishedRace(9974,
+            predictions: [
+                (user1, CreatePredictionWithSafetyCar(user1, SafetyCarsCount.Zero)),
+                (user2, CreatePredictionWithSafetyCar(user2, SafetyCarsCount.Zero)),
+                (user3, CreatePredictionWithSafetyCar(user3, SafetyCarsCount.One)),
+            ]
+        );
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9974);
+
+        stats.SafetyCarPickCounts.Should().Contain(x => x.Driver == "Нет" && x.Score == 2);
+        stats.SafetyCarPickCounts.Should().Contain(x => x.Driver == "1" && x.Score == 1);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_SafetyCarPickCounts_Should_AccumulateAcrossRaces()
+    {
+        var users = Enumerable.Range(0, 4).Select(_ => Guid.NewGuid()).ToArray();
+        await CreateFinishedRace(9975,
+            predictions: [
+                (users[0], CreatePredictionWithSafetyCar(users[0], SafetyCarsCount.Two)),
+                (users[1], CreatePredictionWithSafetyCar(users[1], SafetyCarsCount.Two)),
+            ]
+        );
+        await CreateFinishedRace(9975,
+            predictions: [
+                (users[2], CreatePredictionWithSafetyCar(users[2], SafetyCarsCount.Two)),
+                (users[3], CreatePredictionWithSafetyCar(users[3], SafetyCarsCount.ThreePlus)),
+            ]
+        );
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9975);
+
+        stats.SafetyCarPickCounts.Should().Contain(x => x.Driver == "2" && x.Score == 3);
+        stats.SafetyCarPickCounts.Should().Contain(x => x.Driver == "3+" && x.Score == 1);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_SafetyCarActualCounts_Should_CountActualVariantsAcrossRaces()
+    {
+        var user1 = Guid.NewGuid();
+        var user2 = Guid.NewGuid();
+        var user3 = Guid.NewGuid();
+        await CreateFinishedRace(9976, safetyCars: 0, predictions: [(user1, CreatePrediction(user1, "D1"))]);
+        await CreateFinishedRace(9976, safetyCars: 0, predictions: [(user2, CreatePrediction(user2, "D1"))]);
+        await CreateFinishedRace(9976, safetyCars: 1, predictions: [(user3, CreatePrediction(user3, "D1"))]);
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9976);
+
+        stats.SafetyCarActualCounts.Should().Contain(x => x.Driver == "Нет" && x.Score == 2);
+        stats.SafetyCarActualCounts.Should().Contain(x => x.Driver == "1" && x.Score == 1);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_SafetyCarActualCounts_Should_MapThreePlusCorrectly()
+    {
+        var user1 = Guid.NewGuid();
+        await CreateFinishedRace(9977, safetyCars: 3, predictions: [(user1, CreatePrediction(user1, "D1"))]);
+        await CreateFinishedRace(9977, safetyCars: 5, predictions: [(user1, CreatePrediction(user1, "D1"))]);
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9977);
+
+        stats.SafetyCarActualCounts.Should().ContainSingle(x => x.Driver == "3+" && x.Score == 2);
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_SafetyCarCorrectGuesses_Should_CountOnlyCorrectGuesses()
+    {
+        var user1 = Guid.NewGuid();
+        var user2 = Guid.NewGuid();
+        var user3 = Guid.NewGuid();
+        await CreateFinishedRace(9978, safetyCars: 0,
+            predictions: [
+                (user1, CreatePredictionWithSafetyCar(user1, SafetyCarsCount.Zero)),  // угадал
+                (user2, CreatePredictionWithSafetyCar(user2, SafetyCarsCount.Zero)),  // угадал
+                (user3, CreatePredictionWithSafetyCar(user3, SafetyCarsCount.One)),   // не угадал
+            ]
+        );
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9978);
+
+        stats.SafetyCarCorrectGuesses.Should().ContainSingle(x => x.Driver == "Нет" && x.Score == 2);
+        stats.SafetyCarCorrectGuesses.Should().NotContain(x => x.Driver == "1");
+    }
+
+    [Test]
+    public async Task GetSeasonStatsAsync_SafetyCarCorrectGuesses_Should_AccumulateAcrossVariantsAndRaces()
+    {
+        var users = Enumerable.Range(0, 4).Select(_ => Guid.NewGuid()).ToArray();
+        await CreateFinishedRace(9979, safetyCars: 1,
+            predictions: [
+                (users[0], CreatePredictionWithSafetyCar(users[0], SafetyCarsCount.One)), // угадал
+                (users[1], CreatePredictionWithSafetyCar(users[1], SafetyCarsCount.Two)), // не угадал
+            ]
+        );
+        await CreateFinishedRace(9979, safetyCars: 2,
+            predictions: [
+                (users[2], CreatePredictionWithSafetyCar(users[2], SafetyCarsCount.Two)), // угадал
+                (users[3], CreatePredictionWithSafetyCar(users[3], SafetyCarsCount.One)), // не угадал
+            ]
+        );
+
+        var stats = await F1PredictionsStatisticsService.GetSeasonStatsAsync(9979);
+
+        stats.SafetyCarCorrectGuesses.Should().Contain(x => x.Driver == "1" && x.Score == 1);
+        stats.SafetyCarCorrectGuesses.Should().Contain(x => x.Driver == "2" && x.Score == 1);
+        stats.SafetyCarCorrectGuesses.Should().NotContain(x => x.Driver == "Нет");
+    }
+
     private async Task CreateFinishedRace(
         int season,
         string[]? classification = null,
@@ -545,6 +847,17 @@ public class F1PredictionsStatisticsServiceTests : IntegrationTestsBase
             SafetyCarsPrediction = SafetyCarsCount.Zero,
             DriverPositionPrediction = 1,
             FirstPlaceLeadPrediction = leadPrediction,
+        };
+
+    private static F1Prediction CreatePredictionWithSafetyCar(Guid userId, SafetyCarsCount safetyCars) =>
+        new()
+        {
+            UserId = userId,
+            TenthPlacePickedDriver = "SomeTenthDriver",
+            DnfPrediction = new DnfPrediction { NoDnfPredicted = true },
+            SafetyCarsPrediction = safetyCars,
+            DriverPositionPrediction = 1,
+            FirstPlaceLeadPrediction = 5.0m,
         };
 
     private const string PositionDriver = "StatsTestPositionDriver";
