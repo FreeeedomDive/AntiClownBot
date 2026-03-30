@@ -13,6 +13,7 @@ const PAGE_TITLES: [string, string][] = [
   ["/f1Predictions/races", "Предсказания гонок"],
   ["/f1Predictions/championship", "Чемпионат"],
   ["/f1Predictions/bingo", "Бинго"],
+  ["/f1Predictions/statistics", "Статистика"],
   ["/economy", "Экономика"],
   ["/inventory", "Инвентарь"],
   ["/shop", "Магазин"],

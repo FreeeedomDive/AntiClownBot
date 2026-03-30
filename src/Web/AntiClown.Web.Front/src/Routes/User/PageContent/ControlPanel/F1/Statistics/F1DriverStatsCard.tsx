@@ -1,10 +1,21 @@
 import { Box, Card, CardContent, LinearProgress, Typography } from "@mui/material";
 import { DriverStatisticsDto } from "../../../../../../Dto/F1Predictions/DriverStatisticsDto";
 
+type PluralForms = [string, string, string];
+
+function pluralize(n: number, [one, few, many]: PluralForms): string {
+  const mod10 = Math.abs(n) % 10;
+  const mod100 = Math.abs(n) % 100;
+  if (mod100 >= 11 && mod100 <= 19) return many;
+  if (mod10 === 1) return one;
+  if (mod10 >= 2 && mod10 <= 4) return few;
+  return many;
+}
+
 interface Props {
   title: string;
   data: DriverStatisticsDto[];
-  scoreLabel?: string;
+  scoreLabel?: PluralForms;
 }
 
 export default function F1DriverStatsCard({ title, data, scoreLabel }: Props) {
@@ -64,7 +75,7 @@ export default function F1DriverStatsCard({ title, data, scoreLabel }: Props) {
                         color="text.disabled"
                       >
                         {" "}
-                        {scoreLabel}
+                        {pluralize(entry.score, scoreLabel)}
                       </Typography>
                     )}
                   </Typography>
