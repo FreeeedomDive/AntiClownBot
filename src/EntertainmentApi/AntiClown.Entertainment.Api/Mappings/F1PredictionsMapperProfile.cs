@@ -21,9 +21,8 @@ public class F1PredictionsMapperProfile : Profile
         CreateMap<F1Race, F1RaceDto>();
         CreateMap<F1RaceFilterDto, F1RaceFilter>();
         CreateMap<DriverStatistics, DriverStatisticsDto>();
-        CreateMap<MostPickedDriversStats, MostPickedDriversStatsDto>();
-        CreateMap<MostProfitableDriversStats, MostProfitableDriversStatsDto>();
-        CreateMap<UserPointsStats, UserPointsStatsDto>();
+        CreateMap<LeadGapPredictionStats, LeadGapPredictionStatsDto>();
+        CreateMap<F1SeasonStats, F1SeasonStatsDto>();
         CreateMap<F1Team, F1TeamDto>().ReverseMap();
     }
 }

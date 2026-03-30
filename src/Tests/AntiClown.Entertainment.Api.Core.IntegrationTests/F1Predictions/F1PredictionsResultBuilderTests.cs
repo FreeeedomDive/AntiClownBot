@@ -4,7 +4,7 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 using FluentAssertions;
 
-namespace AntiClown.Entertainment.Api.Core.UnitTests.F1Predictions;
+namespace AntiClown.Entertainment.Api.Core.IntegrationTests.F1Predictions;
 
 public class F1PredictionsResultBuilderTests
 {

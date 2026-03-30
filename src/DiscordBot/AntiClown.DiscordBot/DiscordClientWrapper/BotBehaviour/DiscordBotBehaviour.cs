@@ -542,7 +542,6 @@ public class DiscordBotBehaviour(
         slash.RegisterCommands<RollCommandModule>(guildId);
         slash.RegisterCommands<SelectCommandModule>(guildId);
         slash.RegisterCommands<F1CommandModule>(guildId);
-        slash.RegisterCommands<F1StatsCommand>(guildId);
         slash.RegisterCommands<WebCommandModule>(guildId);
         slash.RegisterCommands<AiCommandModule>(guildId);
 

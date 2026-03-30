@@ -1,6 +1,7 @@
 ﻿using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
+using AntiClown.Entertainment.Api.Dto.F1Predictions.Statistics;
 using AntiClown.Web.Api.Attributes;
 using AntiClown.Web.Api.Dto.F1Predictions;
 using Microsoft.AspNetCore.Mvc;
@@ -205,6 +206,12 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
     {
         return racesCount * F1PredictionsHelper.CalculatePoints(F1PredictionsHelper.GetMaxPointsPerRace(season), season, false)
                + sprintsCount * F1PredictionsHelper.CalculatePoints(F1PredictionsHelper.GetMaxPointsPerRace(season), season, true);
+    }
+
+    [HttpGet("stats")]
+    public async Task<ActionResult<F1SeasonStatsDto>> GetSeasonStats([FromQuery] int season)
+    {
+        return await antiClownEntertainmentApiClient.F1PredictionsStats.GetSeasonStatsAsync(season);
     }
 
     [HttpGet("teams")]
