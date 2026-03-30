@@ -7,6 +7,7 @@ import { F1RaceFilterDto } from "../Dto/F1Predictions/F1RaceFilterDto";
 import { F1TeamDto } from "../Dto/F1Predictions/F1TeamDto";
 import { F1ChartsDto } from "../Dto/F1Predictions/F1ChartsDto";
 import { F1StandingsDto } from "../Dto/F1Predictions/F1StandingsDto";
+import { F1SeasonStatsDto } from "../Dto/F1Predictions/F1SeasonStatsDto";
 
 export default class F1PredictionsApi {
   static init = () => {
@@ -88,6 +89,13 @@ export default class F1PredictionsApi {
     grid: string[],
   ): Promise<void> => {
     await F1PredictionsApi.init().post(`${raceId}/saveQualifyingGrid`, grid);
+  };
+
+  static getSeasonStats = async (season: number): Promise<F1SeasonStatsDto> => {
+    const result = await F1PredictionsApi.init().get<F1SeasonStatsDto>(`stats`, {
+      params: { season },
+    });
+    return result.data;
   };
 
   static createOrUpdateTeam = async (

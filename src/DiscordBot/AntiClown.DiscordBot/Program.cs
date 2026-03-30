@@ -220,7 +220,6 @@ internal class Program
         builder.Services.AddTransientWithProxy<IRatingEmbedBuilder, RatingEmbedBuilder>();
         builder.Services.AddTransientWithProxy<ILootBoxEmbedBuilder, LootBoxEmbedBuilder>();
         builder.Services.AddTransientWithProxy<IReleaseEmbedBuilder, ReleaseEmbedBuilder>();
-        builder.Services.AddTransientWithProxy<IF1PredictionStatsEmbedBuilder, F1PredictionStatsEmbedBuilder>();
         builder.Services.AddTransientWithProxy<IF1PredictionsEmbedBuilder, F1PredictionsEmbedBuilder>();
     }
 

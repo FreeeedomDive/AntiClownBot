@@ -1,148 +1,234 @@
-﻿using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Stats;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Stats;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
+using AntiClown.Entertainment.Api.Dto.F1Predictions;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services.Statistics;
 
-// this is completely useless, need to rewrite stats from scratch
-public class F1PredictionsStatisticsService : IF1PredictionsStatisticsService
+public class F1PredictionsStatisticsService(
+    IF1RacesRepository f1RacesRepository,
+    IF1PredictionResultsRepository f1PredictionResultsRepository
+) : IF1PredictionsStatisticsService
 {
-    public F1PredictionsStatisticsService(
-        IF1RacesRepository f1RacesRepository,
-        IF1PredictionResultsRepository f1PredictionResultsRepository
-    )
+    public async Task<F1SeasonStats> GetSeasonStatsAsync(int season)
     {
-        this.f1RacesRepository = f1RacesRepository;
-        this.f1PredictionResultsRepository = f1PredictionResultsRepository;
-    }
-
-    public async Task<MostPickedDriversStats> GetMostPickedDriversAsync()
-    {
-        /*var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
-        var predictions = finishedRaces.SelectMany(x => x.Predictions).ToArray();
-        var tenthPlacePredictions = CountAndOrderByScore(predictions, x => x.TenthPlacePickedDriver);
-        // var dnfPredictions = CountAndOrderByScore(predictions, x => x.FirstDnfPickedDriver);
-
-        return new MostPickedDriversStats
+        var finishedRaces = await f1RacesRepository.FindAsync(new F1RaceFilter
         {
-            TenthPlacePickedDrivers = tenthPlacePredictions,
-            FirstDnfPickedDrivers = Array.Empty<DriverStatistics>(),
-        };*/
+            Season = season,
+            IsActive = false,
+        });
 
-        return new MostPickedDriversStats();
-    }
-
-    public async Task<MostProfitableDriversStats> GetMostProfitableDriversAsync()
-    {
-        /*var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
-        var raceResults = finishedRaces.Select(x => x.Result).ToArray();
-        var tenthPlacePoints = Enum.GetValues<F1Driver>().ToDictionary(driver => driver, _ => 0);
-        foreach (var raceResult in raceResults)
+        if (finishedRaces.Length == 0)
         {
-            var position = 0;
-            foreach (var driver in raceResult.Classification)
-            {
-                position++;
-                tenthPlacePoints[driver] += F1PredictionsPointsHelper.PointsByFinishPlaceDistribution[position];
-            }
+            return EmptyStats();
         }
 
-        var correctedTenthPlacePoints = tenthPlacePoints
-                                        .Where(kv => kv.Value > 0)
-                                        .Select(
-                                            kv => new DriverStatistics
-                                            {
-                                                Driver = kv.Key,
-                                                Score = kv.Value,
-                                            }
-                                        )
-                                        .OrderByDescending(x => x.Score)
-                                        .ToArray();
-        var tenthPlaceCount = CountAndOrderByScore(raceResults, x => x.Classification[9]);
-        // var firstDnfCount = CountAndOrderByScore(raceResults, x => x.FirstDnf);
+        var finishedRaceIds = finishedRaces.Select(x => x.Id).ToHashSet();
+        var allPredictionResults = await f1PredictionResultsRepository.FindAsync(new F1PredictionResultsFilter());
+        var seasonResults = allPredictionResults.Where(x => finishedRaceIds.Contains(x.RaceId)).ToArray();
+        var resultLookup = seasonResults.ToDictionary(x => (x.RaceId, x.UserId));
 
-        return new MostProfitableDriversStats
-        {
-            TenthPlacePoints = correctedTenthPlacePoints,
-            TenthPlaceCount = tenthPlaceCount,
-            FirstDnfCount = Array.Empty<DriverStatistics>(),
-        };*/
+        var allPredictions = finishedRaces.SelectMany(x => x.Predictions).ToArray();
+        var raceResultById = finishedRaces.ToDictionary(x => x.Id, x => x.Result);
 
-        return new MostProfitableDriversStats();
-    }
-
-    public async Task<UserPointsStats> GetUserPointsStatsAsync(Guid userId)
-    {
-        /*var userPredictionsResults = (await f1PredictionResultsRepository.FindAsync(
-            new F1PredictionResultsFilter
+        var tenthPlacePointsRating = allPredictions
+            .GroupBy(p => p.TenthPlacePickedDriver)
+            .Select(g => new DriverStatistics
             {
-                UserId = userId,
-            }
-        )).Select(x => x.TenthPlacePoints + x.DnfsPoints).ToArray();
-        if (userPredictionsResults.Length == 0)
-        {
-            return new UserPointsStats
-            {
-                UserId = userId,
-                Races = 0,
-                AveragePoints = 0,
-                MedianPoints = 0,
-            };
-        }
+                Driver = g.Key,
+                Score = g.Sum(p => resultLookup.TryGetValue((p.RaceId, p.UserId), out var r) ? r.TenthPlacePoints : 0),
+            })
+            .Where(x => x.Score > 0)
+            .OrderByDescending(x => x.Score)
+            .Take(TopCount)
+            .ToArray();
 
-        var average = userPredictionsResults.Sum() / (double)userPredictionsResults.Length;
-        var result = new UserPointsStats
+        var mostPickedForTenthPlace = allPredictions
+            .GroupBy(p => p.TenthPlacePickedDriver)
+            .Select(g => new DriverStatistics
+            {
+                Driver = g.Key,
+                Score = g.Count(),
+            })
+            .OrderByDescending(x => x.Score)
+            .Take(TopCount)
+            .ToArray();
+
+        var tenthPickedButDnfed = allPredictions
+            .Where(p => raceResultById.TryGetValue(p.RaceId, out var result) && result.DnfDrivers.Contains(p.TenthPlacePickedDriver))
+            .GroupBy(p => p.TenthPlacePickedDriver)
+            .Select(g => new DriverStatistics
+            {
+                Driver = g.Key,
+                Score = g.Count(),
+            })
+            .OrderByDescending(x => x.Score)
+            .Take(TopCount)
+            .ToArray();
+
+        var driverOwnTenthPlacePoints = finishedRaces
+            .SelectMany(r => r.Result.Classification.Select((driver, index) => new
+            {
+                Driver = driver,
+                Points = F1PredictionsHelper.PointsByFinishPlaceDistribution.GetValueOrDefault(index + 1),
+            }))
+            .GroupBy(x => x.Driver)
+            .Select(g => new DriverStatistics
+            {
+                Driver = g.Key,
+                Score = g.Sum(x => x.Points),
+            })
+            .Where(x => x.Score > 0)
+            .OrderByDescending(x => x.Score)
+            .Take(TopCount)
+            .ToArray();
+
+        var tenthPlacePredictionEfficiency = allPredictions
+            .GroupBy(p => p.TenthPlacePickedDriver)
+            .Select(g => new
+            {
+                Driver = g.Key,
+                TotalPoints = g.Sum(p => resultLookup.TryGetValue((p.RaceId, p.UserId), out var r) ? r.TenthPlacePoints : 0),
+                Count = g.Count(),
+            })
+            .Where(x => x.Count > 0 && x.TotalPoints > 0)
+            .Select(x => new DriverStatistics
+            {
+                Driver = x.Driver,
+                Score = x.TotalPoints / x.Count,
+            })
+            .OrderByDescending(x => x.Score)
+            .Take(TopCount)
+            .ToArray();
+
+        var mostDnfDrivers = finishedRaces
+            .SelectMany(r => r.Result.DnfDrivers)
+            .GroupBy(d => d)
+            .Select(g => new DriverStatistics
+            {
+                Driver = g.Key,
+                Score = g.Count(),
+            })
+            .OrderByDescending(x => x.Score)
+            .Take(TopCount)
+            .ToArray();
+
+        var mostPickedForDnf = allPredictions
+            .Where(p => p.DnfPrediction is { NoDnfPredicted: false, DnfPickedDrivers: { Length: > 0 } })
+            .SelectMany(p => p.DnfPrediction.DnfPickedDrivers!)
+            .GroupBy(d => d)
+            .Select(g => new DriverStatistics
+            {
+                Driver = g.Key,
+                Score = g.Count(),
+            })
+            .OrderByDescending(x => x.Score)
+            .Take(TopCount)
+            .ToArray();
+
+        var tenthPlaceDnfAntiRating = allPredictions
+            .Where(p => raceResultById.TryGetValue(p.RaceId, out var result) && result.DnfDrivers.Contains(p.TenthPlacePickedDriver))
+            .GroupBy(p => p.UserId)
+            .Select(g => new UserStatistics
+            {
+                UserId = g.Key,
+                Score = g.Count(),
+            })
+            .OrderByDescending(x => x.Score)
+            .Take(TopCount)
+            .ToArray();
+
+        var closestLeadGapPredictions = finishedRaces
+            .Where(r => r.Predictions.Count > 0)
+            .SelectMany(r => r.Predictions.Select(p => new LeadGapPredictionStats
+            {
+                UserId = p.UserId,
+                RaceName = r.Name,
+                PredictedGap = p.FirstPlaceLeadPrediction,
+                ActualGap = r.Result.FirstPlaceLead,
+                Difference = Math.Abs(r.Result.FirstPlaceLead - p.FirstPlaceLeadPrediction),
+            }))
+            .OrderBy(x => x.Difference)
+            .Take(TopCount)
+            .ToArray();
+
+        var safetyCarPickCounts = allPredictions
+            .GroupBy(p => p.SafetyCarsPrediction)
+            .Select(g => new DriverStatistics
+            {
+                Driver = SafetyCarVariantName(g.Key),
+                Score = g.Count(),
+            })
+            .OrderByDescending(x => x.Score)
+            .ToArray();
+
+        var safetyCarActualCounts = finishedRaces
+            .GroupBy(r => F1PredictionsResultBuilder.ToSafetyCarsEnum(r.Result.SafetyCars))
+            .Select(g => new DriverStatistics
+            {
+                Driver = SafetyCarVariantName(g.Key),
+                Score = g.Count(),
+            })
+            .OrderByDescending(x => x.Score)
+            .ToArray();
+
+        var safetyCarCorrectGuesses = allPredictions
+            .Where(p => raceResultById.TryGetValue(p.RaceId, out var result) &&
+                        p.SafetyCarsPrediction == F1PredictionsResultBuilder.ToSafetyCarsEnum(result.SafetyCars))
+            .GroupBy(p => p.SafetyCarsPrediction)
+            .Select(g => new DriverStatistics
+            {
+                Driver = SafetyCarVariantName(g.Key),
+                Score = g.Count(),
+            })
+            .OrderByDescending(x => x.Score)
+            .ToArray();
+
+        return new F1SeasonStats
         {
-            UserId = userId,
-            Races = userPredictionsResults.Length,
-            AveragePoints = average,
+            TenthPlacePointsRating = tenthPlacePointsRating,
+            MostPickedForTenthPlace = mostPickedForTenthPlace,
+            TenthPickedButDnfed = tenthPickedButDnfed,
+            DriverOwnTenthPlacePoints = driverOwnTenthPlacePoints,
+            TenthPlacePredictionEfficiency = tenthPlacePredictionEfficiency,
+            MostDnfDrivers = mostDnfDrivers,
+            MostPickedForDnf = mostPickedForDnf,
+            TenthPlaceDnfAntiRating = tenthPlaceDnfAntiRating,
+            ClosestLeadGapPredictions = closestLeadGapPredictions,
+            SafetyCarPickCounts = safetyCarPickCounts,
+            SafetyCarActualCounts = safetyCarActualCounts,
+            SafetyCarCorrectGuesses = safetyCarCorrectGuesses,
         };
-
-        var sortedPoints = userPredictionsResults.Order().ToArray();
-        var median = sortedPoints.Length % 2 == 1
-            ? sortedPoints[sortedPoints.Length / 2]
-            : (double)(sortedPoints[sortedPoints.Length / 2 - 1] + sortedPoints[sortedPoints.Length / 2]) / 2;
-        result.MedianPoints = median;
-        return result;*/
-
-        return new UserPointsStats();
     }
 
-    public async Task<MostPickedDriversStats> GetMostPickedDriversAsync(Guid userId)
+    private static string SafetyCarVariantName(SafetyCarsCount variant) => variant switch
     {
-        /*var finishedRaces = (await f1RacesRepository.ReadAllAsync()).Where(x => !x.IsActive).ToArray();
-        var predictions = finishedRaces
-                          .SelectMany(x => x.Predictions)
-                          .Where(x => x.UserId == userId)
-                          .ToArray();
-        var tenthPlacePredictions = CountAndOrderByScore(predictions, x => x.TenthPlacePickedDriver);
-        // var dnfPredictions = CountAndOrderByScore(predictions, x => x.FirstDnfPickedDriver);
+        SafetyCarsCount.Zero => "Нет",
+        SafetyCarsCount.One => "1",
+        SafetyCarsCount.Two => "2",
+        SafetyCarsCount.ThreePlus => "3+",
+        _ => variant.ToString(),
+    };
 
-        return new MostPickedDriversStats
-        {
-            TenthPlacePickedDrivers = tenthPlacePredictions,
-            FirstDnfPickedDrivers = Array.Empty<DriverStatistics>(),
-        };*/
-
-        return new MostPickedDriversStats();
-    }
-
-    /*private static DriverStatistics[] CountAndOrderByScore<T>(IEnumerable<T> predictions, Func<T, F1Driver?> selector)
+    private static F1SeasonStats EmptyStats() => new()
     {
-        return predictions
-               .GroupBy(selector)
-               .Where(x => x.Key is not null)
-               .Select(
-                   group => new DriverStatistics
-                   {
-                       Driver = group.Key!.Value,
-                       Score = group.Count(),
-                   }
-               )
-               .OrderByDescending(x => x.Score)
-               .ToArray();
-    }*/
+        TenthPlacePointsRating = [],
+        MostPickedForTenthPlace = [],
+        TenthPickedButDnfed = [],
+        DriverOwnTenthPlacePoints = [],
+        TenthPlacePredictionEfficiency = [],
+        MostDnfDrivers = [],
+        MostPickedForDnf = [],
+        TenthPlaceDnfAntiRating = [],
+        ClosestLeadGapPredictions = [],
+        SafetyCarPickCounts = [],
+        SafetyCarActualCounts = [],
+        SafetyCarCorrectGuesses = [],
+    };
 
-    private readonly IF1PredictionResultsRepository f1PredictionResultsRepository;
-    private readonly IF1RacesRepository f1RacesRepository;
+    private const int TopCount = 5;
 }
