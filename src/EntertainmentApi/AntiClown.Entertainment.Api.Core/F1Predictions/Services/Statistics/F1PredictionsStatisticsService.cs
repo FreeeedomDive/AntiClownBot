@@ -130,6 +130,18 @@ public class F1PredictionsStatisticsService(
             .Take(TopCount)
             .ToArray();
 
+        var tenthPlaceDnfAntiRating = allPredictions
+            .Where(p => raceResultById.TryGetValue(p.RaceId, out var result) && result.DnfDrivers.Contains(p.TenthPlacePickedDriver))
+            .GroupBy(p => p.UserId)
+            .Select(g => new UserStatistics
+            {
+                UserId = g.Key,
+                Score = g.Count(),
+            })
+            .OrderByDescending(x => x.Score)
+            .Take(TopCount)
+            .ToArray();
+
         var closestLeadGapPredictions = finishedRaces
             .Where(r => r.Predictions.Count > 0)
             .SelectMany(r => r.Predictions.Select(p => new LeadGapPredictionStats
@@ -185,6 +197,7 @@ public class F1PredictionsStatisticsService(
             TenthPlacePredictionEfficiency = tenthPlacePredictionEfficiency,
             MostDnfDrivers = mostDnfDrivers,
             MostPickedForDnf = mostPickedForDnf,
+            TenthPlaceDnfAntiRating = tenthPlaceDnfAntiRating,
             ClosestLeadGapPredictions = closestLeadGapPredictions,
             SafetyCarPickCounts = safetyCarPickCounts,
             SafetyCarActualCounts = safetyCarActualCounts,
@@ -210,6 +223,7 @@ public class F1PredictionsStatisticsService(
         TenthPlacePredictionEfficiency = [],
         MostDnfDrivers = [],
         MostPickedForDnf = [],
+        TenthPlaceDnfAntiRating = [],
         ClosestLeadGapPredictions = [],
         SafetyCarPickCounts = [],
         SafetyCarActualCounts = [],

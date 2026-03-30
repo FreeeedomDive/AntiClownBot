@@ -9,6 +9,7 @@ public class F1SeasonStats
     public DriverStatistics[] TenthPlacePredictionEfficiency { get; set; }
     public DriverStatistics[] MostDnfDrivers { get; set; }
     public DriverStatistics[] MostPickedForDnf { get; set; }
+    public UserStatistics[] TenthPlaceDnfAntiRating { get; set; }
     public LeadGapPredictionStats[] ClosestLeadGapPredictions { get; set; }
     public DriverStatistics[] SafetyCarPickCounts { get; set; }
     public DriverStatistics[] SafetyCarActualCounts { get; set; }
