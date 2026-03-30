@@ -47,12 +47,12 @@ export default function F1PredictionsStats() {
           <F1StatsSection title="10 место" columns={3}>
             {[
               <F1DriverStatsCard
-                title="Сколько очков принесли гонщики за 10 место"
+                title="Сумма очков за предсказания участников"
                 data={stats.tenthPlacePointsRating}
                 scoreLabel={["очко", "очка", "очков"]}
               />,
               <F1DriverStatsCard
-                title="Самые популярные предсказания на 10 место"
+                title="Самые популярные предсказания"
                 data={stats.mostPickedForTenthPlace}
                 scoreLabel={["раз", "раза", "раз"]}
               />,
@@ -60,6 +60,16 @@ export default function F1PredictionsStats() {
                 title="Выбор 10 места => DNF в гонке"
                 data={stats.tenthPickedButDnfed}
                 scoreLabel={["раз", "раза", "раз"]}
+              />,
+              <F1DriverStatsCard
+                title="Максимальная сумма очков по результатам гонок"
+                data={stats.driverOwnTenthPlacePoints}
+                scoreLabel={["очко", "очка", "очков"]}
+              />,
+              <F1DriverStatsCard
+                title="Среднее количество очков за предсказание гонщика"
+                data={stats.tenthPlacePredictionEfficiency}
+                scoreLabel={["очко", "очка", "очков"]}
               />,
             ]}
           </F1StatsSection>
@@ -77,6 +87,28 @@ export default function F1PredictionsStats() {
                 title="Самые популярные выборы DNF"
                 data={stats.mostPickedForDnf}
                 scoreLabel={["раз", "раза", "раз"]}
+              />,
+            ]}
+          </F1StatsSection>
+
+          <Divider />
+
+          <F1StatsSection title="Инциденты" columns={3}>
+            {[
+              <F1DriverStatsCard
+                title="Сколько раз выбирали вариант"
+                data={stats.safetyCarPickCounts}
+                scoreLabel={["раз", "раза", "раз"]}
+              />,
+              <F1DriverStatsCard
+                title="Сколько раз угадали вариант"
+                data={stats.safetyCarCorrectGuesses}
+                scoreLabel={["раз", "раза", "раз"]}
+              />,
+              <F1DriverStatsCard
+                title="Количество инцидентов в гонках"
+                data={stats.safetyCarActualCounts}
+                scoreLabel={["гонка", "гонки", "гонок"]}
               />,
             ]}
           </F1StatsSection>
