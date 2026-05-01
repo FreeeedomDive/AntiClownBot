@@ -47,6 +47,46 @@ public class JolpicaClient(ILogger<JolpicaClient> logger) : IJolpicaClient
             .ToArray();
     }
 
+    public async Task<(int Round, string[] Standings)?> GetDriverStandingsAsync(int season)
+    {
+        var url = $"/ergast/f1/{season}/driverStandings.json";
+        var response = await HttpClient.GetAsync(url);
+
+        logger.LogInformation(
+            "Jolpica driver standings response for season {Season}: {StatusCode}",
+            season, response.StatusCode
+        );
+
+        if (!response.IsSuccessStatusCode)
+        {
+            logger.LogWarning("Jolpica returned non-success status {Status}", response.StatusCode);
+            return null;
+        }
+
+        var content = await response.Content.ReadAsStringAsync();
+        var data = JsonConvert.DeserializeObject<JolpicaDriverStandingsResponse>(content);
+        var standingsList = data?.MrData?.StandingsTable?.StandingsLists?.FirstOrDefault();
+
+        if (standingsList?.DriverStandings is null || standingsList.DriverStandings.Length == 0)
+        {
+            logger.LogWarning("Jolpica returned no driver standings for season {Season}", season);
+            return null;
+        }
+
+        if (!int.TryParse(standingsList.Round, out var round))
+        {
+            logger.LogWarning("Jolpica returned unparseable round number '{Round}' for season {Season}", standingsList.Round, season);
+            return null;
+        }
+
+        var standings = standingsList.DriverStandings
+            .OrderBy(d => int.TryParse(d.Position, out var pos) ? pos : 99)
+            .Select(d => CapitalizeDriverId(d.Driver.DriverId))
+            .ToArray();
+
+        return (round, standings);
+    }
+
     private static string CapitalizeDriverId(string driverId)
     {
         var last = driverId.Split('_').Last();

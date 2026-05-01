@@ -20,4 +20,5 @@ public interface IF1PredictionsService
     Task CreateOrUpdateTeamAsync(F1Team team);
     Task SaveQualifyingGridAsync(Guid raceId, string[] grid);
     Task PollQualifyingGridAsync(Guid raceId);
+    Task PollChampionshipResultsAsync(Guid raceId);
 }

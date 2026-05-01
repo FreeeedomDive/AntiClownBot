@@ -3,14 +3,18 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Options;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Services.ChampionshipPredictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.EventsProducing;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 using AntiClown.Entertainment.Api.Dto.Exceptions.F1Predictions;
 using AntiClown.Tools.Utility.Extensions;
 using Hangfire;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 
@@ -20,8 +24,11 @@ public class F1PredictionsService(
     IF1PredictionsMessageProducer f1PredictionsMessageProducer,
     IF1PredictionTeamsRepository f1PredictionTeamsRepository,
     IF1PredictionsResultBuilder f1PredictionsResultBuilder,
+    IF1ChampionshipPredictionsService championshipPredictionsService,
     IJolpicaClient jolpicaClient,
     IScheduler scheduler,
+    IOptions<F1PredictionsOptions> options,
+    ILogger<F1PredictionsService> logger,
     TimeProvider timeProvider
 ) : IF1PredictionsService
 {
@@ -129,6 +136,13 @@ public class F1PredictionsService(
         await f1RacesRepository.UpdateAsync(race);
         await f1PredictionsMessageProducer.ProduceRaceFinishedAsync(raceId);
 
+        scheduler.Schedule(
+            () => BackgroundJob.Schedule(
+                () => PollChampionshipResultsAsync(raceId),
+                options.Value.ChampionshipPollingInterval
+            )
+        );
+
         return results;
     }
 
@@ -202,10 +216,52 @@ public class F1PredictionsService(
             scheduler.Schedule(
                 () => BackgroundJob.Schedule(
                     () => PollQualifyingGridAsync(raceId),
-                    TimeSpan.FromMinutes(30)
+                    options.Value.QualifyingGridPollingInterval
                 )
             );
         }
+    }
+
+    [AutomaticRetry(Attempts = 0)]
+    public async Task PollChampionshipResultsAsync(Guid raceId)
+    {
+        var race = await f1RacesRepository.ReadAsync(raceId);
+
+        // Sprint races don't affect driver championship standings round count
+        if (race.IsSprint)
+        {
+            logger.LogInformation("Race {RaceId} is a sprint, skipping championship standings poll", raceId);
+            return;
+        }
+
+        var finishedRaces = await f1RacesRepository.FindAsync(new F1RaceFilter { Season = race.Season, IsActive = false });
+        var expectedRound = finishedRaces.Count(x => !x.IsSprint);
+
+        var result = await jolpicaClient.GetDriverStandingsAsync(race.Season);
+
+        if (result is null || result.Value.Round < expectedRound)
+        {
+            logger.LogInformation(
+                "Championship standings for season {Season} not yet updated (got round {GotRound}, expected {ExpectedRound}), rescheduling",
+                race.Season, result?.Round, expectedRound
+            );
+            scheduler.Schedule(
+                () => BackgroundJob.Schedule(
+                    () => PollChampionshipResultsAsync(raceId),
+                    options.Value.ChampionshipPollingInterval
+                )
+            );
+            return;
+        }
+
+        var existing = await championshipPredictionsService.ReadResultsAsync(race.Season);
+        existing.Standings = result.Value.Standings;
+        await championshipPredictionsService.WriteResultsAsync(race.Season, existing);
+
+        logger.LogInformation(
+            "Championship standings for season {Season} updated after round {Round}",
+            race.Season, result.Value.Round
+        );
     }
 
     private async Task<bool> TryLoadQualifyingGridAsync(Guid raceId)

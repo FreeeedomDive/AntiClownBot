@@ -37,6 +37,7 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Statistics;
 using AntiClown.Entertainment.Api.Core.MinecraftAuth.Repositories;
 using AntiClown.Entertainment.Api.Core.MinecraftAuth.Services;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Options;
 using AntiClown.Entertainment.Api.Core.Options;
 using AntiClown.Entertainment.Api.Core.Parties.Repositories;
 using AntiClown.Entertainment.Api.Core.Parties.Services;
@@ -62,6 +63,7 @@ var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.Configure<F1PredictionsOptions>(builder.Configuration.GetSection("F1Predictions"));
 builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));
 builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
 
