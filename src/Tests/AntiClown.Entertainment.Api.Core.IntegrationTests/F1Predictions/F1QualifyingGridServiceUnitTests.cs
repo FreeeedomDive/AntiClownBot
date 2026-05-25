@@ -3,13 +3,16 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Options;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
+using AntiClown.Entertainment.Api.Core.F1Predictions.Services.ChampionshipPredictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.EventsProducing;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
 namespace AntiClown.Entertainment.Api.Core.IntegrationTests.F1Predictions;
@@ -24,6 +27,7 @@ public class F1QualifyingGridServiceUnitTests
         messageProducer = Substitute.For<IF1PredictionsMessageProducer>();
         teamsRepository = Substitute.For<IF1PredictionTeamsRepository>();
         resultBuilder = Substitute.For<IF1PredictionsResultBuilder>();
+        championshipPredictionsService = Substitute.For<IF1ChampionshipPredictionsService>();
         jolpicaClient = Substitute.For<IJolpicaClient>();
         scheduler = Substitute.For<IScheduler>();
         timeProvider = Substitute.For<TimeProvider>();
@@ -34,8 +38,11 @@ public class F1QualifyingGridServiceUnitTests
             messageProducer,
             teamsRepository,
             resultBuilder,
+            championshipPredictionsService,
             jolpicaClient,
             scheduler,
+            Microsoft.Extensions.Options.Options.Create(new F1PredictionsOptions()),
+            NullLogger<F1PredictionsService>.Instance,
             timeProvider
         );
 
@@ -268,7 +275,7 @@ public class F1QualifyingGridServiceUnitTests
 
     private IJolpicaClient jolpicaClient = null!;
     private IF1PredictionsMessageProducer messageProducer = null!;
-
+    private IF1ChampionshipPredictionsService championshipPredictionsService = null!;
     private IF1RacesRepository racesRepository = null!;
     private IF1PredictionsResultBuilder resultBuilder = null!;
     private IF1PredictionResultsRepository resultsRepository = null!;
