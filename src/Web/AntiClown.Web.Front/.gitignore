@@ -11,6 +11,9 @@
 # production
 /build
 
+# Self-hosted Telegram WebApp SDK (fetched at build time, fallback copied from /vendor)
+/public/telegram-web-app.js
+
 # misc
 .DS_Store
 .env.local

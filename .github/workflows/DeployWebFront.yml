@@ -23,6 +23,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Fetch Telegram WebApp SDK (self-host)
+        run: ./scripts/fetch-tg-sdk.sh
+
       - name: Log in to Docker Registry
         env:
           DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
