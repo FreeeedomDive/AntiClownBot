@@ -25,6 +25,7 @@ jobs:
 
       - name: Fetch Telegram WebApp SDK (self-host)
         run: ./scripts/fetch-tg-sdk.sh
+        working-directory: ${{ env.PROJECT_FOLDER }}
 
       - name: Log in to Docker Registry
         env:

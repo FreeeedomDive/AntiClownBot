@@ -37,7 +37,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "ensure-tg-sdk": "node -e \"const fs=require('fs');const p='public/telegram-web-app.js';if(!fs.existsSync(p)){fs.copyFileSync('../../../vendor/telegram-web-app.js',p);console.log('[ensure-tg-sdk] copied fallback from vendor/telegram-web-app.js');}\"",
+    "ensure-tg-sdk": "node -e \"const fs=require('fs');const p='public/telegram-web-app.js';if(!fs.existsSync(p)){fs.copyFileSync('vendor/telegram-web-app.js',p);console.log('[ensure-tg-sdk] copied fallback from vendor/telegram-web-app.js');}\"",
     "prestart": "npm run ensure-tg-sdk",
     "prebuild": "npm run ensure-tg-sdk",
     "start": "react-scripts start",

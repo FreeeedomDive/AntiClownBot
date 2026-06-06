@@ -6,10 +6,10 @@ set -euo pipefail
 # in regions where it's throttled/blocked). On any failure we fall back to the
 # committed vendor/ copy and warn — the build must not break because of this.
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 URL="https://telegram.org/js/telegram-web-app.js"
-TARGET="$REPO_ROOT/src/Web/AntiClown.Web.Front/public/telegram-web-app.js"
-FALLBACK="$REPO_ROOT/vendor/telegram-web-app.js"
+TARGET="$PROJECT_ROOT/public/telegram-web-app.js"
+FALLBACK="$PROJECT_ROOT/vendor/telegram-web-app.js"
 TMP="$(mktemp)"
 trap 'rm -f "$TMP"' EXIT
 
