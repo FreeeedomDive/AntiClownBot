@@ -1,7 +1,8 @@
 import { Alert, Snackbar, Stack, TextField } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import "./LoginPage.css";
 import { Navigate, useNavigate } from "react-router-dom";
+import DocumentTitle from "react-document-title";
 import { useStore } from "../../Stores";
 import TokensApi from "../../Api/TokensApi";
 import { LoadingButton } from "@mui/lab";
@@ -32,52 +33,50 @@ export default function LoginPage() {
     navigate(`/user/${userId}`);
   }, [userId, token, authStore, navigate]);
 
-  useEffect(() => {
-    document.title = "Авторизация - Clown City";
-  }, []);
-
   return (
-    <div className="background">
-      <Snackbar
-        open={!!error}
-        autoHideDuration={5000}
-        onClose={() => setError("")}
-      >
-        <Alert severity="error">{error}</Alert>
-      </Snackbar>
-      {currentLoggedInUserId && hasToken && (
-        <Navigate to={`/user/${currentLoggedInUserId}`} />
-      )}
-      <Stack alignItems="center" className="auth" spacing="8px">
-        <TextField
-          className="input"
-          fullWidth
-          variant="outlined"
-          label="UserId"
-          value={userId}
-          onChange={(x) => setUserId(x.target.value)}
-        />
-        <TextField
-          className="input"
-          fullWidth
-          variant="outlined"
-          label="Token"
-          type="password"
-          value={token}
-          onChange={(x) => setToken(x.target.value)}
-        />
-        <LoadingButton
-          fullWidth
-          loading={loading}
-          color="primary"
-          size="large"
-          variant="contained"
-          startIcon={<Login />}
-          onClick={login}
+    <DocumentTitle title="Авторизация - Clown City">
+      <div className="background">
+        <Snackbar
+          open={!!error}
+          autoHideDuration={5000}
+          onClose={() => setError("")}
         >
-          Login
-        </LoadingButton>
-      </Stack>
-    </div>
+          <Alert severity="error">{error}</Alert>
+        </Snackbar>
+        {currentLoggedInUserId && hasToken && (
+          <Navigate to={`/user/${currentLoggedInUserId}`} />
+        )}
+        <Stack alignItems="center" className="auth" spacing="8px">
+          <TextField
+            className="input"
+            fullWidth
+            variant="outlined"
+            label="UserId"
+            value={userId}
+            onChange={(x) => setUserId(x.target.value)}
+          />
+          <TextField
+            className="input"
+            fullWidth
+            variant="outlined"
+            label="Token"
+            type="password"
+            value={token}
+            onChange={(x) => setToken(x.target.value)}
+          />
+          <LoadingButton
+            fullWidth
+            loading={loading}
+            color="primary"
+            size="large"
+            variant="contained"
+            startIcon={<Login />}
+            onClick={login}
+          >
+            Login
+          </LoadingButton>
+        </Stack>
+      </div>
+    </DocumentTitle>
   );
 }

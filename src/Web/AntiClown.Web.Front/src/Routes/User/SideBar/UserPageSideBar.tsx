@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { List, Stack } from "@mui/material";
@@ -32,20 +32,6 @@ interface Props {
 
 const ICON_SX = { fontSize: 18 };
 
-const F1_USER_PATHS = [
-  "standings",
-  "rulebook",
-  "races",
-  "championship",
-  "bingo",
-].map((p) => `f1Predictions/${p}`);
-const F1_ADMIN_PATHS = [
-  "admin/f1Predictions/results",
-  "admin/f1Predictions/championship",
-  "admin/f1Predictions/bingo",
-  "admin/f1Predictions/teams",
-];
-
 const UserPageSideBar = observer(({ user }: Props) => {
   const { authStore } = useStore();
   const { rightsStore } = useStore();
@@ -53,14 +39,7 @@ const UserPageSideBar = observer(({ user }: Props) => {
   const { userId = "" } = useParams<"userId">();
   const isMyPage = currentLoggedInUserId === userId;
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const isF1AdminSelected = F1_ADMIN_PATHS.some((p) =>
-    location.pathname.endsWith(p),
-  );
-  const isF1PredictionsSelected =
-    !isF1AdminSelected &&
-    F1_USER_PATHS.some((p) => location.pathname.endsWith(p));
   const userHasAnyAdminRights = rightsStore.userRights.find(
     (right) =>
       right === RightsDto.F1PredictionsAdmin ||
@@ -104,7 +83,6 @@ const UserPageSideBar = observer(({ user }: Props) => {
                 link={buildLink(userId, "f1Predictions/standings")}
                 text="Предсказания F1"
                 icon={<Speed sx={ICON_SX} />}
-                isSelected={isF1PredictionsSelected}
               />
             </RightsWrapper>
           </List>
@@ -119,7 +97,6 @@ const UserPageSideBar = observer(({ user }: Props) => {
                 link={buildLink(userId, "admin/f1Predictions/results")}
                 text="Админка F1"
                 icon={<AdminPanelSettings sx={ICON_SX} />}
-                isSelected={isF1AdminSelected}
               />
             </RightsWrapper>
             <RightsWrapper requiredRights={[RightsDto.EditSettings]}>

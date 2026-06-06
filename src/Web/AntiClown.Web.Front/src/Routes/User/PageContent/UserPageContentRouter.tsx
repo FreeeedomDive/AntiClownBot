@@ -1,7 +1,8 @@
-import { Route, Routes, useLocation, useParams } from "react-router-dom";
-import React, { useEffect } from "react";
+import { Route, Routes, useParams } from "react-router-dom";
+import React from "react";
+import DocumentTitle from "react-document-title";
 import { useStore } from "../../../Stores";
-import { getPageTitle } from "../../../Helpers/PageTitleHelper";
+import { ActiveSidebar } from "../SideBar/SideBarContext";
 import UserOverview from "./UserOverview/UserOverview";
 import UserInventory from "./ControlPanel/Inventory/UserInventory";
 import UserShop from "./ControlPanel/Shop/UserShop";
@@ -24,11 +25,6 @@ const UserPageContentRouter = ({ user }: Props) => {
   const currentLoggedInUserId = authStore.loggedInUserId;
   const { userId } = useParams<"userId">();
   const isMyPage = currentLoggedInUserId === userId;
-  const location = useLocation();
-
-  useEffect(() => {
-    document.title = getPageTitle(location.pathname, userId);
-  }, [location.pathname, userId]);
 
   if (user === null) {
     return <Typography variant={"h5"}>Пользователь не найден</Typography>;
@@ -41,23 +37,89 @@ const UserPageContentRouter = ({ user }: Props) => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<UserOverview />} />
+        <Route
+          path="/"
+          element={
+            <ActiveSidebar id="Overview">
+              <DocumentTitle title="Профиль - Clown City">
+                <UserOverview />
+              </DocumentTitle>
+            </ActiveSidebar>
+          }
+        />
       </Routes>
 
       {isMyPage && (
         <Routes>
-          <Route path="/economy" element={<UserEconomy />} />
-          <Route path="/inventory" element={<UserInventory />} />
-          <Route path="/shop" element={<UserShop />} />
+          <Route
+            path="/economy"
+            element={
+              <ActiveSidebar id="Economy">
+                <DocumentTitle title="Экономика - Clown City">
+                  <UserEconomy />
+                </DocumentTitle>
+              </ActiveSidebar>
+            }
+          />
+          <Route
+            path="/inventory"
+            element={
+              <ActiveSidebar id="Inventory">
+                <DocumentTitle title="Инвентарь - Clown City">
+                  <UserInventory />
+                </DocumentTitle>
+              </ActiveSidebar>
+            }
+          />
+          <Route
+            path="/shop"
+            element={
+              <ActiveSidebar id="Shop">
+                <DocumentTitle title="Магазин - Clown City">
+                  <UserShop />
+                </DocumentTitle>
+              </ActiveSidebar>
+            }
+          />
           <Route path="/f1Predictions/*" element={<F1PredictionsPage />} />
-          <Route path="/admin/f1Predictions/*" element={<F1PredictionsAdminPage />} />
-          <Route path="/admin/settings" element={<EditSettings />} />
+          <Route
+            path="/admin/f1Predictions/*"
+            element={<F1PredictionsAdminPage />}
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <ActiveSidebar id="Settings">
+                <DocumentTitle title="Настройки - Clown City">
+                  <EditSettings />
+                </DocumentTitle>
+              </ActiveSidebar>
+            }
+          />
         </Routes>
       )}
       {Boolean(!isMyPage && currentLoggedInUserId && user) && (
         <Routes>
-          <Route path="/itemsTrade" element={<ItemsTrade />} />
-          <Route path="/f1Predictions/bingo" element={<F1BingoBoard />} />
+          <Route
+            path="/itemsTrade"
+            element={
+              <ActiveSidebar id="ItemsTrade">
+                <DocumentTitle title="Обмен предметами - Clown City">
+                  <ItemsTrade />
+                </DocumentTitle>
+              </ActiveSidebar>
+            }
+          />
+          <Route
+            path="/f1Predictions/bingo"
+            element={
+              <ActiveSidebar id="F1PredictionsBingo">
+                <DocumentTitle title="Бинго - Clown City">
+                  <F1BingoBoard />
+                </DocumentTitle>
+              </ActiveSidebar>
+            }
+          />
         </Routes>
       )}
     </>

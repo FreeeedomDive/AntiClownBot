@@ -6,8 +6,9 @@ import {
   ListItemText,
 } from "@mui/material";
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MAIN_COLOR } from "../../../Helpers/Colors";
+import { useIsSidebarActive } from "./SideBarContext";
 
 interface Props {
   sidebarKey: string;
@@ -17,7 +18,6 @@ interface Props {
   nesting?: number;
   showBadge?: boolean;
   onClick?: (() => void) | null;
-  isSelected?: boolean;
 }
 
 export default function UserPageSideBarItem({
@@ -28,10 +28,9 @@ export default function UserPageSideBarItem({
   nesting = 1,
   showBadge = false,
   onClick = null,
-  isSelected,
 }: Props) {
   const navigate = useNavigate();
-  const location = useLocation();
+  const isSelected = useIsSidebarActive(sidebarKey);
 
   return (
     <ListItem key={sidebarKey} disablePadding>
@@ -46,7 +45,7 @@ export default function UserPageSideBarItem({
           },
         }}
         onClick={onClick ?? (() => navigate(link))}
-        selected={isSelected !== undefined ? isSelected : location.pathname === link}
+        selected={isSelected}
       >
         {icon && (
           <ListItemIcon sx={{ minWidth: 32, "& .MuiSvgIcon-root": { fontSize: 18 } }}>

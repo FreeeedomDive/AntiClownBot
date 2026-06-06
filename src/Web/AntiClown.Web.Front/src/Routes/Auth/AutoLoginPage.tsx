@@ -1,6 +1,7 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import DocumentTitle from "react-document-title";
 import { useStore } from "../../Stores";
 import TokensApi from "../../Api/TokensApi";
 
@@ -10,7 +11,6 @@ export default function AutoLoginPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "Авторизация - Clown City";
     const userId = searchParams.get("userId");
     const token = searchParams.get("token");
 
@@ -30,18 +30,20 @@ export default function AutoLoginPage() {
   }, [searchParams, authStore, navigate]);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 2,
-        height: "100vh",
-      }}
-    >
-      <CircularProgress />
-      <Typography color="text.secondary">Выполняется вход...</Typography>
-    </Box>
+    <DocumentTitle title="Авторизация - Clown City">
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 2,
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+        <Typography color="text.secondary">Выполняется вход...</Typography>
+      </Box>
+    </DocumentTitle>
   );
 }

@@ -7,6 +7,7 @@ import { UserDto } from "../../../Dto/Users/UserDto";
 import { Navigate, useParams } from "react-router-dom";
 import RightsApi from "../../../Api/RightsApi";
 import { useStore } from "../../../Stores";
+import { SideBarProvider } from "../SideBar/SideBarContext";
 
 export default function UserMainPage() {
   const { authStore, rightsStore } = useStore();
@@ -37,32 +38,34 @@ export default function UserMainPage() {
   }
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      <Box
-        component="nav"
-        sx={{
-          width: { sm: sideBarWidth },
-          flexShrink: { sm: 0 },
-          bgcolor: "#000000",
-          position: "sticky",
-          top: 0,
-          height: "100vh",
-          overflowY: "auto",
-        }}
-      >
-        <UserPageSideBar user={user} />
-      </Box>
+    <SideBarProvider>
+      <Box sx={{ display: "flex", minHeight: "100vh" }}>
+        <Box
+          component="nav"
+          sx={{
+            width: { sm: sideBarWidth },
+            flexShrink: { sm: 0 },
+            bgcolor: "#000000",
+            position: "sticky",
+            top: 0,
+            height: "100vh",
+            overflowY: "auto",
+          }}
+        >
+          <UserPageSideBar user={user} />
+        </Box>
 
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: "16px",
-          width: { sm: `calc(100% - ${sideBarWidth}px)` },
-        }}
-      >
-        <UserPageContentRouter user={user} />
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: "16px",
+            width: { sm: `calc(100% - ${sideBarWidth}px)` },
+          }}
+        >
+          <UserPageContentRouter user={user} />
+        </Box>
       </Box>
-    </Box>
+    </SideBarProvider>
   );
 }

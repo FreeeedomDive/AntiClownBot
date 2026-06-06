@@ -17,6 +17,8 @@ import {
   Leaderboard,
   MenuBook,
 } from "@mui/icons-material";
+import DocumentTitle from "react-document-title";
+import { ActiveSidebar } from "../../../SideBar/SideBarContext";
 import F1PredictionsStandings from "./Standings/F1PredictionsStandings";
 import F1PredictionsRulebook from "./Rulebook/F1PredictionsRulebook";
 import F1PredictionsList from "./Predictions/F1PredictionsList";
@@ -25,12 +27,42 @@ import F1BingoBoard from "./Bingo/F1BingoBoard";
 import F1PredictionsStats from "./Statistics/F1PredictionsStats";
 
 const TABS = [
-  { label: "Регламент", path: "rulebook", icon: <MenuBook /> },
-  { label: "Таблица", path: "standings", icon: <Leaderboard /> },
-  { label: "Предсказания гонок", path: "races", icon: <Assignment /> },
-  { label: "Чемпионат", path: "championship", icon: <EmojiEvents /> },
-  { label: "Бинго", path: "bingo", icon: <Casino /> },
-  { label: "Статистика", path: "statistics", icon: <BarChart /> },
+  {
+    label: "Регламент",
+    path: "rulebook",
+    icon: <MenuBook />,
+    element: <F1PredictionsRulebook />,
+  },
+  {
+    label: "Таблица",
+    path: "standings",
+    icon: <Leaderboard />,
+    element: <F1PredictionsStandings />,
+  },
+  {
+    label: "Предсказания гонок",
+    path: "races",
+    icon: <Assignment />,
+    element: <F1PredictionsList />,
+  },
+  {
+    label: "Чемпионат",
+    path: "championship",
+    icon: <EmojiEvents />,
+    element: <F1ChampionshipPredictions />,
+  },
+  {
+    label: "Бинго",
+    path: "bingo",
+    icon: <Casino />,
+    element: <F1BingoBoard />,
+  },
+  {
+    label: "Статистика",
+    path: "statistics",
+    icon: <BarChart />,
+    element: <F1PredictionsStats />,
+  },
 ] as const;
 
 const FIRST_SEASON = 2023;
@@ -61,62 +93,69 @@ const F1PredictionsPage = () => {
   };
 
   return (
-    <Box>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          sx={{ minHeight: 32 }}
-        >
-          {TABS.map((tab, index) => (
-            <Tab
-              key={tab.path}
-              label={tab.label}
-              icon={tab.icon}
-              iconPosition="start"
-              value={index}
-              sx={{
-                minHeight: 32,
-                py: 0.5,
-                fontSize: "0.8rem",
-                "& .MuiSvgIcon-root": { fontSize: 16 },
-              }}
-            />
-          ))}
-        </Tabs>
-        {showSeasonSelector && (
-          <FormControl size="small" sx={{ ml: "auto", minWidth: 90 }}>
-            <Select
-              value={season}
-              onChange={(e) =>
-                setSearchParams(
-                  { season: String(e.target.value) },
-                  { replace: true },
-                )
-              }
-              sx={{ height: 32 }}
-            >
-              {seasons.map((s) => (
-                <MenuItem key={s} value={s}>
-                  {s}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
+    <ActiveSidebar id="F1Predictions">
+      <Box>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            sx={{ minHeight: 32 }}
+          >
+            {TABS.map((tab, index) => (
+              <Tab
+                key={tab.path}
+                label={tab.label}
+                icon={tab.icon}
+                iconPosition="start"
+                value={index}
+                sx={{
+                  minHeight: 32,
+                  py: 0.5,
+                  fontSize: "0.8rem",
+                  "& .MuiSvgIcon-root": { fontSize: 16 },
+                }}
+              />
+            ))}
+          </Tabs>
+          {showSeasonSelector && (
+            <FormControl size="small" sx={{ ml: "auto", minWidth: 90 }}>
+              <Select
+                value={season}
+                onChange={(e) =>
+                  setSearchParams(
+                    { season: String(e.target.value) },
+                    { replace: true },
+                  )
+                }
+                sx={{ height: 32 }}
+              >
+                {seasons.map((s) => (
+                  <MenuItem key={s} value={s}>
+                    {s}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        </Box>
+        <Box sx={{ mt: 2 }}>
+          <Routes>
+            <Route path="/" element={<Navigate to="standings" replace />} />
+            {TABS.map((tab) => (
+              <Route
+                key={tab.path}
+                path={tab.path}
+                element={
+                  <DocumentTitle title={`${tab.label} - Clown City`}>
+                    {tab.element}
+                  </DocumentTitle>
+                }
+              />
+            ))}
+          </Routes>
+        </Box>
       </Box>
-      <Box sx={{ mt: 2 }}>
-        <Routes>
-          <Route path="/" element={<Navigate to="standings" replace />} />
-          <Route path="standings" element={<F1PredictionsStandings />} />
-          <Route path="rulebook" element={<F1PredictionsRulebook />} />
-          <Route path="races" element={<F1PredictionsList />} />
-          <Route path="championship" element={<F1ChampionshipPredictions />} />
-          <Route path="bingo" element={<F1BingoBoard />} />
-          <Route path="statistics" element={<F1PredictionsStats />} />
-        </Routes>
-      </Box>
-    </Box>
+    </ActiveSidebar>
   );
 };
 
