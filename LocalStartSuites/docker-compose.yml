@@ -1,0 +1,12 @@
+name: anticlownlocal
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: anticlown-nginx-local
+    ports:
+      - "30228:4400"
+    volumes:
+      - ../nginx/nginx_local.conf:/etc/nginx/nginx.conf:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
