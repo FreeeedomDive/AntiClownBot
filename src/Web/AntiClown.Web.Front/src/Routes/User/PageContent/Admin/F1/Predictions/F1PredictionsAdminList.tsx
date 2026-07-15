@@ -19,19 +19,21 @@ export default function F1PredictionsAdminList() {
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto | undefined>();
   const [isActive, setIsActive] = useState(true);
 
-  async function loadRaces(onlyActive: boolean) {
-    const result = await F1PredictionsApi.find({
+  function fetchRaces(onlyActive: boolean) {
+    return F1PredictionsApi.find({
       season: new Date().getFullYear(),
       isActive: onlyActive ? true : undefined,
     });
-
-    setF1Races(result);
-    setCurrentF1Race(onlyActive ? result[0] : result.at(-1));
   }
 
   useEffect(() => {
-    loadRaces(isActive).catch(console.error);
-  }, [isActive]);
+    fetchRaces(true)
+      .then((result) => {
+        setF1Races(result);
+        setCurrentF1Race(result[0]);
+      })
+      .catch(console.error);
+  }, []);
 
   return (
     <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
@@ -67,7 +69,9 @@ export default function F1PredictionsAdminList() {
                   onChange={async (x) => {
                     const onlyActive = x.target.checked;
                     setIsActive(onlyActive);
-                    await loadRaces(onlyActive);
+                    const result = await fetchRaces(onlyActive);
+                    setF1Races(result);
+                    setCurrentF1Race(onlyActive ? result[0] : result.at(-1));
                   }}
                 />
               }

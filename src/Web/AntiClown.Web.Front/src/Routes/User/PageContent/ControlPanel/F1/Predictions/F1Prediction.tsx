@@ -40,57 +40,66 @@ interface Props {
 
 export default function F1Prediction({ f1Race }: Props) {
   const { userId } = useParams<"userId">();
-  const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto>(f1Race);
-  const [teams, setTeams] = useState<F1TeamDto[]>([]);
+  const [predictionData, setPredictionData] = useState<{
+    f1Race: F1RaceDto;
+    teams: F1TeamDto[];
+  }>();
 
   useEffect(() => {
-    async function load() {
-      const [result, teams] = await Promise.all([
-        F1PredictionsApi.read(f1Race.id, userId),
-        F1PredictionsApi.getActiveTeams(),
-      ]);
-      setCurrentF1Race(result);
-      setTeams(teams);
-    }
+    Promise.all([
+      F1PredictionsApi.read(f1Race.id, userId),
+      F1PredictionsApi.getActiveTeams(),
+    ])
+      .then(([loadedRace, teams]) =>
+        setPredictionData({ f1Race: loadedRace, teams }),
+      )
+      .catch(console.error);
+  }, [f1Race.id, userId]);
 
-    load().catch(console.error);
-  }, [f1Race.id]);
+  if (!predictionData) {
+    return null;
+  }
 
+  return (
+    <F1PredictionForm
+      key={`${predictionData.f1Race.id}-${userId ?? ""}`}
+      f1Race={predictionData.f1Race}
+      teams={predictionData.teams}
+      userId={userId}
+    />
+  );
+}
+
+interface F1PredictionFormProps extends Props {
+  teams: F1TeamDto[];
+  userId: string | undefined;
+}
+
+function F1PredictionForm({ f1Race, teams, userId }: F1PredictionFormProps) {
   const userPrediction = useMemo(() => {
-    return currentF1Race.predictions.find(
+    return f1Race.predictions.find(
       (prediction) => prediction.userId === userId,
     );
-  }, [currentF1Race, userId]);
+  }, [f1Race, userId]);
 
-  const [selected10Position, setSelected10Position] = useState<string>("");
-  const [isDNFNobody, setIsDNFNobody] = useState<boolean>(false);
-  const [dnfList, setDnfList] = useState<DNFList>([
-    "",
-    "",
-    "",
-    "",
-    "",
-  ] as unknown as DNFList);
-
-  useEffect(() => {
-    if (teams.length === 0) return;
-    const firstDriver = teams[0].firstDriver;
-    setSelected10Position(
-      userPrediction?.tenthPlacePickedDriver ?? firstDriver,
-    );
-    setIsDNFNobody(userPrediction?.dnfPrediction?.noDnfPredicted ?? false);
-    if (userPrediction?.dnfPrediction.dnfPickedDrivers?.length === 5) {
-      setDnfList(userPrediction.dnfPrediction.dnfPickedDrivers as DNFList);
-    } else {
-      setDnfList([
-        firstDriver,
-        firstDriver,
-        firstDriver,
-        firstDriver,
-        firstDriver,
-      ]);
-    }
-  }, [teams, userPrediction]);
+  const firstDriver = teams[0]?.firstDriver ?? "";
+  const [selected10Position, setSelected10Position] = useState<string>(
+    () => userPrediction?.tenthPlacePickedDriver ?? firstDriver,
+  );
+  const [isDNFNobody, setIsDNFNobody] = useState<boolean>(
+    () => userPrediction?.dnfPrediction?.noDnfPredicted ?? false,
+  );
+  const [dnfList, setDnfList] = useState<DNFList>(() =>
+    userPrediction?.dnfPrediction.dnfPickedDrivers?.length === 5
+      ? (userPrediction.dnfPrediction.dnfPickedDrivers as DNFList)
+      : ([
+          firstDriver,
+          firstDriver,
+          firstDriver,
+          firstDriver,
+          firstDriver,
+        ] as DNFList),
+  );
 
   const [selectedSafetyCarPrediction, setSafetyCarPrediction] =
     useState<F1SafetyCarPredictionDto>(
@@ -160,12 +169,8 @@ export default function F1Prediction({ f1Race }: Props) {
         sx={{ width: "100%", height: "100%", margin: "auto" }}
       >
         <F1PredictionGridColumn index={0}>
-          {currentF1Race.qualifyingGrid &&
-          currentF1Race.qualifyingGrid.length > 0 ? (
-            <F1QualifyingGridView
-              grid={currentF1Race.qualifyingGrid}
-              teams={teams}
-            />
+          {f1Race.qualifyingGrid && f1Race.qualifyingGrid.length > 0 ? (
+            <F1QualifyingGridView grid={f1Race.qualifyingGrid} teams={teams} />
           ) : (
             <Stack direction="column" spacing={1} sx={{ opacity: 0.4, mt: 1 }}>
               <Typography variant="h6" align="center">

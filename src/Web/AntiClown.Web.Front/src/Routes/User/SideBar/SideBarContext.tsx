@@ -1,20 +1,5 @@
-import React, {
-  createContext,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from "react";
-
-interface SideBarContextValue {
-  activeId: string | null;
-  setActiveId: React.Dispatch<React.SetStateAction<string | null>>;
-}
-
-const SideBarContext = createContext<SideBarContextValue>({
-  activeId: null,
-  setActiveId: () => {},
-});
+import React, { useContext, useLayoutEffect, useMemo, useState } from "react";
+import { SideBarContext } from "./SideBarContextValue";
 
 export function SideBarProvider({ children }: { children: React.ReactNode }) {
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -39,9 +24,4 @@ export function ActiveSidebar({
     };
   }, [id, setActiveId]);
   return <>{children}</>;
-}
-
-export function useIsSidebarActive(id: string): boolean {
-  const { activeId } = useContext(SideBarContext);
-  return activeId === id;
 }

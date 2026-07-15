@@ -65,7 +65,7 @@ function sortItems(items: BaseItemDto[]): BaseItemDto[] {
 
 export default function UserInventory() {
   const { userId } = useParams<"userId">();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => Boolean(userId));
   const [inventory, setInventory] = useState<InventoryDto | null>(null);
   const [activeTab, setActiveTab] = useState<ItemName>("CatWife");
   const [error, setError] = useState<string | null>(null);
@@ -77,10 +77,13 @@ export default function UserInventory() {
   }, [userId]);
 
   useEffect(() => {
-    loadInventory()
+    if (!userId) return;
+
+    InventoryApi.get(userId)
+      .then(setInventory)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [loadInventory]);
+  }, [userId]);
 
   const handleToggleActive = async (item: BaseItemDto) => {
     if (!userId) return;

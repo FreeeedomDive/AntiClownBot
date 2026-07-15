@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { SettingsCategory } from "../../../../../Dto/Settings/SettingsCategory";
-import React, { useCallback } from "react";
+import React from "react";
 import { Add } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import SettingsApi from "../../../../../Api/SettingsApi";
@@ -23,7 +23,7 @@ const AddSettings = ({ category, onSave }: Props) => {
   const [newSettingValue, setNewSettingValue] = React.useState("");
   const [isSaving, setIsSaving] = React.useState(false);
 
-  const createNewSetting = useCallback(async () => {
+  const createNewSetting = async () => {
     setIsSaving(true);
     await SettingsApi.save({
       category: selectedCategory,
@@ -32,7 +32,7 @@ const AddSettings = ({ category, onSave }: Props) => {
     });
     setIsSaving(false);
     await onSave();
-  }, [newSettingName, newSettingValue, selectedCategory]);
+  };
 
   return (
     <Stack spacing={2} direction="column">

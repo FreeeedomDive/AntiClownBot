@@ -28,7 +28,7 @@ import ShopItemCard from "./ShopItemCard";
 
 export default function UserShop() {
   const { userId } = useParams<"userId">();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => Boolean(userId));
   const [shop, setShop] = useState<CurrentShopInfoDto | null>(null);
   const [economy, setEconomy] = useState<EconomyDto | null>(null);
   const [stats, setStats] = useState<ShopStatsDto | null>(null);
@@ -52,13 +52,16 @@ export default function UserShop() {
   }, [userId]);
 
   useEffect(() => {
-    Promise.all([
-      loadShop(),
-      userId ? EconomyApi.get(userId).then(setEconomy) : Promise.resolve(),
-    ])
+    if (!userId) return;
+
+    Promise.all([ShopApi.get(userId), EconomyApi.get(userId)])
+      .then(([shop, economy]) => {
+        setShop(shop);
+        setEconomy(economy);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [loadShop, userId]);
+  }, [userId]);
 
   const refreshEconomy = useCallback(async () => {
     if (!userId) return;
