@@ -8,7 +8,7 @@ import {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { MAIN_COLOR } from "../../../Helpers/Colors";
-import { useIsSidebarActive } from "./sideBarContext";
+import { useIsSidebarActive } from "./SideBarContextValue";
 
 interface Props {
   sidebarKey: string;

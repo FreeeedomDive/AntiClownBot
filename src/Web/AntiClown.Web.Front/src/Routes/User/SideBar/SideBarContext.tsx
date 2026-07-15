@@ -1,5 +1,5 @@
 import React, { useContext, useLayoutEffect, useMemo, useState } from "react";
-import { SideBarContext } from "./sideBarContext";
+import { SideBarContext } from "./SideBarContextValue";
 
 export function SideBarProvider({ children }: { children: React.ReactNode }) {
   const [activeId, setActiveId] = useState<string | null>(null);
