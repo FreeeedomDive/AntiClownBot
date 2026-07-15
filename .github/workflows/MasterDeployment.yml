@@ -2,191 +2,189 @@ name: Master Deployment
 
 on:
   workflow_call:
+    inputs:
+      base-sha:
+        type: string
+        required: false
+        default: ''
+      components:
+        type: string
+        required: false
+        default: auto
   workflow_dispatch:
+    inputs:
+      components:
+        description: 'auto, all, or comma-separated: api,data-api,entertainment-api,discord-bot,events-daemon,telegram-bot,web-api,frontend,nginx,migrate-api,migrate-data-api,migrate-entertainment-api,migrate-discord-bot'
+        type: string
+        required: true
+        default: auto
 
 jobs:
   detect-changes:
     name: Detect Changes for Deployments
-    runs-on: ubuntu-latest
-    outputs:
-      deploy_api: ${{ steps.check.outputs.deploy_api }}
-      deploy_data_api: ${{ steps.check.outputs.deploy_data_api }}
-      deploy_entertainment_api: ${{ steps.check.outputs.deploy_entertainment_api }}
-      deploy_discord_bot: ${{ steps.check.outputs.deploy_discord_bot }}
-      deploy_events_daemon: ${{ steps.check.outputs.deploy_events_daemon }}
-      deploy_telegram_bot: ${{ steps.check.outputs.deploy_telegram_bot }}
-      deploy_web_api: ${{ steps.check.outputs.deploy_web_api }}
-      deploy_front: ${{ steps.check.outputs.deploy_front }}
-      deploy_nginx: ${{ steps.check.outputs.deploy_nginx }}
-      migrate_api: ${{ steps.check.outputs.migrate_api }}
-      migrate_data_api: ${{ steps.check.outputs.migrate_data_api }}
-      migrate_entertainment_api: ${{ steps.check.outputs.migrate_entertainment_api }}
-      migrate_discord_bot: ${{ steps.check.outputs.migrate_discord_bot }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
+    uses: ./.github/workflows/DetectChanges.yml
+    with:
+      base-sha: ${{ inputs.base-sha }}
+      components: ${{ inputs.components }}
 
-      - name: Detect changes in specific projects
-        id: check
-        run: |
-          # Data.Api migrations
-          if git diff --name-only HEAD^ HEAD | grep -E 'AntiClown\.Data\.Api\.PostgreSqlMigrationsApplier'; then
-            echo "migrate_data_api=true" >> $GITHUB_OUTPUT
-          fi
-
-          # Api migrations
-          if git diff --name-only HEAD^ HEAD | grep -E 'AntiClown\.Api\.PostgreSqlMigrationsApplier'; then
-            echo "migrate_api=true" >> $GITHUB_OUTPUT
-          fi
-
-          # Entertainment.Api migrations
-          if git diff --name-only HEAD^ HEAD | grep -E 'AntiClown\.Entertainment\.Api\.PostgreSqlMigrationsApplier'; then
-            echo "migrate_entertainment_api=true" >> $GITHUB_OUTPUT
-          fi
-
-          # DiscordBot migrations
-          if git diff --name-only HEAD^ HEAD | grep -E 'AntiClown\.DiscordBot\.PostgreSqlMigrationsApplier'; then
-            echo "migrate_discord_bot=true" >> $GITHUB_OUTPUT
-          fi
-
-          # Data.Api
-          if git diff --name-only HEAD^ HEAD | grep -E '(AntiClown\.Data\.Api|AntiClown\.Data\.Api\.Core)/'; then
-            echo "deploy_data_api=true" >> $GITHUB_OUTPUT
-          fi
-
-          # Api
-          if git diff --name-only HEAD^ HEAD | grep -E '(AntiClown\.Api|AntiClown\.Api\.Core)/'; then
-            echo "deploy_api=true" >> $GITHUB_OUTPUT
-          fi
-
-          # Entertainment.Api
-          if git diff --name-only HEAD^ HEAD | grep -E '(AntiClown\.Entertainment\.Api|AntiClown\.Entertainment\.Api\.Core)/'; then
-            echo "deploy_entertainment_api=true" >> $GITHUB_OUTPUT
-          fi
-
-          # DiscordBot
-          if git diff --name-only HEAD^ HEAD | grep -E 'AntiClown\.DiscordBot/'; then
-            echo "deploy_discord_bot=true" >> $GITHUB_OUTPUT
-          fi
-
-          # TelegramBot
-          if git diff --name-only HEAD^ HEAD | grep -E 'AntiClown\.Telegram.Bot/'; then
-            echo "deploy_telegram_bot=true" >> $GITHUB_OUTPUT
-          fi
-
-          # EventsDaemon
-          if git diff --name-only HEAD^ HEAD | grep -E 'AntiClown\.EventsDaemon/'; then
-            echo "deploy_events_daemon=true" >> $GITHUB_OUTPUT
-          fi
-
-          # Web.Api
-          if git diff --name-only HEAD^ HEAD | grep -E 'AntiClown\.Web\.Api/'; then
-            echo "deploy_web_api=true" >> $GITHUB_OUTPUT
-          fi
-
-          # Web.Front
-          if git diff --name-only HEAD^ HEAD | grep -E 'AntiClown\.Web\.Front/'; then
-            echo "deploy_front=true" >> $GITHUB_OUTPUT
-          fi
-
-          # Nginx
-          if git diff --name-only HEAD^ HEAD | grep -E '^nginx/'; then
-            echo "deploy_nginx=true" >> $GITHUB_OUTPUT
-          fi
-
-  # Tier 1: PostgreSQL migrations
   migrate_api:
     name: Migrate Api PostgreSql
     needs: [detect-changes]
     if: ${{ needs.detect-changes.outputs.migrate_api == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployApiPostgreSqlMigrator.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/Api/AntiClown.Api.PostgreSqlMigrationsApplier/Dockerfile
+      dockerimage: anticlownapipostgresql
+      values-file: values/anticlown/api.yaml
+      values-key: .migration.image.tag
     secrets: inherit
 
   migrate_data_api:
     name: Migrate Data.Api PostgreSql
     needs: [detect-changes]
     if: ${{ needs.detect-changes.outputs.migrate_data_api == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployDataApiPostgreSqlMigrator.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/DataApi/AntiClown.Data.Api.PostgreSqlMigrationsApplier/Dockerfile
+      dockerimage: anticlowndataapipostgresql
+      values-file: values/anticlown/data-api.yaml
+      values-key: .migration.image.tag
     secrets: inherit
 
   migrate_entertainment_api:
     name: Migrate Entertainment.Api PostgreSql
     needs: [detect-changes]
     if: ${{ needs.detect-changes.outputs.migrate_entertainment_api == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployEntertainmentApiPostgreSqlMigrator.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/EntertainmentApi/AntiClown.Entertainment.Api.PostgreSqlMigrationsApplier/Dockerfile
+      dockerimage: anticlownentertainmentapipostgresql
+      values-file: values/anticlown/entertainment-api.yaml
+      values-key: .migration.image.tag
     secrets: inherit
 
   migrate_discord_bot:
     name: Migrate DiscordBot PostgreSql
     needs: [detect-changes]
     if: ${{ needs.detect-changes.outputs.migrate_discord_bot == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployDiscordBotPostgreSqlMigrator.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/DiscordBot/AntiClown.DiscordBot.PostgreSqlMigrationsApplier/Dockerfile
+      dockerimage: anticlowndiscordbotpostgresql
+      values-file: values/anticlown/discord-bot.yaml
+      values-key: .migration.image.tag
     secrets: inherit
 
-  # Tier 2: Core backend APIs (wait for their respective migrations)
   deploy_data_api:
     name: Deploy Data.Api
     needs: [detect-changes, migrate_data_api]
     if: ${{ needs.detect-changes.outputs.deploy_data_api == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployDataApi.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/DataApi/AntiClown.Data.Api/Dockerfile
+      dockerimage: anticlowndataapi
+      values-file: values/anticlown/data-api.yaml
     secrets: inherit
 
   deploy_api:
     name: Deploy Api
     needs: [detect-changes, migrate_api]
     if: ${{ needs.detect-changes.outputs.deploy_api == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployApi.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/Api/AntiClown.Api/Dockerfile
+      dockerimage: anticlownapi
+      values-file: values/anticlown/api.yaml
     secrets: inherit
 
   deploy_entertainment_api:
     name: Deploy Entertainment.Api
     needs: [detect-changes, migrate_entertainment_api]
     if: ${{ needs.detect-changes.outputs.deploy_entertainment_api == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployEntertainmentApi.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/EntertainmentApi/AntiClown.Entertainment.Api/Dockerfile
+      dockerimage: anticlownentertainmentapi
+      values-file: values/anticlown/entertainment-api.yaml
     secrets: inherit
 
-  # Tier 3: Services that depend on core APIs (wait for all 3 API deploys)
   deploy_discord_bot:
     name: Deploy DiscordBot
     needs: [detect-changes, migrate_discord_bot, deploy_data_api, deploy_api, deploy_entertainment_api]
     if: ${{ needs.detect-changes.outputs.deploy_discord_bot == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployDiscordBot.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/DiscordBot/AntiClown.DiscordBot/Dockerfile
+      dockerimage: anticlowndiscordbot
+      values-file: values/anticlown/discord-bot.yaml
     secrets: inherit
 
   deploy_events_daemon:
     name: Deploy EventsDaemon
     needs: [detect-changes, deploy_data_api, deploy_api, deploy_entertainment_api]
     if: ${{ needs.detect-changes.outputs.deploy_events_daemon == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployEventsDaemon.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/AntiClown.EventsDaemon/Dockerfile
+      dockerimage: anticlowneventsdaemon
+      values-file: values/anticlown/events-daemon.yaml
     secrets: inherit
 
   deploy_telegram_bot:
     name: Deploy TelegramBot
     needs: [detect-changes, deploy_data_api, deploy_api, deploy_entertainment_api]
     if: ${{ needs.detect-changes.outputs.deploy_telegram_bot == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployTelegramBot.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/AntiClown.Telegram.Bot/Dockerfile
+      dockerimage: anticlowntelegrambot
+      values-file: values/anticlown/telegram-bot.yaml
     secrets: inherit
 
   deploy_web_api:
     name: Deploy Web.Api
     needs: [detect-changes, deploy_data_api, deploy_api, deploy_entertainment_api]
     if: ${{ needs.detect-changes.outputs.deploy_web_api == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployWebApi.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src
+      dockerfile: src/Web/AntiClown.Web.Api/Dockerfile
+      dockerimage: anticlownwebapi
+      values-file: values/anticlown/web-api.yaml
     secrets: inherit
 
-  # Tier 4: Front (waits for Web.Api)
   deploy_front:
     name: Deploy Web.Front
     needs: [detect-changes, deploy_web_api]
     if: ${{ needs.detect-changes.outputs.deploy_front == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployWebFront.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: src/Web/AntiClown.Web.Front
+      dockerfile: src/Web/AntiClown.Web.Front/Dockerfile
+      dockerimage: anticlownwebfront
+      values-file: values/anticlown/web-front.yaml
+      prepare-command: ./scripts/fetch-tg-sdk.sh
+      prepare-working-directory: src/Web/AntiClown.Web.Front
     secrets: inherit
 
   deploy_nginx:
     name: Deploy Nginx
     needs: [detect-changes]
     if: ${{ needs.detect-changes.outputs.deploy_nginx == 'true' && !failure() && !cancelled() }}
-    uses: ./.github/workflows/DeployNginx.yml
+    uses: ./.github/workflows/DeployImage.yml
+    with:
+      build-context: nginx
+      dockerfile: nginx/Dockerfile
+      dockerimage: anticlownnginx
+      values-file: values/anticlown/nginx.yaml
     secrets: inherit

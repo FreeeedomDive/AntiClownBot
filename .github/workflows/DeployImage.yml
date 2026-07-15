@@ -1,0 +1,98 @@
+name: Deploy Image
+
+on:
+  workflow_call:
+    inputs:
+      build-context:
+        type: string
+        required: true
+      dockerfile:
+        type: string
+        required: true
+      dockerimage:
+        type: string
+        required: true
+      values-file:
+        type: string
+        required: true
+      values-key:
+        type: string
+        required: false
+        default: .image.tag
+      prepare-command:
+        type: string
+        required: false
+        default: ''
+      prepare-working-directory:
+        type: string
+        required: false
+        default: .
+    secrets:
+      DOCKER_REGISTRY_IP:
+        required: true
+      DOCKER_REGISTRY_LOGIN:
+        required: true
+      DOCKER_REGISTRY_PASSWORD:
+        required: true
+      CONFIG_REPO_TOKEN:
+        required: true
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Prepare build context
+        if: ${{ inputs.prepare-command != '' }}
+        working-directory: ${{ inputs.prepare-working-directory }}
+        run: ${{ inputs.prepare-command }}
+
+      - name: Log in to Docker Registry
+        env:
+          DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_REGISTRY_LOGIN }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login "$DOCKER_REGISTRY_IP" \
+            -u "$DOCKER_USERNAME" --password-stdin
+
+      - name: Build and push image
+        env:
+          DOCKER_REGISTRY_IP: ${{ secrets.DOCKER_REGISTRY_IP }}
+        run: |
+          docker build "${{ inputs.build-context }}" \
+            -f "${{ inputs.dockerfile }}" \
+            -t "$DOCKER_REGISTRY_IP/${{ inputs.dockerimage }}:${{ github.sha }}"
+          docker push "$DOCKER_REGISTRY_IP/${{ inputs.dockerimage }}:${{ github.sha }}"
+
+      - name: Update image tag in config repo
+        env:
+          CONFIG_REPO_TOKEN: ${{ secrets.CONFIG_REPO_TOKEN }}
+          VALUES_FILE: ${{ inputs.values-file }}
+          VALUES_KEY: ${{ inputs.values-key }}
+          IMAGE: ${{ inputs.dockerimage }}
+          SHA: ${{ github.sha }}
+        run: |
+          for attempt in 1 2 3; do
+            rm -rf argocd-config
+            git clone "https://x-access-token:$CONFIG_REPO_TOKEN@github.com/FreeeedomDive/argocd-config.git"
+            FILE="argocd-config/$VALUES_FILE"
+            yq e "$VALUES_KEY = \"$SHA\"" -i "$FILE"
+
+            if git -C argocd-config diff --quiet -- "$VALUES_FILE"; then
+              exit 0
+            fi
+
+            git -C argocd-config config user.email "ci@github.com"
+            git -C argocd-config config user.name "GitHub Actions"
+            git -C argocd-config commit -am "deploy: $IMAGE $SHA"
+            if git -C argocd-config push; then
+              exit 0
+            fi
+            sleep "$attempt"
+          done
+
+          exit 1

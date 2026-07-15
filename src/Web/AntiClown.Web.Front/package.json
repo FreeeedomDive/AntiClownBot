@@ -34,14 +34,26 @@
     "prestart": "npm run ensure-tg-sdk",
     "prebuild": "npm run ensure-tg-sdk",
     "start": "vite --port 3000",
-    "build": "tsc --noEmit && vite build"
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --max-warnings 0",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@emnapi/core": "^1.11.2",
     "@emnapi/runtime": "^1.11.2",
     "@types/react-document-title": "^2.0.10",
     "@vitejs/plugin-react": "^6.0.3",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "globals": "^17.7.0",
     "prettier": "3.1.1",
+    "typescript-eslint": "^8.62.1",
     "vite": "^8.1.1",
     "typescript": "~6.0.2"
   }
