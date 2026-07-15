@@ -55,16 +55,18 @@ const EditSettings = () => {
     React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  async function loadSettings(category: SettingsCategory) {
-    setIsLoading(true);
-    const result = await SettingsApi.find(category);
-    setSettings(result);
-    setIsLoading(false);
+  function loadSettings(category: SettingsCategory) {
+    return SettingsApi.find(category).then((result) => {
+      setSettings(result);
+    });
   }
 
   useEffect(() => {
-    loadSettings(currentCategory).catch(console.error);
-  }, []);
+    SettingsApi.find(currentCategory)
+      .then(setSettings)
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, [currentCategory]);
 
   return isLoading ? (
     <Loader />
@@ -77,10 +79,10 @@ const EditSettings = () => {
               labelId="category-select"
               id="category-select"
               value={currentCategory}
-              onChange={async (event) => {
+              onChange={(event) => {
                 const value = event.target.value as SettingsCategory;
                 setCurrentCategory(value);
-                await loadSettings(value);
+                setIsLoading(true);
               }}
             >
               {Object.values(SettingsCategory).map((category) => (
@@ -131,7 +133,12 @@ const EditSettings = () => {
               category={currentCategory}
               onSave={async () => {
                 setIsCreateSettingsModalOpen(false);
-                await loadSettings(currentCategory);
+                setIsLoading(true);
+                try {
+                  await loadSettings(currentCategory);
+                } finally {
+                  setIsLoading(false);
+                }
               }}
             />
           </Box>

@@ -21,13 +21,21 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-      // These React Compiler rules require refactoring existing async loading and react-dnd patterns.
-      "react-hooks/exhaustive-deps": "off",
-      "react-hooks/immutability": "off",
-      "react-hooks/preserve-manual-memoization": "off",
+      "react-hooks/exhaustive-deps": "error",
+      "react-hooks/immutability": "error",
+      "react-hooks/preserve-manual-memoization": "error",
+      "react-hooks/refs": "error",
+      "react-hooks/set-state-in-effect": "error",
+      "react-refresh/only-export-components": "error",
+    },
+  },
+  // @hello-pangea/dnd exposes ref-backed drag props that must be spread during render.
+  {
+    files: [
+      "src/Routes/User/PageContent/Admin/F1/Predictions/F1RaceClassificationsElement.tsx",
+    ],
+    rules: {
       "react-hooks/refs": "off",
-      "react-hooks/set-state-in-effect": "off",
-      "react-refresh/only-export-components": "off",
     },
   },
   prettier,

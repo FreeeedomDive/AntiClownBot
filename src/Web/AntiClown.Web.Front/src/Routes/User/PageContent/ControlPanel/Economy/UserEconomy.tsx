@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import EconomyApi from "../../../../../Api/EconomyApi";
 import { Loader } from "../../../../../Components/Loader/Loader";
 import {
@@ -17,15 +17,16 @@ import { EconomyDto } from "../../../../../Dto/Economy/EconomyDto";
 import TransactionRow from "./TransactionRow";
 import { AddOutlined } from "@mui/icons-material";
 
+const TRANSACTIONS_STEP = 50;
+
 export default function UserEconomy() {
   const { userId } = useParams<"userId">();
   const [loading, setLoading] = useState(true);
 
   const [economy, setEconomy] = useState<EconomyDto>();
 
-  const transactionsStep = 50;
   const [transactions, setTransactions] = useState<TransactionDto[]>([]);
-  const [transactionsLimit, setTransactionsLimit] = useState(transactionsStep);
+  const [transactionsLimit, setTransactionsLimit] = useState(TRANSACTIONS_STEP);
   const [transactionsMin, setTransactionsMin] = useState(0);
   const [transactionsMax, setTransactionsMax] = useState(0);
   const [transactionsHistory, setTransactionsHistory] = useState<number[]>([]);
@@ -33,9 +34,67 @@ export default function UserEconomy() {
 
   const [isLoadMoreLoading, setIsLoadMoreLoading] = useState(false);
 
+  async function loadEconomy(transactionsCount: number) {
+    const economy = await EconomyApi.get(userId!);
+    setEconomy(economy);
+
+    const transactions = await EconomyApi.getTransactions(
+      userId!,
+      0,
+      transactionsCount,
+    );
+    setTransactions(transactions);
+
+    const result = Array.from<number>([]);
+    let currentScamCoinsBalance = economy.scamCoins;
+    let min = currentScamCoinsBalance;
+    let max = currentScamCoinsBalance;
+    result.push(currentScamCoinsBalance);
+
+    for (const transaction of transactions) {
+      currentScamCoinsBalance -= transaction.scamCoinDiff;
+      result.push(currentScamCoinsBalance);
+      min = Math.min(currentScamCoinsBalance, min);
+      max = Math.max(currentScamCoinsBalance, max);
+    }
+
+    setTransactionsHistory(result.reverse());
+    setTransactionsMin(min);
+    setTransactionsMax(max);
+    setTransactionsLimit(transactionsCount);
+  }
+
   useEffect(() => {
-    loadEconomy(transactionsLimit, true).catch(console.error);
-  }, []);
+    if (!userId) return;
+
+    Promise.all([
+      EconomyApi.get(userId),
+      EconomyApi.getTransactions(userId, 0, TRANSACTIONS_STEP),
+    ])
+      .then(([economy, transactions]) => {
+        const result = Array.from<number>([]);
+        let currentScamCoinsBalance = economy.scamCoins;
+        let min = currentScamCoinsBalance;
+        let max = currentScamCoinsBalance;
+        result.push(currentScamCoinsBalance);
+
+        for (const transaction of transactions) {
+          currentScamCoinsBalance -= transaction.scamCoinDiff;
+          result.push(currentScamCoinsBalance);
+          min = Math.min(currentScamCoinsBalance, min);
+          max = Math.max(currentScamCoinsBalance, max);
+        }
+
+        setEconomy(economy);
+        setTransactions(transactions);
+        setTransactionsHistory(result.reverse());
+        setTransactionsMin(min);
+        setTransactionsMax(max);
+        setTransactionsLimit(TRANSACTIONS_STEP);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [userId]);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout | undefined;
@@ -48,44 +107,6 @@ export default function UserEconomy() {
       clearTimeout(timeout);
     };
   }, [selectedTransaction]);
-
-  const loadEconomy = useCallback(
-    async (transactionsCount: number, showLoading: boolean = false) => {
-      if (showLoading) {
-        setLoading(true);
-      }
-
-      const economy = await EconomyApi.get(userId!);
-      setEconomy(economy);
-
-      const transactions = await EconomyApi.getTransactions(
-        userId!,
-        0,
-        transactionsCount,
-      );
-      setTransactions(transactions);
-
-      const result = Array.from<number>([]);
-      let currentScamCoinsBalance = economy.scamCoins;
-      let min = currentScamCoinsBalance;
-      let max = currentScamCoinsBalance;
-      result.push(currentScamCoinsBalance);
-
-      for (const transaction of transactions) {
-        currentScamCoinsBalance -= transaction.scamCoinDiff;
-        result.push(currentScamCoinsBalance);
-        min = Math.min(currentScamCoinsBalance, min);
-        max = Math.max(currentScamCoinsBalance, max);
-      }
-
-      setTransactionsHistory(result.reverse());
-      setTransactionsMin(min);
-      setTransactionsMax(max);
-      setTransactionsLimit(transactionsCount);
-      setLoading(false);
-    },
-    [userId],
-  );
 
   const createTransactionsHistoryListElements = (): React.ReactElement[] => {
     let scamCoinsNow = economy!.scamCoins;
@@ -120,7 +141,7 @@ export default function UserEconomy() {
           selected={selectedTransaction === transactionsLimit}
           onClick={async () => {
             setIsLoadMoreLoading(true);
-            await loadEconomy(transactionsLimit + transactionsStep);
+            await loadEconomy(transactionsLimit + TRANSACTIONS_STEP);
             setIsLoadMoreLoading(false);
           }}
         >

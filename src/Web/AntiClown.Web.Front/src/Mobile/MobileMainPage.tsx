@@ -89,7 +89,7 @@ export default function MobileMainPage() {
     }
 
     load().finally(() => setIsLoading(false));
-  }, []);
+  }, [authStore, mobileUserContextStore, rightsStore]);
 
   return (
     <ChakraProvider value={system}>
