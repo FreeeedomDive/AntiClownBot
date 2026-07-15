@@ -1,13 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import { Box, Paper, Stack, Typography } from "@mui/material";
 
-export default function SortedAxisTooltip(props: any) {
-  const { dataIndex, series, races } = props as {
-    dataIndex: number | null;
-    series: { label: string; data: (number | null)[]; color: string }[];
-    races: F1RaceDto[];
-  };
+interface SortedAxisTooltipProps {
+  dataIndex: number | null;
+  series: { label: string; data: (number | null)[]; color: string }[];
+  races: F1RaceDto[];
+}
+
+export default function SortedAxisTooltip(props: SortedAxisTooltipProps) {
+  const { dataIndex, series, races } = props;
   if (dataIndex == null) return null;
 
   const race = dataIndex === 0 ? null : races[dataIndex - 1];
@@ -22,7 +23,7 @@ export default function SortedAxisTooltip(props: any) {
     .map((s) => ({
       label: s.label,
       value: s.data[dataIndex],
-      color: s.color
+      color: s.color,
     }))
     .filter((item) => item.value != null)
     .sort((a, b) => b.value! - a.value!);
@@ -49,7 +50,7 @@ export default function SortedAxisTooltip(props: any) {
                 height: 8,
                 borderRadius: "50%",
                 backgroundColor: item.color,
-                flexShrink: 0
+                flexShrink: 0,
               }}
             />
             <Typography variant="caption" sx={{ flex: 1 }}>

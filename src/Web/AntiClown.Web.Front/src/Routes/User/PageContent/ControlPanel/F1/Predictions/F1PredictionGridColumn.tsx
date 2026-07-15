@@ -6,7 +6,10 @@ interface Props {
   children: React.ReactElement | React.ReactElement[];
 }
 
-export default function F1PredictionGridColumn({ index, children }: Props) {
+export default function F1PredictionGridColumn({
+  index: _index,
+  children,
+}: Props) {
   return (
     <Grid
       item
@@ -14,7 +17,11 @@ export default function F1PredictionGridColumn({ index, children }: Props) {
       sm={12}
       md={12}
       lg={4}
-      sx={{ display: "flex", justifyContent: "flex-start", alignItems: "flex-start" }}
+      sx={{
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+      }}
     >
       <Stack direction={"column"} spacing={1} width={"100%"}>
         {children}

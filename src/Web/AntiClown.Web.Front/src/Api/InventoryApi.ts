@@ -24,10 +24,10 @@ export default class InventoryApi {
   static changeActiveStatus = async (
     userId: string,
     itemId: string,
-    isActive: boolean
+    isActive: boolean,
   ): Promise<void> => {
     await InventoryApi.init().post(
-      `${userId}/items/${itemId}/active/${isActive}`
+      `${userId}/items/${itemId}/active/${isActive}`,
     );
   };
 

@@ -1,0 +1,53 @@
+name: Checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [labeled]
+    branches:
+      - main
+
+jobs:
+  remove-label:
+    name: Remove trigger label
+    if: ${{ github.event_name == 'pull_request' && (github.event.label.name == 'run-checks' || github.event.label.name == 'hotfix') }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Remove label so it can be re-applied to re-run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          LABEL: ${{ github.event.label.name }}
+          REPO: ${{ github.repository }}
+        run: gh pr edit "$PR" --repo "$REPO" --remove-label "$LABEL"
+
+  detect-changes:
+    name: Detect Changes
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.label.name == 'run-checks' }}
+    uses: ./.github/workflows/DetectChanges.yml
+    with:
+      base-ref: main
+
+  tests:
+    name: Backend Tests
+    needs: [detect-changes]
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || (github.event.label.name == 'run-checks' && needs.detect-changes.outputs.backend_tests == 'true')) }}
+    uses: ./.github/workflows/Tests.yml
+
+  frontend-checks:
+    name: Frontend Checks
+    needs: [detect-changes]
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || (github.event.label.name == 'run-checks' && needs.detect-changes.outputs.frontend_checks == 'true')) }}
+    uses: ./.github/workflows/Lint.yml
+
+  gate:
+    name: Checks Passed
+    needs: [detect-changes, tests, frontend-checks]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail unless checks passed, hotfix, or manual run
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || (github.event_name == 'pull_request' && github.event.label.name != 'run-checks' && github.event.label.name != 'hotfix') }}
+        run: exit 1

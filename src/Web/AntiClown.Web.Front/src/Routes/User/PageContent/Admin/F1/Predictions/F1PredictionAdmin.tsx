@@ -111,7 +111,9 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
           sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
         >
           <Stack direction={"column"} spacing={1} width={"100%"}>
-            <Typography variant="h6" align="center">Квалификация</Typography>
+            <Typography variant="h6" align="center">
+              Квалификация
+            </Typography>
             <F1RaceClassifications
               drivers={qualifyingGrid}
               setDrivers={setQualifyingGrid}
@@ -132,7 +134,9 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
           sx={{ display: "flex", justifyContent: "top", alignItems: "top" }}
         >
           <Stack direction={"column"} spacing={1} width={"100%"}>
-            <Typography variant="h6" align="center">Гонка</Typography>
+            <Typography variant="h6" align="center">
+              Гонка
+            </Typography>
             <F1RaceClassifications
               drivers={drivers}
               setDrivers={setDrivers}

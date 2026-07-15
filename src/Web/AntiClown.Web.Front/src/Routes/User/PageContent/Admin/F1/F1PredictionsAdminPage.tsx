@@ -53,7 +53,9 @@ const F1PredictionsAdminPage = () => {
   );
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    navigate(`/user/${userId}/admin/f1Predictions/${ADMIN_TABS[newValue].path}`);
+    navigate(
+      `/user/${userId}/admin/f1Predictions/${ADMIN_TABS[newValue].path}`,
+    );
   };
 
   return (

@@ -18,7 +18,11 @@ interface Props {
   showTitle?: boolean;
 }
 
-export default function F1QualifyingGridView({ grid, teams, showTitle = true }: Props) {
+export default function F1QualifyingGridView({
+  grid,
+  teams,
+  showTitle = true,
+}: Props) {
   return (
     <Stack direction="column" spacing={1}>
       {showTitle && (

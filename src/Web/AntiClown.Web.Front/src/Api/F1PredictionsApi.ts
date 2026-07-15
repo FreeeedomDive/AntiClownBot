@@ -92,9 +92,12 @@ export default class F1PredictionsApi {
   };
 
   static getSeasonStats = async (season: number): Promise<F1SeasonStatsDto> => {
-    const result = await F1PredictionsApi.init().get<F1SeasonStatsDto>(`stats`, {
-      params: { season },
-    });
+    const result = await F1PredictionsApi.init().get<F1SeasonStatsDto>(
+      `stats`,
+      {
+        params: { season },
+      },
+    );
     return result.data;
   };
 

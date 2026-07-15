@@ -51,7 +51,9 @@ export default function F1PredictionsStandings() {
     <Stack direction={"column"} spacing={1}>
       {isLoading && <Loader />}
       {!isLoading && standings && standings.standings.length === 0 && (
-        <Typography variant={"body1"}>Сезон {season} еще не стартовал</Typography>
+        <Typography variant={"body1"}>
+          Сезон {season} еще не стартовал
+        </Typography>
       )}
       {!isLoading && standings && standings.standings.length > 0 && charts && (
         <Stack direction={"column"} spacing={1}>
@@ -60,7 +62,11 @@ export default function F1PredictionsStandings() {
             members={members}
             standings={standings}
           />
-          <F1PredictionsStandingsChart members={members} charts={charts} races={finishedRaces} />
+          <F1PredictionsStandingsChart
+            members={members}
+            charts={charts}
+            races={finishedRaces}
+          />
         </Stack>
       )}
     </Stack>

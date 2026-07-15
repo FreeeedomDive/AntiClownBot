@@ -22,7 +22,7 @@ export class AuthStore {
     });
   }
 
-  logInViaTelegram(telegramUserId: number | undefined){
+  logInViaTelegram(telegramUserId: number | undefined) {
     cookies.set("telegramUserId", telegramUserId, cookiesOptions);
     this.telegramUserId = telegramUserId;
   }

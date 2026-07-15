@@ -7,7 +7,7 @@ interface Props {
   userId: string;
 }
 
-export default function MemberInfo({userId}: Props) {
+export default function MemberInfo({ userId }: Props) {
   const [member, setMember] = useState<DiscordMemberDto | null>(null);
   const [loading, setLoading] = useState(true);
 

@@ -1,0 +1,187 @@
+name: Detect Changes
+
+on:
+  workflow_call:
+    inputs:
+      base-ref:
+        description: Branch to diff the current ref against. Empty uses base-sha or the previous commit.
+        type: string
+        required: false
+        default: ''
+      base-sha:
+        description: Commit SHA to diff the current ref against.
+        type: string
+        required: false
+        default: ''
+      components:
+        description: Comma-separated components to force for a manual deploy, or all.
+        type: string
+        required: false
+        default: auto
+    outputs:
+      deploy_api:
+        value: ${{ jobs.detect.outputs.deploy_api }}
+      deploy_data_api:
+        value: ${{ jobs.detect.outputs.deploy_data_api }}
+      deploy_entertainment_api:
+        value: ${{ jobs.detect.outputs.deploy_entertainment_api }}
+      deploy_discord_bot:
+        value: ${{ jobs.detect.outputs.deploy_discord_bot }}
+      deploy_events_daemon:
+        value: ${{ jobs.detect.outputs.deploy_events_daemon }}
+      deploy_telegram_bot:
+        value: ${{ jobs.detect.outputs.deploy_telegram_bot }}
+      deploy_web_api:
+        value: ${{ jobs.detect.outputs.deploy_web_api }}
+      deploy_front:
+        value: ${{ jobs.detect.outputs.deploy_front }}
+      deploy_nginx:
+        value: ${{ jobs.detect.outputs.deploy_nginx }}
+      migrate_api:
+        value: ${{ jobs.detect.outputs.migrate_api }}
+      migrate_data_api:
+        value: ${{ jobs.detect.outputs.migrate_data_api }}
+      migrate_entertainment_api:
+        value: ${{ jobs.detect.outputs.migrate_entertainment_api }}
+      migrate_discord_bot:
+        value: ${{ jobs.detect.outputs.migrate_discord_bot }}
+      backend_tests:
+        value: ${{ jobs.detect.outputs.backend_tests }}
+      frontend_checks:
+        value: ${{ jobs.detect.outputs.frontend_checks }}
+
+jobs:
+  detect:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      deploy_api: ${{ steps.check.outputs.deploy_api }}
+      deploy_data_api: ${{ steps.check.outputs.deploy_data_api }}
+      deploy_entertainment_api: ${{ steps.check.outputs.deploy_entertainment_api }}
+      deploy_discord_bot: ${{ steps.check.outputs.deploy_discord_bot }}
+      deploy_events_daemon: ${{ steps.check.outputs.deploy_events_daemon }}
+      deploy_telegram_bot: ${{ steps.check.outputs.deploy_telegram_bot }}
+      deploy_web_api: ${{ steps.check.outputs.deploy_web_api }}
+      deploy_front: ${{ steps.check.outputs.deploy_front }}
+      deploy_nginx: ${{ steps.check.outputs.deploy_nginx }}
+      migrate_api: ${{ steps.check.outputs.migrate_api }}
+      migrate_data_api: ${{ steps.check.outputs.migrate_data_api }}
+      migrate_entertainment_api: ${{ steps.check.outputs.migrate_entertainment_api }}
+      migrate_discord_bot: ${{ steps.check.outputs.migrate_discord_bot }}
+      backend_tests: ${{ steps.check.outputs.backend_tests }}
+      frontend_checks: ${{ steps.check.outputs.frontend_checks }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed paths
+        id: check
+        env:
+          BASE_REF: ${{ inputs.base-ref }}
+          BASE_SHA: ${{ inputs.base-sha }}
+          COMPONENTS: ${{ inputs.components }}
+        run: |
+          if [ -n "$BASE_REF" ]; then
+            git fetch --no-tags origin "+refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF"
+            BASE=$(git merge-base "origin/$BASE_REF" HEAD)
+          elif [ -n "$BASE_SHA" ] && git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+            BASE="$BASE_SHA"
+          elif git rev-parse HEAD^ >/dev/null 2>&1; then
+            BASE="HEAD^"
+          else
+            BASE=$(git hash-object -t tree /dev/null)
+          fi
+
+          CHANGED=$(git diff --name-only "$BASE" HEAD)
+          has_changed() {
+            printf '%s\n' "$CHANGED" | grep -qE "$1"
+          }
+          is_forced() {
+            [ "$COMPONENTS" = "all" ] || printf '%s' "$COMPONENTS" | tr ',' '\n' | grep -qx "$1"
+          }
+
+          deploy_api=false
+          deploy_data_api=false
+          deploy_entertainment_api=false
+          deploy_discord_bot=false
+          deploy_events_daemon=false
+          deploy_telegram_bot=false
+          deploy_web_api=false
+          deploy_front=false
+          deploy_nginx=false
+          migrate_api=false
+          migrate_data_api=false
+          migrate_entertainment_api=false
+          migrate_discord_bot=false
+          backend_tests=false
+          frontend_checks=false
+
+          if has_changed '^src/(Api|DataApi|DiscordBot|EntertainmentApi|Common|Tests|AntiClown\.Telegram\.Bot|AntiClown\.EventsDaemon|Web/AntiClown\.Web\.Api)/|^src/AntiClownBot\.slnx$|^src/\.dockerignore$'; then
+            backend_tests=true
+          fi
+          if has_changed '^src/Web/AntiClown\.Web\.Front/'; then
+            frontend_checks=true
+          fi
+
+          if has_changed '^src/(Common/|\.dockerignore$)'; then
+            deploy_api=true
+            deploy_data_api=true
+            deploy_entertainment_api=true
+            deploy_discord_bot=true
+            deploy_events_daemon=true
+            deploy_telegram_bot=true
+            deploy_web_api=true
+            migrate_api=true
+            migrate_data_api=true
+            migrate_entertainment_api=true
+            migrate_discord_bot=true
+          fi
+
+          if has_changed '^src/Api/(AntiClown\.Api|AntiClown\.Api\.Core|AntiClown\.Api\.Dto|AntiClown\.Api\.Client)/'; then deploy_api=true; fi
+          if has_changed '^src/DataApi/(AntiClown\.Data\.Api|AntiClown\.Data\.Api\.Core|AntiClown\.Data\.Api\.Dto|AntiClown\.Data\.Api\.Client)/'; then deploy_data_api=true; fi
+          if has_changed '^src/EntertainmentApi/(AntiClown\.Entertainment\.Api|AntiClown\.Entertainment\.Api\.Core|AntiClown\.Entertainment\.Api\.Dto|AntiClown\.Entertainment\.Api\.Client)/'; then deploy_entertainment_api=true; fi
+          if has_changed '^src/DiscordBot/(AntiClown\.DiscordBot|AntiClown\.DiscordBot\.Dto|AntiClown\.DiscordBot\.Client)/'; then deploy_discord_bot=true; fi
+          if has_changed '^src/AntiClown\.EventsDaemon/'; then deploy_events_daemon=true; fi
+          if has_changed '^src/AntiClown\.Telegram\.Bot/'; then deploy_telegram_bot=true; fi
+          if has_changed '^src/Web/AntiClown\.Web\.Api/'; then deploy_web_api=true; fi
+          if has_changed '^src/Web/AntiClown\.Web\.Front/'; then deploy_front=true; fi
+          if has_changed '^nginx/'; then deploy_nginx=true; fi
+
+          if has_changed '^src/Api/AntiClown\.Api\.PostgreSqlMigrationsApplier/'; then migrate_api=true; fi
+          if has_changed '^src/DataApi/AntiClown\.Data\.Api\.PostgreSqlMigrationsApplier/'; then migrate_data_api=true; fi
+          if has_changed '^src/EntertainmentApi/AntiClown\.Entertainment\.Api\.PostgreSqlMigrationsApplier/'; then migrate_entertainment_api=true; fi
+          if has_changed '^src/DiscordBot/AntiClown\.DiscordBot\.PostgreSqlMigrationsApplier/'; then migrate_discord_bot=true; fi
+
+          if is_forced api; then deploy_api=true; fi
+          if is_forced data-api; then deploy_data_api=true; fi
+          if is_forced entertainment-api; then deploy_entertainment_api=true; fi
+          if is_forced discord-bot; then deploy_discord_bot=true; fi
+          if is_forced events-daemon; then deploy_events_daemon=true; fi
+          if is_forced telegram-bot; then deploy_telegram_bot=true; fi
+          if is_forced web-api; then deploy_web_api=true; fi
+          if is_forced frontend; then deploy_front=true; fi
+          if is_forced nginx; then deploy_nginx=true; fi
+          if is_forced migrate-api; then migrate_api=true; fi
+          if is_forced migrate-data-api; then migrate_data_api=true; fi
+          if is_forced migrate-entertainment-api; then migrate_entertainment_api=true; fi
+          if is_forced migrate-discord-bot; then migrate_discord_bot=true; fi
+
+          {
+            echo "deploy_api=$deploy_api"
+            echo "deploy_data_api=$deploy_data_api"
+            echo "deploy_entertainment_api=$deploy_entertainment_api"
+            echo "deploy_discord_bot=$deploy_discord_bot"
+            echo "deploy_events_daemon=$deploy_events_daemon"
+            echo "deploy_telegram_bot=$deploy_telegram_bot"
+            echo "deploy_web_api=$deploy_web_api"
+            echo "deploy_front=$deploy_front"
+            echo "deploy_nginx=$deploy_nginx"
+            echo "migrate_api=$migrate_api"
+            echo "migrate_data_api=$migrate_data_api"
+            echo "migrate_entertainment_api=$migrate_entertainment_api"
+            echo "migrate_discord_bot=$migrate_discord_bot"
+            echo "backend_tests=$backend_tests"
+            echo "frontend_checks=$frontend_checks"
+          } >> "$GITHUB_OUTPUT"

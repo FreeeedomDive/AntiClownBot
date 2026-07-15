@@ -3,13 +3,10 @@ name: Tests
 on:
   workflow_call:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  entertainment-api-integration-tests:
-    name: AntiClown.Entertainment.Api.Core.IntegrationTests
+  tests:
+    name: Integration Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,26 +17,13 @@ jobs:
         with:
           dotnet-version: '9.x'
 
-      - name: Restore
-        run: dotnet restore ./src/AntiClownBot.slnx
-
-      - name: Build
-        run: dotnet build ./src/AntiClownBot.slnx --configuration Release --no-restore
-
-      - name: Run Tests
-        run: dotnet test src/Tests/AntiClown.Entertainment.Api.Core.IntegrationTests/AntiClown.Entertainment.Api.Core.IntegrationTests.csproj --configuration Release --no-restore --no-build
-
-  api-integration-tests:
-    name: AntiClown.Api.Core.IntegrationTests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
         with:
-          dotnet-version: '9.x'
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('src/**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
       - name: Restore
         run: dotnet restore ./src/AntiClownBot.slnx
@@ -48,25 +32,4 @@ jobs:
         run: dotnet build ./src/AntiClownBot.slnx --configuration Release --no-restore
 
       - name: Run Tests
-        run: dotnet test src/Tests/AntiClown.Api.Core.IntegrationTests/AntiClown.Api.Core.IntegrationTests.csproj --configuration Release --no-restore --no-build
-
-  data-api-integration-tests:
-    name: AntiClown.Data.Api.Core.IntegrationTests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '9.x'
-
-      - name: Restore
-        run: dotnet restore ./src/AntiClownBot.slnx
-
-      - name: Build
-        run: dotnet build ./src/AntiClownBot.slnx --configuration Release --no-restore
-
-      - name: Run Tests
-        run: dotnet test src/Tests/AntiClown.Data.Api.Core.IntegrationTests/AntiClown.Data.Api.Core.IntegrationTests.csproj --configuration Release --no-restore --no-build
+        run: dotnet test ./src/AntiClownBot.slnx --configuration Release --no-restore --no-build

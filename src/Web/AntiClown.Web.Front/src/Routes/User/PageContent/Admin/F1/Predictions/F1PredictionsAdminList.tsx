@@ -49,7 +49,7 @@ export default function F1PredictionsAdminList() {
                 }}
               >
                 {f1Races.map((race) => (
-                  //@ts-ignore - necessary to load object into value
+                  // @ts-expect-error - necessary to load object into value
                   <MenuItem key={race.id} value={race}>
                     {race.name}
                     {race.isSprint ? " (спринт) " : " "}

@@ -8,10 +8,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {
-  BaseItemDto,
-  Rarity,
-} from "../../../../../Dto/Inventory/InventoryDto";
+import { BaseItemDto, Rarity } from "../../../../../Dto/Inventory/InventoryDto";
 import ItemStats from "./ItemStats";
 
 const rarityColors: Record<Rarity, string> = {
@@ -36,7 +33,11 @@ interface ItemCardProps {
   onSell: (item: BaseItemDto) => Promise<void>;
 }
 
-export default function ItemCard({ item, onToggleActive, onSell }: ItemCardProps) {
+export default function ItemCard({
+  item,
+  onToggleActive,
+  onSell,
+}: ItemCardProps) {
   const [confirmSell, setConfirmSell] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -88,7 +89,12 @@ export default function ItemCard({ item, onToggleActive, onSell }: ItemCardProps
       <Box sx={{ pl: 2, pr: 2, pt: 1.5, pb: 1.5 }}>
         <Stack spacing={1}>
           {/* Header */}
-          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
             <Stack direction="row" alignItems="center" spacing={1}>
               <Chip
                 label={rarityLabels[item.rarity]}
@@ -119,7 +125,11 @@ export default function ItemCard({ item, onToggleActive, onSell }: ItemCardProps
                 />
               )}
             </Stack>
-            <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "nowrap" }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ whiteSpace: "nowrap" }}
+            >
               💰 {item.price.toLocaleString("ru")}
             </Typography>
           </Stack>
@@ -130,7 +140,13 @@ export default function ItemCard({ item, onToggleActive, onSell }: ItemCardProps
           {/* Actions */}
           <Stack direction="row" spacing={1}>
             {!isNegative && (
-              <Tooltip title={item.isActive ? "Деактивировать предмет" : "Активировать предмет"}>
+              <Tooltip
+                title={
+                  item.isActive
+                    ? "Деактивировать предмет"
+                    : "Активировать предмет"
+                }
+              >
                 <Button
                   size="small"
                   variant={item.isActive ? "outlined" : "contained"}

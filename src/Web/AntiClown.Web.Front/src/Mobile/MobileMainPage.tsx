@@ -53,7 +53,7 @@ export default function MobileMainPage() {
         telegramId: telegramUserId,
       });
 
-      if (!!apiUser) {
+      if (apiUser) {
         mobileUserContextStore.addUser(apiUser);
       }
 
@@ -62,7 +62,7 @@ export default function MobileMainPage() {
 
     async function loadDiscordMember(userId: string) {
       const discordMember = await DiscordMembersApi.getMember(userId);
-      if (!!discordMember) {
+      if (discordMember) {
         mobileUserContextStore.addDiscordMember(discordMember);
       }
     }

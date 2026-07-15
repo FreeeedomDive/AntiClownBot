@@ -29,7 +29,7 @@ export default function F1DriverStatsCard({
   title,
   data,
   scoreLabel,
-  antiRating = false
+  antiRating = false,
 }: Props) {
   const maxScore = Math.max(...data.map((x) => x.score), 1);
 

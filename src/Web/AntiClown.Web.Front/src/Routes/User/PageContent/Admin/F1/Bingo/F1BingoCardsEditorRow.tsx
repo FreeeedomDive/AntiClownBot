@@ -1,5 +1,12 @@
 import { F1BingoCardDto } from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
-import { Box, IconButton, Stack, TableCell, TableRow, Typography } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Stack,
+  TableCell,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Add, Remove, Save } from "@mui/icons-material";
 import React, { useCallback } from "react";

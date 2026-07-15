@@ -8,7 +8,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Rarity, ItemName, BaseItemDto } from "../../../../../Dto/Inventory/InventoryDto";
+import {
+  Rarity,
+  ItemName,
+  BaseItemDto,
+} from "../../../../../Dto/Inventory/InventoryDto";
 import { ShopItemDto } from "../../../../../Dto/Shop/ShopDto";
 import ItemStats from "../Inventory/ItemStats";
 
@@ -106,9 +110,18 @@ export default function ShopItemCard({
     >
       <Box sx={{ pl: 2, pr: 2, pt: 1.5, pb: 1.5 }}>
         <Stack spacing={1}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
             <Stack direction="row" alignItems="center" spacing={1}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontWeight: 600 }}
+              >
                 #{index}
               </Typography>
               <Chip
@@ -130,13 +143,19 @@ export default function ShopItemCard({
                 />
               )}
             </Stack>
-            <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "nowrap" }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ whiteSpace: "nowrap" }}
+            >
               💰 {item.price.toLocaleString("ru")}
             </Typography>
           </Stack>
 
           <Typography variant="body1" sx={{ fontWeight: 500 }}>
-            {isNameVisible ? itemNameLabels[item.name] : "Нераспознанный предмет"}
+            {isNameVisible
+              ? itemNameLabels[item.name]
+              : "Нераспознанный предмет"}
           </Typography>
 
           {purchasedItem && <ItemStats item={purchasedItem} />}
@@ -182,7 +201,9 @@ export default function ShopItemCard({
                   title={
                     freeReveals > 0
                       ? `Бесплатное распознавание (осталось: ${freeReveals})`
-                      : `Стоимость распознавания: 💰 ${revealCost.toLocaleString("ru")} (40% от цены)`
+                      : `Стоимость распознавания: 💰 ${revealCost.toLocaleString(
+                          "ru",
+                        )} (40% от цены)`
                   }
                 >
                   <Button

@@ -94,7 +94,7 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
     String(userPrediction?.firstPlaceLeadPrediction ?? ""),
   );
   const [driverPosition, setDriverPosition] = useState<number | null>(
-    userPrediction?.driverPositionPrediction ?? null
+    userPrediction?.driverPositionPrediction ?? null,
   );
 
   const isValid = useMemo(() => {
@@ -177,7 +177,8 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
           <Typography variant="h6">Стартовая решётка</Typography>
         </AccordionSummary>
         <AccordionDetails sx={{ p: 0 }}>
-          {currentF1Race.qualifyingGrid && currentF1Race.qualifyingGrid.length > 0 ? (
+          {currentF1Race.qualifyingGrid &&
+          currentF1Race.qualifyingGrid.length > 0 ? (
             <F1QualifyingGridView
               grid={currentF1Race.qualifyingGrid}
               teams={teams}
@@ -189,7 +190,12 @@ export default function F1PredictionStepMaster({ f1Race }: Props) {
                 Результаты квалификации появятся здесь
               </Typography>
               {Array.from({ length: 22 }).map((_, i) => (
-                <Skeleton key={i} variant="rectangular" height={22} sx={{ borderRadius: 1 }} />
+                <Skeleton
+                  key={i}
+                  variant="rectangular"
+                  height={22}
+                  sx={{ borderRadius: 1 }}
+                />
               ))}
             </Stack>
           )}

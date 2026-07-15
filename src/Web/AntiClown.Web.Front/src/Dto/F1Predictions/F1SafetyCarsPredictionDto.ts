@@ -1,8 +1,8 @@
 export const F1SafetyCarsPredictionObject = {
-  Zero: 'Zero',
-  One: 'One',
-  Two: 'Two',
-  ThreePlus: 'ThreePlus',
+  Zero: "Zero",
+  One: "One",
+  Two: "Two",
+  ThreePlus: "ThreePlus",
 } as const;
 
 export type F1SafetyCarPredictionDto =

@@ -9,7 +9,7 @@ interface Props {
 }
 
 const SIZE = 64;
-export default function UserAchievements({userId}: Props) {
+export default function UserAchievements({ userId }: Props) {
   const [loading, setLoading] = useState(true);
   const [achievements, setAchievements] = useState<
     UserAchievementWithDetailsDto[]

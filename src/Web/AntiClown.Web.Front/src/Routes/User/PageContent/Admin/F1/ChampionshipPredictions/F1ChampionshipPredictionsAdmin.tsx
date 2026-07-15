@@ -53,7 +53,9 @@ export default function F1ChampionshipPredictionsAdmin() {
       setIsOpen(results.hasData ? results.isOpen : false);
     }
 
-    load().catch(console.error).finally(() => setIsLoading(false));
+    load()
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
   }, []);
 
   const save = useCallback(async () => {

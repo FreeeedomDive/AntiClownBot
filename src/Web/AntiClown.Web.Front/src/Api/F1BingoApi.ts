@@ -1,6 +1,6 @@
 import axios from "axios";
 import { F1BingoCardDto } from "../Dto/F1Bingo/F1BingoCardDto";
-import {UpdateF1BingoCardDto} from "../Dto/F1Bingo/UpdateF1BingoCardDto";
+import { UpdateF1BingoCardDto } from "../Dto/F1Bingo/UpdateF1BingoCardDto";
 
 export default class F1BingoApi {
   static init = () => {
@@ -24,14 +24,20 @@ export default class F1BingoApi {
     return result.data;
   };
 
-  static updateCard = async (cardId: string, dto: UpdateF1BingoCardDto): Promise<void> => {
+  static updateCard = async (
+    cardId: string,
+    dto: UpdateF1BingoCardDto,
+  ): Promise<void> => {
     await F1BingoApi.init().patch<string[]>(`cards/${cardId}`, dto);
-  }
+  };
 
-  static getBoard = async (userId: string, season: number): Promise<string[]> => {
+  static getBoard = async (
+    userId: string,
+    season: number,
+  ): Promise<string[]> => {
     const result = await F1BingoApi.init().get<string[]>(`boards/${userId}`, {
       params: { season },
     });
     return result.data;
-  }
+  };
 }
