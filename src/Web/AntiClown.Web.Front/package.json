@@ -11,11 +11,7 @@
     "@mui/lab": "^5.0.0-alpha.166",
     "@mui/material": "^5.15.2",
     "@mui/x-charts": "^7.11.1",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.57",
+    "@types/node": "^20.19.0",
     "@types/react": "^18.2.24",
     "@types/react-dom": "^18.2.9",
     "@types/telegram-web-app": "^7.10.1",
@@ -31,40 +27,22 @@
     "react-document-title": "^2.0.3",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.16.0",
-    "react-scripts": "5.0.1",
-    "sort-by": "^1.2.0",
-    "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "sort-by": "^1.2.0"
   },
   "scripts": {
     "ensure-tg-sdk": "node -e \"const fs=require('fs');const p='public/telegram-web-app.js';if(!fs.existsSync(p)){fs.copyFileSync('vendor/telegram-web-app.js',p);console.log('[ensure-tg-sdk] copied fallback from vendor/telegram-web-app.js');}\"",
     "prestart": "npm run ensure-tg-sdk",
     "prebuild": "npm run ensure-tg-sdk",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "start": "vite --port 3000",
+    "build": "tsc --noEmit && vite build"
   },
   "devDependencies": {
+    "@emnapi/core": "^1.11.2",
+    "@emnapi/runtime": "^1.11.2",
     "@types/react-document-title": "^2.0.10",
-    "prettier": "3.1.1"
+    "@vitejs/plugin-react": "^6.0.3",
+    "prettier": "3.1.1",
+    "vite": "^8.1.1",
+    "typescript": "~6.0.2"
   }
 }
