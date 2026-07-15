@@ -6,4 +6,8 @@ export default defineConfig({
   build: {
     target: "es2015",
   },
+  server: {
+    host: "0.0.0.0",
+    allowedHosts: ["host.docker.internal"],
+  },
 });
