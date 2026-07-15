@@ -48,7 +48,9 @@ export default function UserPageSideBarItem({
         selected={isSelected}
       >
         {icon && (
-          <ListItemIcon sx={{ minWidth: 32, "& .MuiSvgIcon-root": { fontSize: 18 } }}>
+          <ListItemIcon
+            sx={{ minWidth: 32, "& .MuiSvgIcon-root": { fontSize: 18 } }}
+          >
             {icon}
           </ListItemIcon>
         )}

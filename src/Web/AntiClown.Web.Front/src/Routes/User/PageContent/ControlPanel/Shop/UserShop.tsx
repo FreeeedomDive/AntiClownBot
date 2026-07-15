@@ -15,7 +15,11 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { CurrentShopInfoDto, ShopItemDto, ShopStatsDto } from "../../../../../Dto/Shop/ShopDto";
+import {
+  CurrentShopInfoDto,
+  ShopItemDto,
+  ShopStatsDto,
+} from "../../../../../Dto/Shop/ShopDto";
 import { BaseItemDto } from "../../../../../Dto/Inventory/InventoryDto";
 import { EconomyDto } from "../../../../../Dto/Economy/EconomyDto";
 import ShopApi from "../../../../../Api/ShopApi";
@@ -28,7 +32,9 @@ export default function UserShop() {
   const [shop, setShop] = useState<CurrentShopInfoDto | null>(null);
   const [economy, setEconomy] = useState<EconomyDto | null>(null);
   const [stats, setStats] = useState<ShopStatsDto | null>(null);
-  const [purchasedItems, setPurchasedItems] = useState<Record<string, BaseItemDto>>({});
+  const [purchasedItems, setPurchasedItems] = useState<
+    Record<string, BaseItemDto>
+  >({});
   const [statsOpen, setStatsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rerolling, setRerolling] = useState(false);
@@ -71,7 +77,7 @@ export default function UserShop() {
               freeReveals: prev.freeReveals > 0 ? prev.freeReveals - 1 : 0,
               items: prev.items.map((i) => (i.id === updated.id ? updated : i)),
             }
-          : prev
+          : prev,
       );
       await refreshEconomy();
     } catch {
@@ -88,10 +94,12 @@ export default function UserShop() {
           ? {
               ...prev,
               items: prev.items.map((i) =>
-                i.id === item.id ? { ...i, isOwned: true, isRevealed: true } : i
+                i.id === item.id
+                  ? { ...i, isOwned: true, isRevealed: true }
+                  : i,
               ),
             }
-          : prev
+          : prev,
       );
       setPurchasedItems((prev) => ({ ...prev, [item.id]: boughtItem }));
       await refreshEconomy();

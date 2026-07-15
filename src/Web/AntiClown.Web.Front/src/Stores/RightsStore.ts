@@ -1,5 +1,5 @@
-import {makeAutoObservable} from "mobx";
-import {RightsDto} from "../Dto/Rights/RightsDto";
+import { makeAutoObservable } from "mobx";
+import { RightsDto } from "../Dto/Rights/RightsDto";
 
 export class RightsStore {
   userRights: RightsDto[];

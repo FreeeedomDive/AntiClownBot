@@ -3,10 +3,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import EconomyApi from "../../../../../Api/EconomyApi";
 import { Loader } from "../../../../../Components/Loader/Loader";
 import {
-  Box, 
+  Box,
   List,
   ListItem,
-  ListItemButton, ListItemText,
+  ListItemButton,
+  ListItemText,
   Stack,
   Typography,
 } from "@mui/material";
@@ -14,7 +15,7 @@ import { LineChart } from "@mui/x-charts/LineChart";
 import { TransactionDto } from "../../../../../Dto/Economy/TransactionDto";
 import { EconomyDto } from "../../../../../Dto/Economy/EconomyDto";
 import TransactionRow from "./TransactionRow";
-import {AddOutlined} from "@mui/icons-material";
+import { AddOutlined } from "@mui/icons-material";
 
 export default function UserEconomy() {
   const { userId } = useParams<"userId">();
@@ -43,7 +44,9 @@ export default function UserEconomy() {
         setSelectedTransaction(-1);
       }, 1500);
     }
-    return () => {clearTimeout(timeout);};
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [selectedTransaction]);
 
   const loadEconomy = useCallback(
@@ -68,7 +71,7 @@ export default function UserEconomy() {
       let max = currentScamCoinsBalance;
       result.push(currentScamCoinsBalance);
 
-      for (let transaction of transactions) {
+      for (const transaction of transactions) {
         currentScamCoinsBalance -= transaction.scamCoinDiff;
         result.push(currentScamCoinsBalance);
         min = Math.min(currentScamCoinsBalance, min);
@@ -106,7 +109,7 @@ export default function UserEconomy() {
         </ListItem>
       );
     });
-    items.push((
+    items.push(
       <ListItem
         disablePadding
         id={`transaction_${transactionsLimit}`}
@@ -121,11 +124,13 @@ export default function UserEconomy() {
             setIsLoadMoreLoading(false);
           }}
         >
-          <AddOutlined/>
-          <ListItemText primary={isLoadMoreLoading ? "Загрузка..." : "Загрузить еще"} />
+          <AddOutlined />
+          <ListItemText
+            primary={isLoadMoreLoading ? "Загрузка..." : "Загрузить еще"}
+          />
         </ListItemButton>
-      </ListItem>
-    ));
+      </ListItem>,
+    );
 
     return items;
   };

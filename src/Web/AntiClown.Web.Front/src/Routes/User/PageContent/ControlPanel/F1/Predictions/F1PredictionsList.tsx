@@ -44,7 +44,9 @@ export default function F1PredictionsList() {
                 id="race-select"
                 value={currentF1Race?.id ?? ""}
                 onChange={(e) => {
-                  setCurrentF1Race(f1Races.find((r) => r.id === e.target.value));
+                  setCurrentF1Race(
+                    f1Races.find((r) => r.id === e.target.value),
+                  );
                 }}
               >
                 {f1Races.map((race) => (

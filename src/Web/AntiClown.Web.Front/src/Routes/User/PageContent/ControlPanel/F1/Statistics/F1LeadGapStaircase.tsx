@@ -64,7 +64,10 @@ export default function F1LeadGapStaircase({ data, members }: Props) {
                 {label}
               </Typography>,
 
-              <Box key={`bar-${i}`} sx={{ display: "flex", alignItems: "center" }}>
+              <Box
+                key={`bar-${i}`}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
                 <Tooltip
                   title={
                     <Box>
@@ -85,7 +88,9 @@ export default function F1LeadGapStaircase({ data, members }: Props) {
                       minWidth: 8,
                       height: 28,
                       bgcolor:
-                        entry.difference === 0 ? "success.main" : "primary.main",
+                        entry.difference === 0
+                          ? "success.main"
+                          : "primary.main",
                       borderRadius: "0 4px 4px 0",
                       cursor: "default",
                       flexShrink: 0,

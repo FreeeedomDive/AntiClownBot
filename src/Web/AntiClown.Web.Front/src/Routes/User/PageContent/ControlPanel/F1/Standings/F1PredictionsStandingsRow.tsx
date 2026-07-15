@@ -130,7 +130,14 @@ export function F1PredictionsStandingsRow({
             p: "4px 8px",
           }}
         >
-            <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 0.5 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "center",
+              gap: 0.5,
+            }}
+          >
             <Typography
               fontWeight="bold"
               color={position === 1 && pointsLeft === 0 ? "gold" : "inherit"}

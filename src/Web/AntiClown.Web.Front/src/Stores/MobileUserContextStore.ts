@@ -1,6 +1,6 @@
-import {makeAutoObservable} from "mobx";
-import {UserDto} from "../Dto/Users/UserDto";
-import {DiscordMemberDto} from "../Dto/Users/DiscordMemberDto";
+import { makeAutoObservable } from "mobx";
+import { UserDto } from "../Dto/Users/UserDto";
+import { DiscordMemberDto } from "../Dto/Users/DiscordMemberDto";
 
 export class MobileUserContextStore {
   isUnknown: boolean;

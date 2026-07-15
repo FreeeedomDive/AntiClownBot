@@ -1,7 +1,10 @@
 import React from "react";
 import { Box } from "@mui/material";
 import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
-import { getTeamForDriver, getTeamInfo } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
+import {
+  getTeamForDriver,
+  getTeamInfo,
+} from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
 
 interface Props {
   driver: string;

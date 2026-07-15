@@ -41,7 +41,10 @@ export default function F1PredictionsStandingsTable({
         sx={{
           tableLayout: "fixed",
           width: "100%",
-          minWidth: LEFT_COL_MIN_WIDTH + finishedRaces.length * RACE_COL_WIDTH + RIGHT_COL_WIDTH,
+          minWidth:
+            LEFT_COL_MIN_WIDTH +
+            finishedRaces.length * RACE_COL_WIDTH +
+            RIGHT_COL_WIDTH,
         }}
       >
         <TableHead>

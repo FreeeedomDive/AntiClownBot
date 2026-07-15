@@ -1,6 +1,6 @@
 import axios from "axios";
-import {EconomyDto} from "../Dto/Economy/EconomyDto";
-import {TransactionDto} from "../Dto/Economy/TransactionDto";
+import { EconomyDto } from "../Dto/Economy/EconomyDto";
+import { TransactionDto } from "../Dto/Economy/TransactionDto";
 
 export default class EconomyApi {
   static init = () => {
@@ -18,16 +18,19 @@ export default class EconomyApi {
   };
 
   static get = async (userId: string): Promise<EconomyDto> => {
-    const result = await EconomyApi.init().get<EconomyDto>(
-      userId
-    );
+    const result = await EconomyApi.init().get<EconomyDto>(userId);
     return result.data;
-  }
+  };
 
-  static getTransactions = async (userId: string, offset: number, limit: number): Promise<TransactionDto[]> => {
+  static getTransactions = async (
+    userId: string,
+    offset: number,
+    limit: number,
+  ): Promise<TransactionDto[]> => {
     const result = await EconomyApi.init().post<TransactionDto[]>(
-      `${userId}/transactions`, {offset, limit}
+      `${userId}/transactions`,
+      { offset, limit },
     );
     return result.data;
-  }
+  };
 }

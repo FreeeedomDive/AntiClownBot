@@ -1,6 +1,14 @@
 import { useParams } from "react-router-dom";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, Fab, Grid, Skeleton, Snackbar, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Fab,
+  Grid,
+  Skeleton,
+  Snackbar,
+  Stack,
+  Typography,
+} from "@mui/material";
 import {
   F1SafetyCarPredictionDto,
   F1SafetyCarsPredictionObject,
@@ -56,7 +64,13 @@ export default function F1Prediction({ f1Race }: Props) {
 
   const [selected10Position, setSelected10Position] = useState<string>("");
   const [isDNFNobody, setIsDNFNobody] = useState<boolean>(false);
-  const [dnfList, setDnfList] = useState<DNFList>(["", "", "", "", ""] as unknown as DNFList);
+  const [dnfList, setDnfList] = useState<DNFList>([
+    "",
+    "",
+    "",
+    "",
+    "",
+  ] as unknown as DNFList);
 
   useEffect(() => {
     if (teams.length === 0) return;
@@ -68,7 +82,13 @@ export default function F1Prediction({ f1Race }: Props) {
     if (userPrediction?.dnfPrediction.dnfPickedDrivers?.length === 5) {
       setDnfList(userPrediction.dnfPrediction.dnfPickedDrivers as DNFList);
     } else {
-      setDnfList([firstDriver, firstDriver, firstDriver, firstDriver, firstDriver]);
+      setDnfList([
+        firstDriver,
+        firstDriver,
+        firstDriver,
+        firstDriver,
+        firstDriver,
+      ]);
     }
   }, [teams, userPrediction]);
 
@@ -80,7 +100,7 @@ export default function F1Prediction({ f1Race }: Props) {
     String(userPrediction?.firstPlaceLeadPrediction ?? ""),
   );
   const [driverPosition, setDriverPosition] = useState<number | null>(
-    userPrediction?.driverPositionPrediction ?? null
+    userPrediction?.driverPositionPrediction ?? null,
   );
 
   const isValid = useMemo(() => {
@@ -140,8 +160,12 @@ export default function F1Prediction({ f1Race }: Props) {
         sx={{ width: "100%", height: "100%", margin: "auto" }}
       >
         <F1PredictionGridColumn index={0}>
-          {currentF1Race.qualifyingGrid && currentF1Race.qualifyingGrid.length > 0 ? (
-            <F1QualifyingGridView grid={currentF1Race.qualifyingGrid} teams={teams} />
+          {currentF1Race.qualifyingGrid &&
+          currentF1Race.qualifyingGrid.length > 0 ? (
+            <F1QualifyingGridView
+              grid={currentF1Race.qualifyingGrid}
+              teams={teams}
+            />
           ) : (
             <Stack direction="column" spacing={1} sx={{ opacity: 0.4, mt: 1 }}>
               <Typography variant="h6" align="center">
@@ -151,7 +175,12 @@ export default function F1Prediction({ f1Race }: Props) {
                 Результаты квалификации появятся здесь
               </Typography>
               {Array.from({ length: 22 }).map((_, i) => (
-                <Skeleton key={i} variant="rectangular" height={24} sx={{ borderRadius: 1 }} />
+                <Skeleton
+                  key={i}
+                  variant="rectangular"
+                  height={24}
+                  sx={{ borderRadius: 1 }}
+                />
               ))}
             </Stack>
           )}

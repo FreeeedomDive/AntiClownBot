@@ -1,5 +1,9 @@
 import axios from "axios";
-import { CurrentShopInfoDto, ShopItemDto, ShopStatsDto } from "../Dto/Shop/ShopDto";
+import {
+  CurrentShopInfoDto,
+  ShopItemDto,
+  ShopStatsDto,
+} from "../Dto/Shop/ShopDto";
 import { BaseItemDto } from "../Dto/Inventory/InventoryDto";
 
 export default class ShopApi {
@@ -22,15 +26,20 @@ export default class ShopApi {
     return result.data;
   };
 
-  static reveal = async (userId: string, itemId: string): Promise<ShopItemDto> => {
+  static reveal = async (
+    userId: string,
+    itemId: string,
+  ): Promise<ShopItemDto> => {
     const result = await ShopApi.init().post<ShopItemDto>(
-      `${userId}/items/${itemId}/reveal`
+      `${userId}/items/${itemId}/reveal`,
     );
     return result.data;
   };
 
   static buy = async (userId: string, itemId: string): Promise<BaseItemDto> => {
-    const result = await ShopApi.init().post<BaseItemDto>(`${userId}/items/${itemId}/buy`);
+    const result = await ShopApi.init().post<BaseItemDto>(
+      `${userId}/items/${itemId}/buy`,
+    );
     return result.data;
   };
 
