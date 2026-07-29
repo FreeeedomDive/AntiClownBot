@@ -68,7 +68,7 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
-        builder.Services.AddOpenTelemetryTracing(builder.Configuration);
+        builder.Services.AddOpenTelemetryTracing("anticlown-discord-bot");
 
         ConfigureOptions(builder);
         ConfigurePostgreSql(builder);

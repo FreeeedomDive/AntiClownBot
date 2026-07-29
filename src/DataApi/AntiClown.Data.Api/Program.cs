@@ -12,10 +12,21 @@ using Newtonsoft.Json.Converters;
 using Serilog;
 using SqlRepositoryBase.Configuration.Extensions;
 
+const string fallbackServiceName = "anticlown-data-api";
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
-builder.Services.AddOpenTelemetryTracing(builder.Configuration);
+builder.Host.UseSerilog((context, config) =>
+    {
+        config.ReadFrom.Configuration(context.Configuration);
+
+        if (AntiClown.Core.OpenTelemetry.ServiceCollectionExtensions.IsExportEnabled())
+        {
+            config.WriteTo.WriteToOpenTelemetry(fallbackServiceName);
+        }
+    }
+);
+builder.Services.AddOpenTelemetryTracing(fallbackServiceName);
 
 // configure AutoMapper
 var assemblies = AppDomain.CurrentDomain.GetAssemblies();

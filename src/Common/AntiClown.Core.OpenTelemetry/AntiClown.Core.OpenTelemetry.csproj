@@ -8,14 +8,13 @@
 
     <ItemGroup>
         <PackageReference Include="Castle.Core" Version="5.1.1" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
-        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
-        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\DataApi\AntiClown.Data.Api.Client\AntiClown.Data.Api.Client.csproj" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.17.0" />
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.17.0" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.17.0" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.17.0" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.17.0" />
+        <PackageReference Include="Serilog.Sinks.OpenTelemetry" Version="4.2.0" />
     </ItemGroup>
 </Project>

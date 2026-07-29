@@ -32,7 +32,7 @@ using SqlRepositoryBase.Core.Options;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
-builder.Services.AddOpenTelemetryTracing(builder.Configuration);
+builder.Services.AddOpenTelemetryTracing("anticlown-api");
 
 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 

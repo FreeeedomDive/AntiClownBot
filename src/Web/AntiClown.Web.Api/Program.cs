@@ -17,7 +17,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
-builder.Services.AddOpenTelemetryTracing(builder.Configuration);
+builder.Services.AddOpenTelemetryTracing("anticlown-web-api");
 
 builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
 builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));
