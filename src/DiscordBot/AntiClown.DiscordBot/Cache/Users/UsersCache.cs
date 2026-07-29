@@ -2,6 +2,7 @@
 using AntiClown.Api.Client;
 using AntiClown.Api.Dto.Users;
 using AntiClown.DiscordBot.DiscordClientWrapper;
+using AntiClown.DiscordBot.Telemetry;
 using DSharpPlus.Entities;
 
 namespace AntiClown.DiscordBot.Cache.Users;
@@ -11,12 +12,14 @@ public class UsersCache : IUsersCache
     public UsersCache(
         IAntiClownApiClient antiClownApiClient,
         IDiscordClientWrapper discordClientWrapper,
-        ILogger<UsersCache> logger
+        ILogger<UsersCache> logger,
+        DiscordTelemetry telemetry
     )
     {
         this.antiClownApiClient = antiClownApiClient;
         this.discordClientWrapper = discordClientWrapper;
         this.logger = logger;
+        this.telemetry = telemetry;
         discordMemberToApiId = new ConcurrentDictionary<ulong, Guid>();
         apiIdToDiscordMember = new ConcurrentDictionary<Guid, DiscordMember>();
     }
@@ -65,7 +68,8 @@ public class UsersCache : IUsersCache
             await InitializeAsync();
         }
 
-        apiIdToDiscordMember.TryGetValue(userId, out var member);
+        var found = apiIdToDiscordMember.TryGetValue(userId, out var member);
+        telemetry.RecordCacheLookup(DiscordTelemetryValues.CacheNames.UsersByApiId, found);
         logger.LogInformation("Resolve ApiUserId-MemberId binding [{apiId}]-[{memberId}] from cache", userId, member?.Id);
         return member;
     }
@@ -79,9 +83,12 @@ public class UsersCache : IUsersCache
 
         if (discordMemberToApiId.TryGetValue(memberId, out var apiId))
         {
+            telemetry.RecordCacheLookup(DiscordTelemetryValues.CacheNames.UsersByDiscordId, found: true);
             logger.LogInformation("Resolve MemberId-ApiUserId binding [{memberId}]-[{apiId}] from cache", memberId, apiId);
             return apiId;
         }
+
+        telemetry.RecordCacheLookup(DiscordTelemetryValues.CacheNames.UsersByDiscordId, found: false);
 
         var member = await discordClientWrapper.Members.GetAsync(memberId);
         var users = await antiClownApiClient.Users.FindAsync(
@@ -122,6 +129,7 @@ public class UsersCache : IUsersCache
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly ConcurrentDictionary<ulong, Guid> discordMemberToApiId;
     private readonly ILogger<UsersCache> logger;
+    private readonly DiscordTelemetry telemetry;
 
     private bool isInitialized;
 }

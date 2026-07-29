@@ -1,6 +1,7 @@
 ﻿using Xdd.HttpHelpers.Models.Exceptions;
 using AntiClown.Data.Api.Core.SettingsStoring.Domain;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
+using AntiClown.Data.Api.Core.SettingsStoring.Telemetry;
 using AntiClown.Data.Api.Dto.Exceptions;
 using AutoMapper;
 
@@ -10,11 +11,13 @@ public class SettingsService : ISettingsService
 {
     public SettingsService(
         ISettingsRepository settingsRepository,
-        IMapper mapper
+        IMapper mapper,
+        SettingsTelemetry telemetry
     )
     {
         this.settingsRepository = settingsRepository;
         this.mapper = mapper;
+        this.telemetry = telemetry;
     }
 
     public async Task<Setting[]> ReadAllAsync()
@@ -26,6 +29,7 @@ public class SettingsService : ISettingsService
     public async Task<Setting> ReadAsync(string category, string key)
     {
         var result = await settingsRepository.TryReadAsync(category, key);
+        telemetry.RecordRead(result is not null);
         if (result is null)
         {
             throw new SettingNotFoundException(category, key);
@@ -46,4 +50,5 @@ public class SettingsService : ISettingsService
 
     private readonly IMapper mapper;
     private readonly ISettingsRepository settingsRepository;
+    private readonly SettingsTelemetry telemetry;
 }

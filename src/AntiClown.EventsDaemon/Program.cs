@@ -3,15 +3,29 @@ using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
+using AntiClown.EventsDaemon.Telemetry;
 using AntiClown.EventsDaemon.Workers;
 using AntiClown.EventsDaemon.Workers.F1Predictions;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Metrics;
 using Serilog;
+
+const string fallbackServiceName = "anticlown-events-daemon";
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
-builder.Services.AddOpenTelemetryTracing("anticlown-events-daemon", instrumentAspNetCore: false);
+builder.Host.UseSerilog((context, config) =>
+    {
+        config.ReadFrom.Configuration(context.Configuration);
+        if (AntiClown.Core.OpenTelemetry.ServiceCollectionExtensions.IsExportEnabled())
+        {
+            config.WriteTo.WriteToOpenTelemetry(fallbackServiceName);
+        }
+    }
+);
+builder.Services.AddOpenTelemetryTracing(fallbackServiceName, instrumentAspNetCore: false);
+builder.Services.ConfigureOpenTelemetryMeterProvider(EventsDaemonTelemetry.ConfigureMetrics);
+builder.Services.AddSingleton<EventsDaemonTelemetry>();
 
 builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
 builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
@@ -36,5 +50,6 @@ foreach (var workerType in workersTypes)
 }
 
 var app = builder.Build();
+app.Services.StartOpenTelemetry();
 var workers = app.Services.GetServices<IWorker>();
 await Task.WhenAll(workers.Select(x => x.StartAsync()));

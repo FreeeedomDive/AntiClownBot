@@ -3,6 +3,7 @@ using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.CommonEvents;
+using AntiClown.EventsDaemon.Telemetry;
 using AntiClown.Tools.Utility.Extensions;
 
 namespace AntiClown.EventsDaemon.Workers.CommonEvents;
@@ -10,9 +11,10 @@ namespace AntiClown.EventsDaemon.Workers.CommonEvents;
 public class CommonEventsWorker(
     IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
     IAntiClownDataApiClient antiClownDataApiClient,
-    ILogger<CommonEventsWorker> logger
+    ILogger<CommonEventsWorker> logger,
+    EventsDaemonTelemetry telemetry
 )
-    : FixedIntervalPeriodicJobWorker(logger)
+    : FixedIntervalPeriodicJobWorker(logger, telemetry)
 {
     protected override async Task<int> GetMillisecondsBeforeStartAsync()
     {

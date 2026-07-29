@@ -29,10 +29,20 @@ using Serilog;
 using SqlRepositoryBase.Configuration.Extensions;
 using SqlRepositoryBase.Core.Options;
 
+const string fallbackServiceName = "anticlown-api";
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
-builder.Services.AddOpenTelemetryTracing("anticlown-api");
+builder.Host.UseSerilog((context, config) =>
+    {
+        config.ReadFrom.Configuration(context.Configuration);
+        if (AntiClown.Core.OpenTelemetry.ServiceCollectionExtensions.IsExportEnabled())
+        {
+            config.WriteTo.WriteToOpenTelemetry(fallbackServiceName);
+        }
+    }
+);
+builder.Services.AddOpenTelemetryTracing(fallbackServiceName);
 
 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 

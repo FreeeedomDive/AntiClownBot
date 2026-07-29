@@ -4,6 +4,7 @@ using AntiClown.Data.Api.Core.Rights.Repositories;
 using AntiClown.Data.Api.Core.Rights.Services;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
 using AntiClown.Data.Api.Core.SettingsStoring.Services;
+using AntiClown.Data.Api.Core.SettingsStoring.Telemetry;
 using AntiClown.Data.Api.Core.Tokens.Repositories;
 using AntiClown.Data.Api.Core.Tokens.Services;
 using AntiClown.Data.Api.Middlewares;
@@ -41,6 +42,7 @@ builder.Services.AddTransientWithProxy<ITokensRepository, TokensRepository>();
 builder.Services.AddTransientWithProxy<IRightsRepository, RightsRepository>();
 
 // configure services
+builder.Services.AddSingleton<SettingsTelemetry>();
 builder.Services.AddTransientWithProxy<ISettingsService, SettingsService>();
 builder.Services.AddTransientWithProxy<ITokenGenerator, GuidTokenGenerator>();
 builder.Services.AddTransientWithProxy<ITokensService, TokensService>();

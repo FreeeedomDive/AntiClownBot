@@ -14,10 +14,20 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
 using Serilog;
 
+const string fallbackServiceName = "anticlown-web-api";
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
-builder.Services.AddOpenTelemetryTracing("anticlown-web-api");
+builder.Host.UseSerilog((context, config) =>
+    {
+        config.ReadFrom.Configuration(context.Configuration);
+        if (AntiClown.Core.OpenTelemetry.ServiceCollectionExtensions.IsExportEnabled())
+        {
+            config.WriteTo.WriteToOpenTelemetry(fallbackServiceName);
+        }
+    }
+);
+builder.Services.AddOpenTelemetryTracing(fallbackServiceName);
 
 builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
 builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));

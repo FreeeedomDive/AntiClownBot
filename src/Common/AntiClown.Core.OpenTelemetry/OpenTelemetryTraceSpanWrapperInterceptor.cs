@@ -39,7 +39,7 @@ public class OpenTelemetryTraceSpanWrapperInterceptor : IInterceptor
         try
         {
             invocation.Proceed();
-            activity?.SetStatus(ActivityStatusCode.Ok);
+            MarkSuccess(activity);
         }
         catch (Exception exception)
         {
@@ -56,7 +56,7 @@ public class OpenTelemetryTraceSpanWrapperInterceptor : IInterceptor
         {
             invocation.Proceed();
             await ((Task)invocation.ReturnValue!).ConfigureAwait(false);
-            activity?.SetStatus(ActivityStatusCode.Ok);
+            MarkSuccess(activity);
         }
         catch (Exception exception)
         {
@@ -73,7 +73,7 @@ public class OpenTelemetryTraceSpanWrapperInterceptor : IInterceptor
         {
             invocation.Proceed();
             var result = await ((Task<TResult>)invocation.ReturnValue!).ConfigureAwait(false);
-            activity?.SetStatus(ActivityStatusCode.Ok);
+            MarkSuccess(activity);
             return result;
         }
         catch (Exception exception)
@@ -92,6 +92,14 @@ public class OpenTelemetryTraceSpanWrapperInterceptor : IInterceptor
     {
         activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
         activity?.AddException(exception);
+    }
+
+    private static void MarkSuccess(Activity? activity)
+    {
+        if (activity?.Status != ActivityStatusCode.Error)
+        {
+            activity?.SetStatus(ActivityStatusCode.Ok);
+        }
     }
 
     private readonly ActivitySource activitySource;

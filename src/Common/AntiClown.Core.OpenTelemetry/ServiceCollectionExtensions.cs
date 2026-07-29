@@ -3,6 +3,7 @@ using System.Diagnostics.Metrics;
 using Castle.DynamicProxy;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.Instrumentation.Http;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
@@ -17,7 +18,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddOpenTelemetryTracing(
         this IServiceCollection serviceCollection,
         string fallbackServiceName,
-        bool instrumentAspNetCore = true
+        bool instrumentAspNetCore = true,
+        Action<HttpClientTraceInstrumentationOptions>? configureHttpClientTracing = null
     )
     {
         serviceCollection.AddSingleton(_ => new ActivitySource(fallbackServiceName));
@@ -40,7 +42,7 @@ public static class ServiceCollectionExtensions
                                  }
 
                                  tracing
-                                     .AddHttpClientInstrumentation()
+                                     .AddHttpClientInstrumentation(options => configureHttpClientTracing?.Invoke(options))
                                      .AddSource(NpgsqlActivitySourceName)
                                      .AddSource(fallbackServiceName)
                                      .AddOtlpExporter();
@@ -96,6 +98,17 @@ public static class ServiceCollectionExtensions
 
         var disabled = Environment.GetEnvironmentVariable(SdkDisabledVariable);
         return !string.Equals(disabled, "true", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static void StartOpenTelemetry(this IServiceProvider serviceProvider)
+    {
+        if (!IsExportEnabled())
+        {
+            return;
+        }
+
+        serviceProvider.GetRequiredService<TracerProvider>();
+        serviceProvider.GetRequiredService<MeterProvider>();
     }
 
     private static IServiceCollection AddProxies(this IServiceCollection serviceCollection)

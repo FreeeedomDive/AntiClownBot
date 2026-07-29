@@ -1,6 +1,9 @@
-﻿namespace AntiClown.EventsDaemon.Workers;
+﻿using System.Diagnostics;
+using AntiClown.EventsDaemon.Telemetry;
 
-public abstract class ArbitraryIntervalPeriodicJobWorker(ILogger logger) : IWorker
+namespace AntiClown.EventsDaemon.Workers;
+
+public abstract class ArbitraryIntervalPeriodicJobWorker(ILogger logger, EventsDaemonTelemetry telemetry) : IWorker
 {
     public async Task StartAsync()
     {
@@ -14,7 +17,9 @@ public abstract class ArbitraryIntervalPeriodicJobWorker(ILogger logger) : IWork
             }
 
             Logger.LogInformation("{WorkerName} will start iteration {iteration} in {delay}", WorkerName, currentIteration, delay.Value);
+            var scheduledAt = DateTimeOffset.UtcNow + delay.Value;
             await Task.Delay(delay.Value);
+            telemetry.RecordScheduleDrift(WorkerName, scheduledAt);
             await ExecuteIterationWithLogAsync();
             currentIteration++;
         }
@@ -23,9 +28,12 @@ public abstract class ArbitraryIntervalPeriodicJobWorker(ILogger logger) : IWork
     private async Task ExecuteIterationWithLogAsync()
     {
         Logger.LogInformation("{WorkerName} Iteration {i} START at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
+        var startedAt = Stopwatch.GetTimestamp();
+        var succeeded = false;
         try
         {
             await ExecuteIterationAsync();
+            succeeded = true;
             successfulIterations++;
             Logger.LogInformation(
                 "{WorkerName} Iteration {i} SUCCESS at {startTime} ({success} succeeded, {failed} failed)",
@@ -48,6 +56,10 @@ public abstract class ArbitraryIntervalPeriodicJobWorker(ILogger logger) : IWork
                 failedIterations,
                 e
             );
+        }
+        finally
+        {
+            telemetry.RecordRun(WorkerName, succeeded, Stopwatch.GetElapsedTime(startedAt));
         }
     }
 
