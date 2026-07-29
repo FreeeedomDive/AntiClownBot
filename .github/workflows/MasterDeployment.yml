@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       components:
-        description: 'auto, all, or comma-separated: api,data-api,entertainment-api,discord-bot,events-daemon,telegram-bot,web-api,frontend,nginx,migrate-api,migrate-data-api,migrate-entertainment-api,migrate-discord-bot'
+        description: 'auto detects changes; all or comma-separated deploys only the selected components: api,data-api,entertainment-api,discord-bot,events-daemon,telegram-bot,web-api,frontend,nginx,migrate-api,migrate-data-api,migrate-entertainment-api,migrate-discord-bot'
         type: string
         required: true
         default: auto
