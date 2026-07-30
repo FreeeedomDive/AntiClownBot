@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Castle.DynamicProxy;
+using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Instrumentation.Http;
 using OpenTelemetry.Resources;
@@ -43,6 +45,7 @@ public static class ServiceCollectionExtensions
 
                                  tracing
                                      .AddHttpClientInstrumentation(options => configureHttpClientTracing?.Invoke(options))
+                                     .AddSource(MassTransitInstrumentationName)
                                      .AddSource(NpgsqlActivitySourceName)
                                      .AddSource(fallbackServiceName)
                                      .AddOtlpExporter();
@@ -59,7 +62,12 @@ public static class ServiceCollectionExtensions
                                  metrics
                                      .AddHttpClientInstrumentation()
                                      .AddRuntimeInstrumentation()
+                                     .AddMeter(MassTransitInstrumentationName)
                                      .AddMeter(fallbackServiceName)
+                                     .AddView(
+                                         MessagingMessageAgeMetricName,
+                                         new ExplicitBucketHistogramConfiguration { Boundaries = MessageAgeBuckets }
+                                     )
                                      .AddView(
                                          HttpServerDurationMetricName,
                                          new ExplicitBucketHistogramConfiguration { Boundaries = DurationBuckets }
@@ -73,6 +81,14 @@ public static class ServiceCollectionExtensions
                                      );
                              }
                          );
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection AddMassTransitTelemetry(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.TryAddEnumerable(ServiceDescriptor.Singleton<IPublishObserver, MassTransitPublishObserver>());
+        serviceCollection.TryAddEnumerable(ServiceDescriptor.Singleton<IReceiveObserver, MassTransitReceiveObserver>());
 
         return serviceCollection;
     }
@@ -160,14 +176,19 @@ public static class ServiceCollectionExtensions
     private const string ServiceNameAttribute = "service.name";
 
     private const string NpgsqlActivitySourceName = "Npgsql";
+    private const string MassTransitInstrumentationName = "MassTransit";
     private const string HttpServerDurationMetricName = "http.server.request.duration";
     private const string HttpClientDurationMetricName = "http.client.request.duration";
+    private const string MessagingMessageAgeMetricName = "anticlown.messaging.message.age";
 
     private const string OpenTelemetrySourcePrefix = "OpenTelemetry";
     private const string GrpcSourcePrefix = "Grpc";
 
     private static readonly double[] DurationBuckets =
         [0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10];
+
+    private static readonly double[] MessageAgeBuckets =
+        [0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 10, 30, 60, 300, 900, 3600];
 
     public static IServiceCollection AddTransientWithProxy<TInterface, TImplementation>(this IServiceCollection serviceCollection)
         where TInterface : class

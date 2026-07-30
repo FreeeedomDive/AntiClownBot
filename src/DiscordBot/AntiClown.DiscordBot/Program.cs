@@ -83,6 +83,7 @@ internal class Program
             FallbackServiceName,
             configureHttpClientTracing: DiscordTelemetry.ConfigureHttpClientTracing
         );
+        builder.Services.AddMassTransitTelemetry();
         builder.Services.AddSingleton<DiscordTelemetry>();
         builder.Services.ConfigureOpenTelemetryMeterProvider(DiscordTelemetry.ConfigureMetrics);
         builder.Services.ConfigureOpenTelemetryTracerProvider((serviceProvider, tracing) =>
@@ -287,6 +288,7 @@ internal class Program
                     (context, rabbitMqConfiguration) =>
                     {
                         var rabbitMqOptions = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+                        rabbitMqConfiguration.UseInstrumentation(serviceName: FallbackServiceName);
                         rabbitMqConfiguration.ConfigureEndpoints(context);
                         rabbitMqConfiguration.Host(
                             rabbitMqOptions.Host, "/", hostConfiguration =>

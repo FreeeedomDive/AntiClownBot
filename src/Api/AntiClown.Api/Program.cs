@@ -43,6 +43,7 @@ builder.Host.UseSerilog((context, config) =>
     }
 );
 builder.Services.AddOpenTelemetryTracing(fallbackServiceName);
+builder.Services.AddMassTransitTelemetry();
 
 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -63,6 +64,7 @@ builder.Services.AddMassTransit(
             (context, rabbitMqConfiguration) =>
             {
                 var rabbitMqOptions = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+                rabbitMqConfiguration.UseInstrumentation(serviceName: fallbackServiceName);
                 rabbitMqConfiguration.ConfigureEndpoints(context);
                 rabbitMqConfiguration.Host(
                     rabbitMqOptions.Host, "/", hostConfiguration =>
