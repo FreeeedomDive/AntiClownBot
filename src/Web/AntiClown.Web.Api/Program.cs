@@ -7,9 +7,7 @@ using AntiClown.DiscordBot.Client;
 using AntiClown.DiscordBot.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
-using AntiClown.Web.Api.ExternalClients.F1FastApi;
 using AntiClown.Web.Api.Middlewares;
-using AntiClown.Web.Api.Options;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
 using Serilog;
@@ -34,8 +32,6 @@ builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.
 builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
 builder.Services.Configure<AntiClownDiscordApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDiscordApi"));
 
-builder.Services.Configure<F1FastApiOptions>(builder.Configuration.GetSection("F1FastApi"));
-
 builder.Services.AddTransientWithProxy<IAntiClownDataApiClient>(
     serviceProvider => AntiClownDataApiClientProvider.Build(
         serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl
@@ -56,8 +52,6 @@ builder.Services.AddTransientWithProxy<IAntiClownDiscordBotClient>(
         serviceProvider.GetRequiredService<IOptions<AntiClownDiscordApiConnectionOptions>>().Value.ServiceUrl
     )
 );
-
-builder.Services.AddTransient<IF1FastApiClient, F1FastApiClient>();
 
 builder.Services.AddControllers().AddNewtonsoftJson(
     options => options.SerializerSettings.Converters.Add(new StringEnumConverter())
