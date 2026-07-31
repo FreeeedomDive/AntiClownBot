@@ -7,4 +7,5 @@ public record F1StandingsRowDto
     public Guid UserId { get; set; }
     public int TotalPoints { get; set; }
     public F1PredictionUserResultDto?[] Results { get; set; }
+    public F1PodiumDto[] PreviousPodiums { get; set; } = [];
 }
