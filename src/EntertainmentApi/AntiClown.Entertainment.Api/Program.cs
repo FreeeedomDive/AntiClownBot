@@ -53,10 +53,21 @@ using Serilog;
 using SqlRepositoryBase.Configuration.Extensions;
 using SqlRepositoryBase.Core.Options;
 
+const string fallbackServiceName = "anticlown-entertainment-api";
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
-builder.Services.AddOpenTelemetryTracing(builder.Configuration);
+builder.Host.UseSerilog((context, config) =>
+    {
+        config.ReadFrom.Configuration(context.Configuration);
+        if (AntiClown.Core.OpenTelemetry.ServiceCollectionExtensions.IsExportEnabled())
+        {
+            config.WriteTo.WriteToOpenTelemetry(fallbackServiceName);
+        }
+    }
+);
+builder.Services.AddOpenTelemetryTracing(fallbackServiceName);
+builder.Services.AddMassTransitTelemetry();
 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
 // configure AutoMapper
@@ -76,6 +87,7 @@ builder.Services.AddMassTransit(massTransitConfiguration =>
         massTransitConfiguration.UsingRabbitMq((context, rabbitMqConfiguration) =>
             {
                 var rabbitMqOptions = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+                rabbitMqConfiguration.UseInstrumentation(serviceName: fallbackServiceName);
                 rabbitMqConfiguration.ConfigureEndpoints(context);
                 rabbitMqConfiguration.Host(
                     rabbitMqOptions.Host, "/", hostConfiguration =>

@@ -1,5 +1,6 @@
 ﻿using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
+using AntiClown.Core.OpenTelemetry;
 using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Configuration;
 using AntiClown.DiscordBot.Client;
@@ -17,9 +18,21 @@ using Microsoft.Extensions.Options;
 using Serilog;
 using Telegram.Bot;
 
+const string fallbackServiceName = "anticlown-telegram-bot";
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
+builder.Host.UseSerilog((context, config) =>
+    {
+        config.ReadFrom.Configuration(context.Configuration);
+        if (AntiClown.Core.OpenTelemetry.ServiceCollectionExtensions.IsExportEnabled())
+        {
+            config.WriteTo.WriteToOpenTelemetry(fallbackServiceName);
+        }
+    }
+);
+builder.Services.AddOpenTelemetryTracing(fallbackServiceName, instrumentAspNetCore: false);
+builder.Services.AddMassTransitTelemetry();
 
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMQ"));
 builder.Services.AddMassTransit(
@@ -31,6 +44,7 @@ builder.Services.AddMassTransit(
             (context, rabbitMqConfiguration) =>
             {
                 var rabbitMqOptions = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+                rabbitMqConfiguration.UseInstrumentation(serviceName: fallbackServiceName);
                 rabbitMqConfiguration.ConfigureEndpoints(context);
                 rabbitMqConfiguration.Host(
                     rabbitMqOptions.Host, "/", hostConfiguration =>
@@ -81,6 +95,7 @@ builder.Services.AddTransient<ITelegramBotWorker, TelegramBotWorker>();
 builder.Services.AddSingleton<IPartiesService, PartiesService>();
 
 var app = builder.Build();
+app.Services.StartOpenTelemetry();
 
 /*
 var usersCache = app.Services.GetRequiredService<IUsersCache>();

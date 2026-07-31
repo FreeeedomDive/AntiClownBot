@@ -40,6 +40,7 @@ using AntiClown.DiscordBot.Releases.Services;
 using AntiClown.DiscordBot.Roles.Repositories;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.DiscordBot.SlashCommands.Base.Middlewares;
+using AntiClown.DiscordBot.Telemetry;
 using AntiClown.DiscordBot.Utility.Locks;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
@@ -56,6 +57,8 @@ using MassTransit;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using Serilog;
 using SqlRepositoryBase.Configuration.Extensions;
 
@@ -67,8 +70,25 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
-        builder.Services.AddOpenTelemetryTracing(builder.Configuration);
+        builder.Host.UseSerilog((context, config) =>
+            {
+                config.ReadFrom.Configuration(context.Configuration);
+                if (AntiClown.Core.OpenTelemetry.ServiceCollectionExtensions.IsExportEnabled())
+                {
+                    config.WriteTo.WriteToOpenTelemetry(FallbackServiceName);
+                }
+            }
+        );
+        builder.Services.AddOpenTelemetryTracing(
+            FallbackServiceName,
+            configureHttpClientTracing: DiscordTelemetry.ConfigureHttpClientTracing
+        );
+        builder.Services.AddMassTransitTelemetry();
+        builder.Services.AddSingleton<DiscordTelemetry>();
+        builder.Services.ConfigureOpenTelemetryMeterProvider(DiscordTelemetry.ConfigureMetrics);
+        builder.Services.ConfigureOpenTelemetryTracerProvider((serviceProvider, tracing) =>
+            tracing.AddProcessor(new DiscordApiMetricsProcessor(serviceProvider.GetRequiredService<DiscordTelemetry>()))
+        );
 
         ConfigureOptions(builder);
         ConfigurePostgreSql(builder);
@@ -91,6 +111,9 @@ internal class Program
         );
 
         var app = builder.Build();
+        app.Services.StartOpenTelemetry();
+        app.Services.GetRequiredService<DiscordTelemetry>()
+           .SubscribeToGateway(app.Services.GetRequiredService<DiscordClient>());
 
         var discordBotBehaviour = app.Services.GetRequiredService<IDiscordBotBehaviour>();
         await discordBotBehaviour.ConfigureAsync();
@@ -123,6 +146,8 @@ internal class Program
 
         await app.RunAsync();
     }
+
+    private const string FallbackServiceName = "anticlown-discord-bot";
 
     private static void ConfigureOptions(WebApplicationBuilder builder)
     {
@@ -263,6 +288,7 @@ internal class Program
                     (context, rabbitMqConfiguration) =>
                     {
                         var rabbitMqOptions = context.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+                        rabbitMqConfiguration.UseInstrumentation(serviceName: FallbackServiceName);
                         rabbitMqConfiguration.ConfigureEndpoints(context);
                         rabbitMqConfiguration.Host(
                             rabbitMqOptions.Host, "/", hostConfiguration =>

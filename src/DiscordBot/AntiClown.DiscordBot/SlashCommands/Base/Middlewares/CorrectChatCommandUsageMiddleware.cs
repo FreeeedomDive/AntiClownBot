@@ -41,6 +41,7 @@ public class CorrectChatCommandUsageMiddleware : ICommandMiddleware
         var partyChannelId = allGuildSettings.First(x => x.Name == "PartyChannelId").GetValue<ulong>();
         if (command == InteractionsIds.CommandsNames.Party_Group && channelId != partyChannelId)
         {
+            context.Reject();
             var madgeEmote = await emotesCache.GetEmoteAsTextAsync("Madge");
             var pointRightEmote = await emotesCache.GetEmoteAsTextAsync("point_right");
             var partyChannel = await discordClientWrapper.Channels.FindDiscordChannel(partyChannelId);
@@ -62,6 +63,7 @@ public class CorrectChatCommandUsageMiddleware : ICommandMiddleware
                     or InteractionsIds.CommandsNames.When
             && channelId != tributeChannelId)
         {
+            context.Reject();
             var madgeEmote = await emotesCache.GetEmoteAsTextAsync("Madge");
             var pointRightEmote = await emotesCache.GetEmoteAsTextAsync("point_right");
             var tributeChannel = await discordClientWrapper.Channels.FindDiscordChannel(tributeChannelId);
@@ -72,6 +74,7 @@ public class CorrectChatCommandUsageMiddleware : ICommandMiddleware
         // запрещаем использовать любые команды, кроме пати, в канале для пати
         if (command != InteractionsIds.CommandsNames.Party_Group && channelId == partyChannelId)
         {
+            context.Reject();
             var madgeEmote = await emotesCache.GetEmoteAsTextAsync("Madge");
             await RespondWithErrorAsync(context.Context, $"{madgeEmote} не срать в чате для пати!");
             return;

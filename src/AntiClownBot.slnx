@@ -35,6 +35,7 @@
         <Project Path="Common/AntiClown.Messages.Dto/AntiClown.Messages.Dto.csproj"/>
     </Folder>
     <Folder Name="/Tests/">
+        <Project Path="Tests/AntiClown.Core.OpenTelemetry.Tests/AntiClown.Core.OpenTelemetry.Tests.csproj"/>
         <Project Path="Tests/AntiClown.Api.Core.IntegrationTests/AntiClown.Api.Core.IntegrationTests.csproj"/>
         <Project
                 Path="Tests/AntiClown.Data.Api.Core.IntegrationTests/AntiClown.Data.Api.Core.IntegrationTests.csproj"/>

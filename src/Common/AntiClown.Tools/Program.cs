@@ -39,6 +39,3 @@ var app = builder.Build();
 
 var toolsRunner = app.Services.GetService<IToolsRunner>()!;
 await toolsRunner.RunAsync();
-
-// даем логам выгрузиться в seq
-await Task.Delay(5000);

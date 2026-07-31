@@ -29,6 +29,7 @@ public class CheckRightsMiddleware : ICommandMiddleware
         var hasRights = userRights.Intersect(commandRights).Any();
         if (!hasRights)
         {
+            context.Reject();
             await context.Context.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Недостаточно прав для выполнения этой команды"));
             return;
         }

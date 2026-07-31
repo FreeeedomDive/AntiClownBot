@@ -14,7 +14,7 @@ on:
         required: false
         default: ''
       components:
-        description: Comma-separated components to force for a manual deploy, or all.
+        description: auto detects changes; all or a comma-separated list selects only those components.
         type: string
         required: false
         default: auto
@@ -125,48 +125,50 @@ jobs:
             frontend_checks=true
           fi
 
-          if has_changed '^src/(Common/|\.dockerignore$)'; then
-            deploy_api=true
-            deploy_data_api=true
-            deploy_entertainment_api=true
-            deploy_discord_bot=true
-            deploy_events_daemon=true
-            deploy_telegram_bot=true
-            deploy_web_api=true
-            migrate_api=true
-            migrate_data_api=true
-            migrate_entertainment_api=true
-            migrate_discord_bot=true
+          if [ "$COMPONENTS" = "auto" ]; then
+            if has_changed '^src/(Common/|\.dockerignore$)'; then
+              deploy_api=true
+              deploy_data_api=true
+              deploy_entertainment_api=true
+              deploy_discord_bot=true
+              deploy_events_daemon=true
+              deploy_telegram_bot=true
+              deploy_web_api=true
+              migrate_api=true
+              migrate_data_api=true
+              migrate_entertainment_api=true
+              migrate_discord_bot=true
+            fi
+
+            if has_changed '^src/Api/(AntiClown\.Api|AntiClown\.Api\.Core|AntiClown\.Api\.Dto|AntiClown\.Api\.Client)/'; then deploy_api=true; fi
+            if has_changed '^src/DataApi/(AntiClown\.Data\.Api|AntiClown\.Data\.Api\.Core|AntiClown\.Data\.Api\.Dto|AntiClown\.Data\.Api\.Client)/'; then deploy_data_api=true; fi
+            if has_changed '^src/EntertainmentApi/(AntiClown\.Entertainment\.Api|AntiClown\.Entertainment\.Api\.Core|AntiClown\.Entertainment\.Api\.Dto|AntiClown\.Entertainment\.Api\.Client)/'; then deploy_entertainment_api=true; fi
+            if has_changed '^src/DiscordBot/(AntiClown\.DiscordBot|AntiClown\.DiscordBot\.Dto|AntiClown\.DiscordBot\.Client)/'; then deploy_discord_bot=true; fi
+            if has_changed '^src/AntiClown\.EventsDaemon/'; then deploy_events_daemon=true; fi
+            if has_changed '^src/AntiClown\.Telegram\.Bot/'; then deploy_telegram_bot=true; fi
+            if has_changed '^src/Web/AntiClown\.Web\.Api/'; then deploy_web_api=true; fi
+            if has_changed '^src/Web/AntiClown\.Web\.Front/'; then deploy_front=true; fi
+            if has_changed '^nginx/'; then deploy_nginx=true; fi
+
+            if has_changed '^src/Api/AntiClown\.Api\.PostgreSqlMigrationsApplier/'; then migrate_api=true; fi
+            if has_changed '^src/DataApi/AntiClown\.Data\.Api\.PostgreSqlMigrationsApplier/'; then migrate_data_api=true; fi
+            if has_changed '^src/EntertainmentApi/AntiClown\.Entertainment\.Api\.PostgreSqlMigrationsApplier/'; then migrate_entertainment_api=true; fi
+            if has_changed '^src/DiscordBot/AntiClown\.DiscordBot\.PostgreSqlMigrationsApplier/'; then migrate_discord_bot=true; fi
+          else
+            if is_forced api; then deploy_api=true; fi
+            if is_forced data-api; then deploy_data_api=true; fi
+            if is_forced entertainment-api; then deploy_entertainment_api=true; fi
+            if is_forced discord-bot; then deploy_discord_bot=true; fi
+            if is_forced events-daemon; then deploy_events_daemon=true; fi
+            if is_forced telegram-bot; then deploy_telegram_bot=true; fi
+            if is_forced web-api; then deploy_web_api=true; fi
+            if is_forced frontend; then deploy_front=true; fi
+            if is_forced nginx; then deploy_nginx=true; fi
+            if is_forced migrate-api; then migrate_api=true; fi
+            if is_forced migrate-data-api; then migrate_data_api=true; fi
+            if is_forced migrate-entertainment-api; then migrate_entertainment_api=true; fi
+            if is_forced migrate-discord-bot; then migrate_discord_bot=true; fi
           fi
-
-          if has_changed '^src/Api/(AntiClown\.Api|AntiClown\.Api\.Core|AntiClown\.Api\.Dto|AntiClown\.Api\.Client)/'; then deploy_api=true; fi
-          if has_changed '^src/DataApi/(AntiClown\.Data\.Api|AntiClown\.Data\.Api\.Core|AntiClown\.Data\.Api\.Dto|AntiClown\.Data\.Api\.Client)/'; then deploy_data_api=true; fi
-          if has_changed '^src/EntertainmentApi/(AntiClown\.Entertainment\.Api|AntiClown\.Entertainment\.Api\.Core|AntiClown\.Entertainment\.Api\.Dto|AntiClown\.Entertainment\.Api\.Client)/'; then deploy_entertainment_api=true; fi
-          if has_changed '^src/DiscordBot/(AntiClown\.DiscordBot|AntiClown\.DiscordBot\.Dto|AntiClown\.DiscordBot\.Client)/'; then deploy_discord_bot=true; fi
-          if has_changed '^src/AntiClown\.EventsDaemon/'; then deploy_events_daemon=true; fi
-          if has_changed '^src/AntiClown\.Telegram\.Bot/'; then deploy_telegram_bot=true; fi
-          if has_changed '^src/Web/AntiClown\.Web\.Api/'; then deploy_web_api=true; fi
-          if has_changed '^src/Web/AntiClown\.Web\.Front/'; then deploy_front=true; fi
-          if has_changed '^nginx/'; then deploy_nginx=true; fi
-
-          if has_changed '^src/Api/AntiClown\.Api\.PostgreSqlMigrationsApplier/'; then migrate_api=true; fi
-          if has_changed '^src/DataApi/AntiClown\.Data\.Api\.PostgreSqlMigrationsApplier/'; then migrate_data_api=true; fi
-          if has_changed '^src/EntertainmentApi/AntiClown\.Entertainment\.Api\.PostgreSqlMigrationsApplier/'; then migrate_entertainment_api=true; fi
-          if has_changed '^src/DiscordBot/AntiClown\.DiscordBot\.PostgreSqlMigrationsApplier/'; then migrate_discord_bot=true; fi
-
-          if is_forced api; then deploy_api=true; fi
-          if is_forced data-api; then deploy_data_api=true; fi
-          if is_forced entertainment-api; then deploy_entertainment_api=true; fi
-          if is_forced discord-bot; then deploy_discord_bot=true; fi
-          if is_forced events-daemon; then deploy_events_daemon=true; fi
-          if is_forced telegram-bot; then deploy_telegram_bot=true; fi
-          if is_forced web-api; then deploy_web_api=true; fi
-          if is_forced frontend; then deploy_front=true; fi
-          if is_forced nginx; then deploy_nginx=true; fi
-          if is_forced migrate-api; then migrate_api=true; fi
-          if is_forced migrate-data-api; then migrate_data_api=true; fi
-          if is_forced migrate-entertainment-api; then migrate_entertainment_api=true; fi
-          if is_forced migrate-discord-bot; then migrate_discord_bot=true; fi
 
           {
             echo "deploy_api=$deploy_api"

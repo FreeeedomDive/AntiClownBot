@@ -3,6 +3,7 @@ using AntiClown.Data.Api.Client;
 using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.DiscordBot.DiscordClientWrapper;
+using AntiClown.DiscordBot.Telemetry;
 using DSharpPlus.Entities;
 
 namespace AntiClown.DiscordBot.Cache.Emotes;
@@ -12,12 +13,14 @@ public class EmotesCache : IEmotesCache
     public EmotesCache(
         IDiscordClientWrapper discordClientWrapper,
         IAntiClownDataApiClient antiClownDataApiClient,
-        ILogger<EmotesCache> logger
+        ILogger<EmotesCache> logger,
+        DiscordTelemetry telemetry
     )
     {
         this.discordClientWrapper = discordClientWrapper;
         this.antiClownDataApiClient = antiClownDataApiClient;
         this.logger = logger;
+        this.telemetry = telemetry;
         emotesCache = new ConcurrentDictionary<string, DiscordEmoji>();
     }
 
@@ -50,9 +53,11 @@ public class EmotesCache : IEmotesCache
         }
         if (emotesCache.TryGetValue(emoteName, out var cachedEmote))
         {
+            telemetry.RecordCacheLookup(DiscordTelemetryValues.CacheNames.Emotes, found: true);
             logger.LogInformation("Get emote {name} from cache", emoteName);
             return cachedEmote;
         }
+        telemetry.RecordCacheLookup(DiscordTelemetryValues.CacheNames.Emotes, found: false);
         var emote = await discordClientWrapper.Emotes.FindEmoteAsync(emoteName);
         emotesCache.TryAdd(emoteName, emote);
         logger.LogInformation("Add emote {name} to cache", emoteName);
@@ -70,4 +75,5 @@ public class EmotesCache : IEmotesCache
     private readonly IDiscordClientWrapper discordClientWrapper;
     private readonly IAntiClownDataApiClient antiClownDataApiClient;
     private readonly ILogger<EmotesCache> logger;
+    private readonly DiscordTelemetry telemetry;
 }

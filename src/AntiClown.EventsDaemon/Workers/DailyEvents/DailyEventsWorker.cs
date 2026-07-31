@@ -3,15 +3,17 @@ using AntiClown.Data.Api.Client.Extensions;
 using AntiClown.Data.Api.Dto.Settings;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.DailyEvents;
+using AntiClown.EventsDaemon.Telemetry;
 
 namespace AntiClown.EventsDaemon.Workers.DailyEvents;
 
 public class DailyEventsWorker(
     IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
     IAntiClownDataApiClient antiClownDataApiClient,
-    ILogger<DailyEventsWorker> logger
+    ILogger<DailyEventsWorker> logger,
+    EventsDaemonTelemetry telemetry
 )
-    : FixedIntervalPeriodicJobWorker(logger)
+    : FixedIntervalPeriodicJobWorker(logger, telemetry)
 {
     protected override async Task<int> GetMillisecondsBeforeStartAsync()
     {

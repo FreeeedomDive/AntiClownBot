@@ -4,6 +4,7 @@ using AntiClown.Data.Api.Core.Rights.Repositories;
 using AntiClown.Data.Api.Core.Rights.Services;
 using AntiClown.Data.Api.Core.SettingsStoring.Repositories;
 using AntiClown.Data.Api.Core.SettingsStoring.Services;
+using AntiClown.Data.Api.Core.SettingsStoring.Telemetry;
 using AntiClown.Data.Api.Core.Tokens.Repositories;
 using AntiClown.Data.Api.Core.Tokens.Services;
 using AntiClown.Data.Api.Middlewares;
@@ -12,10 +13,21 @@ using Newtonsoft.Json.Converters;
 using Serilog;
 using SqlRepositoryBase.Configuration.Extensions;
 
+const string fallbackServiceName = "anticlown-data-api";
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
-builder.Services.AddOpenTelemetryTracing(builder.Configuration);
+builder.Host.UseSerilog((context, config) =>
+    {
+        config.ReadFrom.Configuration(context.Configuration);
+
+        if (AntiClown.Core.OpenTelemetry.ServiceCollectionExtensions.IsExportEnabled())
+        {
+            config.WriteTo.WriteToOpenTelemetry(fallbackServiceName);
+        }
+    }
+);
+builder.Services.AddOpenTelemetryTracing(fallbackServiceName);
 
 // configure AutoMapper
 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -30,6 +42,7 @@ builder.Services.AddTransientWithProxy<ITokensRepository, TokensRepository>();
 builder.Services.AddTransientWithProxy<IRightsRepository, RightsRepository>();
 
 // configure services
+builder.Services.AddSingleton<SettingsTelemetry>();
 builder.Services.AddTransientWithProxy<ISettingsService, SettingsService>();
 builder.Services.AddTransientWithProxy<ITokenGenerator, GuidTokenGenerator>();
 builder.Services.AddTransientWithProxy<ITokensService, TokensService>();

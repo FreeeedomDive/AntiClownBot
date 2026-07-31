@@ -1,14 +1,16 @@
 ﻿using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
+using AntiClown.EventsDaemon.Telemetry;
 
 namespace AntiClown.EventsDaemon.Workers.F1Predictions;
 
 public class F1PredictionStartWorker(
     IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
     IF1RacesProvider f1RacesProvider,
-    ILogger<F1PredictionStartWorker> logger
+    ILogger<F1PredictionStartWorker> logger,
+    EventsDaemonTelemetry telemetry
 )
-    : ArbitraryIntervalPeriodicJobWorker(logger)
+    : ArbitraryIntervalPeriodicJobWorker(logger, telemetry)
 {
     protected override async Task<TimeSpan?> TryGetMillisecondsBeforeNextIterationAsync()
     {

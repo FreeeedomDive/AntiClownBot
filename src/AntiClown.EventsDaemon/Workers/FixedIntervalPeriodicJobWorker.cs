@@ -1,19 +1,31 @@
+using System.Diagnostics;
+using AntiClown.EventsDaemon.Telemetry;
+
 namespace AntiClown.EventsDaemon.Workers;
 
-public abstract class FixedIntervalPeriodicJobWorker(ILogger logger) : IWorker
+public abstract class FixedIntervalPeriodicJobWorker(ILogger logger, EventsDaemonTelemetry telemetry) : IWorker
 {
     public async Task StartAsync()
     {
         var delay = await GetMillisecondsBeforeStartAsync();
-        Logger.LogInformation("{WorkerName} will start in {delay}", WorkerName, TimeSpan.FromMilliseconds(delay));
+        var initialDelay = TimeSpan.FromMilliseconds(delay);
+        var firstScheduledAt = DateTimeOffset.UtcNow + initialDelay;
+        Logger.LogInformation("{WorkerName} will start in {delay}", WorkerName, initialDelay);
         await Task.Delay(delay);
 
         currentIteration = 1;
         timer = new PeriodicTimer(IterationTime);
+        var nextScheduledAt = DateTimeOffset.UtcNow + IterationTime;
+        telemetry.RecordScheduleDrift(WorkerName, firstScheduledAt);
         await ExecuteIterationWithLogAsync();
         while (await timer.WaitForNextTickAsync())
         {
             currentIteration++;
+            telemetry.RecordScheduleDrift(WorkerName, nextScheduledAt);
+            do
+            {
+                nextScheduledAt += IterationTime;
+            } while (nextScheduledAt <= DateTimeOffset.UtcNow);
             await ExecuteIterationWithLogAsync();
         }
     }
@@ -21,9 +33,12 @@ public abstract class FixedIntervalPeriodicJobWorker(ILogger logger) : IWorker
     private async Task ExecuteIterationWithLogAsync()
     {
         Logger.LogInformation("{WorkerName} Iteration {i} START at {startTime}", WorkerName, currentIteration, DateTime.UtcNow);
+        var startedAt = Stopwatch.GetTimestamp();
+        var succeeded = false;
         try
         {
             await ExecuteIterationAsync();
+            succeeded = true;
             successfulIterations++;
             Logger.LogInformation(
                 "{WorkerName} Iteration {i} SUCCESS at {startTime} ({success} succeeded, {failed} failed)",
@@ -46,6 +61,10 @@ public abstract class FixedIntervalPeriodicJobWorker(ILogger logger) : IWorker
                 failedIterations,
                 e
             );
+        }
+        finally
+        {
+            telemetry.RecordRun(WorkerName, succeeded, Stopwatch.GetElapsedTime(startedAt));
         }
     }
 
