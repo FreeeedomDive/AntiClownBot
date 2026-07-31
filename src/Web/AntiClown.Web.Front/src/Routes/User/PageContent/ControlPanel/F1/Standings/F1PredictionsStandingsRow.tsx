@@ -17,6 +17,7 @@ import {
 import React from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import DiscordMember from "../../../../../../Components/Users/DiscordMember";
 import { InfoOutlined } from "@mui/icons-material";
@@ -25,6 +26,7 @@ import { MAIN_COLOR } from "../../../../../../Helpers/Colors";
 
 const STICKY_BG_DEFAULT = MAIN_COLOR;
 const STICKY_BG_ME = "#200056";
+const PODIUM_COLORS = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
 interface IProps {
   discordMember: DiscordMemberDto | undefined;
@@ -81,16 +83,46 @@ export function F1PredictionsStandingsRow({
               {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
             {discordMember && (
-              <>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  flex: 1,
+                  overflow: "hidden",
+                  minWidth: 0,
+                }}
+              >
                 <Avatar
                   alt={userName}
                   src={discordMember.avatarUrl}
                   sx={{ width: 24, height: 24, flexShrink: 0 }}
                 />
-                <Box sx={{ flex: 1, overflow: "hidden", minWidth: 0 }}>
-                  <DiscordMember member={discordMember} />
-                </Box>
-              </>
+                <DiscordMember member={discordMember} />
+                <Stack direction="row" spacing={0.25} sx={{ flexShrink: 0 }}>
+                  {results.previousPodiums.map((podium) => {
+                    const label = `${podium.season}: ${podium.place} место`;
+                    return (
+                      <Tooltip key={podium.season} title={label} arrow>
+                        <Box
+                          component="span"
+                          role="img"
+                          tabIndex={0}
+                          aria-label={label}
+                          sx={{ display: "inline-flex" }}
+                        >
+                          <EmojiEventsIcon
+                            sx={{
+                              color: PODIUM_COLORS[podium.place - 1],
+                              fontSize: 19,
+                            }}
+                          />
+                        </Box>
+                      </Tooltip>
+                    );
+                  })}
+                </Stack>
+              </Box>
             )}
           </Stack>
         </TableCell>

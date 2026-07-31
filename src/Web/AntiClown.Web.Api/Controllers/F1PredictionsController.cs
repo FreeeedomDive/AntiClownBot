@@ -25,6 +25,7 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
         {
             race.Predictions = race.Predictions.Where(p => p.UserId == userId.Value).ToList();
         }
+
         return race;
     }
 
@@ -79,19 +80,20 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
     [HttpGet("standingsV2")]
     public async Task<ActionResult<F1StandingsDto>> ReadStandingsV2Async([FromQuery] int season)
     {
-        var standingsRaw = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season);
-        var standings = standingsRaw.Select(x => new F1StandingsRowDto
-                                        {
-                                            UserId = x.Key,
-                                            TotalPoints = x.Value.Sum(r => r?.TotalPoints ?? 0),
-                                            Results = x.Value,
-                                        }
-                                    )
-                                    .OrderByDescending(x => x.TotalPoints)
-                                    .ThenByDescending(x => x.Results.Count(r => r?.TenthPlacePoints == F1PredictionsHelper.MaxPointsForTenthPlacePrediction))
-                                    .ToArray();
-
         var (totalRacesCount, totalSprintsCount) = F1PredictionsHelper.GetTotalRacesCount(season);
+        if (totalRacesCount == 0)
+        {
+            return BadRequest();
+        }
+
+        var standingsRaw = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(season);
+        var standings = BuildStandings(standingsRaw);
+        var previousPodiums = await ReadPreviousPodiumsAsync(season);
+        foreach (var standingsRow in standings)
+        {
+            standingsRow.PreviousPodiums = previousPodiums.GetValueOrDefault(standingsRow.UserId, []);
+        }
+
         var totalPointsForSeason = GetMaxPoints(totalRacesCount, totalSprintsCount, season);
         var races = await antiClownEntertainmentApiClient.F1Predictions.FindAsync(
             new F1RaceFilterDto
@@ -109,6 +111,48 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
             CurrentLeaderPoints = standings.FirstOrDefault()?.TotalPoints ?? 0,
             PointsLeft = totalPointsLeft,
         };
+    }
+
+    private async Task<Dictionary<Guid, F1PodiumDto[]>> ReadPreviousPodiumsAsync(int season)
+    {
+        var seasons = Enumerable.Range(FirstPredictionsSeason, Math.Max(0, season - FirstPredictionsSeason));
+        var standingsTasks = seasons.Select(async previousSeason =>
+            (
+                Season: previousSeason,
+                Standings: BuildStandings(await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(previousSeason))
+            )
+        );
+        var previousStandings = await Task.WhenAll(standingsTasks);
+
+        return previousStandings
+            .SelectMany(x => x.Standings.Take(3).Select((row, index) => new
+                {
+                    row.UserId,
+                    Podium = new F1PodiumDto
+                    {
+                        Season = x.Season,
+                        Place = index + 1,
+                    },
+                }
+            ))
+            .GroupBy(x => x.UserId)
+            .ToDictionary(x => x.Key, x => x.Select(result => result.Podium).ToArray());
+    }
+
+    private static F1StandingsRowDto[] BuildStandings(Dictionary<Guid, F1PredictionUserResultDto?[]> standings)
+    {
+        return standings.Select(x => new F1StandingsRowDto
+                {
+                    UserId = x.Key,
+                    TotalPoints = x.Value.Sum(r => r?.TotalPoints ?? 0),
+                    Results = x.Value,
+                    PreviousPodiums = [],
+                }
+            )
+            .OrderByDescending(x => x.TotalPoints)
+            .ThenByDescending(x =>
+                x.Results.Count(r => r?.TenthPlacePoints == F1PredictionsHelper.MaxPointsForTenthPlacePrediction))
+            .ToArray();
     }
 
     [HttpGet("charts")]
@@ -155,9 +199,11 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
         }
 
         var ordered = usersCharts
-                      .OrderByDescending(x => x.Points.Last())
-                      .ThenByDescending(x => standings[x.UserId].Count(p => p?.TenthPlacePoints == F1PredictionsHelper.MaxPointsForTenthPlacePrediction))
-                      .ToArray();
+            .OrderByDescending(x => x.Points.Last())
+            .ThenByDescending(x =>
+                standings[x.UserId].Count(p =>
+                    p?.TenthPlacePoints == F1PredictionsHelper.MaxPointsForTenthPlacePrediction))
+            .ToArray();
 
         return ordered;
     }
@@ -181,31 +227,33 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
         var (racesCount, sprintsCount) = F1PredictionsHelper.GetTotalRacesCount(season);
         var totalPointsLeft = GetMaxPoints(racesCount, sprintsCount, season);
         var championPoints = leaderChart
-                             .Points
-                             .Select((points, raceNumber) =>
-                                 {
-                                     if (raceNumber == 0)
-                                     {
-                                         return 0;
-                                     }
+            .Points
+            .Select((points, raceNumber) =>
+                {
+                    if (raceNumber == 0)
+                    {
+                        return 0;
+                    }
 
-                                     var race = races[raceNumber - 1];
-                                     totalPointsLeft -= F1PredictionsHelper.CalculatePoints(
-                                         F1PredictionsHelper.GetMaxPointsPerRace(season), season, race.IsSprint && sprintsCount > 0
-                                     );
+                    var race = races[raceNumber - 1];
+                    totalPointsLeft -= F1PredictionsHelper.CalculatePoints(
+                        F1PredictionsHelper.GetMaxPointsPerRace(season), season, race.IsSprint && sprintsCount > 0
+                    );
 
-                                     return Math.Max(0, points - totalPointsLeft);
-                                 }
-                             )
-                             .ToArray();
+                    return Math.Max(0, points - totalPointsLeft);
+                }
+            )
+            .ToArray();
 
         return result with { Points = championPoints };
     }
 
     private static int GetMaxPoints(int racesCount, int sprintsCount, int season)
     {
-        return racesCount * F1PredictionsHelper.CalculatePoints(F1PredictionsHelper.GetMaxPointsPerRace(season), season, false)
-               + sprintsCount * F1PredictionsHelper.CalculatePoints(F1PredictionsHelper.GetMaxPointsPerRace(season), season, true);
+        return racesCount *
+               F1PredictionsHelper.CalculatePoints(F1PredictionsHelper.GetMaxPointsPerRace(season), season, false)
+               + sprintsCount *
+               F1PredictionsHelper.CalculatePoints(F1PredictionsHelper.GetMaxPointsPerRace(season), season, true);
     }
 
     [HttpGet("stats")]
@@ -226,4 +274,6 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
         await antiClownEntertainmentApiClient.F1Predictions.CreateOrUpdateTeamAsync(dto);
         return NoContent();
     }
+
+    private const int FirstPredictionsSeason = 2023;
 }

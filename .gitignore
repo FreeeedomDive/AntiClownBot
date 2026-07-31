@@ -38,3 +38,5 @@ AntiClown.Telegram.Bot/appsettings.Production.json
 .DS_Store
 nginx/nginx_local.conf
 memory/MEMORY.md
+appsettings.Production.json
+appsettings.Local.json
