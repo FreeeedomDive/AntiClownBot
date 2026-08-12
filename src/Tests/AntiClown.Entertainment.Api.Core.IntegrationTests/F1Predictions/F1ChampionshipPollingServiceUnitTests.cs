@@ -77,6 +77,19 @@ public class F1ChampionshipPollingServiceUnitTests
     }
 
     [Test]
+    public async Task PollChampionshipResultsAsync_Should_ScheduleRepoll_WhenJolpicaThrows()
+    {
+        racesRepository.FindAsync(Arg.Any<F1RaceFilter>()).Returns([testRace]);
+        jolpicaClient
+            .GetDriverStandingsAsync(Arg.Any<int>())
+            .Returns<Task<(int Round, string[] Standings)?>>(_ => throw new HttpRequestException("Jolpica is unavailable"));
+
+        await service.PollChampionshipResultsAsync(testRaceId);
+
+        scheduler.Received(1).Schedule(Arg.Any<Action>());
+    }
+
+    [Test]
     public async Task PollChampionshipResultsAsync_Should_ScheduleRepoll_WhenJolpicaRoundIsOlderThanExpected()
     {
         var finishedRace1 = CreateFinishedNonSprintRace(Guid.NewGuid(), season: 2026);
