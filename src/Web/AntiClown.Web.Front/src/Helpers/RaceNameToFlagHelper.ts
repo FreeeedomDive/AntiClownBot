@@ -2,6 +2,9 @@ export function convertRaceNameToFlag(raceName: string): string {
   if (raceName.startsWith("Бахрейн")) {
     return "https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Bahrain.svg";
   }
+  if (raceName.startsWith("Малайзия")) {
+    return "https://upload.wikimedia.org/wikipedia/commons/6/66/Flag_of_Malaysia.svg";
+  }
   if (raceName.startsWith("Саудовская Аравия")) {
     return "https://upload.wikimedia.org/wikipedia/commons/0/0d/Flag_of_Saudi_Arabia.svg";
   }

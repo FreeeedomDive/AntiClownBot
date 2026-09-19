@@ -85,6 +85,11 @@ public class F1RacesProvider : IF1RacesProvider
                    },
                    new F1RaceInfo
                    {
+                       Name = "Малайзия",
+                       PredictionsStartTime = new DateTime(2026, 10, 03),
+                   },
+                   new F1RaceInfo
+                   {
                        Name = "Сингапур",
                        PredictionsStartTime = new DateTime(2026, 10, 10),
                    },
