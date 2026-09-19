@@ -136,12 +136,7 @@ public class F1PredictionsService(
         await f1RacesRepository.UpdateAsync(race);
         await f1PredictionsMessageProducer.ProduceRaceFinishedAsync(raceId);
 
-        scheduler.Schedule(
-            () => BackgroundJob.Schedule(
-                () => PollChampionshipResultsAsync(raceId),
-                options.Value.ChampionshipPollingInterval
-            )
-        );
+        ScheduleChampionshipResultsPoll(raceId);
 
         return results;
     }
@@ -225,42 +220,57 @@ public class F1PredictionsService(
     [AutomaticRetry(Attempts = 0)]
     public async Task PollChampionshipResultsAsync(Guid raceId)
     {
-        var race = await f1RacesRepository.ReadAsync(raceId);
+        logger.LogInformation("Starting championship standings poll for race {RaceId}", raceId);
 
-        // Sprint races don't affect driver championship standings round count
-        if (race.IsSprint)
+        try
         {
-            logger.LogInformation("Race {RaceId} is a sprint, skipping championship standings poll", raceId);
-            return;
-        }
+            var race = await f1RacesRepository.ReadAsync(raceId);
 
-        var finishedRaces = await f1RacesRepository.FindAsync(new F1RaceFilter { Season = race.Season, IsActive = false });
-        var expectedRound = finishedRaces.Count(x => !x.IsSprint);
+            // Sprint races don't affect driver championship standings round count
+            if (race.IsSprint)
+            {
+                logger.LogInformation("Race {RaceId} is a sprint, skipping championship standings poll", raceId);
+                return;
+            }
 
-        var result = await jolpicaClient.GetDriverStandingsAsync(race.Season);
+            var finishedRaces = await f1RacesRepository.FindAsync(new F1RaceFilter { Season = race.Season, IsActive = false });
+            var expectedRound = finishedRaces.Count(x => !x.IsSprint);
 
-        if (result is null || result.Value.Round < expectedRound)
-        {
+            var result = await jolpicaClient.GetDriverStandingsAsync(race.Season);
+
+            if (result is null || result.Value.Round < expectedRound)
+            {
+                logger.LogInformation(
+                    "Championship standings for season {Season} not yet updated (got round {GotRound}, expected {ExpectedRound}), rescheduling",
+                    race.Season, result?.Round, expectedRound
+                );
+                ScheduleChampionshipResultsPoll(raceId);
+                return;
+            }
+
+            var existing = await championshipPredictionsService.ReadResultsAsync(race.Season);
+            existing.Standings = result.Value.Standings;
+            await championshipPredictionsService.WriteResultsAsync(race.Season, existing);
+
             logger.LogInformation(
-                "Championship standings for season {Season} not yet updated (got round {GotRound}, expected {ExpectedRound}), rescheduling",
-                race.Season, result?.Round, expectedRound
+                "Championship standings for season {Season} updated after round {Round}",
+                race.Season, result.Value.Round
             );
-            scheduler.Schedule(
-                () => BackgroundJob.Schedule(
-                    () => PollChampionshipResultsAsync(raceId),
-                    options.Value.ChampionshipPollingInterval
-                )
-            );
-            return;
         }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Championship standings poll failed for race {RaceId}, rescheduling", raceId);
+            ScheduleChampionshipResultsPoll(raceId);
+        }
+    }
 
-        var existing = await championshipPredictionsService.ReadResultsAsync(race.Season);
-        existing.Standings = result.Value.Standings;
-        await championshipPredictionsService.WriteResultsAsync(race.Season, existing);
-
-        logger.LogInformation(
-            "Championship standings for season {Season} updated after round {Round}",
-            race.Season, result.Value.Round
+    private void ScheduleChampionshipResultsPoll(Guid raceId)
+    {
+        scheduler.Schedule(
+            () => BackgroundJob.Schedule(
+                () => PollChampionshipResultsAsync(raceId),
+                options.Value.ChampionshipPollingInterval
+            )
         );
     }
 
