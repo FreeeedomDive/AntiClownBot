@@ -24,6 +24,7 @@ using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Messages;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.PaymentsAndResets;
 using AntiClown.Entertainment.Api.Core.Database;
 using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
+using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.OpenF1;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Bingo;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.ChampionshipPredictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
@@ -147,6 +148,11 @@ builder.Services.AddTransientWithProxy<IF1PredictionsMessageProducer, F1Predicti
 builder.Services.AddTransientWithProxy<IF1PredictionsResultBuilder, F1PredictionsResultBuilder>();
 builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
 builder.Services.AddTransient<IJolpicaClient, JolpicaClient>();
+builder.Services.AddHttpClient<IStartingGridClient, OpenF1StartingGridClient>(client =>
+{
+    client.BaseAddress = new Uri("https://api.openf1.org");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
 builder.Services.AddTransientWithProxy<IF1PredictionsService, F1PredictionsService>();
 builder.Services.AddTransientWithProxy<IF1PredictionsStatisticsService, F1PredictionsStatisticsService>();
 builder.Services.AddTransientWithProxy<IMinecraftAuthService, MinecraftAuthService>();

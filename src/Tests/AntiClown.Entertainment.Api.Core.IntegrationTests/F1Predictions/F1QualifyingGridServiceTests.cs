@@ -9,9 +9,9 @@ public class F1QualifyingGridServiceTests : IntegrationTestsBase
     [SetUp]
     public async Task SetUp()
     {
-        JolpicaClientMock.ClearReceivedCalls();
-        JolpicaClientMock
-            .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
+        StartingGridClientMock.ClearReceivedCalls();
+        StartingGridClientMock
+            .GetDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<bool>())
             .Returns(Task.FromResult<string[]?>(null));
 
         testTeam = new F1Team("TestTeam", "Driver1", "Driver2");
@@ -45,13 +45,13 @@ public class F1QualifyingGridServiceTests : IntegrationTestsBase
     }
 
     [Test]
-    public async Task PollQualifyingGridAsync_Should_NotSaveGrid_WhenJolpicaReturnsNull()
+    public async Task PollQualifyingGridAsync_Should_NotSaveGrid_WhenOpenF1ReturnsNull()
     {
         TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2033, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Qualifying Test GP", false);
 
-        JolpicaClientMock
-            .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
+        StartingGridClientMock
+            .GetDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<bool>())
             .Returns(Task.FromResult<string[]?>(null));
 
         await F1PredictionsService.PollQualifyingGridAsync(raceId);
@@ -61,13 +61,13 @@ public class F1QualifyingGridServiceTests : IntegrationTestsBase
     }
 
     [Test]
-    public async Task PollQualifyingGridAsync_Should_NotSaveGrid_WhenJolpicaReturnsEmpty()
+    public async Task PollQualifyingGridAsync_Should_NotSaveGrid_WhenOpenF1ReturnsEmpty()
     {
         TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2034, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Qualifying Test GP", false);
 
-        JolpicaClientMock
-            .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
+        StartingGridClientMock
+            .GetDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<bool>())
             .Returns(Task.FromResult<string[]?>([]));
 
         await F1PredictionsService.PollQualifyingGridAsync(raceId);
@@ -77,13 +77,13 @@ public class F1QualifyingGridServiceTests : IntegrationTestsBase
     }
 
     [Test]
-    public async Task PollQualifyingGridAsync_Should_SaveGrid_WhenJolpicaReturnsDriverNames()
+    public async Task PollQualifyingGridAsync_Should_SaveGrid_WhenOpenF1ReturnsDriverNames()
     {
         TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2035, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Qualifying Test GP", false);
 
-        JolpicaClientMock
-            .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
+        StartingGridClientMock
+            .GetDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<bool>())
             .Returns(Task.FromResult<string[]?>(["Driver1", "Driver2"]));
 
         await F1PredictionsService.PollQualifyingGridAsync(raceId);
@@ -94,13 +94,13 @@ public class F1QualifyingGridServiceTests : IntegrationTestsBase
     }
 
     [Test]
-    public async Task PollQualifyingGridAsync_Should_AppendMissingTeamDrivers_WhenJolpicaGridIsPartial()
+    public async Task PollQualifyingGridAsync_Should_NotFabricateMissingTeamDrivers()
     {
         TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2036, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Qualifying Test GP", false);
 
-        JolpicaClientMock
-            .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
+        StartingGridClientMock
+            .GetDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<bool>())
             .Returns(Task.FromResult<string[]?>(["Driver1"]));
 
         await F1PredictionsService.PollQualifyingGridAsync(raceId);
@@ -108,7 +108,7 @@ public class F1QualifyingGridServiceTests : IntegrationTestsBase
         var race = await F1PredictionsService.ReadAsync(raceId);
         race.QualifyingGrid.Should().NotBeNull();
         race.QualifyingGrid![0].Should().Be("Driver1");
-        race.QualifyingGrid.Should().Contain("Driver2");
+        race.QualifyingGrid.Should().NotContain("Driver2");
     }
 
     [Test]
@@ -120,8 +120,8 @@ public class F1QualifyingGridServiceTests : IntegrationTestsBase
         var secondRaceId = await F1PredictionsService.StartNewRaceAsync("Second GP", false);
 
         var capturedRoundIndex = -1;
-        JolpicaClientMock
-            .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Is<int>(i => true))
+        StartingGridClientMock
+            .GetDriverNamesAsync(Arg.Any<int>(), Arg.Is<int>(i => true), Arg.Any<bool>())
             .Returns(callInfo =>
                 {
                     capturedRoundIndex = callInfo.ArgAt<int>(1);
@@ -129,20 +129,20 @@ public class F1QualifyingGridServiceTests : IntegrationTestsBase
                 }
             );
 
-        await F1PredictionsService.PollQualifyingGridAsync(raceId);
+        await F1PredictionsService.PollQualifyingGridAsync(secondRaceId);
 
         capturedRoundIndex.Should().Be(2);
     }
 
     [Test]
-    public async Task PollQualifyingGridAsync_Should_CallJolpicaWithCurrentSeason()
+    public async Task PollQualifyingGridAsync_Should_CallOpenF1WithCurrentSeason()
     {
         TimeProviderMock.GetUtcNow().Returns(new DateTimeOffset(2038, 6, 1, 0, 0, 0, TimeSpan.Zero));
         var raceId = await F1PredictionsService.StartNewRaceAsync("Qualifying Test GP", false);
 
         var capturedSeason = -1;
-        JolpicaClientMock
-            .GetQualifyingDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>())
+        StartingGridClientMock
+            .GetDriverNamesAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<bool>())
             .Returns(callInfo =>
                 {
                     capturedSeason = callInfo.ArgAt<int>(0);

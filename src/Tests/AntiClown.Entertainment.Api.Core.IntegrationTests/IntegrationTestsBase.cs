@@ -1,4 +1,5 @@
 using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
+using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.OpenF1;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Bingo;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.ChampionshipPredictions;
@@ -24,6 +25,7 @@ public abstract class IntegrationTestsBase
         F1ChampionshipPredictionsService = Scope.ServiceProvider.GetRequiredService<IF1ChampionshipPredictionsService>();
         PartiesService = Scope.ServiceProvider.GetRequiredService<IPartiesService>();
         JolpicaClientMock = Scope.ServiceProvider.GetRequiredService<IJolpicaClient>();
+        StartingGridClientMock = Scope.ServiceProvider.GetRequiredService<IStartingGridClient>();
         TimeProviderMock = Scope.ServiceProvider.GetRequiredService<TimeProvider>();
     }
 
@@ -34,6 +36,7 @@ public abstract class IntegrationTestsBase
     protected IF1ChampionshipPredictionsService F1ChampionshipPredictionsService { get; private set; } = null!;
     protected IPartiesService PartiesService { get; private set; } = null!;
     protected IJolpicaClient JolpicaClientMock { get; private set; } = null!;
+    protected IStartingGridClient StartingGridClientMock { get; private set; } = null!;
     protected TimeProvider TimeProviderMock { get; private set; } = null!;
     protected IFixture Fixture { get; private set; } = null!;
 }

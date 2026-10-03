@@ -37,3 +37,9 @@ public record JolpicaDriverStanding
     [JsonProperty("Driver")]
     public JolpicaDriver Driver { get; set; } = new();
 }
+
+public record JolpicaDriver
+{
+    [JsonProperty("driverId")]
+    public string DriverId { get; set; } = string.Empty;
+}
