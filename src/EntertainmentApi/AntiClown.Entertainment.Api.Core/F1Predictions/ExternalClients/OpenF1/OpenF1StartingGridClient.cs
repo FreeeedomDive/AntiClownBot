@@ -5,26 +5,27 @@ namespace AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.OpenF1;
 
 public class OpenF1StartingGridClient(HttpClient httpClient, ILogger<OpenF1StartingGridClient> logger) : IStartingGridClient
 {
-    // Free OpenF1 access allows at most three requests per second. The grid lookup
-    // needs four requests, so coordinate calls across client instances in this process.
+    // Free OpenF1 access allows at most three requests per second. Coordinate calls
+    // across client instances in this process, including concurrent race polls.
     private static readonly SemaphoreSlim RequestGate = new(1, 1);
     private static readonly Queue<DateTimeOffset> RequestTimes = new();
 
     public async Task<string[]?> GetDriverNamesAsync(int season, int raceIndex, bool isSprint)
     {
-        var sessions = await GetAsync<Session[]>($"/v1/sessions?year={season}&session_name=Race");
-        var raceSession = sessions?.Where(x => !x.IsCancelled).OrderBy(x => x.DateStart).ElementAtOrDefault(raceIndex - 1);
+        var sessions = await GetAsync<Session[]>($"/v1/sessions?year={season}");
+        var raceSession = sessions?.Where(x => !x.IsCancelled && x.SessionName == "Race")
+                                  .OrderBy(x => x.DateStart)
+                                  .ElementAtOrDefault(raceIndex - 1);
         if (raceSession is null)
         {
             return null;
         }
 
         // OpenF1 associates the starting grid with qualifying, not with the race/sprint session.
-        var qualifyingName = isSprint ? "Sprint%20Qualifying" : "Qualifying";
-        var qualifyingSessions = await GetAsync<Session[]>(
-            $"/v1/sessions?meeting_key={raceSession.MeetingKey}&session_name={qualifyingName}"
-        );
-        var sessionKey = qualifyingSessions?.FirstOrDefault(x => !x.IsCancelled)?.SessionKey;
+        var qualifyingName = isSprint ? "Sprint Qualifying" : "Qualifying";
+        var sessionKey = sessions?.FirstOrDefault(x =>
+            !x.IsCancelled && x.MeetingKey == raceSession.MeetingKey && x.SessionName == qualifyingName
+        )?.SessionKey;
         if (sessionKey is null)
         {
             return null;
@@ -113,6 +114,9 @@ public class OpenF1StartingGridClient(HttpClient httpClient, ILogger<OpenF1Start
 
     private sealed record Session
     {
+        [JsonProperty("session_name")]
+        public string SessionName { get; init; } = string.Empty;
+
         [JsonProperty("session_key")]
         public int SessionKey { get; init; }
 

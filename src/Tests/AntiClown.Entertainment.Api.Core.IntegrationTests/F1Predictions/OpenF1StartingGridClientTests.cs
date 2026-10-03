@@ -12,12 +12,10 @@ public class OpenF1StartingGridClientTests
     {
         var client = CreateClient(url => url switch
         {
-            "/v1/sessions?year=2026&session_name=Race" => """
-                [{"session_key":101,"meeting_key":1,"date_start":"2026-03-01T12:00:00Z"},
-                 {"session_key":202,"meeting_key":2,"date_start":"2026-03-08T12:00:00Z"}]
-                """,
-            "/v1/sessions?meeting_key=2&session_name=Qualifying" => """
-                [{"session_key":201,"meeting_key":2,"date_start":"2026-03-07T12:00:00Z"}]
+            "/v1/sessions?year=2026" => """
+                [{"session_key":101,"session_name":"Race","meeting_key":1,"date_start":"2026-03-01T12:00:00Z"},
+                 {"session_key":201,"session_name":"Qualifying","meeting_key":2,"date_start":"2026-03-07T12:00:00Z"},
+                 {"session_key":202,"session_name":"Race","meeting_key":2,"date_start":"2026-03-08T12:00:00Z"}]
                 """,
             "/v1/starting_grid?session_key=201" => """
                 [{"driver_number":22,"position":2},{"driver_number":11,"position":1}]
@@ -38,11 +36,9 @@ public class OpenF1StartingGridClientTests
     {
         var client = CreateClient(url => url switch
         {
-            "/v1/sessions?year=2026&session_name=Race" => """
-                [{"session_key":101,"meeting_key":7,"date_start":"2026-03-01T12:00:00Z"}]
-                """,
-            "/v1/sessions?meeting_key=7&session_name=Sprint%20Qualifying" => """
-                [{"session_key":99,"meeting_key":7,"date_start":"2026-02-28T12:00:00Z"}]
+            "/v1/sessions?year=2026" => """
+                [{"session_key":99,"session_name":"Sprint Qualifying","meeting_key":7,"date_start":"2026-02-28T12:00:00Z"},
+                 {"session_key":101,"session_name":"Race","meeting_key":7,"date_start":"2026-03-01T12:00:00Z"}]
                 """,
             "/v1/starting_grid?session_key=99" => """
                 [{"driver_number":11,"position":1}]
@@ -69,16 +65,14 @@ public class OpenF1StartingGridClientTests
     }
 
     [Test]
-    public async Task GetDriverNamesAsync_Should_SpaceFourRequestsAcrossRateLimitWindow()
+    public async Task GetDriverNamesAsync_Should_UseOnlyThreeRequestsPerPoll()
     {
         var requestTimes = new List<DateTimeOffset>();
         var client = CreateClient(url => url switch
         {
-            "/v1/sessions?year=2026&session_name=Race" => """
-                [{"session_key":101,"meeting_key":1,"date_start":"2026-03-01T12:00:00Z"}]
-                """,
-            "/v1/sessions?meeting_key=1&session_name=Qualifying" => """
-                [{"session_key":100,"meeting_key":1,"date_start":"2026-02-28T12:00:00Z"}]
+            "/v1/sessions?year=2026" => """
+                [{"session_key":100,"session_name":"Qualifying","meeting_key":1,"date_start":"2026-02-28T12:00:00Z"},
+                 {"session_key":101,"session_name":"Race","meeting_key":1,"date_start":"2026-03-01T12:00:00Z"}]
                 """,
             "/v1/starting_grid?session_key=100" => """
                 [{"driver_number":11,"position":1}]
@@ -92,8 +86,7 @@ public class OpenF1StartingGridClientTests
         var names = await client.GetDriverNamesAsync(2026, 1, false);
 
         names.Should().Equal("DriverA");
-        requestTimes.Should().HaveCount(4);
-        (requestTimes[3] - requestTimes[0]).Should().BeGreaterThanOrEqualTo(TimeSpan.FromSeconds(1));
+        requestTimes.Should().HaveCount(3);
     }
 
     private static OpenF1StartingGridClient CreateClient(Func<string, string?> responseForUrl, Action? onRequest = null)
