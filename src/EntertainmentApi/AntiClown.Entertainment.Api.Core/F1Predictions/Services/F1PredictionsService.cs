@@ -308,17 +308,29 @@ public class F1PredictionsService(
         var updatedGrid = gridNames;
         if (race.QualifyingGrid?.SequenceEqual(updatedGrid) == true)
         {
+            logger.LogInformation("Starting grid unchanged for race {RaceId}", race.Id);
             return;
         }
 
         race = await f1RacesRepository.ReadAsync(race.Id);
-        if (!race.IsActive || race.QualifyingGrid?.SequenceEqual(updatedGrid) == true)
+        if (!race.IsActive)
         {
             return;
         }
 
+        if (race.QualifyingGrid?.SequenceEqual(updatedGrid) == true)
+        {
+            logger.LogInformation("Starting grid unchanged for race {RaceId}", race.Id);
+            return;
+        }
+
+        var previousGrid = race.QualifyingGrid is null ? "not set" : string.Join(", ", race.QualifyingGrid);
         race.QualifyingGrid = updatedGrid;
         await f1RacesRepository.UpdateAsync(race);
+        logger.LogInformation(
+            "Starting grid updated for race {RaceId}: {PreviousGrid} -> {UpdatedGrid}",
+            race.Id, previousGrid, string.Join(", ", updatedGrid)
+        );
         await f1PredictionsMessageProducer.ProduceStartingGridUpdatedAsync(race.Id);
     }
 }
