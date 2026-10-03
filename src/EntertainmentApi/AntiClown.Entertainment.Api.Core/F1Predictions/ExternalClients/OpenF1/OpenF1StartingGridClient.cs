@@ -5,11 +5,6 @@ namespace AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.OpenF1;
 
 public class OpenF1StartingGridClient(HttpClient httpClient, ILogger<OpenF1StartingGridClient> logger) : IStartingGridClient
 {
-    // Free OpenF1 access allows at most three requests per second. Coordinate calls
-    // across client instances in this process, including concurrent race polls.
-    private static readonly SemaphoreSlim RequestGate = new(1, 1);
-    private static readonly Queue<DateTimeOffset> RequestTimes = new();
-
     public async Task<string[]?> GetDriverNamesAsync(int season, int raceIndex, bool isSprint)
     {
         var sessions = await GetAsync<Session[]>($"/v1/sessions?year={season}");
@@ -60,56 +55,15 @@ public class OpenF1StartingGridClient(HttpClient httpClient, ILogger<OpenF1Start
 
     private async Task<T?> GetAsync<T>(string url)
     {
-        for (var attempt = 0; attempt < 2; attempt++)
+        using var response = await httpClient.GetAsync(url);
+        if (!response.IsSuccessStatusCode)
         {
-            await WaitForRequestSlotAsync();
-            using var response = await httpClient.GetAsync(url);
-            if ((int)response.StatusCode == 429 && attempt == 0)
-            {
-                var retryAfter = response.Headers.RetryAfter?.Delta ?? TimeSpan.FromSeconds(2);
-                await Task.Delay(retryAfter > TimeSpan.Zero ? retryAfter : TimeSpan.FromSeconds(2));
-                continue;
-            }
-
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("OpenF1 request {Url} failed with {StatusCode}", url, response.StatusCode);
-                return default;
-            }
-
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T>(content);
+            logger.LogWarning("OpenF1 request {Url} failed with {StatusCode}", url, response.StatusCode);
+            return default;
         }
 
-        return default;
-    }
-
-    private static async Task WaitForRequestSlotAsync()
-    {
-        await RequestGate.WaitAsync();
-        try
-        {
-            while (true)
-            {
-                var now = DateTimeOffset.UtcNow;
-                while (RequestTimes.Count > 0 && now - RequestTimes.Peek() >= TimeSpan.FromSeconds(1))
-                {
-                    RequestTimes.Dequeue();
-                }
-
-                if (RequestTimes.Count < 3)
-                {
-                    RequestTimes.Enqueue(now);
-                    return;
-                }
-
-                await Task.Delay(RequestTimes.Peek().AddSeconds(1) - now + TimeSpan.FromMilliseconds(50));
-            }
-        }
-        finally
-        {
-            RequestGate.Release();
-        }
+        var content = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<T>(content);
     }
 
     private sealed record Session
