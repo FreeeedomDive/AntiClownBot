@@ -7,22 +7,23 @@ public class OpenF1StartingGridClient(HttpClient httpClient, ILogger<OpenF1Start
 {
     public async Task<string[]?> GetDriverNamesAsync(int season, int raceIndex, bool isSprint)
     {
-        var sessions = await GetAsync<Session[]>($"/v1/sessions?year={season}&session_name=Race");
-        var raceSession = sessions?.Where(x => !x.IsCancelled).OrderBy(x => x.DateStart).ElementAtOrDefault(raceIndex - 1);
+        var sessions = await GetAsync<Session[]>($"/v1/sessions?year={season}");
+        var raceSession = sessions?.Where(x => !x.IsCancelled && x.SessionName == "Race")
+                                  .OrderBy(x => x.DateStart)
+                                  .ElementAtOrDefault(raceIndex - 1);
         if (raceSession is null)
         {
             return null;
         }
 
-        var sessionKey = raceSession.SessionKey;
-        if (isSprint)
+        // OpenF1 associates the starting grid with qualifying, not with the race/sprint session.
+        var qualifyingName = isSprint ? "Sprint Qualifying" : "Qualifying";
+        var sessionKey = sessions?.FirstOrDefault(x =>
+            !x.IsCancelled && x.MeetingKey == raceSession.MeetingKey && x.SessionName == qualifyingName
+        )?.SessionKey;
+        if (sessionKey is null)
         {
-            var sprintSessions = await GetAsync<Session[]>($"/v1/sessions?meeting_key={raceSession.MeetingKey}&session_name=Sprint");
-            sessionKey = sprintSessions?.FirstOrDefault(x => !x.IsCancelled)?.SessionKey ?? 0;
-            if (sessionKey == 0)
-            {
-                return null;
-            }
+            return null;
         }
 
         var grid = await GetAsync<GridEntry[]>($"/v1/starting_grid?session_key={sessionKey}");
@@ -67,6 +68,9 @@ public class OpenF1StartingGridClient(HttpClient httpClient, ILogger<OpenF1Start
 
     private sealed record Session
     {
+        [JsonProperty("session_name")]
+        public string SessionName { get; init; } = string.Empty;
+
         [JsonProperty("session_key")]
         public int SessionKey { get; init; }
 
