@@ -68,17 +68,46 @@ public class OpenF1StartingGridClientTests
         names.Should().BeNull();
     }
 
-    private static OpenF1StartingGridClient CreateClient(Func<string, string?> responseForUrl)
+    [Test]
+    public async Task GetDriverNamesAsync_Should_SpaceFourRequestsAcrossRateLimitWindow()
     {
-        var handler = new StubHandler(responseForUrl);
+        var requestTimes = new List<DateTimeOffset>();
+        var client = CreateClient(url => url switch
+        {
+            "/v1/sessions?year=2026&session_name=Race" => """
+                [{"session_key":101,"meeting_key":1,"date_start":"2026-03-01T12:00:00Z"}]
+                """,
+            "/v1/sessions?meeting_key=1&session_name=Qualifying" => """
+                [{"session_key":100,"meeting_key":1,"date_start":"2026-02-28T12:00:00Z"}]
+                """,
+            "/v1/starting_grid?session_key=100" => """
+                [{"driver_number":11,"position":1}]
+                """,
+            "/v1/drivers?session_key=100" => """
+                [{"driver_number":11,"last_name":"DriverA"}]
+                """,
+            _ => throw new AssertionException($"Unexpected URL: {url}"),
+        }, () => requestTimes.Add(DateTimeOffset.UtcNow));
+
+        var names = await client.GetDriverNamesAsync(2026, 1, false);
+
+        names.Should().Equal("DriverA");
+        requestTimes.Should().HaveCount(4);
+        (requestTimes[3] - requestTimes[0]).Should().BeGreaterThanOrEqualTo(TimeSpan.FromSeconds(1));
+    }
+
+    private static OpenF1StartingGridClient CreateClient(Func<string, string?> responseForUrl, Action? onRequest = null)
+    {
+        var handler = new StubHandler(responseForUrl, onRequest);
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri("https://api.openf1.org") };
         return new OpenF1StartingGridClient(httpClient, NullLogger<OpenF1StartingGridClient>.Instance);
     }
 
-    private sealed class StubHandler(Func<string, string?> responseForUrl) : HttpMessageHandler
+    private sealed class StubHandler(Func<string, string?> responseForUrl, Action? onRequest) : HttpMessageHandler
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            onRequest?.Invoke();
             var body = responseForUrl(request.RequestUri!.PathAndQuery);
             return Task.FromResult(body is null
                 ? new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)
