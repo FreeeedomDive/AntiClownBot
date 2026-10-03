@@ -8,7 +8,7 @@ namespace AntiClown.Entertainment.Api.Core.IntegrationTests.F1Predictions;
 public class OpenF1StartingGridClientTests
 {
     [Test]
-    public async Task GetDriverNamesAsync_Should_SelectRaceRoundAndOrderByGridPosition()
+    public async Task GetDriverNamesAsync_Should_UseQualifyingSessionForRaceRoundAndOrderByGridPosition()
     {
         var client = CreateClient(url => url switch
         {
@@ -16,10 +16,13 @@ public class OpenF1StartingGridClientTests
                 [{"session_key":101,"meeting_key":1,"date_start":"2026-03-01T12:00:00Z"},
                  {"session_key":202,"meeting_key":2,"date_start":"2026-03-08T12:00:00Z"}]
                 """,
-            "/v1/starting_grid?session_key=202" => """
+            "/v1/sessions?meeting_key=2&session_name=Qualifying" => """
+                [{"session_key":201,"meeting_key":2,"date_start":"2026-03-07T12:00:00Z"}]
+                """,
+            "/v1/starting_grid?session_key=201" => """
                 [{"driver_number":22,"position":2},{"driver_number":11,"position":1}]
                 """,
-            "/v1/drivers?session_key=202" => """
+            "/v1/drivers?session_key=201" => """
                 [{"driver_number":11,"last_name":"DriverA"},{"driver_number":22,"last_name":"DriverB"}]
                 """,
             _ => throw new AssertionException($"Unexpected URL: {url}"),
@@ -31,14 +34,14 @@ public class OpenF1StartingGridClientTests
     }
 
     [Test]
-    public async Task GetDriverNamesAsync_Should_SelectSprintFromSameMeeting()
+    public async Task GetDriverNamesAsync_Should_UseSprintQualifyingFromSameMeeting()
     {
         var client = CreateClient(url => url switch
         {
             "/v1/sessions?year=2026&session_name=Race" => """
                 [{"session_key":101,"meeting_key":7,"date_start":"2026-03-01T12:00:00Z"}]
                 """,
-            "/v1/sessions?meeting_key=7&session_name=Sprint" => """
+            "/v1/sessions?meeting_key=7&session_name=Sprint%20Qualifying" => """
                 [{"session_key":99,"meeting_key":7,"date_start":"2026-02-28T12:00:00Z"}]
                 """,
             "/v1/starting_grid?session_key=99" => """

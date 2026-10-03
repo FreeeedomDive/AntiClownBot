@@ -14,15 +14,15 @@ public class OpenF1StartingGridClient(HttpClient httpClient, ILogger<OpenF1Start
             return null;
         }
 
-        var sessionKey = raceSession.SessionKey;
-        if (isSprint)
+        // OpenF1 associates the starting grid with qualifying, not with the race/sprint session.
+        var qualifyingName = isSprint ? "Sprint%20Qualifying" : "Qualifying";
+        var qualifyingSessions = await GetAsync<Session[]>(
+            $"/v1/sessions?meeting_key={raceSession.MeetingKey}&session_name={qualifyingName}"
+        );
+        var sessionKey = qualifyingSessions?.FirstOrDefault(x => !x.IsCancelled)?.SessionKey;
+        if (sessionKey is null)
         {
-            var sprintSessions = await GetAsync<Session[]>($"/v1/sessions?meeting_key={raceSession.MeetingKey}&session_name=Sprint");
-            sessionKey = sprintSessions?.FirstOrDefault(x => !x.IsCancelled)?.SessionKey ?? 0;
-            if (sessionKey == 0)
-            {
-                return null;
-            }
+            return null;
         }
 
         var grid = await GetAsync<GridEntry[]>($"/v1/starting_grid?session_key={sessionKey}");
