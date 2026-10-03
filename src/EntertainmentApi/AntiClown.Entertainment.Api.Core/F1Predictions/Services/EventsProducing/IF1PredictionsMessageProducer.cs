@@ -5,6 +5,7 @@ public interface IF1PredictionsMessageProducer
     Task ProducePredictionStartedAsync(Guid raceId);
     Task ProducePredictionUpdatedAsync(Guid userId, Guid raceId, bool isNew);
     Task ProduceRaceResultUpdatedAsync(Guid raceId);
+    Task ProduceStartingGridUpdatedAsync(Guid raceId);
     Task ProduceRaceFinishedAsync(Guid raceId);
     Task ProduceBingoCompletedAsync(Guid userId);
 }

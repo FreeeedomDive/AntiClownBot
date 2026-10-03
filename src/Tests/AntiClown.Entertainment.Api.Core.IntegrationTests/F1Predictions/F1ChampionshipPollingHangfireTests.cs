@@ -4,6 +4,7 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.ChampionshipPredicti
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
+using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.OpenF1;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Options;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.ChampionshipPredictions;
@@ -30,7 +31,8 @@ public class F1ChampionshipPollingHangfireTests
         timeProvider.GetUtcNow().Returns(new DateTimeOffset(2026, 8, 3, 0, 0, 0, TimeSpan.Zero));
 
         await service.CreateOrUpdateTeamAsync(new F1Team("Test Team", "Driver1", "Driver2"));
-        jolpicaClient.GetQualifyingDriverNamesAsync(2026, 1).Returns(["Driver1", "Driver2"]);
+        Scope.ServiceProvider.GetRequiredService<IStartingGridClient>()
+            .GetDriverNamesAsync(2026, 1, false).Returns(["Driver1", "Driver2"]);
         jolpicaClient.GetDriverStandingsAsync(2026).Returns(
             _ => Task.FromException<(int Round, string[] Standings)?>(
                 new HttpRequestException("Jolpica is temporarily unavailable")

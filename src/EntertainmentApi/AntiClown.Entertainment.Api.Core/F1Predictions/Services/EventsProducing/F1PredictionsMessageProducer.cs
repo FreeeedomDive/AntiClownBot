@@ -37,6 +37,11 @@ public class F1PredictionsMessageProducer(IBus bus) : IF1PredictionsMessageProdu
         );
     }
 
+    public async Task ProduceStartingGridUpdatedAsync(Guid raceId)
+    {
+        await bus.Publish(new F1StartingGridUpdatedMessageDto { RaceId = raceId });
+    }
+
     public async Task ProduceRaceFinishedAsync(Guid raceId)
     {
         await bus.Publish(

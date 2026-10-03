@@ -50,6 +50,15 @@ public class F1PredictionsEmbedBuilder(
                .Build();
     }
 
+    public DiscordEmbed BuildStartingGridUpdated(F1RaceDto race)
+    {
+        return new DiscordEmbedBuilder()
+               .WithTitle($"Обновлена стартовая решётка для гонки {race.FullName()} {race.Season}")
+               .WithColor(DiscordColor.Violet)
+               .WithDescription(string.Join("\n", race.QualifyingGrid!.Select((driver, index) => $"{index + 1}. {driver}")))
+               .Build();
+    }
+
     public DiscordEmbed BuildRaceFinished(F1RaceDto race, F1PredictionUserResultDto[] results)
     {
         var apiIdToMember = results.ToDictionary(

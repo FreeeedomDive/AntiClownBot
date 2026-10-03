@@ -3,6 +3,7 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Predictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
+using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.OpenF1;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Options;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
@@ -26,6 +27,7 @@ public class F1PredictionsService(
     IF1PredictionsResultBuilder f1PredictionsResultBuilder,
     IF1ChampionshipPredictionsService championshipPredictionsService,
     IJolpicaClient jolpicaClient,
+    IStartingGridClient startingGridClient,
     IScheduler scheduler,
     IOptions<F1PredictionsOptions> options,
     ILogger<F1PredictionsService> logger,
@@ -198,23 +200,40 @@ public class F1PredictionsService(
     public async Task SaveQualifyingGridAsync(Guid raceId, string[] grid)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
+        if (race.QualifyingGrid?.SequenceEqual(grid) == true)
+        {
+            return;
+        }
+
         race.QualifyingGrid = grid;
         await f1RacesRepository.UpdateAsync(race);
+        await f1PredictionsMessageProducer.ProduceStartingGridUpdatedAsync(raceId);
     }
 
     [AutomaticRetry(Attempts = 0)]
     public async Task PollQualifyingGridAsync(Guid raceId)
     {
-        var found = await TryLoadQualifyingGridAsync(raceId);
-        if (!found)
+        var race = await f1RacesRepository.ReadAsync(raceId);
+        if (!race.IsActive)
         {
-            scheduler.Schedule(
-                () => BackgroundJob.Schedule(
-                    () => PollQualifyingGridAsync(raceId),
-                    options.Value.QualifyingGridPollingInterval
-                )
-            );
+            return;
         }
+
+        try
+        {
+            await TryLoadStartingGridAsync(race);
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Starting grid poll failed for race {RaceId}; rescheduling", raceId);
+        }
+
+        scheduler.Schedule(
+            () => BackgroundJob.Schedule(
+                () => PollQualifyingGridAsync(raceId),
+                options.Value.QualifyingGridPollingInterval
+            )
+        );
     }
 
     [AutomaticRetry(Attempts = 0)]
@@ -274,25 +293,32 @@ public class F1PredictionsService(
         );
     }
 
-    private async Task<bool> TryLoadQualifyingGridAsync(Guid raceId)
+    private async Task TryLoadStartingGridAsync(F1Race race)
     {
-        var race = await f1RacesRepository.ReadAsync(raceId);
-        var raceIndex = (await f1RacesRepository.FindAsync(new F1RaceFilter { Season = race.Season })).Count(x => !x.IsSprint);
+        var previousRaces = (await f1RacesRepository.FindAsync(new F1RaceFilter { Season = race.Season }))
+                            .TakeWhile(x => x.Id != race.Id);
+        var raceIndex = previousRaces.Count(x => !x.IsSprint) + 1;
 
-        var qualifyingNames = await jolpicaClient.GetQualifyingDriverNamesAsync(race.Season, raceIndex);
-        if (qualifyingNames is null || qualifyingNames.Length == 0)
+        var gridNames = await startingGridClient.GetDriverNamesAsync(race.Season, raceIndex, race.IsSprint);
+        if (gridNames is null || gridNames.Length == 0)
         {
-            return false;
+            return;
         }
 
-        var allDrivers = (await f1PredictionTeamsRepository.ReadAllAsync())
-                         .SelectMany(t => new[] { t.FirstDriver, t.SecondDriver })
-                         .ToArray();
-        var qualifyingSet = qualifyingNames.ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var backOfGridDrivers = allDrivers.Where(d => !qualifyingSet.Contains(d)).ToArray();
+        var updatedGrid = gridNames;
+        if (race.QualifyingGrid?.SequenceEqual(updatedGrid) == true)
+        {
+            return;
+        }
 
-        race.QualifyingGrid = qualifyingNames.Concat(backOfGridDrivers).ToArray();
+        race = await f1RacesRepository.ReadAsync(race.Id);
+        if (!race.IsActive || race.QualifyingGrid?.SequenceEqual(updatedGrid) == true)
+        {
+            return;
+        }
+
+        race.QualifyingGrid = updatedGrid;
         await f1RacesRepository.UpdateAsync(race);
-        return true;
+        await f1PredictionsMessageProducer.ProduceStartingGridUpdatedAsync(race.Id);
     }
 }

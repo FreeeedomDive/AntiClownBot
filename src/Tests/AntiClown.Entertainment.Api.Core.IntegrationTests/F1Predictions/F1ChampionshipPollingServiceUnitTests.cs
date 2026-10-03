@@ -3,6 +3,7 @@ using AntiClown.Entertainment.Api.Core.F1Predictions.Domain;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.ChampionshipPredictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Domain.Results;
 using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
+using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.OpenF1;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Options;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
@@ -29,6 +30,7 @@ public class F1ChampionshipPollingServiceUnitTests
         resultBuilder = Substitute.For<IF1PredictionsResultBuilder>();
         championshipPredictionsService = Substitute.For<IF1ChampionshipPredictionsService>();
         jolpicaClient = Substitute.For<IJolpicaClient>();
+        startingGridClient = Substitute.For<IStartingGridClient>();
         scheduler = Substitute.For<IScheduler>();
         timeProvider = Substitute.For<TimeProvider>();
 
@@ -46,6 +48,7 @@ public class F1ChampionshipPollingServiceUnitTests
             resultBuilder,
             championshipPredictionsService,
             jolpicaClient,
+            startingGridClient,
             scheduler,
             pollingOptions,
             NullLogger<F1PredictionsService>.Instance,
@@ -250,6 +253,7 @@ public class F1ChampionshipPollingServiceUnitTests
     };
 
     private IJolpicaClient jolpicaClient = null!;
+    private IStartingGridClient startingGridClient = null!;
     private IF1PredictionsMessageProducer messageProducer = null!;
     private IF1ChampionshipPredictionsService championshipPredictionsService = null!;
 
