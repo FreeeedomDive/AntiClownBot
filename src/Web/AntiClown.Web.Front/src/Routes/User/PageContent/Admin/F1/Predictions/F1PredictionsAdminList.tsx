@@ -14,16 +14,11 @@ import {
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1PredictionAdmin from "./F1PredictionAdmin";
 
-export default function F1PredictionsAdminList() {
+export default function F1PredictionsAdminList({ season }: { season: number }) {
   const currentYear = new Date().getFullYear();
-  const seasons = Array.from(
-    { length: currentYear - 2023 + 1 },
-    (_, index) => 2023 + index,
-  );
   const [f1Races, setF1Races] = useState<F1RaceDto[] | undefined>();
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto | undefined>();
-  const [season, setSeason] = useState(currentYear);
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(season === currentYear);
 
   useEffect(() => {
     let cancelled = false;
@@ -43,25 +38,6 @@ export default function F1PredictionsAdminList() {
     <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
       <Stack spacing={2} direction={"column"}>
         <Stack direction={"row"} spacing={1} alignItems="center">
-          <FormControl size="small">
-            <Select
-              aria-label="Сезон"
-              value={season}
-              onChange={(event) => {
-                const selectedSeason = Number(event.target.value);
-                setF1Races(undefined);
-                setCurrentF1Race(undefined);
-                setSeason(selectedSeason);
-                setIsActive(selectedSeason === currentYear);
-              }}
-            >
-              {seasons.map((year) => (
-                <MenuItem key={year} value={year}>
-                  {year}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
           {f1Races ? (
             <>
               <FormControl fullWidth size="small">
