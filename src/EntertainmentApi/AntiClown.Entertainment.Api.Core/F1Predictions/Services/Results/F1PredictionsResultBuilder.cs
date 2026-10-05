@@ -22,34 +22,13 @@ public class F1PredictionsResultBuilder : IF1PredictionsResultBuilder
                 return pos;
             }
         );
-        switch (race.Season)
+        return race.Predictions.Select(prediction => race.Season switch
         {
-            case 2023:
-                return race.Predictions.Select(prediction => Build2023Result(race, prediction, driverToPosition)).ToArray();
-            case 2024:
-            {
-                var teamMatesWinners = Get2024TeamMatesWinners(driverToPosition);
-                var closestLeadDifference = GetClosestLeadDifference(race);
-                return race.Predictions.Select(prediction =>
-                    Build2024Result(race, prediction, driverToPosition, teamMatesWinners, closestLeadDifference)
-                ).ToArray();
-            }
-            case 2025:
-            {
-                var teamMatesWinners = Get2025TeamMatesWinners(race, driverToPosition);
-                var closestLeadDifference = GetClosestLeadDifference(race);
-                return race.Predictions.Select(prediction =>
-                    Build2025Result(race, prediction, driverToPosition, teamMatesWinners, closestLeadDifference)
-                ).ToArray();
-            }
-            default:
-            {
-                var closestLeadDifference = GetClosestLeadDifference(race);
-                return race.Predictions.Select(prediction =>
-                    Build2026Result(race, prediction, driverToPosition, closestLeadDifference)
-                ).ToArray();
-            }
-        }
+            2023 => Build2023Result(race, prediction, driverToPosition),
+            2024 => Build2024Result(race, prediction, driverToPosition),
+            2025 => Build2025Result(race, prediction, driverToPosition),
+            _ => Build2026Result(race, prediction, driverToPosition),
+        }).ToArray();
     }
 
     private static decimal GetClosestLeadDifference(F1Race race)
@@ -76,11 +55,11 @@ public class F1PredictionsResultBuilder : IF1PredictionsResultBuilder
     private static F1PredictionResult Build2024Result(
         F1Race race,
         F1Prediction prediction,
-        Dictionary<string, int> positions,
-        HashSet<string> teamMatesWinners,
-        decimal closestLeadDifference
+        Dictionary<string, int> positions
     )
     {
+        var teamMatesWinners = Get2024TeamMatesWinners(positions);
+        var closestLeadDifference = GetClosestLeadDifference(race);
         var result = new F1PredictionResult
         {
             RaceId = race.Id,
@@ -100,11 +79,11 @@ public class F1PredictionsResultBuilder : IF1PredictionsResultBuilder
     private static F1PredictionResult Build2025Result(
         F1Race race,
         F1Prediction prediction,
-        Dictionary<string, int> positions,
-        HashSet<string> teamMatesWinners,
-        decimal closestLeadDifference
+        Dictionary<string, int> positions
     )
     {
+        var teamMatesWinners = Get2025TeamMatesWinners(race, positions);
+        var closestLeadDifference = GetClosestLeadDifference(race);
         var result = new F1PredictionResult
         {
             RaceId = race.Id,
@@ -124,10 +103,10 @@ public class F1PredictionsResultBuilder : IF1PredictionsResultBuilder
     private static F1PredictionResult Build2026Result(
         F1Race race,
         F1Prediction prediction,
-        Dictionary<string, int> positions,
-        decimal closestLeadDifference
+        Dictionary<string, int> positions
     )
     {
+        var closestLeadDifference = GetClosestLeadDifference(race);
         var result = new F1PredictionResult
         {
             RaceId = race.Id,
