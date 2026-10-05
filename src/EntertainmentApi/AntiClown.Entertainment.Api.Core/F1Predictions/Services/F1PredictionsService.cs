@@ -122,12 +122,16 @@ public class F1PredictionsService(
         var race = await f1RacesRepository.ReadAsync(raceId);
         race.Result = raceResult;
         await f1RacesRepository.UpdateAsync(race);
-        await f1PredictionsMessageProducer.ProduceRaceResultUpdatedAsync(raceId);
+        if (race.IsActive)
+        {
+            await f1PredictionsMessageProducer.ProduceRaceResultUpdatedAsync(raceId);
+        }
     }
 
     public async Task<F1PredictionResult[]> FinishRaceAsync(Guid raceId)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
+        var wasActive = race.IsActive;
 
         var results = f1PredictionsResultBuilder.Build(race);
 
@@ -136,7 +140,10 @@ public class F1PredictionsService(
         race.IsOpened = false;
         race.IsActive = false;
         await f1RacesRepository.UpdateAsync(race);
-        await f1PredictionsMessageProducer.ProduceRaceFinishedAsync(raceId);
+        if (wasActive)
+        {
+            await f1PredictionsMessageProducer.ProduceRaceFinishedAsync(raceId);
+        }
 
         ScheduleChampionshipResultsPoll(raceId);
 
