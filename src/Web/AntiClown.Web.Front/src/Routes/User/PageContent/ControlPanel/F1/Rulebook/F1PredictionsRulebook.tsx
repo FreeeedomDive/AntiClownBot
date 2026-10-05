@@ -131,6 +131,19 @@ export default function F1PredictionsRulebook() {
         </SubSection>
 
         <SubSection
+          title="Первый DNF"
+          badge="5 очков"
+          badgeColor="warning"
+          seasons="2023"
+          isActive={false}
+        >
+          <Rule>
+            В 2023 году выбирали одного пилота, который сойдёт первым. За точное
+            попадание начислялось <strong>5 очков</strong>.
+          </Rule>
+        </SubSection>
+
+        <SubSection
           title="DNF (Не финишировавшие)"
           badge="до 10 очков"
           badgeColor="success"
@@ -312,7 +325,7 @@ export default function F1PredictionsRulebook() {
               col1="Сезон"
               col2="Максимум за гонку"
               rows={[
-                ["2023", "35 (10 место + DNF)"],
+                ["2023", "30 (10 место + первый DNF)"],
                 [
                   "2024–2025",
                   "55 (10 место + DNF + Инциденты + Отрыв + Команды)",

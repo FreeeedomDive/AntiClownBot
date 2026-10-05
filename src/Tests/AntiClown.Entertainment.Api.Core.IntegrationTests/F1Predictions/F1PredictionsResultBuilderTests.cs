@@ -134,7 +134,7 @@ public class F1PredictionsResultBuilderTests
     }
 
     [TestCase(1.5, 5, 0, 0, 0, 0)]
-    [TestCase(2, 5, 0, 0, 0, 0)] /* первый поставил такой отрыв лидера раньше */
+    [TestCase(2, 5, 5, 0, 0, 0)]
     [TestCase(3.5, 0, 5, 0, 0, 0)]
     [TestCase(5.5, 0, 0, 5, 0, 0)]
     [TestCase(7.5, 0, 0, 0, 5, 0)]
@@ -236,22 +236,15 @@ public class F1PredictionsResultBuilderTests
         result.TotalPoints.Should().Be(expectedPoints);
     }
 
-    // 15 + 0 + 0 + 5 + 7
-    [TestCase(2024, "Hamilton", "", SafetyCarsCount.Two, 1, 8, 27)]
-    // 8 + 0 + 5 + 5 + 3
-    [TestCase(2024, "Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 21)]
-    // 0 + 2 + 0 + 5 + 3
-    [TestCase(2024, "Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 10)]
-    // 25 + 4 + 0 + 5 + 10
-    [TestCase(2024, "Sainz", "Colapinto,Gasly", SafetyCarsCount.Two, 1, 7, 44)]
-    // (15 + 0 + 0 + 5 + 7)*0.3
-    [TestCase(2025, "Hamilton", "", SafetyCarsCount.Two, 1, 8, 8)]
-    // (8 + 0 + 5 + 5 + 3)*0.3
-    [TestCase(2025, "Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 6)]
-    // (0 + 2 + 0 + 5 + 3)*0.3
-    [TestCase(2025, "Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 3)]
-    // (25 + 4 + 0 + 5 + 10)*0.3
-    [TestCase(2025, "Sainz", "Colapinto,Gasly", SafetyCarsCount.Two, 1, 7, 13)]
+    // 2024–2025: position prediction is not scored; sprint multiplier applies only in 2025.
+    [TestCase(2024, "Hamilton", "", SafetyCarsCount.Two, 1, 8, 20)]
+    [TestCase(2024, "Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 18)]
+    [TestCase(2024, "Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 7)]
+    [TestCase(2024, "Sainz", "Colapinto,Gasly", SafetyCarsCount.Two, 1, 7, 34)]
+    [TestCase(2025, "Hamilton", "", SafetyCarsCount.Two, 1, 8, 6)]
+    [TestCase(2025, "Verstappen", "Norris", SafetyCarsCount.One, 1, 4, 5)]
+    [TestCase(2025, "Perez", "Colapinto,Norris", SafetyCarsCount.ThreePlus, 1, 10, 2)]
+    [TestCase(2025, "Sainz", "Colapinto,Gasly", SafetyCarsCount.Two, 1, 7, 10)]
     // 15 + 0 + 0 + 5 + 7
     [TestCase(2026, "Hamilton", "", SafetyCarsCount.Two, 1, 8, 27)]
     // 8 + 0 + 5 + 5 + 3
@@ -295,6 +288,58 @@ public class F1PredictionsResultBuilderTests
 
         var result = f1PredictionsResultBuilder.Build(race).First();
         result.TotalPoints.Should().Be(expectedPoints);
+    }
+
+    [Test]
+    public void Season2023ScoresOnlyTenthPlaceAndFirstDnf()
+    {
+        var race = CreateTestRace(season: 2023);
+        race.Result.DnfDrivers = ["Gasly"];
+        var prediction = CreatePrediction(race.Id, dnfDrivers: ["Gasly"], noDnfSelected: false);
+        race.Predictions.Add(prediction);
+
+        var result = f1PredictionsResultBuilder.Build(race).Single();
+
+        result.TenthPlacePoints.Should().Be(25);
+        result.DnfsPoints.Should().Be(5);
+        result.SafetyCarsPoints.Should().Be(0);
+        result.FirstPlaceLeadPoints.Should().Be(0);
+        result.TeamMatesPoints.Should().Be(0);
+        result.DriverPositionPoints.Should().Be(0);
+        result.TotalPoints.Should().Be(30);
+    }
+
+    [Test]
+    public void Season2024UsesTeamMatesFromThatRace()
+    {
+        var race = CreateTestRace(season: 2024);
+        race.Result.Classification = ["Bearman", "Leclerc", "Hulkenberg", "Magnussen"];
+        var prediction = CreatePrediction(race.Id);
+        prediction.TeamsPickedDrivers = ["Bearman", "Hulkenberg"];
+        race.Predictions.Add(prediction);
+
+        var result = f1PredictionsResultBuilder.Build(race).Single();
+
+        result.TeamMatesPoints.Should().Be(2);
+        result.DriverPositionPoints.Should().Be(0);
+        result.TotalPoints.Should().Be(22);
+    }
+
+    [TestCase("Китай (спринт)", 1)]
+    [TestCase("Япония", 0)]
+    public void Season2025UsesRaceSpecificTeamMates(string raceName, int expectedTeamPoints)
+    {
+        var race = CreateTestRace(season: 2025);
+        race.Name = raceName;
+        race.Result.Classification = ["Tsunoda", "Verstappen", "Hadjar", "Lawson"];
+        var prediction = CreatePrediction(race.Id);
+        prediction.TeamsPickedDrivers = ["Verstappen"];
+        race.Predictions.Add(prediction);
+
+        var result = f1PredictionsResultBuilder.Build(race).Single();
+
+        result.TeamMatesPoints.Should().Be(expectedTeamPoints);
+        result.DriverPositionPoints.Should().Be(0);
     }
 
     private readonly IF1PredictionsResultBuilder f1PredictionsResultBuilder = new F1PredictionsResultBuilder();
