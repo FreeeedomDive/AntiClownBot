@@ -22,23 +22,39 @@ public class F1PredictionsResultBuilder : IF1PredictionsResultBuilder
                 return pos;
             }
         );
-        HashSet<string> teamMatesWinners = race.Season switch
+        switch (race.Season)
         {
-            2024 => Get2024TeamMatesWinners(driverToPosition),
-            2025 => Get2025TeamMatesWinners(race, driverToPosition),
-            _ => [],
-        };
-        var closestLeadDifference = race.Season == 2023
-            ? 0
-            : race.Predictions.Min(x => Math.Abs(race.Result.FirstPlaceLead - x.FirstPlaceLeadPrediction));
+            case 2023:
+                return race.Predictions.Select(prediction => Build2023Result(race, prediction, driverToPosition)).ToArray();
+            case 2024:
+            {
+                var teamMatesWinners = Get2024TeamMatesWinners(driverToPosition);
+                var closestLeadDifference = GetClosestLeadDifference(race);
+                return race.Predictions.Select(prediction =>
+                    Build2024Result(race, prediction, driverToPosition, teamMatesWinners, closestLeadDifference)
+                ).ToArray();
+            }
+            case 2025:
+            {
+                var teamMatesWinners = Get2025TeamMatesWinners(race, driverToPosition);
+                var closestLeadDifference = GetClosestLeadDifference(race);
+                return race.Predictions.Select(prediction =>
+                    Build2025Result(race, prediction, driverToPosition, teamMatesWinners, closestLeadDifference)
+                ).ToArray();
+            }
+            default:
+            {
+                var closestLeadDifference = GetClosestLeadDifference(race);
+                return race.Predictions.Select(prediction =>
+                    Build2026Result(race, prediction, driverToPosition, closestLeadDifference)
+                ).ToArray();
+            }
+        }
+    }
 
-        return race.Predictions.Select(prediction => race.Season switch
-        {
-            2023 => Build2023Result(race, prediction, driverToPosition),
-            2024 => Build2024Result(race, prediction, driverToPosition, teamMatesWinners, closestLeadDifference),
-            2025 => Build2025Result(race, prediction, driverToPosition, teamMatesWinners, closestLeadDifference),
-            _ => Build2026Result(race, prediction, driverToPosition, closestLeadDifference),
-        }).ToArray();
+    private static decimal GetClosestLeadDifference(F1Race race)
+    {
+        return race.Predictions.Min(x => Math.Abs(race.Result.FirstPlaceLead - x.FirstPlaceLeadPrediction));
     }
 
     private static F1PredictionResult Build2023Result(F1Race race, F1Prediction prediction, Dictionary<string, int> positions)
