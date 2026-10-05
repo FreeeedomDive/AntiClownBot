@@ -342,6 +342,18 @@ public class F1PredictionsResultBuilderTests
         result.DriverPositionPoints.Should().Be(0);
     }
 
+    [Test]
+    public void FutureSeasonKeepsCurrentScoringRules()
+    {
+        var race = CreateTestRace(season: 2050);
+        race.Predictions.Add(CreatePrediction(race.Id));
+
+        var result = f1PredictionsResultBuilder.Build(race).Single();
+
+        result.DriverPositionPoints.Should().Be(10);
+        result.TeamMatesPoints.Should().Be(0);
+    }
+
     private readonly IF1PredictionsResultBuilder f1PredictionsResultBuilder = new F1PredictionsResultBuilder();
 
     private static F1Race CreateTestRace(

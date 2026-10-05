@@ -9,11 +9,6 @@ public class F1PredictionsResultBuilder : IF1PredictionsResultBuilder
 {
     public F1PredictionResult[] Build(F1Race race)
     {
-        if (race.Season is < 2023 or > 2026)
-        {
-            throw new NotSupportedException($"F1 prediction rules for season {race.Season} are not defined");
-        }
-
         if (race.Predictions.Count == 0)
         {
             return [];
@@ -59,7 +54,7 @@ public class F1PredictionsResultBuilder : IF1PredictionsResultBuilder
                                       TeamMatesPoints = race.Season is 2024 or 2025
                                           ? (prediction.TeamsPickedDrivers ?? []).Intersect(teamMatesWinners).Count()
                                           : 0,
-                                      DriverPositionPoints = race.Season != 2026 || race.Conditions?.PositionPredictionDriver is null
+                                      DriverPositionPoints = race.Season < 2026 || race.Conditions?.PositionPredictionDriver is null
                                           ? 0
                                           : F1PredictionsHelper.GetPositionPredictionPoints(
                                               prediction.DriverPositionPrediction,
