@@ -9,7 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace AntiClown.Web.Api.Controllers;
 
 [Route("webApi/f1Predictions"), RequireUserToken]
-public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient) : Controller
+public class F1PredictionsController(
+    IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+    ILogger<F1PredictionsController> logger
+) : Controller
 {
     [HttpPost("find")]
     public async Task<ActionResult<F1RaceDto[]>> Find([FromBody] F1RaceFilterDto filter)
@@ -39,6 +42,11 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
     [HttpPost("{raceId:guid}/addPrediction")]
     public async Task<ActionResult<AddPredictionResultDto>> AddPrediction([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction, [FromQuery] bool isAdmin = false)
     {
+        logger.LogInformation(
+            "Web API AddPrediction: raceId={RaceId}, userId={UserId}, isAdmin={IsAdmin}",
+            raceId, prediction.UserId, isAdmin
+        );
+
         try
         {
             await antiClownEntertainmentApiClient.F1Predictions.AddPredictionAsync(raceId, prediction, isAdmin);
