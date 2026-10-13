@@ -20,8 +20,10 @@ import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
 import { F1PredictionDto } from "../../../../../../Dto/F1Predictions/F1PredictionDto";
+import { getPredictionDrivers } from "../../../../../../Dto/F1Predictions/F1PredictionHelpers";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
+import F1RaceSeasonContext from "../../../ControlPanel/F1/Predictions/F1RaceSeasonContext";
 import F1RaceClassifications from "./F1RaceClassifications";
 import F1UserPredictionsTable from "./F1UserPredictionsTable";
 
@@ -62,11 +64,13 @@ export default function F1PredictionAdmin({ f1Race }: Props) {
   if (!data) return <Loader />;
 
   return (
-    <F1PredictionAdminEditor
-      key={data.race.id}
-      race={data.race}
-      teams={data.teams}
-    />
+    <F1RaceSeasonContext.Provider value={data.race.season}>
+      <F1PredictionAdminEditor
+        key={data.race.id}
+        race={data.race}
+        teams={data.teams}
+      />
+    </F1RaceSeasonContext.Provider>
   );
 }
 
@@ -136,19 +140,7 @@ function F1PredictionAdminEditor({
     qualifyingDirty || resultDirty || dirtyPredictions.size > 0;
   const hasClassification = savedRace.result.classification.length > 0;
   const positionDriver = race.conditions?.positionPredictionDriver;
-  const driverOptions = Array.from(
-    new Set([
-      ...initialGrid,
-      ...race.result.classification,
-      ...race.result.dnfDrivers,
-      ...(positionDriver ? [positionDriver] : []),
-      ...race.predictions.flatMap((prediction) => [
-        prediction.tenthPlacePickedDriver,
-        ...(prediction.dnfPrediction.dnfPickedDrivers ?? []),
-        ...(prediction.teamsPickedDrivers ?? []),
-      ]),
-    ]),
-  ).filter(Boolean);
+  const driverOptions = getPredictionDrivers(savedRace, teams);
 
   async function saveQualifying() {
     setAction("qualifying");

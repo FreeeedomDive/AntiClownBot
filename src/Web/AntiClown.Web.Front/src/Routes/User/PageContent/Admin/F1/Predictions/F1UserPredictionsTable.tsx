@@ -11,11 +11,11 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import DiscordMembersApi from "../../../../../../Api/DiscordMembersApi";
 import { F1PredictionDto } from "../../../../../../Dto/F1Predictions/F1PredictionDto";
+import { getPredictionMaxPosition } from "../../../../../../Dto/F1Predictions/F1PredictionHelpers";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
@@ -83,10 +83,7 @@ export default function F1UserPredictionsTable({
     matches(prediction.userId),
   ).length;
   const positionDriver = race.conditions?.positionPredictionDriver;
-  const maxPosition =
-    race.qualifyingGrid?.length ||
-    race.result.classification.length ||
-    drivers.length;
+  const maxPosition = getPredictionMaxPosition(race, teams);
 
   if (predictions.length === 0) {
     return (
@@ -175,6 +172,7 @@ export default function F1UserPredictionsTable({
                   member={membersById.get(prediction.userId)}
                   teams={teams}
                   drivers={drivers}
+                  qualifyingGrid={race.qualifyingGrid}
                   maxPosition={maxPosition}
                   showPosition={!!positionDriver}
                   hidden={!matches(prediction.userId)}

@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import {
   Avatar,
-  Box,
-  Checkbox,
   FormControl,
-  FormHelperText,
   MenuItem,
   Select,
   Stack,
@@ -24,13 +21,16 @@ import {
   F1SafetyCarsPredictionDto,
 } from "../../../../../../Dto/F1Predictions/F1SafetyCarsPredictionDto";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
-import F1TeamBadge from "../../../ControlPanel/F1/Predictions/F1TeamBadge";
+import { isValidDnfPrediction } from "../../../../../../Dto/F1Predictions/F1PredictionHelpers";
+import F1DriverSelect from "../../../ControlPanel/F1/Predictions/Selections/F1DriverSelect";
+import F1DnfSelect from "../../../ControlPanel/F1/Predictions/Selections/F1DnfSelect";
 
 interface Props {
   prediction: F1PredictionDto;
   member?: DiscordMemberDto;
   teams: F1TeamDto[];
   drivers: string[];
+  qualifyingGrid?: string[];
   maxPosition: number;
   showPosition: boolean;
   hidden: boolean;
@@ -43,7 +43,6 @@ interface Props {
 type PredictionDraft = Omit<F1PredictionDto, "firstPlaceLeadPrediction"> & {
   firstPlaceLeadPrediction: string;
 };
-const NOBODY = "__nobody__";
 const INCIDENT_LABELS: Record<F1SafetyCarPredictionDto, string> = {
   Zero: "0",
   One: "1",
@@ -56,6 +55,7 @@ export default function F1UserPredictionRow({
   member,
   teams,
   drivers,
+  qualifyingGrid,
   maxPosition,
   showPosition,
   hidden,
@@ -73,12 +73,7 @@ export default function F1UserPredictionRow({
   const [status, setStatus] = useState<"saved" | "error" | null>(null);
   const userName = member?.serverName || member?.userName || prediction.userId;
   const dirty = JSON.stringify(draft) !== JSON.stringify(savedDraft);
-  const dnfValues = draft.dnfPrediction.noDnfPredicted
-    ? [NOBODY]
-    : draft.dnfPrediction.dnfPickedDrivers ?? [];
-  const validDnf =
-    draft.dnfPrediction.noDnfPredicted ||
-    (dnfValues.length === 5 && new Set(dnfValues).size === 5);
+  const validDnf = isValidDnfPrediction(draft.dnfPrediction);
   const validLead =
     draft.firstPlaceLeadPrediction.trim() !== "" &&
     Number.isFinite(Number(draft.firstPlaceLeadPrediction)) &&
@@ -99,24 +94,6 @@ export default function F1UserPredictionRow({
       prediction.userId,
       JSON.stringify(next) !== JSON.stringify(savedDraft),
     );
-  }
-
-  function changeDnf(values: string[]) {
-    const choseNobody =
-      values.includes(NOBODY) && !draft.dnfPrediction.noDnfPredicted;
-    update({
-      dnfPrediction: choseNobody
-        ? {
-            noDnfPredicted: true,
-            dnfPickedDrivers: null,
-          }
-        : {
-            noDnfPredicted: false,
-            dnfPickedDrivers: values
-              .filter((value) => value !== NOBODY)
-              .slice(0, 5),
-          },
-    });
   }
 
   async function save() {
@@ -180,102 +157,27 @@ export default function F1UserPredictionRow({
         </Stack>
       </TableCell>
       <TableCell>
-        <FormControl size="small" fullWidth disabled={disabled}>
-          <Select
-            value={draft.tenthPlacePickedDriver}
-            inputProps={{ "aria-label": `10-е место — ${userName}` }}
-            onChange={(event) =>
-              update({ tenthPlacePickedDriver: event.target.value })
-            }
-          >
-            {drivers.map((driver) => (
-              <MenuItem key={driver} value={driver}>
-                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                  <F1TeamBadge driver={driver} teams={teams} />
-                  {driver}
-                </Box>
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <F1DriverSelect
+          value={draft.tenthPlacePickedDriver}
+          onChange={(driver) => update({ tenthPlacePickedDriver: driver })}
+          drivers={drivers}
+          teams={teams}
+          qualifyingGrid={qualifyingGrid}
+          ariaLabel={`10-е место — ${userName}`}
+          disabled={disabled}
+        />
       </TableCell>
       <TableCell sx={{ maxWidth: 320 }}>
-        <FormControl
-          size="small"
-          fullWidth
+        <F1DnfSelect
+          value={draft.dnfPrediction}
+          onChange={(dnfPrediction) => update({ dnfPrediction })}
+          drivers={drivers}
+          teams={teams}
+          qualifyingGrid={qualifyingGrid}
+          ariaLabel={`DNF — ${userName}`}
           disabled={disabled}
-          error={!validDnf}
-        >
-          <Select
-            multiple
-            displayEmpty
-            value={dnfValues}
-            inputProps={{ "aria-label": `DNF — ${userName}` }}
-            onChange={(event) =>
-              changeDnf(
-                typeof event.target.value === "string"
-                  ? event.target.value.split(",")
-                  : event.target.value,
-              )
-            }
-            renderValue={(values) => {
-              const label = values.includes(NOBODY)
-                ? "Никто"
-                : values.length
-                  ? `${values.length}/5 · ${values.join(", ")}`
-                  : "Выберите 5 пилотов";
-              return (
-                <Box
-                  title={label}
-                  sx={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    maxWidth: 260,
-                  }}
-                >
-                  {label}
-                </Box>
-              );
-            }}
-            MenuProps={{ PaperProps: { sx: { maxHeight: 440 } } }}
-          >
-            <MenuItem value={NOBODY}>
-              <Checkbox
-                size="small"
-                checked={draft.dnfPrediction.noDnfPredicted}
-                sx={{ mr: 1, p: 0.5 }}
-              />
-              Никто
-            </MenuItem>
-            {drivers.map((driver) => (
-              <MenuItem
-                key={driver}
-                value={driver}
-                disabled={
-                  !draft.dnfPrediction.noDnfPredicted &&
-                  dnfValues.length >= 5 &&
-                  !dnfValues.includes(driver)
-                }
-              >
-                <Checkbox
-                  size="small"
-                  checked={dnfValues.includes(driver)}
-                  sx={{ mr: 1, p: 0.5 }}
-                />
-                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                  <F1TeamBadge driver={driver} teams={teams} />
-                  {driver}
-                </Box>
-              </MenuItem>
-            ))}
-          </Select>
-          {!validDnf && (
-            <FormHelperText>
-              Выберите ровно 5 пилотов или «Никто»
-            </FormHelperText>
-          )}
-        </FormControl>
+          summaryMaxWidth={260}
+        />
       </TableCell>
       <TableCell>
         <FormControl size="small" fullWidth disabled={disabled}>

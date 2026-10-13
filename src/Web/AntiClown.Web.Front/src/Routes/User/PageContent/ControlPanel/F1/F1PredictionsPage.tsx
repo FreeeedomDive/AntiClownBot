@@ -78,9 +78,16 @@ const F1PredictionsPage = () => {
     { length: currentYear - FIRST_SEASON + 1 },
     (_, i) => FIRST_SEASON + i,
   );
-  const season = Number(searchParams.get("season") ?? currentYear);
+  const requestedSeason = Number(searchParams.get("season") ?? currentYear);
+  const season =
+    Number.isInteger(requestedSeason) &&
+    requestedSeason >= FIRST_SEASON &&
+    requestedSeason <= currentYear
+      ? requestedSeason
+      : currentYear;
   const showSeasonSelector =
     location.pathname.endsWith("/f1Predictions/standings") ||
+    location.pathname.endsWith("/f1Predictions/races") ||
     location.pathname.endsWith("/f1Predictions/bingo") ||
     location.pathname.endsWith("/f1Predictions/statistics");
 
@@ -89,17 +96,23 @@ const F1PredictionsPage = () => {
   );
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    navigate(`/user/${userId}/f1Predictions/${TABS[newValue].path}`);
+    navigate(
+      `/user/${userId}/f1Predictions/${TABS[newValue].path}${location.search}`,
+    );
   };
 
   return (
     <ActiveSidebar id="F1Predictions">
       <Box>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          sx={{ display: "flex", alignItems: "center", gap: 2, minWidth: 0 }}
+        >
           <Tabs
-            value={activeTab}
+            value={activeTab >= 0 ? activeTab : 1}
             onChange={handleTabChange}
-            sx={{ minHeight: 32 }}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{ minHeight: 32, flex: 1, minWidth: 0 }}
           >
             {TABS.map((tab, index) => (
               <Tab
@@ -121,12 +134,13 @@ const F1PredictionsPage = () => {
             <FormControl size="small" sx={{ ml: "auto", minWidth: 90 }}>
               <Select
                 value={season}
-                onChange={(e) =>
-                  setSearchParams(
-                    { season: String(e.target.value) },
-                    { replace: true },
-                  )
-                }
+                inputProps={{ "aria-label": "Сезон F1" }}
+                onChange={(event) => {
+                  const next = new URLSearchParams(searchParams);
+                  next.set("season", String(event.target.value));
+                  next.delete("active");
+                  setSearchParams(next, { replace: true });
+                }}
                 sx={{ height: 32 }}
               >
                 {seasons.map((s) => (
@@ -140,7 +154,10 @@ const F1PredictionsPage = () => {
         </Box>
         <Box sx={{ mt: 2 }}>
           <Routes>
-            <Route path="/" element={<Navigate to="standings" replace />} />
+            <Route
+              path="/"
+              element={<Navigate to={`standings${location.search}`} replace />}
+            />
             {TABS.map((tab) => (
               <Route
                 key={tab.path}
