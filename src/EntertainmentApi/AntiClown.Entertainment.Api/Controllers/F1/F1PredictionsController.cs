@@ -13,13 +13,11 @@ public class F1PredictionsController : Controller
 {
     public F1PredictionsController(
         IF1PredictionsService f1PredictionsService,
-        IMapper mapper,
-        ILogger<F1PredictionsController> logger
+        IMapper mapper
     )
     {
         this.f1PredictionsService = f1PredictionsService;
         this.mapper = mapper;
-        this.logger = logger;
     }
 
     [HttpPost("find")]
@@ -45,11 +43,6 @@ public class F1PredictionsController : Controller
     [HttpPost("{raceId:guid}/addPrediction")]
     public async Task<ActionResult> AddPrediction([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction, [FromQuery] bool isAdmin = false)
     {
-        logger.LogInformation(
-            "Entertainment API AddPrediction: raceId={RaceId}, userId={UserId}, isAdmin={IsAdmin}",
-            raceId, prediction.UserId, isAdmin
-        );
-
         var model = mapper.Map<F1Prediction>(prediction);
         await f1PredictionsService.AddPredictionAsync(raceId, prediction.UserId, model, isAdmin);
         return NoContent();
@@ -115,5 +108,4 @@ public class F1PredictionsController : Controller
 
     private readonly IF1PredictionsService f1PredictionsService;
     private readonly IMapper mapper;
-    private readonly ILogger<F1PredictionsController> logger;
 }
