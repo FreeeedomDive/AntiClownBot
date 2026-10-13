@@ -221,7 +221,7 @@ export default function F1PredictionsStandingsChart({
           xs: "minmax(0, 1fr)",
           lg: "minmax(0, 1fr) 280px",
         },
-        gap: 1,
+        gap: 2,
         alignItems: "stretch",
       }}
     >
