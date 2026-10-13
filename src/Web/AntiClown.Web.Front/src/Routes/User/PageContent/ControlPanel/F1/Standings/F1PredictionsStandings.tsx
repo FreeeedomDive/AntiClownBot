@@ -64,6 +64,7 @@ export default function F1PredictionsStandings() {
           />
           <F1PredictionsStandingsChart
             key={season}
+            standings={standings}
             members={members}
             charts={charts}
             races={finishedRaces}

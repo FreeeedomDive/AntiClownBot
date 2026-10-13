@@ -10,6 +10,7 @@ import {
   Paper,
   Stack,
   Switch,
+  TextField,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
@@ -21,12 +22,14 @@ import { useParams } from "react-router-dom";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { F1ChartsDto } from "../../../../../../Dto/F1Predictions/F1ChartsDto";
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import { F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1StandingsDto";
 import SortedAxisTooltip from "./SortedAxisTooltip";
 
 interface Props {
   members: DiscordMemberDto[];
   charts: F1ChartsDto;
   races: F1RaceDto[];
+  standings: F1StandingsDto;
 }
 
 interface Participant {
@@ -34,9 +37,11 @@ interface Participant {
   seriesId: string;
   isMe: boolean;
   userName: string;
+  searchText: string;
   avatarUrl?: string;
   color: string;
   points: number[];
+  racePoints: (number | null)[];
 }
 
 const THRESHOLD_ID = "prediction_title_threshold";
@@ -78,34 +83,56 @@ export default function F1PredictionsStandingsChart({
   members,
   charts,
   races,
+  standings,
 }: Props) {
   const { userId } = useParams<"userId">();
-  const [mode, setMode] = useState<"points" | "gap">("points");
+  const [mode, setMode] = useState<"points" | "gap" | "race">("points");
   const [selectedUsers, setSelectedUsers] = useState<Set<string> | null>(null);
   const [showThreshold, setShowThreshold] = useState(true);
+  const [search, setSearch] = useState("");
 
+  const standingsByUserId = new Map(
+    standings.standings.map((row) => [row.userId, row]),
+  );
   const participants: Participant[] = charts.usersCharts.map((chart, index) => {
     const member = members.find((item) => item.userId === chart.userId);
+    const resultsByRaceId = new Map(
+      (standingsByUserId.get(chart.userId)?.results ?? [])
+        .filter((result) => result !== null)
+        .map((result) => [result.raceId, result.totalPoints]),
+    );
     return {
       userId: chart.userId,
       seriesId: `prediction_points_${chart.userId}`,
       isMe: chart.userId === userId,
       userName: member?.serverName || member?.userName || chart.userId,
+      searchText: [member?.serverName, member?.userName, chart.userId]
+        .filter(Boolean)
+        .join(" ")
+        .toLocaleLowerCase(),
       avatarUrl: member?.avatarUrl,
       color:
         chart.userId === userId ? "#ffffff" : COLORS[index % COLORS.length],
       points: chart.points,
+      racePoints: races.map((race) => resultsByRaceId.get(race.id) ?? null),
     };
   });
   const visibleParticipants = participants.filter(
     (participant) =>
       selectedUsers === null || selectedUsers.has(participant.userId),
   );
+  const filteredParticipants = participants.filter((participant) =>
+    participant.searchText.includes(search.trim().toLocaleLowerCase()),
+  );
+  const allSelected = visibleParticipants.length === participants.length;
+  const partlySelected = visibleParticipants.length > 0 && !allSelected;
   const stageCount = Math.max(
     0,
     ...participants.map((participant) => participant.points.length),
   );
   const stages = Array.from({ length: stageCount }, (_, index) => index);
+  const axisStages =
+    mode === "race" ? races.map((_, index) => index + 1) : stages;
   // The leader comes from all participants, even when some lines are hidden.
   const leaderPoints = stages.map((index) =>
     Math.max(
@@ -117,8 +144,8 @@ export default function F1PredictionsStandingsChart({
     (value) => value > 0,
   );
   const hasThreshold = firstThresholdStage >= 0;
-  const ownSeriesId = participants.find((participant) => participant.isMe)
-    ?.seriesId;
+  const ownParticipant = participants.find((participant) => participant.isMe);
+  const ownSeriesId = ownParticipant?.seriesId;
 
   const chartSeries: Omit<LineSeriesType, "type">[] = visibleParticipants.map(
     (participant) => ({
@@ -127,15 +154,19 @@ export default function F1PredictionsStandingsChart({
       color: participant.color,
       curve: "linear",
       area: false,
-      showMark: false,
-      data: stages.map((index) => {
-        const points = pointsAt(participant.points, index);
-        return mode === "gap" ? points - leaderPoints[index] : points;
-      }),
+      showMark: mode === "race",
+      connectNulls: false,
+      data:
+        mode === "race"
+          ? participant.racePoints
+          : stages.map((index) => {
+              const points = pointsAt(participant.points, index);
+              return mode === "gap" ? points - leaderPoints[index] : points;
+            }),
     }),
   );
 
-  if (showThreshold && hasThreshold) {
+  if (mode !== "race" && showThreshold && hasThreshold) {
     chartSeries.push({
       id: THRESHOLD_ID,
       label: "Порог борьбы за титул",
@@ -191,25 +222,13 @@ export default function F1PredictionsStandingsChart({
     });
   }
 
-  function selectLeaders() {
-    const leaders = [...participants]
-      .sort(
-        (a, b) =>
-          pointsAt(b.points, stageCount - 1) -
-          pointsAt(a.points, stageCount - 1),
-      )
-      .slice(0, 5);
-    setSelectedUsers(
-      new Set([
-        ...leaders.map((participant) => participant.userId),
-        ...participants
-          .filter((participant) => participant.isMe)
-          .map((participant) => participant.userId),
-      ]),
-    );
+  function selectMe() {
+    if (!ownParticipant) return;
+    setSelectedUsers(new Set([ownParticipant.userId]));
+    setSearch("");
   }
 
-  if (participants.length === 0 || stageCount === 0) {
+  if (participants.length === 0 || axisStages.length === 0) {
     return <Alert severity="info">Данных для графика пока нет.</Alert>;
   }
 
@@ -234,7 +253,9 @@ export default function F1PredictionsStandingsChart({
           <Typography variant="caption" color="text.secondary">
             {mode === "points"
               ? "Накопленные очки после каждого этапа"
-              : "Отставание от лидера на каждом этапе · 0 — лидер"}
+              : mode === "gap"
+                ? "Отставание от лидера на каждом этапе · 0 — лидер"
+                : "Общая сумма очков за каждую гонку · Пропуск — нет предсказания"}
           </Typography>
         </Stack>
         {chartSeries.length > 0 ? (
@@ -246,13 +267,13 @@ export default function F1PredictionsStandingsChart({
                 series={chartSeries}
                 xAxis={[
                   {
-                    data: stages,
+                    data: axisStages,
                     scaleType: "linear",
-                    min: 0,
-                    max: stageCount - 1,
+                    min: axisStages[0],
+                    max: axisStages[axisStages.length - 1],
                     domainLimit: "strict",
                     tickMinStep: 1,
-                    tickInterval: stages,
+                    tickInterval: axisStages,
                     label: "Этап сезона",
                   },
                 ]}
@@ -262,7 +283,12 @@ export default function F1PredictionsStandingsChart({
                     max: maxY,
                     scaleType: "linear",
                     tickMinStep: 1,
-                    label: mode === "gap" ? "Отставание, очки" : "Очки",
+                    label:
+                      mode === "gap"
+                        ? "Отставание, очки"
+                        : mode === "race"
+                          ? "Очки за гонку"
+                          : "Очки",
                   },
                 ]}
                 margin={{ top: 20, bottom: 55, left: 65, right: 20 }}
@@ -321,7 +347,14 @@ export default function F1PredictionsStandingsChart({
             size="small"
             color="primary"
             aria-label="Режим графика"
-            onChange={(_, value: "points" | "gap" | null) => {
+            sx={{
+              "& .MuiToggleButton-root": {
+                px: 0.75,
+                fontSize: "0.75rem",
+                whiteSpace: "nowrap",
+              },
+            }}
+            onChange={(_, value: "points" | "gap" | "race" | null) => {
               if (value !== null) setMode(value);
             }}
           >
@@ -333,6 +366,13 @@ export default function F1PredictionsStandingsChart({
             </ToggleButton>
             <ToggleButton value="gap" sx={{ flex: 1, textTransform: "none" }}>
               Отставание
+            </ToggleButton>
+            <ToggleButton
+              value="race"
+              sx={{ flex: 1, textTransform: "none" }}
+              disabled={races.length === 0}
+            >
+              За гонку
             </ToggleButton>
           </ToggleButtonGroup>
           <Divider />
@@ -349,23 +389,51 @@ export default function F1PredictionsStandingsChart({
                 {visibleParticipants.length} / {participants.length}
               </Typography>
             </Stack>
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={0.5} alignItems="center">
+              <Checkbox
+                size="small"
+                checked={allSelected}
+                indeterminate={partlySelected}
+                onChange={(_, checked) =>
+                  setSelectedUsers(checked ? null : new Set<string>())
+                }
+                inputProps={{
+                  "aria-label": allSelected
+                    ? "Снять выбор со всех участников"
+                    : "Выбрать всех участников",
+                  "aria-checked": partlySelected ? "mixed" : allSelected,
+                }}
+                sx={{ p: 0.5, flexShrink: 0 }}
+              />
+              <TextField
+                size="small"
+                type="search"
+                placeholder="Поиск по нику"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                inputProps={{ "aria-label": "Поиск участников по нику" }}
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                  "& .MuiInputBase-input": { px: 1, fontSize: "0.8rem" },
+                  "& .MuiInputBase-root": { height: 36 },
+                }}
+              />
               <Button
                 size="small"
                 variant="outlined"
-                onClick={() => setSelectedUsers(null)}
-                sx={{ textTransform: "none" }}
+                onClick={selectMe}
+                disabled={!ownParticipant}
+                title="Показать только мои результаты"
+                sx={{
+                  textTransform: "none",
+                  minWidth: 32,
+                  height: 36,
+                  px: 1,
+                  flexShrink: 0,
+                }}
               >
-                Все
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={selectLeaders}
-                title="Показать топ-5 и своё предсказание"
-                sx={{ textTransform: "none" }}
-              >
-                {ownSeriesId ? "Я и лидеры" : "Лидеры"}
+                Я
               </Button>
             </Stack>
             <Stack
@@ -390,7 +458,7 @@ export default function F1PredictionsStandingsChart({
                 },
               }}
             >
-              {participants.map((participant) => (
+              {filteredParticipants.map((participant) => (
                 <FormControlLabel
                   key={participant.userId}
                   sx={{
@@ -448,6 +516,7 @@ export default function F1PredictionsStandingsChart({
                       <Typography
                         variant="caption"
                         color="text.secondary"
+                        title="Сумма очков за сезон"
                         sx={{
                           fontVariantNumeric: "tabular-nums",
                           flexShrink: 0,
@@ -459,39 +528,54 @@ export default function F1PredictionsStandingsChart({
                   }
                 />
               ))}
+              {filteredParticipants.length === 0 && (
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ py: 2, textAlign: "center" }}
+                >
+                  Участники не найдены
+                </Typography>
+              )}
             </Stack>
           </Stack>
-          <Divider />
-          <Stack spacing={0.5}>
-            <FormControlLabel
-              sx={{ m: 0, alignItems: "center" }}
-              control={
-                <Switch
-                  size="small"
-                  checked={hasThreshold && showThreshold}
-                  disabled={!hasThreshold}
-                  onChange={(_, checked) => setShowThreshold(checked)}
+          {mode !== "race" && (
+            <>
+              <Divider />
+              <Stack spacing={0.5}>
+                <FormControlLabel
+                  sx={{ m: 0, alignItems: "center" }}
+                  control={
+                    <Switch
+                      size="small"
+                      checked={hasThreshold && showThreshold}
+                      disabled={!hasThreshold}
+                      onChange={(_, checked) => setShowThreshold(checked)}
+                    />
+                  }
+                  label={
+                    <Typography variant="body2">
+                      Порог борьбы за титул
+                    </Typography>
+                  }
                 />
-              }
-              label={
-                <Typography variant="body2">Порог борьбы за титул</Typography>
-              }
-            />
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Box
-                sx={{
-                  width: 24,
-                  borderTop: `2px dashed ${THRESHOLD_COLOR}`,
-                  flexShrink: 0,
-                }}
-              />
-              <Typography variant="caption" color="text.secondary">
-                {hasThreshold
-                  ? "Минимум очков для сохранения шансов на титул"
-                  : "Порог пока не появился"}
-              </Typography>
-            </Stack>
-          </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Box
+                    sx={{
+                      width: 24,
+                      borderTop: `2px dashed ${THRESHOLD_COLOR}`,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <Typography variant="caption" color="text.secondary">
+                    {hasThreshold
+                      ? "Минимум очков для сохранения шансов на титул"
+                      : "Порог пока не появился"}
+                  </Typography>
+                </Stack>
+              </Stack>
+            </>
+          )}
         </Stack>
       </Paper>
     </Box>

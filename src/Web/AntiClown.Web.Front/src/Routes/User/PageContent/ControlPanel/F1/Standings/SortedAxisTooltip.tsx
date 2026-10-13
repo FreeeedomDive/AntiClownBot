@@ -10,7 +10,7 @@ interface SortedAxisTooltipProps {
     color: string;
   }[];
   races: F1RaceDto[];
-  mode?: "points" | "gap";
+  mode?: "points" | "gap" | "race";
   referenceSeriesId?: string;
 }
 
@@ -24,9 +24,10 @@ export default function SortedAxisTooltip(props: SortedAxisTooltipProps) {
   } = props;
   if (dataIndex == null) return null;
 
-  const race = dataIndex === 0 ? null : races[dataIndex - 1];
+  const raceIndex = mode === "race" ? dataIndex : dataIndex - 1;
+  const race = raceIndex < 0 ? null : races[raceIndex];
   const raceLabel =
-    dataIndex === 0
+    raceIndex < 0
       ? "Начало сезона"
       : race
         ? race.name + (race.isSprint ? " (спринт)" : "")
@@ -39,8 +40,12 @@ export default function SortedAxisTooltip(props: SortedAxisTooltipProps) {
       value: s.data[dataIndex],
       color: s.color,
     }))
-    .filter((item) => item.value != null)
-    .sort((a, b) => b.value! - a.value!);
+    .filter((item) => mode === "race" || item.value != null)
+    .sort((a, b) => {
+      if (a.value == null) return b.value == null ? 0 : 1;
+      if (b.value == null) return -1;
+      return b.value - a.value;
+    });
   const participants = items.filter((item) => item.id !== referenceSeriesId);
   const reference = items.find((item) => item.id === referenceSeriesId);
 
@@ -72,8 +77,16 @@ export default function SortedAxisTooltip(props: SortedAxisTooltipProps) {
             <Typography variant="caption" sx={{ flex: 1 }}>
               {item.label}
             </Typography>
-            <Typography variant="caption" fontWeight="bold">
-              {mode === "gap" && item.value === 0 ? "0 · лидер" : item.value}
+            <Typography
+              variant="caption"
+              fontWeight={item.value == null ? 400 : "bold"}
+              color={item.value == null ? "text.secondary" : "inherit"}
+            >
+              {item.value == null
+                ? "Нет предсказания"
+                : mode === "gap" && item.value === 0
+                  ? "0 · лидер"
+                  : item.value}
             </Typography>
           </Box>
         ))}
