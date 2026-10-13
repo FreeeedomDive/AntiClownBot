@@ -37,11 +37,11 @@ public class F1PredictionsController(IAntiClownEntertainmentApiClient antiClownE
     }
 
     [HttpPost("{raceId:guid}/addPrediction")]
-    public async Task<ActionResult<AddPredictionResultDto>> AddPrediction([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction)
+    public async Task<ActionResult<AddPredictionResultDto>> AddPrediction([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction, [FromQuery] bool isAdmin = false)
     {
         try
         {
-            await antiClownEntertainmentApiClient.F1Predictions.AddPredictionAsync(raceId, prediction);
+            await antiClownEntertainmentApiClient.F1Predictions.AddPredictionAsync(raceId, prediction, isAdmin);
             return AddPredictionResultDto.Success;
         }
         catch (PredictionsAlreadyClosedException)

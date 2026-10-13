@@ -95,10 +95,10 @@ public class F1PredictionsService(
         return raceId;
     }
 
-    public async Task AddPredictionAsync(Guid raceId, Guid userId, F1Prediction prediction)
+    public async Task AddPredictionAsync(Guid raceId, Guid userId, F1Prediction prediction, bool isAdmin = false)
     {
         var race = await f1RacesRepository.ReadAsync(raceId);
-        if (!race.IsOpened)
+        if (!isAdmin && !race.IsOpened)
         {
             throw new PredictionsAlreadyClosedException(raceId);
         }
@@ -107,7 +107,10 @@ public class F1PredictionsService(
         var deletedCount = race.Predictions.RemoveAll(x => x.UserId == userId);
         race.Predictions.Add(prediction);
         await f1RacesRepository.UpdateAsync(race);
-        await f1PredictionsMessageProducer.ProducePredictionUpdatedAsync(userId, raceId, deletedCount == 0);
+        if (!isAdmin)
+        {
+            await f1PredictionsMessageProducer.ProducePredictionUpdatedAsync(userId, raceId, deletedCount == 0);
+        }
     }
 
     public async Task ClosePredictionsAsync(Guid raceId)

@@ -34,10 +34,11 @@ public class F1PredictionsClient : IF1PredictionsClient
         return await client.MakeRequestAsync<System.Guid>(requestBuilder.Build());
     }
 
-    public async Task AddPredictionAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionDto prediction)
+    public async Task AddPredictionAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionDto prediction, bool isAdmin = false)
     {
         var requestBuilder = new RequestBuilder($"entertainmentApi/f1Predictions/{raceId}/addPrediction", HttpRequestMethod.POST);
         requestBuilder.WithJsonBody(prediction);
+        requestBuilder.WithQueryParameter("isAdmin", isAdmin);
         await client.MakeRequestAsync(requestBuilder.Build());
     }
 

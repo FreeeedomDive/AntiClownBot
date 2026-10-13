@@ -41,10 +41,10 @@ public class F1PredictionsController : Controller
     }
 
     [HttpPost("{raceId:guid}/addPrediction")]
-    public async Task<ActionResult> AddPrediction([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction)
+    public async Task<ActionResult> AddPrediction([FromRoute] Guid raceId, [FromBody] F1PredictionDto prediction, [FromQuery] bool isAdmin = false)
     {
         var model = mapper.Map<F1Prediction>(prediction);
-        await f1PredictionsService.AddPredictionAsync(raceId, prediction.UserId, model);
+        await f1PredictionsService.AddPredictionAsync(raceId, prediction.UserId, model, isAdmin);
         return NoContent();
     }
 
