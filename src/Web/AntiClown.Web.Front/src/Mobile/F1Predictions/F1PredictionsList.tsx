@@ -1,100 +1,105 @@
 import React, { useEffect, useState } from "react";
-import { F1RaceDto } from "../../Dto/F1Predictions/F1RaceDto";
-import F1PredictionsApi from "../../Api/F1PredictionsApi";
-import { RightsWrapper } from "../../Components/UserRights/RightsWrapper";
-import { RightsDto } from "../../Dto/Rights/RightsDto";
 import {
+  Alert,
   Checkbox,
   FormControl,
   FormControlLabel,
+  InputLabel,
   MenuItem,
   Select,
   Stack,
 } from "@mui/material";
+import F1PredictionsApi from "../../Api/F1PredictionsApi";
 import { Loader } from "../../Components/Loader/Loader";
-import F1PredictionStepMaster from "./F1PredictionStepMaster";
+import { RightsWrapper } from "../../Components/UserRights/RightsWrapper";
+import { F1RaceDto } from "../../Dto/F1Predictions/F1RaceDto";
+import { RightsDto } from "../../Dto/Rights/RightsDto";
+import F1Prediction from "./F1Prediction";
 
 export default function F1PredictionsList() {
-  const [f1Races, setF1Races] = useState<F1RaceDto[] | undefined>();
-  const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto | undefined>();
-  const [isActive, setIsActive] = useState(true);
-
-  function fetchRaces(onlyActive: boolean) {
-    return F1PredictionsApi.find({
-      season: new Date().getFullYear(),
-      isActive: onlyActive ? true : undefined,
-    });
-  }
+  const [onlyActive, setOnlyActive] = useState(true);
+  const [selectedRaceId, setSelectedRaceId] = useState("");
+  const [data, setData] = useState<{
+    onlyActive: boolean;
+    races: F1RaceDto[];
+    error?: boolean;
+  }>();
 
   useEffect(() => {
-    fetchRaces(true)
-      .then((result) => {
-        setF1Races(result);
-        setCurrentF1Race(result[0]);
+    let cancelled = false;
+    F1PredictionsApi.find({
+      season: new Date().getFullYear(),
+      isActive: onlyActive ? true : undefined,
+    })
+      .then((races) => {
+        if (!cancelled) {
+          setData({ onlyActive, races });
+          setSelectedRaceId(
+            onlyActive ? races[0]?.id ?? "" : races.at(-1)?.id ?? "",
+          );
+        }
       })
-      .catch(console.error);
-  }, []);
+      .catch(() => {
+        if (!cancelled) setData({ onlyActive, races: [], error: true });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [onlyActive]);
+
+  const isLoading = !data || data.onlyActive !== onlyActive;
+  const currentRace = !isLoading
+    ? data?.races.find((race) => race.id === selectedRaceId)
+    : undefined;
 
   return (
     <RightsWrapper requiredRights={[RightsDto.F1Predictions]}>
-      <Stack
-        spacing={3}
-        direction={"column"}
-        sx={{
-          marginLeft: "16px",
-          marginTop: "8px",
-          marginBottom: "8px",
-          marginRight: "16px",
-        }}
-      >
-        {f1Races ? (
-          <Stack direction={"row"} spacing={1}>
-            <FormControl fullWidth>
-              <Select
-                labelId="race-select"
-                id="race-select"
-                value={currentF1Race}
-                key={currentF1Race?.id ?? ""}
-                onChange={(selectedRace) => {
-                  setCurrentF1Race(selectedRace.target.value as F1RaceDto);
-                }}
-              >
-                {f1Races.map((race) => (
-                  // @ts-expect-error - necessary to load object into value
-                  <MenuItem key={race.id} value={race}>
-                    {race.name} {race.season}
-                    {race.isSprint ? " (спринт)" : ""}
+      <Stack spacing={2} sx={{ mx: 2, my: 1, minWidth: 0 }}>
+        <Stack spacing={0.5}>
+          <FormControl
+            size="small"
+            fullWidth
+            disabled={isLoading || !data?.races.length}
+          >
+            <InputLabel id="mobile-prediction-race-label">Гонка</InputLabel>
+            <Select
+              labelId="mobile-prediction-race-label"
+              label="Гонка"
+              value={currentRace?.id ?? ""}
+              onChange={(event) => setSelectedRaceId(event.target.value)}
+            >
+              {!isLoading &&
+                data?.races.map((race) => (
+                  <MenuItem key={race.id} value={race.id}>
+                    {race.name} · {race.season}
+                    {race.isSprint ? " · Спринт" : ""}
                   </MenuItem>
                 ))}
-              </Select>
-            </FormControl>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={isActive}
-                  onChange={(x) => {
-                    const onlyActive = x.target.checked;
-                    setIsActive(onlyActive);
-                    fetchRaces(onlyActive)
-                      .then((result) => {
-                        setF1Races(result);
-                        setCurrentF1Race(result[0]);
-                      })
-                      .catch(console.error);
-                  }}
-                />
-              }
-              label={"Только текущие"}
-            />
-          </Stack>
-        ) : (
-          <Loader />
-        )}
-        {currentF1Race && (
-          <F1PredictionStepMaster
-            key={currentF1Race.id}
-            f1Race={currentF1Race}
+            </Select>
+          </FormControl>
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                checked={onlyActive}
+                onChange={(_, checked) => setOnlyActive(checked)}
+              />
+            }
+            label="Только текущие гонки"
           />
+        </Stack>
+        {isLoading ? (
+          <Loader />
+        ) : data?.error ? (
+          <Alert severity="error">Не удалось загрузить список гонок</Alert>
+        ) : currentRace ? (
+          <F1Prediction key={currentRace.id} f1Race={currentRace} />
+        ) : (
+          <Alert severity="info">
+            {onlyActive
+              ? "Нет текущих гонок. Отключите фильтр, чтобы посмотреть завершённые."
+              : "В этом сезоне пока нет гонок."}
+          </Alert>
         )}
       </Stack>
     </RightsWrapper>

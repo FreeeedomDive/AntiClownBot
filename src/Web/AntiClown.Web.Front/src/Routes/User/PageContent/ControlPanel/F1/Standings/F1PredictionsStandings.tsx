@@ -56,13 +56,15 @@ export default function F1PredictionsStandings() {
         </Typography>
       )}
       {!isLoading && standings && standings.standings.length > 0 && charts && (
-        <Stack direction={"column"} spacing={1}>
+        <Stack direction={"column"} spacing={2}>
           <F1PredictionsStandingsTable
             finishedRaces={finishedRaces}
             members={members}
             standings={standings}
           />
           <F1PredictionsStandingsChart
+            key={season}
+            standings={standings}
             members={members}
             charts={charts}
             races={finishedRaces}

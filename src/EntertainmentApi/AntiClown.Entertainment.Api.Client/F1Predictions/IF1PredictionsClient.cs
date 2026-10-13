@@ -8,7 +8,7 @@ public interface IF1PredictionsClient
     Task<AntiClown.Entertainment.Api.Dto.F1Predictions.F1RaceDto[]> FindAsync(AntiClown.Entertainment.Api.Dto.F1Predictions.F1RaceFilterDto filter);
     Task<AntiClown.Entertainment.Api.Dto.F1Predictions.F1RaceDto> ReadAsync(System.Guid raceId);
     Task<System.Guid> StartNewRaceAsync(string name, bool isSprint);
-    Task AddPredictionAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionDto prediction);
+    Task AddPredictionAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionDto prediction, bool isAdmin = false);
     Task ClosePredictionsAsync(System.Guid raceId);
     Task AddResultAsync(System.Guid raceId, AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionRaceResultDto raceResult);
     Task<AntiClown.Entertainment.Api.Dto.F1Predictions.F1PredictionUserResultDto[]> FinishRaceAsync(System.Guid raceId);

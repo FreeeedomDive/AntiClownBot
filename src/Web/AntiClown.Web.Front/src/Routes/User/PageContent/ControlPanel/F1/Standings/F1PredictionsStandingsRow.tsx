@@ -14,6 +14,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { lighten } from "@mui/material/styles";
 import React from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -24,7 +25,7 @@ import { InfoOutlined } from "@mui/icons-material";
 import { F1StandingsRowDto } from "../../../../../../Dto/F1Predictions/F1StandingsRowDto";
 import { MAIN_COLOR } from "../../../../../../Helpers/Colors";
 
-const STICKY_BG_DEFAULT = MAIN_COLOR;
+const STICKY_BG_DEFAULT = lighten(MAIN_COLOR, 0.025);
 const STICKY_BG_ME = "#200056";
 const PODIUM_COLORS = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
@@ -59,6 +60,11 @@ export function F1PredictionsStandingsRow({
     races.length === 0 ? new Date().getFullYear() : races[0].season;
   const stillInChampionship = leaderPoints - results.totalPoints < pointsLeft;
   const stickyBg = isMe ? STICKY_BG_ME : STICKY_BG_DEFAULT;
+  const resultsByRaceId = new Map(
+    results.results
+      .filter((result) => result !== null)
+      .map((result) => [result.raceId, result]),
+  );
 
   return (
     <React.Fragment>
@@ -126,31 +132,34 @@ export function F1PredictionsStandingsRow({
             )}
           </Stack>
         </TableCell>
-        {results.results.map((x) => (
-          <TableCell
-            key={`${discordMember?.userId}_${x?.raceId}_points`}
-            align="center"
-            sx={{ p: "4px", width: 40 }}
-          >
-            {!!x && (
-              <Tooltip
-                title={
-                  <Typography
-                    sx={{ whiteSpace: "pre-line", fontSize: "0.75rem" }}
-                  >
-                    {getPointsDetails(x, getRace(x.raceId), season)}
+        {races.map((race) => {
+          const raceResult = resultsByRaceId.get(race.id);
+          return (
+            <TableCell
+              key={`${results.userId}_${race.id}_points`}
+              align="center"
+              sx={{ p: "4px", width: 40 }}
+            >
+              {raceResult && (
+                <Tooltip
+                  title={
+                    <Typography
+                      sx={{ whiteSpace: "pre-line", fontSize: "0.75rem" }}
+                    >
+                      {getPointsDetails(raceResult, race, season)}
+                    </Typography>
+                  }
+                  arrow
+                  placement="top"
+                >
+                  <Typography sx={{ cursor: "default" }}>
+                    {raceResult.totalPoints}
                   </Typography>
-                }
-                arrow
-                placement="top"
-              >
-                <Typography sx={{ cursor: "default" }}>
-                  {x.totalPoints}
-                </Typography>
-              </Tooltip>
-            )}
-          </TableCell>
-        ))}
+                </Tooltip>
+              )}
+            </TableCell>
+          );
+        })}
         <TableCell
           align="center"
           sx={{

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box } from "@mui/material";
 import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import {
   getTeamForDriver,
   getTeamInfo,
 } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
+import F1RaceSeasonContext from "./F1RaceSeasonContext";
 
 interface Props {
   driver: string;
@@ -12,6 +13,9 @@ interface Props {
 }
 
 export default function F1TeamBadge({ driver, teams }: Props) {
+  const season = useContext(F1RaceSeasonContext);
+  if (season !== undefined && season !== new Date().getFullYear()) return null;
+
   const team = getTeamForDriver(driver, teams);
   if (!team) return null;
 

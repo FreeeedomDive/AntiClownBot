@@ -10,7 +10,7 @@ public interface IF1PredictionsService
     Task<F1Race[]> ReadActiveAsync();
     Task<F1Race[]> FindAsync(F1RaceFilter filter);
     Task<Guid> StartNewRaceAsync(string name, bool isSprint);
-    Task AddPredictionAsync(Guid raceId, Guid userId, F1Prediction prediction);
+    Task AddPredictionAsync(Guid raceId, Guid userId, F1Prediction prediction, bool isAdmin = false);
     Task ClosePredictionsAsync(Guid raceId);
     Task AddRaceResultAsync(Guid raceId, F1PredictionRaceResult raceResult);
     Task<F1PredictionResult[]> FinishRaceAsync(Guid raceId);

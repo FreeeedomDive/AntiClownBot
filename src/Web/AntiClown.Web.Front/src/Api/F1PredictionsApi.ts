@@ -19,7 +19,7 @@ export default class F1PredictionsApi {
         "Content-Type": "application/json",
       },
       validateStatus: function (status) {
-        return status < 500;
+        return status >= 200 && status < 300;
       },
     });
   };
@@ -42,10 +42,12 @@ export default class F1PredictionsApi {
   static addPrediction = async (
     raceId: string,
     prediction: F1PredictionDto,
+    isAdmin = false,
   ): Promise<AddPredictionResultDto> => {
-    const result = await F1PredictionsApi.init().post(
+    const result = await F1PredictionsApi.init().post<AddPredictionResultDto>(
       `${raceId}/addPrediction`,
       prediction,
+      { params: { isAdmin } },
     );
     return result.data;
   };
