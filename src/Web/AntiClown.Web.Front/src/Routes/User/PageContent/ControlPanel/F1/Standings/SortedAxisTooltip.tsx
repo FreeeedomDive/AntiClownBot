@@ -1,14 +1,27 @@
 import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
-import { Box, Paper, Stack, Typography } from "@mui/material";
+import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
 
 interface SortedAxisTooltipProps {
   dataIndex: number | null;
-  series: { label: string; data: (number | null)[]; color: string }[];
+  series: {
+    id: string | number;
+    label: string;
+    data: (number | null)[];
+    color: string;
+  }[];
   races: F1RaceDto[];
+  mode?: "points" | "gap";
+  referenceSeriesId?: string;
 }
 
 export default function SortedAxisTooltip(props: SortedAxisTooltipProps) {
-  const { dataIndex, series, races } = props;
+  const {
+    dataIndex,
+    series,
+    races,
+    mode = "points",
+    referenceSeriesId,
+  } = props;
   if (dataIndex == null) return null;
 
   const race = dataIndex === 0 ? null : races[dataIndex - 1];
@@ -21,12 +34,15 @@ export default function SortedAxisTooltip(props: SortedAxisTooltipProps) {
 
   const items = series
     .map((s) => ({
+      id: s.id,
       label: s.label,
       value: s.data[dataIndex],
       color: s.color,
     }))
     .filter((item) => item.value != null)
     .sort((a, b) => b.value! - a.value!);
+  const participants = items.filter((item) => item.id !== referenceSeriesId);
+  const reference = items.find((item) => item.id === referenceSeriesId);
 
   return (
     <Paper sx={{ p: 1, minWidth: 160 }}>
@@ -39,9 +55,9 @@ export default function SortedAxisTooltip(props: SortedAxisTooltipProps) {
         </Typography>
       )}
       <Stack spacing={0.25}>
-        {items.map((item) => (
+        {participants.map((item) => (
           <Box
-            key={item.label}
+            key={item.id}
             sx={{ display: "flex", alignItems: "center", gap: 1 }}
           >
             <Box
@@ -57,10 +73,30 @@ export default function SortedAxisTooltip(props: SortedAxisTooltipProps) {
               {item.label}
             </Typography>
             <Typography variant="caption" fontWeight="bold">
-              {item.value}
+              {mode === "gap" && item.value === 0 ? "0 · лидер" : item.value}
             </Typography>
           </Box>
         ))}
+        {reference && (
+          <>
+            <Divider sx={{ my: 0.5 }} />
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Box
+                sx={{
+                  width: 16,
+                  borderTop: `2px dashed ${reference.color}`,
+                  flexShrink: 0,
+                }}
+              />
+              <Typography variant="caption" sx={{ flex: 1 }}>
+                {reference.label}
+              </Typography>
+              <Typography variant="caption" fontWeight="bold">
+                {reference.value}
+              </Typography>
+            </Stack>
+          </>
+        )}
       </Stack>
     </Paper>
   );
