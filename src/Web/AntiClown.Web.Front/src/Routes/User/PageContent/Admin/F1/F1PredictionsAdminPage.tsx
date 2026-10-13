@@ -6,8 +6,9 @@ import {
   useLocation,
   useNavigate,
   useParams,
+  useSearchParams,
 } from "react-router-dom";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, FormControl, MenuItem, Select, Tab, Tabs } from "@mui/material";
 import { Casino, EmojiEvents, Flag, Groups } from "@mui/icons-material";
 import DocumentTitle from "react-document-title";
 import { ActiveSidebar } from "../../../SideBar/SideBarContext";
@@ -21,7 +22,6 @@ const ADMIN_TABS = [
     label: "Результаты гонок",
     path: "results",
     icon: <Flag />,
-    element: <F1PredictionsAdminList />,
   },
   {
     label: "Чемпионат",
@@ -47,6 +47,14 @@ const F1PredictionsAdminPage = () => {
   const navigate = useNavigate();
   const { userId } = useParams<"userId">();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentYear = new Date().getFullYear();
+  const seasons = Array.from(
+    { length: currentYear - 2023 + 1 },
+    (_, index) => 2023 + index,
+  );
+  const season = Number(searchParams.get("season") ?? currentYear);
 
   const activeTab = ADMIN_TABS.findIndex((tab) =>
     location.pathname.endsWith(`/admin/f1Predictions/${tab.path}`),
@@ -61,27 +69,50 @@ const F1PredictionsAdminPage = () => {
   return (
     <ActiveSidebar id="F1Admin">
       <Box>
-        <Tabs
-          value={activeTab >= 0 ? activeTab : 0}
-          onChange={handleTabChange}
-          sx={{ minHeight: 32 }}
-        >
-          {ADMIN_TABS.map((tab, index) => (
-            <Tab
-              key={tab.path}
-              label={tab.label}
-              icon={tab.icon}
-              iconPosition="start"
-              value={index}
-              sx={{
-                minHeight: 32,
-                py: 0.5,
-                fontSize: "0.8rem",
-                "& .MuiSvgIcon-root": { fontSize: 16 },
-              }}
-            />
-          ))}
-        </Tabs>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Tabs
+            value={activeTab >= 0 ? activeTab : 0}
+            onChange={handleTabChange}
+            sx={{ minHeight: 32 }}
+          >
+            {ADMIN_TABS.map((tab, index) => (
+              <Tab
+                key={tab.path}
+                label={tab.label}
+                icon={tab.icon}
+                iconPosition="start"
+                value={index}
+                sx={{
+                  minHeight: 32,
+                  py: 0.5,
+                  fontSize: "0.8rem",
+                  "& .MuiSvgIcon-root": { fontSize: 16 },
+                }}
+              />
+            ))}
+          </Tabs>
+          {activeTab === 0 && (
+            <FormControl size="small" sx={{ ml: "auto", minWidth: 90 }}>
+              <Select
+                aria-label="Сезон"
+                value={season}
+                onChange={(event) =>
+                  setSearchParams(
+                    { season: String(event.target.value) },
+                    { replace: true },
+                  )
+                }
+                sx={{ height: 32 }}
+              >
+                {seasons.map((year) => (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        </Box>
         <Box sx={{ mt: 2 }}>
           <Routes>
             <Route path="/" element={<Navigate to="results" replace />} />
@@ -91,7 +122,11 @@ const F1PredictionsAdminPage = () => {
                 path={tab.path}
                 element={
                   <DocumentTitle title={`${tab.label} - Clown City`}>
-                    {tab.element}
+                    {tab.path === "results" ? (
+                      <F1PredictionsAdminList key={season} season={season} />
+                    ) : (
+                      tab.element
+                    )}
                   </DocumentTitle>
                 }
               />

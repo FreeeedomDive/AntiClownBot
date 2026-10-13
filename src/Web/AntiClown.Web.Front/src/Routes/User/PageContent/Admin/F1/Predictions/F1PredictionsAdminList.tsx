@@ -14,73 +14,72 @@ import {
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1PredictionAdmin from "./F1PredictionAdmin";
 
-export default function F1PredictionsAdminList() {
+export default function F1PredictionsAdminList({ season }: { season: number }) {
+  const currentYear = new Date().getFullYear();
   const [f1Races, setF1Races] = useState<F1RaceDto[] | undefined>();
   const [currentF1Race, setCurrentF1Race] = useState<F1RaceDto | undefined>();
-  const [isActive, setIsActive] = useState(true);
-
-  function fetchRaces(onlyActive: boolean) {
-    return F1PredictionsApi.find({
-      season: new Date().getFullYear(),
-      isActive: onlyActive ? true : undefined,
-    });
-  }
+  const [isActive, setIsActive] = useState(season === currentYear);
 
   useEffect(() => {
-    fetchRaces(true)
+    let cancelled = false;
+    F1PredictionsApi.find({ season, isActive: isActive ? true : undefined })
       .then((result) => {
+        if (cancelled) return;
         setF1Races(result);
-        setCurrentF1Race(result[0]);
+        setCurrentF1Race(isActive ? result[0] : result.at(-1));
       })
       .catch(console.error);
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [season, isActive]);
 
   return (
     <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
       <Stack spacing={2} direction={"column"}>
-        {f1Races ? (
-          <Stack direction={"row"} spacing={1} alignItems="center">
-            <FormControl fullWidth size="small">
-              <Select
-                labelId="race-select"
-                id="race-select"
-                key={currentF1Race?.id ?? ""}
-                value={currentF1Race}
-                onChange={(selectedRace) => {
-                  setCurrentF1Race(selectedRace.target.value as F1RaceDto);
-                }}
-              >
-                {f1Races.map((race) => (
-                  // @ts-expect-error - necessary to load object into value
-                  <MenuItem key={race.id} value={race}>
-                    {race.name}
-                    {race.isSprint ? " (спринт) " : " "}
-                    {race.season}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControlLabel
-              sx={{ whiteSpace: "nowrap", mr: 0 }}
-              control={
-                <Checkbox
-                  size="small"
-                  checked={isActive}
-                  onChange={async (x) => {
-                    const onlyActive = x.target.checked;
-                    setIsActive(onlyActive);
-                    const result = await fetchRaces(onlyActive);
-                    setF1Races(result);
-                    setCurrentF1Race(onlyActive ? result[0] : result.at(-1));
+        <Stack direction={"row"} spacing={1} alignItems="center">
+          {f1Races ? (
+            <>
+              <FormControl fullWidth size="small">
+                <Select
+                  labelId="race-select"
+                  id="race-select"
+                  key={currentF1Race?.id ?? ""}
+                  value={currentF1Race}
+                  onChange={(selectedRace) => {
+                    setCurrentF1Race(selectedRace.target.value as F1RaceDto);
                   }}
-                />
-              }
-              label={"Только текущие гонки"}
-            />
-          </Stack>
-        ) : (
-          <Loader />
-        )}
+                >
+                  {f1Races.map((race) => (
+                    // @ts-expect-error - necessary to load object into value
+                    <MenuItem key={race.id} value={race}>
+                      {race.name}
+                      {race.isSprint ? " (спринт) " : " "}
+                      {race.season}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControlLabel
+                sx={{ whiteSpace: "nowrap", mr: 0 }}
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={isActive}
+                    onChange={(event) => {
+                      setF1Races(undefined);
+                      setCurrentF1Race(undefined);
+                      setIsActive(event.target.checked);
+                    }}
+                  />
+                }
+                label={"Только текущие гонки"}
+              />
+            </>
+          ) : (
+            <Loader />
+          )}
+        </Stack>
         {currentF1Race ? (
           <F1PredictionAdmin key={currentF1Race.id} f1Race={currentF1Race} />
         ) : null}
