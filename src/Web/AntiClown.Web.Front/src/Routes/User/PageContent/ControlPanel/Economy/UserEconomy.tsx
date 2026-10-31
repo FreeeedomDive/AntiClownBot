@@ -10,6 +10,8 @@ import {
   ListItemText,
   Stack,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { TransactionDto } from "../../../../../Dto/Economy/TransactionDto";
@@ -21,6 +23,8 @@ const TRANSACTIONS_STEP = 50;
 
 export default function UserEconomy() {
   const { userId } = useParams<"userId">();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [loading, setLoading] = useState(true);
 
   const [economy, setEconomy] = useState<EconomyDto>();
@@ -161,13 +165,18 @@ export default function UserEconomy() {
       {loading && <Loader />}
       {!loading && (
         <Stack direction={"column"} spacing={2}>
-          <Typography variant={"h5"}>История баланса скам-койнов</Typography>
+          <Typography
+            variant="h5"
+            sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
+          >
+            История баланса скам-койнов
+          </Typography>
           <Stack
             direction={{ xs: "column", md: "row" }}
-            spacing={{ xs: 0, md: 4 }}
-            sx={{ width: "100%" }}
+            spacing={{ xs: 2, md: 4 }}
+            sx={{ width: "100%", minWidth: 0 }}
           >
-            <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{ flexGrow: 1, minWidth: 0, width: "100%" }}>
               <LineChart
                 xAxis={[
                   {
@@ -198,7 +207,7 @@ export default function UserEconomy() {
                     area: true,
                   },
                 ]}
-                height={600}
+                height={isMobile ? 320 : 600}
                 grid={{ vertical: true, horizontal: true }}
               />
             </Box>
@@ -206,7 +215,8 @@ export default function UserEconomy() {
               direction="column"
               sx={{
                 width: { xs: "100%", md: "40%" },
-                height: 600,
+                height: { xs: 400, md: 600 },
+                minWidth: 0,
                 overflowY: "auto",
               }}
             >

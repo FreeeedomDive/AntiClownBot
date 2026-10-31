@@ -26,10 +26,13 @@ export default function MemberInfo({ userId }: Props) {
     <>
       {loading && (
         <Stack direction="row" alignItems="center" spacing="16px">
-          <Skeleton variant="rounded" sx={{ width: 128, height: 128 }} />
-          <Stack direction="column" spacing="8px">
-            <Skeleton sx={{ width: 256 }} />
-            <Skeleton sx={{ width: 256 }} />
+          <Skeleton
+            variant="rounded"
+            sx={{ width: { xs: 80, sm: 128 }, height: { xs: 80, sm: 128 } }}
+          />
+          <Stack direction="column" spacing="8px" sx={{ minWidth: 0 }}>
+            <Skeleton sx={{ width: { xs: 160, sm: 256 }, maxWidth: "100%" }} />
+            <Skeleton sx={{ width: { xs: 160, sm: 256 }, maxWidth: "100%" }} />
           </Stack>
         </Stack>
       )}
@@ -38,16 +41,32 @@ export default function MemberInfo({ userId }: Props) {
           <Avatar
             alt="Discord profile pic"
             src={member.avatarUrl}
-            sx={{ width: 128, height: 128 }}
+            sx={{
+              width: { xs: 80, sm: 128 },
+              height: { xs: 80, sm: 128 },
+              flexShrink: 0,
+            }}
           />
-          <Stack direction="column" spacing="8px">
+          <Stack direction="column" spacing="8px" sx={{ minWidth: 0 }}>
             {member.serverName && (
-              <Typography variant="h5">
+              <Typography
+                variant="h5"
+                sx={{
+                  fontSize: { xs: "1rem", sm: "1.5rem" },
+                  overflowWrap: "anywhere",
+                }}
+              >
                 Имя на сервере: {member.serverName}
               </Typography>
             )}
             {member.userName && (
-              <Typography variant="h5">
+              <Typography
+                variant="h5"
+                sx={{
+                  fontSize: { xs: "1rem", sm: "1.5rem" },
+                  overflowWrap: "anywhere",
+                }}
+              >
                 Имя в дискорде: {member.userName}
               </Typography>
             )}

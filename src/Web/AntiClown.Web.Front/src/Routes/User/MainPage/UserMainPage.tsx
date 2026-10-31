@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Drawer,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { Menu } from "@mui/icons-material";
 import UserPageSideBar from "../SideBar/UserPageSideBar";
 import UserPageContentRouter from "../PageContent/UserPageContentRouter";
 import UsersApi from "../../../Api/UsersApi";
@@ -9,15 +17,19 @@ import RightsApi from "../../../Api/RightsApi";
 import { useStore } from "../../../Stores";
 import { SideBarProvider } from "../SideBar/SideBarContext";
 
+const SIDE_BAR_WIDTH = 250;
+
 export default function UserMainPage() {
   const { authStore, rightsStore } = useStore();
   const { userId = "" } = useParams<"userId">();
-  const sideBarWidth = 250;
   const [user, setUser] = useState<UserDto | null | undefined>(undefined);
-  const hasToken = !!authStore.userToken;
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isAuthenticated = Boolean(
+    authStore.userToken || authStore.telegramUserId,
+  );
 
   useEffect(() => {
-    if (!hasToken) return;
+    if (!isAuthenticated) return;
 
     async function updateUser(userId: string): Promise<void> {
       const user = await UsersApi.get(userId);
@@ -31,39 +43,86 @@ export default function UserMainPage() {
 
     updateUser(userId).catch(console.error);
     getUserRights(userId).catch(console.error);
-  }, [hasToken, rightsStore, userId]);
+  }, [isAuthenticated, rightsStore, userId]);
 
-  if (!hasToken) {
+  if (!isAuthenticated) {
     return <Navigate to={`/auth`} />;
   }
 
   return (
     <SideBarProvider>
-      <Box sx={{ display: "flex", minHeight: "100vh" }}>
-        <Box
-          component="nav"
+      <Box sx={{ minHeight: "100dvh" }}>
+        <AppBar
+          position="sticky"
+          color="default"
+          elevation={0}
           sx={{
-            width: { sm: sideBarWidth },
-            flexShrink: { sm: 0 },
+            display: { xs: "block", md: "none" },
             bgcolor: "#000000",
-            position: "sticky",
-            top: 0,
-            height: "100vh",
-            overflowY: "auto",
+            backgroundImage: "none",
           }}
         >
-          <UserPageSideBar user={user} />
-        </Box>
+          <Toolbar variant="dense">
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="Открыть меню"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu />
+            </IconButton>
+            <Typography variant="h6" component="div">
+              Clown City
+            </Typography>
+          </Toolbar>
+        </AppBar>
 
-        <Box
-          component="main"
+        <Drawer
+          open={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
+          ModalProps={{ keepMounted: true }}
           sx={{
-            flexGrow: 1,
-            p: "16px",
-            width: { sm: `calc(100% - ${sideBarWidth}px)` },
+            display: { xs: "block", md: "none" },
+            "& .MuiDrawer-paper": {
+              width: SIDE_BAR_WIDTH,
+              bgcolor: "#000000",
+              backgroundImage: "none",
+            },
           }}
         >
-          <UserPageContentRouter user={user} />
+          <Box onClick={() => setIsMobileMenuOpen(false)}>
+            <UserPageSideBar user={user} />
+          </Box>
+        </Drawer>
+
+        <Box sx={{ display: "flex", minHeight: { md: "100dvh" } }}>
+          <Box
+            component="nav"
+            sx={{
+              display: { xs: "none", md: "block" },
+              width: SIDE_BAR_WIDTH,
+              flexShrink: 0,
+              bgcolor: "#000000",
+              position: "sticky",
+              top: 0,
+              height: "100dvh",
+              overflowY: "auto",
+            }}
+          >
+            <UserPageSideBar user={user} />
+          </Box>
+
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              minWidth: 0,
+              p: { xs: 1, sm: 2 },
+              width: { xs: "100%", md: `calc(100% - ${SIDE_BAR_WIDTH}px)` },
+            }}
+          >
+            <UserPageContentRouter user={user} />
+          </Box>
         </Box>
       </Box>
     </SideBarProvider>

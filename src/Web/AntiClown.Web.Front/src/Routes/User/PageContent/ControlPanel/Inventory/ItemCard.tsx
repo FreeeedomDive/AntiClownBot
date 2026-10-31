@@ -94,8 +94,17 @@ export default function ItemCard({
             alignItems="center"
             justifyContent="space-between"
             spacing={1}
+            flexWrap="wrap"
+            useFlexGap
           >
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1}
+              flexWrap="wrap"
+              useFlexGap
+              sx={{ minWidth: 0 }}
+            >
               <Chip
                 label={rarityLabels[item.rarity]}
                 size="small"

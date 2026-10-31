@@ -1,6 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Alert, Fab, Grid, Snackbar, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  CircularProgress,
+  Fab,
+  Grid,
+  Snackbar,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { Save } from "@mui/icons-material";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1ChampionshipPredictionsApi from "../../../../../../Api/F1ChampionshipPredictionsApi";
@@ -18,15 +28,18 @@ import F1ChampionshipCurrentStandings from "./F1ChampionshipCurrentStandings";
 import F1ChampionshipUserStandings from "./F1ChampionshipUserStandings";
 
 const fabStyle = {
-  position: "absolute",
-  bottom: 16,
-  right: 16,
+  position: "fixed" as const,
+  bottom: { xs: "calc(16px + env(safe-area-inset-bottom))", md: 24 },
+  right: { xs: 16, md: 24 },
+  zIndex: 1000,
 };
 
 const SEASON = new Date().getFullYear();
 
 export default function F1ChampionshipPredictions() {
   const { userId } = useParams<"userId">();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [results, setResults] = useState<F1ChampionshipResultsDto | undefined>(
     undefined,
   );
@@ -117,7 +130,7 @@ export default function F1ChampionshipPredictions() {
     results.stage === F1ChampionshipPredictionTypeDto.MidSeason;
 
   return (
-    <Stack direction="row" width="100%">
+    <Stack direction="row" width="100%" sx={{ pb: 10 }}>
       <Grid
         container
         spacing={1}
@@ -226,13 +239,22 @@ export default function F1ChampionshipPredictions() {
 
       <Fab
         disabled={isSaving}
-        variant="extended"
+        variant={isMobile ? "circular" : "extended"}
         sx={fabStyle}
         onClick={save}
         color="success"
+        aria-label={isSaving ? "Сохранение..." : "Сохранить предсказания"}
       >
-        <Save />
-        {isSaving ? <>Сохранение...</> : <>Сохранить</>}
+        {isSaving ? (
+          <CircularProgress
+            size={24}
+            color="inherit"
+            sx={{ mr: isMobile ? 0 : 1 }}
+          />
+        ) : (
+          <Save />
+        )}
+        {!isMobile && (isSaving ? "Сохранение..." : "Сохранить")}
       </Fab>
     </Stack>
   );
