@@ -27,7 +27,7 @@ public class TelegramBotWorker(
 )
     : ITelegramBotWorker
 {
-    public async Task StartAsync()
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         var receiverOptions = new ReceiverOptions
         {
@@ -37,10 +37,11 @@ public class TelegramBotWorker(
         telegramBotClient.StartReceiving(
             HandleUpdateAsync,
             HandlePollingErrorAsync,
-            receiverOptions
+            receiverOptions,
+            cancellationToken
         );
 
-        await Task.Delay(-1);
+        return Task.CompletedTask;
     }
 
     private Task HandlePollingErrorAsync(ITelegramBotClient client, Exception exception, CancellationToken cancellationToken)

@@ -1,4 +1,4 @@
-﻿using AntiClown.Api.Client;
+using AntiClown.Api.Client;
 using AntiClown.Api.Client.Configuration;
 using AntiClown.Core.OpenTelemetry;
 using AntiClown.Data.Api.Client;
@@ -103,4 +103,5 @@ await usersCache.InitializeAsync();
 */
 
 var telegramBotWorker = app.Services.GetRequiredService<ITelegramBotWorker>();
-await Task.WhenAll(telegramBotWorker.StartAsync(), app.RunAsync());
+await telegramBotWorker.StartAsync(app.Lifetime.ApplicationStopping);
+await app.RunAsync();

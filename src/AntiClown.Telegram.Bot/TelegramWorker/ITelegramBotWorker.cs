@@ -1,6 +1,6 @@
-﻿namespace AntiClown.TelegramBot.TelegramWorker;
+namespace AntiClown.TelegramBot.TelegramWorker;
 
 public interface ITelegramBotWorker
 {
-    Task StartAsync();
+    Task StartAsync(CancellationToken cancellationToken);
 }
