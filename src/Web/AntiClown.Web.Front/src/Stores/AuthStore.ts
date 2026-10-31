@@ -23,9 +23,7 @@ export class AuthStore {
     const telegramUserId = cookies.get("telegramUserId", {
       doNotParse: true,
     });
-    this.telegramUserId = telegramUserId
-      ? Number(telegramUserId)
-      : undefined;
+    this.telegramUserId = telegramUserId ? Number(telegramUserId) : undefined;
   }
 
   logInViaTelegram(telegramUserId: number, userId?: string) {
