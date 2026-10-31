@@ -24,10 +24,12 @@ export default function UserMainPage() {
   const { userId = "" } = useParams<"userId">();
   const [user, setUser] = useState<UserDto | null | undefined>(undefined);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const hasToken = !!authStore.userToken;
+  const isAuthenticated = Boolean(
+    authStore.userToken || authStore.telegramUserId,
+  );
 
   useEffect(() => {
-    if (!hasToken) return;
+    if (!isAuthenticated) return;
 
     async function updateUser(userId: string): Promise<void> {
       const user = await UsersApi.get(userId);
@@ -41,9 +43,9 @@ export default function UserMainPage() {
 
     updateUser(userId).catch(console.error);
     getUserRights(userId).catch(console.error);
-  }, [hasToken, rightsStore, userId]);
+  }, [isAuthenticated, rightsStore, userId]);
 
-  if (!hasToken) {
+  if (!isAuthenticated) {
     return <Navigate to={`/auth`} />;
   }
 
