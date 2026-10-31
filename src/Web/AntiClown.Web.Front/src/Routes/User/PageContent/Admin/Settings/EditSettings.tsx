@@ -40,11 +40,13 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 440,
+  width: "min(440px, calc(100vw - 32px))",
+  maxHeight: "calc(100dvh - 32px)",
+  overflowY: "auto",
   bgcolor: "background.paper",
   borderRadius: 2,
   boxShadow: 24,
-  p: 3,
+  p: { xs: 2, sm: 3 },
 };
 
 const EditSettings = () => {

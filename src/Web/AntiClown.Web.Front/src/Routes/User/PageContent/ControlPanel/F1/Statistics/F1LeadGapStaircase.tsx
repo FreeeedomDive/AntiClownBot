@@ -38,7 +38,10 @@ export default function F1LeadGapStaircase({ data, members }: Props) {
           sx={{
             mt: 1,
             display: "grid",
-            gridTemplateColumns: "175px 1fr",
+            gridTemplateColumns: {
+              xs: "110px minmax(0, 1fr)",
+              sm: "175px 1fr",
+            },
             alignItems: "center",
             rowGap: 1,
           }}

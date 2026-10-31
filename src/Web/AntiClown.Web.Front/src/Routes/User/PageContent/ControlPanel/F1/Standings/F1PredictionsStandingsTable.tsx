@@ -77,9 +77,9 @@ export default function F1PredictionsStandingsTable({
             <TableRow>
               <TableCell
                 sx={{
-                  position: "sticky",
-                  left: 0,
-                  zIndex: 3,
+                  position: { xs: "static", md: "sticky" },
+                  left: { xs: "auto", md: 0 },
+                  zIndex: { xs: 0, md: 3 },
                   bgcolor: STICKY_BG,
                   borderRight: "1px solid rgba(255,255,255,0.12)",
                   p: "8px 12px",

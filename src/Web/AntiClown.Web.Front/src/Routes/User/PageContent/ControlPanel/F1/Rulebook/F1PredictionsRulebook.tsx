@@ -545,8 +545,12 @@ export default function F1PredictionsRulebook() {
           <CardContent>
             <Stack spacing={2}>
               <Stack spacing={0.5}>
-                <Stack direction="row" spacing={2} alignItems="baseline">
-                  <Typography variant="body1" sx={{ minWidth: 220 }}>
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={{ xs: 0.5, sm: 2 }}
+                  alignItems="baseline"
+                >
+                  <Typography variant="body1" sx={{ minWidth: { sm: 220 } }}>
                     Официальные документы FIA
                   </Typography>
                   <Link
@@ -568,8 +572,12 @@ export default function F1PredictionsRulebook() {
               <Divider />
 
               <Stack spacing={0.5}>
-                <Stack direction="row" spacing={2} alignItems="baseline">
-                  <Typography variant="body1" sx={{ minWidth: 220 }}>
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={{ xs: 0.5, sm: 2 }}
+                  alignItems="baseline"
+                >
+                  <Typography variant="body1" sx={{ minWidth: { sm: 220 } }}>
                     Liquipedia F1
                   </Typography>
                   <Link

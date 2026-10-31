@@ -115,8 +115,17 @@ export default function ShopItemCard({
             alignItems="center"
             justifyContent="space-between"
             spacing={1}
+            flexWrap="wrap"
+            useFlexGap
           >
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1}
+              flexWrap="wrap"
+              useFlexGap
+              sx={{ minWidth: 0 }}
+            >
               <Typography
                 variant="body2"
                 color="text.secondary"

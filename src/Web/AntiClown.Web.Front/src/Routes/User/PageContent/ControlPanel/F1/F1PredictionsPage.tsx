@@ -105,7 +105,13 @@ const F1PredictionsPage = () => {
     <ActiveSidebar id="F1Predictions">
       <Box>
         <Box
-          sx={{ display: "flex", alignItems: "center", gap: 2, minWidth: 0 }}
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "stretch", sm: "center" },
+            gap: { xs: 1, sm: 2 },
+            minWidth: 0,
+          }}
         >
           <Tabs
             value={activeTab >= 0 ? activeTab : 1}
@@ -131,7 +137,14 @@ const F1PredictionsPage = () => {
             ))}
           </Tabs>
           {showSeasonSelector && (
-            <FormControl size="small" sx={{ ml: "auto", minWidth: 90 }}>
+            <FormControl
+              size="small"
+              sx={{
+                ml: { xs: 0, sm: "auto" },
+                minWidth: 90,
+                alignSelf: { xs: "flex-end", sm: "auto" },
+              }}
+            >
               <Select
                 value={season}
                 inputProps={{ "aria-label": "Сезон F1" }}

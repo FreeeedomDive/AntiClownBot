@@ -71,9 +71,9 @@ export function F1PredictionsStandingsRow({
       <TableRow sx={isMe ? { backgroundColor: STICKY_BG_ME } : {}}>
         <TableCell
           sx={{
-            position: "sticky",
-            left: 0,
-            zIndex: 2,
+            position: { xs: "static", md: "sticky" },
+            left: { xs: "auto", md: 0 },
+            zIndex: { xs: 0, md: 2 },
             bgcolor: stickyBg,
             borderRight: "1px solid rgba(255,255,255,0.12)",
             p: "4px 8px",

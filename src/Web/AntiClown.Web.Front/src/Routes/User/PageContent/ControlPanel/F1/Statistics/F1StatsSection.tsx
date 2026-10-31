@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function F1StatsSection({ title, columns, children }: Props) {
-  const xs = (12 / columns) as 4 | 6 | 12;
+  const md = (12 / columns) as 4 | 6 | 12;
 
   return (
     <Grid container spacing={2} sx={{ width: "100%" }}>
@@ -18,7 +18,7 @@ export default function F1StatsSection({ title, columns, children }: Props) {
         </Typography>
       </Grid>
       {children.map((child, i) => (
-        <Grid key={i} item xs={xs}>
+        <Grid key={i} item xs={12} md={md}>
           {child}
         </Grid>
       ))}

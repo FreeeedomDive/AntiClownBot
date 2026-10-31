@@ -76,7 +76,13 @@ const F1PredictionsAdminPage = () => {
     <ActiveSidebar id="F1Admin">
       <Box>
         <Box
-          sx={{ display: "flex", alignItems: "center", gap: 2, minWidth: 0 }}
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "stretch", sm: "center" },
+            gap: { xs: 1, sm: 2 },
+            minWidth: 0,
+          }}
         >
           <Tabs
             value={activeTab >= 0 ? activeTab : 0}
@@ -102,7 +108,13 @@ const F1PredictionsAdminPage = () => {
             ))}
           </Tabs>
           {(activeTab === 0 || activeTab < 0) && (
-            <FormControl size="small" sx={{ minWidth: 90 }}>
+            <FormControl
+              size="small"
+              sx={{
+                minWidth: 90,
+                alignSelf: { xs: "flex-end", sm: "auto" },
+              }}
+            >
               <Select
                 value={season}
                 inputProps={{ "aria-label": "Сезон гонок" }}

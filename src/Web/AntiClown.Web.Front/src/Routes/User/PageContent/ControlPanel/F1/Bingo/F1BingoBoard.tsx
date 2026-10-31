@@ -47,9 +47,9 @@ export default function F1BingoBoard() {
               <Grid
                 item
                 key={index}
-                xs={2.4}
-                sm={2.4}
-                md={2.4}
+                xs={12}
+                sm={6}
+                md={4}
                 lg={2.4}
                 sx={{
                   display: "flex",
