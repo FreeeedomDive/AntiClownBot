@@ -2,11 +2,10 @@ import { makeAutoObservable } from "mobx";
 import { RightsDto } from "../Dto/Rights/RightsDto";
 
 export class RightsStore {
-  userRights: RightsDto[];
+  userRights: RightsDto[] = [];
 
   constructor() {
     makeAutoObservable(this);
-    this.userRights = [];
   }
 
   setRights(rights: RightsDto[]) {
