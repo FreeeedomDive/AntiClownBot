@@ -5,6 +5,8 @@
         <Platform Name="x86"/>
     </Configurations>
     <Folder Name="/Clients/">
+        <Project Path="F1Predictions/AntiClown.F1Predictions.Client/AntiClown.F1Predictions.Client.csproj"/>
+        <Project Path="F1Predictions/AntiClown.F1Predictions.Dto/AntiClown.F1Predictions.Dto.csproj"/>
         <Project Path="Api/AntiClown.Api.Client/AntiClown.Api.Client.csproj"/>
         <Project Path="Api/AntiClown.Api.Dto/AntiClown.Api.Dto.csproj"/>
         <Project Path="Common/AntiClown.Core.Dto/AntiClown.Core.Dto.csproj"/>
