@@ -2,13 +2,6 @@
 
 public static class InteractionsIds
 {
-    public static class F1PredictionsButtons
-    {
-        public const string DriversSelectDropdown = "DriversSelectDropdown";
-        public const string DriversSelectDropdownItemPrefix = "DriversSelectDropdownItem_";
-        public const string StartRaceResultInputButton = "StartRaceResultInputButton";
-    }
-
     public static class ShopButtons
     {
         public static string BuildId(Guid id, string action)
@@ -141,13 +134,6 @@ public static class InteractionsIds
         public const string MineSkin = "-skin";
         public const string MineShowUsers = "-users";
         public const string MineHelp = "-help";
-
-        public const string F1Admin_Group = "f1admin";
-        public const string F1Admin_Start = "start";
-
-        public const string F1_Group = "f1";
-        public const string F1_List = "list";
-        public const string F1_Standings = "standings";
 
         public const string ChangeNickname = "nickname";
 

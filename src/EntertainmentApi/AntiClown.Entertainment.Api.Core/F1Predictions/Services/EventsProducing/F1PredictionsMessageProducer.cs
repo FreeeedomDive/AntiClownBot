@@ -5,53 +5,6 @@ namespace AntiClown.Entertainment.Api.Core.F1Predictions.Services.EventsProducin
 
 public class F1PredictionsMessageProducer(IBus bus) : IF1PredictionsMessageProducer
 {
-    public async Task ProducePredictionStartedAsync(Guid raceId)
-    {
-        await bus.Publish(
-            new F1PredictionStartedMessageDto
-            {
-                RaceId = raceId,
-            }
-        );
-    }
-
-    public async Task ProducePredictionUpdatedAsync(Guid userId, Guid raceId, bool isNew)
-    {
-        await bus.Publish(
-            new F1UserPredictionUpdatedMessageDto
-            {
-                UserId = userId,
-                RaceId = raceId,
-                IsNew = isNew,
-            }
-        );
-    }
-
-    public async Task ProduceRaceResultUpdatedAsync(Guid raceId)
-    {
-        await bus.Publish(
-            new F1RaceResultUpdatedMessageDto()
-            {
-                RaceId = raceId,
-            }
-        );
-    }
-
-    public async Task ProduceStartingGridUpdatedAsync(Guid raceId)
-    {
-        await bus.Publish(new F1StartingGridUpdatedMessageDto { RaceId = raceId });
-    }
-
-    public async Task ProduceRaceFinishedAsync(Guid raceId)
-    {
-        await bus.Publish(
-            new F1RaceFinishedMessageDto
-            {
-                RaceId = raceId,
-            }
-        );
-    }
-
     public async Task ProduceBingoCompletedAsync(Guid userId)
     {
         await bus.Publish(

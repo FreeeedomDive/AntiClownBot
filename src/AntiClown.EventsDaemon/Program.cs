@@ -5,7 +5,6 @@ using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
 using AntiClown.EventsDaemon.Telemetry;
 using AntiClown.EventsDaemon.Workers;
-using AntiClown.EventsDaemon.Workers.F1Predictions;
 using Microsoft.Extensions.Options;
 using OpenTelemetry.Metrics;
 using Serilog;
@@ -36,8 +35,6 @@ builder.Services.AddTransient<IAntiClownEntertainmentApiClient>(
 builder.Services.AddTransient<IAntiClownDataApiClient>(
     serviceProvider => AntiClownDataApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownDataApiConnectionOptions>>().Value.ServiceUrl)
 );
-
-builder.Services.AddTransient<IF1RacesProvider, F1RacesProvider>();
 
 var workersTypes = AppDomain.CurrentDomain.GetAssemblies()
                           .SelectMany(x => x.GetTypes())

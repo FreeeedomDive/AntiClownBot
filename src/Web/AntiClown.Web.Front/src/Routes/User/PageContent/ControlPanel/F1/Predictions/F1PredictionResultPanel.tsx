@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Chip,
   Paper,
@@ -15,7 +16,9 @@ import {
   InternalRaceResultDto,
 } from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
+import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
 import F1TeamBadge from "./F1TeamBadge";
+import F1DriverListSkeleton from "./F1DriverListSkeleton";
 
 interface Props {
   result: InternalRaceResultDto | null;
@@ -44,13 +47,10 @@ export default function F1PredictionResultPanel({
           Результат гонки
         </Typography>
         {!result ? (
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ px: 2, pb: 2 }}
-          >
-            Результат гонки ещё не опубликован.
-          </Typography>
+          <Stack spacing={2} sx={{ px: 2, pb: 2 }}>
+            <Alert severity="info">Результат гонки ещё не опубликован.</Alert>
+            <F1DriverListSkeleton count={getDriversFromTeams(teams).length} />
+          </Stack>
         ) : (
           <>
             <TableContainer>

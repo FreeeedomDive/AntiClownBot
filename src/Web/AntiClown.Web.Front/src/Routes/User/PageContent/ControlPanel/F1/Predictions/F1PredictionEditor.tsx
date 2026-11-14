@@ -14,7 +14,6 @@ import {
   MenuItem,
   Paper,
   Select,
-  Skeleton,
   Snackbar,
   Stack,
   TextField,
@@ -44,6 +43,8 @@ import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1QualifyingGridView from "./F1QualifyingGridView";
 import F1PredictionResultPanel from "./F1PredictionResultPanel";
 import F1PredictionPointsPanel from "./F1PredictionPointsPanel";
+import F1DriverListSkeleton from "./F1DriverListSkeleton";
+import F1PredictionFormSkeleton from "./F1PredictionFormSkeleton";
 import F1RaceSeasonContext from "./F1RaceSeasonContext";
 import F1TeamBadge from "./F1TeamBadge";
 import F1DnfSelect from "./Selections/F1DnfSelect";
@@ -319,15 +320,11 @@ function F1PredictionForm({
       predictedPosition={validPosition ? draft.driverPositionPrediction : null}
     />
   ) : (
-    <Stack spacing={0.75} sx={{ px: 2, pb: 2, opacity: 0.4 }}>
-      {Array.from({ length: maxPosition || 22 }, (_, index) => (
-        <Skeleton
-          key={index}
-          variant="rectangular"
-          height={28}
-          sx={{ borderRadius: 0.5 }}
-        />
-      ))}
+    <Stack spacing={2} sx={{ px: 2, pb: 2 }}>
+      <Alert severity="info">
+        Стартовая решётка появится после квалификации.
+      </Alert>
+      <F1DriverListSkeleton count={maxPosition} />
     </Stack>
   );
 
@@ -417,11 +414,17 @@ function F1PredictionForm({
           }}
         >
           {!isOpened && !savedDraft ? (
-            <Alert severity="info">
-              {f1Race.status === "SCHEDULED"
-                ? "Приём предсказаний ещё не открыт."
-                : "Вы не оставили предсказание на эту гонку. Приём уже закрыт."}
-            </Alert>
+            <Paper variant="outlined" sx={{ ...PANEL_SX, p: 2 }}>
+              <Stack spacing={2}>
+                <Typography fontWeight={600}>Ваш предикт</Typography>
+                <Alert severity="info">
+                  {f1Race.status === "SCHEDULED"
+                    ? "Приём предсказаний ещё не открыт."
+                    : "Вы не оставили предсказание на эту гонку. Приём уже закрыт."}
+                </Alert>
+                <F1PredictionFormSkeleton season={f1Race.season} />
+              </Stack>
+            </Paper>
           ) : (
             <Paper variant="outlined" sx={{ ...PANEL_SX, p: 2 }}>
               <Stack spacing={3}>

@@ -16,7 +16,6 @@ using AntiClown.DiscordBot.Interactivity.Services.Shop;
 using AntiClown.DiscordBot.Models.Interactions;
 using AntiClown.DiscordBot.SlashCommands.Achievements;
 using AntiClown.DiscordBot.SlashCommands.Dev;
-using AntiClown.DiscordBot.SlashCommands.F1Predictions;
 using AntiClown.DiscordBot.SlashCommands.Gaming;
 using AntiClown.DiscordBot.SlashCommands.Inventory;
 using AntiClown.DiscordBot.SlashCommands.MinecraftRegister;
@@ -541,7 +540,6 @@ public class DiscordBotBehaviour(
         slash.RegisterCommands<TransactionsCommandModule>(guildId);
         slash.RegisterCommands<RollCommandModule>(guildId);
         slash.RegisterCommands<SelectCommandModule>(guildId);
-        slash.RegisterCommands<F1CommandModule>(guildId);
         slash.RegisterCommands<WebCommandModule>(guildId);
         slash.RegisterCommands<AiCommandModule>(guildId);
 
@@ -552,7 +550,6 @@ public class DiscordBotBehaviour(
         slash.RegisterCommands<RightsCommandModule>(guildId);
         slash.RegisterCommands<CreateMessageCommandModule>(guildId);
         slash.RegisterCommands<EventsCommandModule>(guildId);
-        slash.RegisterCommands<F1AdminCommandModule>(guildId);
         slash.RegisterCommands<RolesAdminCommandModule>(guildId);
         slash.RegisterCommands<UsersCommandModule>(guildId);
         slash.RegisterCommands<AchievementsAdminCommandModule>(guildId);
