@@ -43,6 +43,7 @@ import {
 import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1QualifyingGridView from "./F1QualifyingGridView";
 import F1PredictionResultPanel from "./F1PredictionResultPanel";
+import F1PredictionPointsPanel from "./F1PredictionPointsPanel";
 import F1RaceSeasonContext from "./F1RaceSeasonContext";
 import F1TeamBadge from "./F1TeamBadge";
 import F1DnfSelect from "./Selections/F1DnfSelect";
@@ -603,6 +604,10 @@ function F1PredictionForm({
               </Stack>
             </Paper>
           )}
+          <F1PredictionPointsPanel
+            result={f1Race.result}
+            prediction={userPrediction}
+          />
         </Stack>
         <Box sx={{ minWidth: 0, order: mobile ? 0 : { xs: 3, lg: 0 } }}>
           <F1PredictionResultPanel
