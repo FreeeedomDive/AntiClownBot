@@ -31,7 +31,7 @@ export default function F1PredictionsTeamsEditor() {
 
   useEffect(() => {
     async function loadTeams() {
-      const teams = await F1PredictionsApi.getActiveTeams();
+      const teams = await F1PredictionsApi.getLegacyTeams();
       setTeams(teams);
     }
 

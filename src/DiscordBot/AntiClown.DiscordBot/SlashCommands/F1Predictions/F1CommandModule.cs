@@ -6,6 +6,7 @@ using AntiClown.DiscordBot.Options;
 using AntiClown.DiscordBot.SlashCommands.Base;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Dto.F1Predictions;
+using AntiClown.F1Predictions.Client;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Microsoft.Extensions.Options;
@@ -16,6 +17,7 @@ namespace AntiClown.DiscordBot.SlashCommands.F1Predictions;
 public class F1CommandModule(
     ICommandExecutor commandExecutor,
     IAntiClownEntertainmentApiClient antiClownEntertainmentApiClient,
+    IF1PredictionsClient f1PredictionsClient,
     IUsersCache usersCache,
     IOptions<WebOptions> webOptions
 ) : SlashCommandModuleWithMiddlewares(commandExecutor)
@@ -68,53 +70,59 @@ public class F1CommandModule(
         await ExecuteAsync(
             interactionContext, async () =>
             {
-                var standings = await antiClownEntertainmentApiClient.F1Predictions.ReadStandingsAsync(
-                    season is null ? DateTime.UtcNow.Year : (int)season
-                );
-                if (standings.Count == 0)
+                var selectedSeason = season is null ? DateTime.UtcNow.Year : (int)season;
+                AntiClown.F1Predictions.Dto.SeasonStandingsDto standings;
+                try
                 {
-                    await RespondToInteractionAsync(interactionContext, $"В сезоне {season} еще не было ни одной гонки");
+                    standings = await f1PredictionsClient.GetStandingsAsync(selectedSeason);
+                }
+                catch (F1PredictionsException)
+                {
+                    await RespondToInteractionAsync(interactionContext, "Не удалось загрузить таблицу F1Predictions. Попробуйте позже.");
+                    return;
+                }
+                if (standings.Rows.Length == 0 || standings.Events.Length == 0)
+                {
+                    await RespondToInteractionAsync(interactionContext, $"В сезоне {selectedSeason} еще не было ни одной гонки");
                     return;
                 }
 
-                var userToMember = standings.Keys.ToDictionary(x => x, x => usersCache.GetMemberByApiIdAsync(x).GetAwaiter().GetResult());
-                var longestNameLength = userToMember.Values.Select(x => x.ServerOrUserName().Length).Max();
-                var stringBuilder = new StringBuilder($"Полная таблица: {webOptions.Value.FrontApplicationUrl}/f1Predictions/standings")
-                    .Append($"\nРегламент: {webOptions.Value.FrontApplicationUrl}/f1Predictions/rulebook")
-                    .Append("\n```\n");
-                const int maxPossiblePoints = F1PredictionsHelper.MaxPointsForTenthPlacePrediction;
-                var predictionsTable = standings
-                                       .Select(kv => new
-                                           {
-                                               UserId = kv.Key,
-                                               Predictions = kv.Value,
-                                               TotalPoints = kv.Value.Select(p => p?.TotalPoints ?? 0
-                                               ).Sum(),
-                                           }
-                                       )
-                                       .OrderByDescending(x => x.TotalPoints)
-                                       .ThenByDescending(x => x.Predictions.Count(p => p?.TenthPlacePoints == maxPossiblePoints));
-                var position = 1;
-                foreach (var userPredictions in predictionsTable)
+                var names = new Dictionary<Guid, string>();
+                foreach (var row in standings.Rows)
                 {
-                    var member = userToMember[userPredictions.UserId];
-                    var userName = member.ServerOrUserName().AddSpaces(longestNameLength, false);
-                    stringBuilder
-                        .Append($"{position++} | {userName} | ")
-                        .Append(
-                            string.Join(
-                                " ", userPredictions
-                                     .Predictions
-                                     .Select(p => p is null ? "  " : p.TotalPoints.ToString().AddSpaces(2))
-                            )
-                        )
-                        .Append($" | {userPredictions.TotalPoints.AddSpaces(3)}")
-                        .Append($" | {userPredictions.Predictions.Count(x => x?.TenthPlacePoints == maxPossiblePoints)}x{maxPossiblePoints}")
-                        .AppendLine();
+                    var member = await usersCache.GetMemberByApiIdAsync(row.ParticipantId);
+                    var name = (member is null ? row.ParticipantName : member.ServerOrUserName())
+                        .Replace('`', '\'').Replace('\n', ' ').Replace('\r', ' ');
+                    names[row.ParticipantId] = name.Length > 32 ? name[..32] : name;
+                }
+                var longestNameLength = names.Values.Max(x => x.Length);
+                var links = new StringBuilder($"Полная таблица: {webOptions.Value.FrontApplicationUrl}/f1Predictions/standings?season={selectedSeason}")
+                    .Append($"\nРегламент: {webOptions.Value.FrontApplicationUrl}/f1Predictions/rulebook")
+                    .ToString();
+                var chunks = new List<string>();
+                var stringBuilder = new StringBuilder(links).Append("\n```\n");
+                var position = 1;
+                foreach (var row in standings.Rows)
+                {
+                    var points = row.Results.ToDictionary(x => x.RaceId, x => x.Points);
+                    var line = $"{position++} | {names[row.ParticipantId].AddSpaces(longestNameLength, false)} | "
+                        + string.Join(" ", standings.Events.Select(race => points.GetValueOrDefault(race.Id) is { } result
+                            ? result.TotalPoints.ToString().AddSpaces(2) : "  "))
+                        + $" | {row.TotalPoints.AddSpaces(3)} | {row.MaximumTenthPlaceCount}x25\n";
+                    if (stringBuilder.Length + line.Length + 3 > 1950)
+                    {
+                        chunks.Add(stringBuilder.Append("```").ToString());
+                        stringBuilder = new StringBuilder("```\n");
+                    }
+                    stringBuilder.Append(line);
                 }
 
-                stringBuilder.Append("```");
-                await RespondToInteractionAsync(interactionContext, stringBuilder.ToString());
+                chunks.Add(stringBuilder.Append("```").ToString());
+                await RespondToInteractionAsync(interactionContext, chunks[0]);
+                foreach (var chunk in chunks.Skip(1))
+                {
+                    await interactionContext.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent(chunk));
+                }
             }
         );
     }

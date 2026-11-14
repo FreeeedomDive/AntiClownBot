@@ -21,7 +21,9 @@ const F1_TEAM_INFO: Record<string, F1TeamInfo> = {
 };
 
 export function getDriversFromTeams(teams: F1TeamDto[]): string[] {
-  return teams.flatMap((x) => [x.firstDriver, x.secondDriver]);
+  return teams
+    .flatMap((x) => x.drivers ?? [x.firstDriver, x.secondDriver])
+    .filter(Boolean);
 }
 
 export function getTeamInfo(teamName: string): F1TeamInfo | undefined {
@@ -34,6 +36,9 @@ export function getTeamForDriver(
   teams: F1TeamDto[],
 ): F1TeamDto | undefined {
   return teams.find(
-    (t) => t.firstDriver === driver || t.secondDriver === driver,
+    (t) =>
+      t.drivers?.includes(driver) ||
+      t.firstDriver === driver ||
+      t.secondDriver === driver,
   );
 }

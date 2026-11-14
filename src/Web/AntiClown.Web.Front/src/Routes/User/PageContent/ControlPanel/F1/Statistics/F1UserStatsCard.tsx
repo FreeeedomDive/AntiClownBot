@@ -36,9 +36,9 @@ export default function F1UserStatsCard({
 }: Props) {
   const maxScore = Math.max(...data.map((x) => x.score), 1);
 
-  const getMemberName = (userId: string) => {
+  const getMemberName = (userId: string, participantName?: string) => {
     const m = members.find((x) => x.userId === userId);
-    return m?.serverName ?? m?.userName ?? userId;
+    return m?.serverName ?? m?.userName ?? participantName ?? userId;
   };
 
   return (
@@ -84,7 +84,7 @@ export default function F1UserStatsCard({
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {getMemberName(entry.userId)}
+                    {getMemberName(entry.userId, entry.participantName)}
                   </Typography>
                   <Typography variant="caption" fontWeight="bold">
                     {entry.score}

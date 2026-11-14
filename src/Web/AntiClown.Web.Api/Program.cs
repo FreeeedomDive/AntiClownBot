@@ -8,6 +8,8 @@ using AntiClown.DiscordBot.Client.Configuration;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
 using AntiClown.Web.Api.Middlewares;
+using AntiClown.F1Predictions.Client;
+using AntiClown.F1Predictions.Client.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
 using Serilog;
@@ -31,6 +33,9 @@ builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configurat
 builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));
 builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
 builder.Services.Configure<AntiClownDiscordApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDiscordApi"));
+builder.Services.Configure<F1PredictionsConnectionOptions>(builder.Configuration.GetSection("F1Predictions"));
+builder.Services.AddTransient<IF1PredictionsClient>(serviceProvider => new F1PredictionsClient(
+    serviceProvider.GetRequiredService<IOptions<F1PredictionsConnectionOptions>>().Value));
 
 builder.Services.AddTransientWithProxy<IAntiClownDataApiClient>(
     serviceProvider => AntiClownDataApiClientProvider.Build(

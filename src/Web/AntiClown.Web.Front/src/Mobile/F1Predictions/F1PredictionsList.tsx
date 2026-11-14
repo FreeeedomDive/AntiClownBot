@@ -9,10 +9,12 @@ import {
   Select,
   Stack,
 } from "@mui/material";
-import F1PredictionsApi from "../../Api/F1PredictionsApi";
+import F1PredictionsApi, {
+  getF1ErrorMessage,
+} from "../../Api/F1PredictionsApi";
 import { Loader } from "../../Components/Loader/Loader";
 import { RightsWrapper } from "../../Components/UserRights/RightsWrapper";
-import { F1RaceDto } from "../../Dto/F1Predictions/F1RaceDto";
+import { F1RaceSummary as F1RaceDto } from "../../Dto/F1Predictions/F1InternalDto";
 import { RightsDto } from "../../Dto/Rights/RightsDto";
 import F1Prediction from "./F1Prediction";
 
@@ -22,12 +24,12 @@ export default function F1PredictionsList() {
   const [data, setData] = useState<{
     onlyActive: boolean;
     races: F1RaceDto[];
-    error?: boolean;
+    error?: string;
   }>();
 
   useEffect(() => {
     let cancelled = false;
-    F1PredictionsApi.find({
+    F1PredictionsApi.findOwnRaces({
       season: new Date().getFullYear(),
       isActive: onlyActive ? true : undefined,
     })
@@ -39,8 +41,9 @@ export default function F1PredictionsList() {
           );
         }
       })
-      .catch(() => {
-        if (!cancelled) setData({ onlyActive, races: [], error: true });
+      .catch((error) => {
+        if (!cancelled)
+          setData({ onlyActive, races: [], error: getF1ErrorMessage(error) });
       });
     return () => {
       cancelled = true;
@@ -91,7 +94,7 @@ export default function F1PredictionsList() {
         {isLoading ? (
           <Loader />
         ) : data?.error ? (
-          <Alert severity="error">Не удалось загрузить список гонок</Alert>
+          <Alert severity="error">{data.error}</Alert>
         ) : currentRace ? (
           <F1Prediction key={currentRace.id} f1Race={currentRace} />
         ) : (

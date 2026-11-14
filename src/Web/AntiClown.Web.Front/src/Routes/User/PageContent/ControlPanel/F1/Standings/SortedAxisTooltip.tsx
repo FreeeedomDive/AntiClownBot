@@ -1,4 +1,4 @@
-import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import { F1RaceSummary as F1RaceDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
 
 interface SortedAxisTooltipProps {

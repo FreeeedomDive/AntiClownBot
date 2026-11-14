@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   Accordion,
   AccordionDetails,
@@ -23,22 +24,26 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { CheckCircleOutline, ExpandMore, Save } from "@mui/icons-material";
-import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import F1PredictionsApi, {
+  getF1ErrorMessage,
+} from "../../../../../../Api/F1PredictionsApi";
 import { Loader } from "../../../../../../Components/Loader/Loader";
-import { AddPredictionResultDto } from "../../../../../../Dto/F1Predictions/AddPredictionResultDto";
 import { F1DnfPredictionDto } from "../../../../../../Dto/F1Predictions/F1DnfPredictionDto";
+import { isValidDnfPrediction } from "../../../../../../Dto/F1Predictions/F1PredictionHelpers";
 import {
-  getPredictionDrivers,
-  getPredictionMaxPosition,
-  isValidDnfPrediction,
-} from "../../../../../../Dto/F1Predictions/F1PredictionHelpers";
-import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+  F1RaceSummary as F1RaceDto,
+  F1UserRaceView,
+  SafetyCarsCount,
+} from "../../../../../../Dto/F1Predictions/F1InternalDto";
+import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
 import {
   F1SafetyCarPredictionDto,
   F1SafetyCarsPredictionDto,
 } from "../../../../../../Dto/F1Predictions/F1SafetyCarsPredictionDto";
 import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1QualifyingGridView from "./F1QualifyingGridView";
+import F1PredictionResultPanel from "./F1PredictionResultPanel";
+import F1PredictionPointsPanel from "./F1PredictionPointsPanel";
 import F1RaceSeasonContext from "./F1RaceSeasonContext";
 import F1TeamBadge from "./F1TeamBadge";
 import F1DnfSelect from "./Selections/F1DnfSelect";
@@ -72,6 +77,19 @@ const INCIDENT_LABELS: Record<F1SafetyCarPredictionDto, string> = {
   ThreePlus: "3+",
 };
 
+const INTERNAL_INCIDENTS: Record<F1SafetyCarPredictionDto, SafetyCarsCount> = {
+  Zero: "ZERO",
+  One: "ONE",
+  Two: "TWO",
+  ThreePlus: "THREE_PLUS",
+};
+const INCIDENT_VALUES: Record<SafetyCarsCount, F1SafetyCarPredictionDto> = {
+  ZERO: "Zero",
+  ONE: "One",
+  TWO: "Two",
+  THREE_PLUS: "ThreePlus",
+};
+
 export default function F1PredictionEditor({
   f1Race,
   userId,
@@ -80,23 +98,29 @@ export default function F1PredictionEditor({
   const [loaded, setLoaded] = useState<{
     raceId: string;
     userId: string;
-    data?: { race: F1RaceDto; teams: F1TeamDto[] };
-    error?: boolean;
+    data?: { race: F1UserRaceView; teams: F1TeamDto[] };
+    error?: string;
   }>();
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([
-      F1PredictionsApi.read(f1Race.id, userId),
-      F1PredictionsApi.getActiveTeams(),
-    ])
-      .then(([race, teams]) => {
+    F1PredictionsApi.readOwnRace(f1Race.id)
+      .then((race) => {
         if (!cancelled) {
-          setLoaded({ raceId: f1Race.id, userId, data: { race, teams } });
+          setLoaded({
+            raceId: f1Race.id,
+            userId,
+            data: { race, teams: race.teams },
+          });
         }
       })
-      .catch(() => {
-        if (!cancelled) setLoaded({ raceId: f1Race.id, userId, error: true });
+      .catch((error) => {
+        if (!cancelled)
+          setLoaded({
+            raceId: f1Race.id,
+            userId,
+            error: getF1ErrorMessage(error),
+          });
       });
     return () => {
       cancelled = true;
@@ -107,7 +131,11 @@ export default function F1PredictionEditor({
     return <Loader />;
   }
   if (loaded.error || !loaded.data) {
-    return <Alert severity="error">Не удалось загрузить предсказание</Alert>;
+    return (
+      <Alert severity="error">
+        {loaded.error ?? "Не удалось загрузить предсказание"}
+      </Alert>
+    );
   }
 
   return (
@@ -128,19 +156,20 @@ function F1PredictionForm({
   teams,
   userId,
   mobile = false,
-}: Props & {
+}: Omit<Props, "f1Race"> & {
+  f1Race: F1UserRaceView;
   teams: F1TeamDto[];
 }) {
-  const userPrediction = f1Race.predictions.find(
-    (prediction) => prediction.userId === userId,
-  );
+  const userPrediction = f1Race.prediction;
   const [draft, setDraft] = useState<PredictionDraft>(() => ({
     tenthPlacePickedDriver: userPrediction?.tenthPlacePickedDriver ?? "",
-    dnfPrediction: userPrediction?.dnfPrediction ?? {
-      noDnfPredicted: false,
-      dnfPickedDrivers: [],
+    dnfPrediction: {
+      noDnfPredicted: userPrediction?.dnfPickedDrivers?.length === 0,
+      dnfPickedDrivers: userPrediction?.dnfPickedDrivers ?? [],
     },
-    safetyCarsPrediction: userPrediction?.safetyCarsPrediction ?? "",
+    safetyCarsPrediction: userPrediction?.safetyCarsPrediction
+      ? INCIDENT_VALUES[userPrediction.safetyCarsPrediction]
+      : "",
     firstPlaceLeadPrediction: String(
       userPrediction?.firstPlaceLeadPrediction ?? "",
     ),
@@ -149,7 +178,7 @@ function F1PredictionForm({
   const [savedDraft, setSavedDraft] = useState<PredictionDraft | null>(
     userPrediction ? draft : null,
   );
-  const [isOpened, setIsOpened] = useState(f1Race.isOpened);
+  const [isOpened, setIsOpened] = useState(f1Race.predictionsOpen);
   const [isSaving, setIsSaving] = useState(false);
   const [gridExpanded, setGridExpanded] = useState(false);
   const [notification, setNotification] = useState<{
@@ -157,13 +186,44 @@ function F1PredictionForm({
     message: string;
   } | null>(null);
 
-  const drivers = getPredictionDrivers(f1Race, teams);
-  const maxPosition = getPredictionMaxPosition(f1Race, teams);
+  useEffect(() => {
+    if (!f1Race.predictionsOpen) return;
+    const remaining =
+      Date.parse(f1Race.closeAt) - Date.parse(f1Race.serverTime);
+    const timer = window.setTimeout(
+      () => setIsOpened(false),
+      Math.max(0, remaining),
+    );
+    return () => window.clearTimeout(timer);
+  }, [f1Race.closeAt, f1Race.serverTime, f1Race.predictionsOpen]);
+
+  const classification =
+    f1Race.result?.result.classification.map((entry) => entry.driverName) ?? [];
+  const drivers = Array.from(
+    new Set([
+      ...f1Race.qualifyingGrid,
+      ...getDriversFromTeams(teams),
+      ...classification,
+      ...(userPrediction?.tenthPlacePickedDriver
+        ? [userPrediction.tenthPlacePickedDriver]
+        : []),
+      ...(userPrediction?.dnfPickedDrivers ?? []),
+      ...(userPrediction?.teamsPickedDrivers ?? []),
+    ]),
+  );
+  const maxPosition =
+    f1Race.qualifyingGrid.length ||
+    getDriversFromTeams(teams).length ||
+    classification.length;
   const positionDriver = f1Race.conditions?.positionPredictionDriver;
   const disabled = !isOpened || isSaving;
   const dirty =
     !savedDraft || JSON.stringify(draft) !== JSON.stringify(savedDraft);
-  const validDnf = isValidDnfPrediction(draft.dnfPrediction);
+  const validDnf =
+    f1Race.season === 2023
+      ? !draft.dnfPrediction.noDnfPredicted &&
+        draft.dnfPrediction.dnfPickedDrivers?.length === 1
+      : isValidDnfPrediction(draft.dnfPrediction);
   const validLead =
     draft.firstPlaceLeadPrediction.trim() !== "" &&
     Number.isFinite(Number(draft.firstPlaceLeadPrediction)) &&
@@ -177,8 +237,8 @@ function F1PredictionForm({
   const valid =
     !!draft.tenthPlacePickedDriver &&
     validDnf &&
-    validLead &&
-    !!draft.safetyCarsPrediction &&
+    (f1Race.season < 2024 || validLead) &&
+    (f1Race.season < 2024 || !!draft.safetyCarsPrediction) &&
     validPosition;
   const dnfCount = draft.dnfPrediction.dnfPickedDrivers?.length ?? 0;
 
@@ -200,48 +260,45 @@ function F1PredictionForm({
   }
 
   async function savePrediction() {
-    if (
-      !userId ||
-      !isOpened ||
-      isSaving ||
-      !dirty ||
-      !valid ||
-      !draft.safetyCarsPrediction
-    )
-      return;
+    if (!userId || !isOpened || isSaving || !dirty || !valid) return;
     setIsSaving(true);
     try {
-      const result = await F1PredictionsApi.addPrediction(f1Race.id, {
-        ...userPrediction,
-        userId,
-        raceId: f1Race.id,
+      await F1PredictionsApi.saveOwnPrediction(f1Race.id, {
         tenthPlacePickedDriver: draft.tenthPlacePickedDriver,
-        dnfPrediction: draft.dnfPrediction,
-        safetyCarsPrediction: draft.safetyCarsPrediction,
-        firstPlaceLeadPrediction: Number(draft.firstPlaceLeadPrediction),
-        driverPositionPrediction: draft.driverPositionPrediction ?? 0,
+        dnfPickedDrivers: draft.dnfPrediction.noDnfPredicted
+          ? []
+          : draft.dnfPrediction.dnfPickedDrivers ?? null,
+        safetyCarsPrediction: draft.safetyCarsPrediction
+          ? INTERNAL_INCIDENTS[draft.safetyCarsPrediction]
+          : null,
+        firstPlaceLeadPrediction:
+          draft.firstPlaceLeadPrediction === ""
+            ? null
+            : Number(draft.firstPlaceLeadPrediction),
+        driverPositionPrediction: positionDriver
+          ? draft.driverPositionPrediction
+          : null,
       });
-      if (result === AddPredictionResultDto.PredictionsClosed) {
+      setSavedDraft({ ...draft, dnfPrediction: { ...draft.dnfPrediction } });
+      setNotification({
+        severity: "success",
+        message: "Предсказание сохранено",
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
         setIsOpened(false);
-        if (savedDraft) setDraft(savedDraft);
         setNotification({
           severity: "warning",
-          message: "Приём предсказаний уже закрыт. Изменения не сохранены.",
-        });
-      } else if (result === AddPredictionResultDto.Success) {
-        setSavedDraft(draft);
-        setNotification({
-          severity: "success",
-          message: "Предсказание сохранено",
+          message:
+            "Сохранение отклонено. Приём мог завершиться; изменения остались в форме. " +
+            getF1ErrorMessage(error),
         });
       } else {
-        throw new Error("Prediction was not saved");
+        setNotification({
+          severity: "error",
+          message: getF1ErrorMessage(error),
+        });
       }
-    } catch {
-      setNotification({
-        severity: "error",
-        message: "Не удалось сохранить предсказание. Попробуйте ещё раз.",
-      });
     } finally {
       setIsSaving(false);
     }
@@ -277,7 +334,7 @@ function F1PredictionForm({
   return (
     <Stack
       spacing={2}
-      sx={{ maxWidth: mobile ? 640 : 996, width: "100%", minWidth: 0 }}
+      sx={{ maxWidth: mobile ? 640 : undefined, width: "100%", minWidth: 0 }}
     >
       <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1}>
         <Typography variant="h6" sx={{ mr: 1 }}>
@@ -288,7 +345,13 @@ function F1PredictionForm({
           size="small"
           variant="outlined"
           color={isOpened ? "success" : "default"}
-          label={isOpened ? "Приём открыт" : "Приём закрыт, только просмотр"}
+          label={
+            isOpened
+              ? "Приём открыт"
+              : f1Race.status === "SCHEDULED"
+                ? "Приём ещё не открыт"
+                : "Приём закрыт, только просмотр"
+          }
         />
         {savedDraft && (
           <Chip
@@ -308,7 +371,7 @@ function F1PredictionForm({
             ? "minmax(0, 1fr)"
             : {
                 xs: "minmax(0, 1fr)",
-                lg: "340px minmax(0, 1fr)",
+                lg: "repeat(3, minmax(0, 1fr))",
               },
           alignItems: "start",
           gap: 2,
@@ -350,17 +413,19 @@ function F1PredictionForm({
           sx={{
             minWidth: 0,
             width: "100%",
-            maxWidth: 640,
             order: mobile ? 0 : { xs: 1, lg: 0 },
           }}
         >
           {!isOpened && !savedDraft ? (
             <Alert severity="info">
-              Вы не оставили предсказание на эту гонку. Приём уже закрыт.
+              {f1Race.status === "SCHEDULED"
+                ? "Приём предсказаний ещё не открыт."
+                : "Вы не оставили предсказание на эту гонку. Приём уже закрыт."}
             </Alert>
           ) : (
             <Paper variant="outlined" sx={{ ...PANEL_SX, p: 2 }}>
               <Stack spacing={3}>
+                <Typography fontWeight={600}>Ваш предикт</Typography>
                 <Box>
                   <F1DriverSelect
                     label="10-е место"
@@ -376,7 +441,9 @@ function F1PredictionForm({
                   />
                 </Box>
                 <F1DnfSelect
-                  label="DNF"
+                  label={f1Race.season === 2023 ? "Первый DNF" : "DNF"}
+                  requiredCount={f1Race.season === 2023 ? 1 : 5}
+                  allowNobody={f1Race.season !== 2023}
                   value={draft.dnfPrediction}
                   onChange={(dnfPrediction) => update({ dnfPrediction })}
                   drivers={drivers}
@@ -384,114 +451,122 @@ function F1PredictionForm({
                   qualifyingGrid={f1Race.qualifyingGrid}
                   disabled={disabled}
                 />
-                <Stack spacing={3}>
-                  <Stack spacing={0.75}>
-                    <Typography variant="body2">Инциденты</Typography>
-                    <ToggleButtonGroup
-                      value={draft.safetyCarsPrediction}
-                      exclusive
-                      fullWidth
-                      size="small"
-                      color="primary"
-                      disabled={disabled}
-                      aria-label="Число инцидентов"
-                      onChange={(_, value: F1SafetyCarPredictionDto | null) => {
-                        if (value !== null)
-                          update({ safetyCarsPrediction: value });
-                      }}
-                    >
-                      {F1SafetyCarsPredictionDto.map((value) => (
-                        <ToggleButton
-                          key={value}
-                          value={value}
-                          sx={{ flex: 1 }}
-                        >
-                          {INCIDENT_LABELS[value]}
-                        </ToggleButton>
-                      ))}
-                    </ToggleButtonGroup>
-                    <Typography variant="caption" color="text.secondary">
-                      VSC, SC и красные флаги
-                    </Typography>
-                  </Stack>
-                  <TextField
-                    label="Отрыв победителя"
-                    size="small"
-                    fullWidth
-                    value={draft.firstPlaceLeadPrediction}
-                    disabled={disabled}
-                    inputProps={{ inputMode: "decimal" }}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">сек</InputAdornment>
-                      ),
-                    }}
-                    onChange={(event) => {
-                      const value = event.target.value.replace(",", ".");
-                      if (/^\d*(\.\d*)?$/.test(value))
-                        update({ firstPlaceLeadPrediction: value });
-                    }}
-                  />
-                  {positionDriver && (
-                    <Stack spacing={1}>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                {f1Race.season >= 2024 && (
+                  <Stack spacing={3}>
+                    <Stack spacing={0.75}>
+                      <Typography variant="body2">Инциденты</Typography>
+                      <ToggleButtonGroup
+                        value={draft.safetyCarsPrediction}
+                        exclusive
+                        fullWidth
+                        size="small"
+                        color="primary"
+                        disabled={disabled}
+                        aria-label="Число инцидентов"
+                        onChange={(
+                          _,
+                          value: F1SafetyCarPredictionDto | null,
+                        ) => {
+                          if (value !== null)
+                            update({ safetyCarsPrediction: value });
+                        }}
                       >
-                        <Typography variant="body2">
-                          Позиция {positionDriver}
-                        </Typography>
-                        <F1TeamBadge driver={positionDriver} teams={teams} />
-                      </Box>
-                      <FormControl fullWidth size="small" disabled={disabled}>
-                        <InputLabel
-                          id="prediction-driver-position-label"
-                          shrink
-                        >
-                          Место на финише
-                        </InputLabel>
-                        <Select
-                          labelId="prediction-driver-position-label"
-                          label="Место на финише"
-                          notched
-                          displayEmpty
-                          value={
-                            validPosition
-                              ? draft.driverPositionPrediction ?? ""
-                              : ""
-                          }
-                          onChange={(event) =>
-                            update({
-                              driverPositionPrediction: Number(
-                                event.target.value,
-                              ),
-                            })
-                          }
-                        >
-                          <MenuItem value="" disabled>
-                            Выберите позицию
-                          </MenuItem>
-                          {Array.from(
-                            { length: maxPosition },
-                            (_, index) => index + 1,
-                          ).map((position) => (
-                            <MenuItem key={position} value={position}>
-                              {position}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
+                        {F1SafetyCarsPredictionDto.map((value) => (
+                          <ToggleButton
+                            key={value}
+                            value={value}
+                            sx={{ flex: 1 }}
+                          >
+                            {INCIDENT_LABELS[value]}
+                          </ToggleButton>
+                        ))}
+                      </ToggleButtonGroup>
+                      <Typography variant="caption" color="text.secondary">
+                        VSC, SC и красные флаги
+                      </Typography>
                     </Stack>
-                  )}
-                </Stack>
+                    <TextField
+                      label="Отрыв победителя"
+                      size="small"
+                      fullWidth
+                      value={draft.firstPlaceLeadPrediction}
+                      disabled={disabled}
+                      inputProps={{ inputMode: "decimal" }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">сек</InputAdornment>
+                        ),
+                      }}
+                      onChange={(event) => {
+                        const value = event.target.value.replace(",", ".");
+                        if (/^\d*(\.\d*)?$/.test(value))
+                          update({ firstPlaceLeadPrediction: value });
+                      }}
+                    />
+                    {positionDriver && (
+                      <Stack spacing={1}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          <Typography variant="body2">
+                            Позиция {positionDriver}
+                          </Typography>
+                          <F1TeamBadge driver={positionDriver} teams={teams} />
+                        </Box>
+                        <FormControl fullWidth size="small" disabled={disabled}>
+                          <InputLabel
+                            id="prediction-driver-position-label"
+                            shrink
+                          >
+                            Место на финише
+                          </InputLabel>
+                          <Select
+                            labelId="prediction-driver-position-label"
+                            label="Место на финише"
+                            notched
+                            displayEmpty
+                            value={
+                              validPosition
+                                ? draft.driverPositionPrediction ?? ""
+                                : ""
+                            }
+                            onChange={(event) =>
+                              update({
+                                driverPositionPrediction: Number(
+                                  event.target.value,
+                                ),
+                              })
+                            }
+                          >
+                            <MenuItem value="" disabled>
+                              Выберите позицию
+                            </MenuItem>
+                            {Array.from(
+                              { length: maxPosition },
+                              (_, index) => index + 1,
+                            ).map((position) => (
+                              <MenuItem key={position} value={position}>
+                                {position}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Stack>
+                    )}
+                  </Stack>
+                )}
+                {!!userPrediction?.teamsPickedDrivers?.length && (
+                  <Typography variant="body2">
+                    Команды: {userPrediction.teamsPickedDrivers.join(", ")}
+                  </Typography>
+                )}
                 {isOpened && (
                   <>
                     <Divider />
                     <Stack
-                      direction={
-                        mobile ? "column" : { xs: "column", sm: "row" }
-                      }
+                      direction="column"
                       spacing={2}
-                      alignItems={mobile ? "stretch" : { sm: "center" }}
+                      alignItems="stretch"
                       justifyContent="space-between"
                     >
                       <Stack direction="row" spacing={1} alignItems="center">
@@ -514,7 +589,7 @@ function F1PredictionForm({
                         disabled={disabled || !dirty || !valid || !userId}
                         startIcon={<Save />}
                         onClick={savePrediction}
-                        fullWidth={mobile}
+                        fullWidth
                         sx={{
                           textTransform: "none",
                           flexShrink: 0,
@@ -529,7 +604,19 @@ function F1PredictionForm({
               </Stack>
             </Paper>
           )}
+          <F1PredictionPointsPanel
+            result={f1Race.result}
+            prediction={userPrediction}
+          />
         </Stack>
+        <Box sx={{ minWidth: 0, order: mobile ? 0 : { xs: 3, lg: 0 } }}>
+          <F1PredictionResultPanel
+            result={f1Race.result}
+            prediction={userPrediction}
+            teams={teams}
+            positionDriver={positionDriver}
+          />
+        </Box>
       </Box>
       <Snackbar
         open={notification !== null}
