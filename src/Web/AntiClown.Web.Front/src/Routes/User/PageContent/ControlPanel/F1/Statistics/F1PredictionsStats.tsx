@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Divider, Stack, Typography } from "@mui/material";
-import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import { Alert, Divider, Stack, Typography } from "@mui/material";
+import F1PredictionsApi, { getF1ErrorMessage } from "../../../../../../Api/F1PredictionsApi";
 import DiscordMembersApi from "../../../../../../Api/DiscordMembersApi";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import { F1SeasonStatsDto } from "../../../../../../Dto/F1Predictions/F1SeasonStatsDto";
@@ -16,12 +16,16 @@ export default function F1PredictionsStats() {
   const season = Number(searchParams.get("season") ?? new Date().getFullYear());
 
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>();
   const [stats, setStats] = useState<F1SeasonStatsDto | null>(null);
   const [members, setMembers] = useState<DiscordMemberDto[]>([]);
 
   useEffect(() => {
     async function load() {
       setIsLoading(true);
+      setError(undefined);
+      setStats(null);
+      setMembers([]);
       const loaded = await F1PredictionsApi.getSeasonStats(season);
       setStats(loaded);
 
@@ -30,20 +34,21 @@ export default function F1PredictionsStats() {
         ...loaded.tenthPlaceDnfAntiRating.map((x) => x.userId),
       ];
       if (userIds.length > 0) {
-        const loadedMembers = await DiscordMembersApi.getMembers(userIds);
-        setMembers(loadedMembers);
+        const loadedMembers = await DiscordMembersApi.getMembers(userIds).catch(() => []);
+        setMembers(Array.isArray(loadedMembers) ? loadedMembers.filter(Boolean) : []);
       }
     }
 
     load()
-      .catch(console.error)
+      .catch((error) => setError(getF1ErrorMessage(error)))
       .finally(() => setIsLoading(false));
   }, [season]);
 
   return (
     <Stack direction="column" spacing={1}>
       {isLoading && <Loader />}
-      {!isLoading && !stats && (
+      {!isLoading && error && <Alert severity="error">{error}</Alert>}
+      {!isLoading && !stats && !error && (
         <Typography variant="body1">Сезон {season} ещё не стартовал</Typography>
       )}
       {!isLoading && stats && (

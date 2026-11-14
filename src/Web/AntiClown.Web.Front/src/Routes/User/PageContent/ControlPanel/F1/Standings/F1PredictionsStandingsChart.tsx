@@ -21,8 +21,7 @@ import { LineSeriesType } from "@mui/x-charts/models";
 import { useParams } from "react-router-dom";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { F1ChartsDto } from "../../../../../../Dto/F1Predictions/F1ChartsDto";
-import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
-import { F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1StandingsDto";
+import { F1RaceSummary as F1RaceDto, F1StandingsView as F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import SortedAxisTooltip from "./SortedAxisTooltip";
 
 interface Props {
@@ -105,8 +104,8 @@ export default function F1PredictionsStandingsChart({
       userId: chart.userId,
       seriesId: `prediction_points_${chart.userId}`,
       isMe: chart.userId === userId,
-      userName: member?.serverName || member?.userName || chart.userId,
-      searchText: [member?.serverName, member?.userName, chart.userId]
+      userName: member?.serverName || member?.userName || standingsByUserId.get(chart.userId)?.participantName || chart.userId,
+      searchText: [member?.serverName, member?.userName, standingsByUserId.get(chart.userId)?.participantName, chart.userId]
         .filter(Boolean)
         .join(" ")
         .toLocaleLowerCase(),

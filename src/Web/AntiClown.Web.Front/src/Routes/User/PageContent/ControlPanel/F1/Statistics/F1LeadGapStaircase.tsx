@@ -18,9 +18,9 @@ export default function F1LeadGapStaircase({ data, members }: Props) {
 
   const maxDiff = Math.max(...data.map((x) => x.difference), 0.01);
 
-  const getMemberName = (userId: string) => {
+  const getMemberName = (userId: string, participantName?: string) => {
     const m = members.find((x) => x.userId === userId);
-    return m?.serverName ?? m?.userName ?? "—";
+    return m?.serverName ?? m?.userName ?? participantName ?? "—";
   };
 
   return (
@@ -47,7 +47,7 @@ export default function F1LeadGapStaircase({ data, members }: Props) {
           }}
         >
           {data.map((entry, i) => {
-            const name = getMemberName(entry.userId);
+            const name = getMemberName(entry.userId, entry.participantName);
             const label = `${name} (${entry.raceName})`;
             const widthPercent = (entry.difference / maxDiff) * 80;
 

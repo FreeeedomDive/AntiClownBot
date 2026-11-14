@@ -10,10 +10,10 @@ import {
   Select,
   Stack,
 } from "@mui/material";
-import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import F1PredictionsApi, { getF1ErrorMessage } from "../../../../../../Api/F1PredictionsApi";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import { RightsWrapper } from "../../../../../../Components/UserRights/RightsWrapper";
-import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import { F1RaceSummary as F1RaceDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import { RightsDto } from "../../../../../../Dto/Rights/RightsDto";
 import F1Prediction from "./F1Prediction";
 
@@ -21,7 +21,7 @@ interface RacesData {
   season: number;
   onlyActive: boolean;
   races: F1RaceDto[];
-  error?: boolean;
+  error?: string;
 }
 
 export default function F1PredictionsList() {
@@ -42,7 +42,7 @@ export default function F1PredictionsList() {
 
   useEffect(() => {
     let cancelled = false;
-    F1PredictionsApi.find({ season, isActive: onlyActive ? true : undefined })
+    F1PredictionsApi.findOwnRaces({ season, isActive: onlyActive ? true : undefined })
       .then((races) => {
         if (!cancelled) {
           setData({ season, onlyActive, races });
@@ -51,8 +51,8 @@ export default function F1PredictionsList() {
           );
         }
       })
-      .catch(() => {
-        if (!cancelled) setData({ season, onlyActive, races: [], error: true });
+      .catch((error) => {
+        if (!cancelled) setData({ season, onlyActive, races: [], error: getF1ErrorMessage(error) });
       });
     return () => {
       cancelled = true;
@@ -112,7 +112,7 @@ export default function F1PredictionsList() {
         {isLoading ? (
           <Loader />
         ) : data?.error ? (
-          <Alert severity="error">Не удалось загрузить список гонок</Alert>
+          <Alert severity="error">{data.error}</Alert>
         ) : currentRace ? (
           <F1Prediction key={currentRace.id} f1Race={currentRace} />
         ) : (

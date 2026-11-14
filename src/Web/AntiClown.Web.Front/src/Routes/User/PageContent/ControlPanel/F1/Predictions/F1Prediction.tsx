@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import { F1RaceSummary as F1RaceDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import F1PredictionEditor from "./F1PredictionEditor";
 
 interface Props {

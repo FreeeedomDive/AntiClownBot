@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import F1PredictionsApi, { getF1ErrorMessage } from "../../../../../../Api/F1PredictionsApi";
 import DiscordMembersApi from "../../../../../../Api/DiscordMembersApi";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
-import { Stack, Typography } from "@mui/material";
+import { Alert, Stack, Typography } from "@mui/material";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1PredictionsStandingsChart from "./F1PredictionsStandingsChart";
 import F1PredictionsStandingsTable from "./F1PredictionsStandingsTable";
-import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import { F1RaceSummary as F1RaceDto, F1StandingsView as F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import { F1ChartsDto } from "../../../../../../Dto/F1Predictions/F1ChartsDto";
-import { F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1StandingsDto";
 
 export default function F1PredictionsStandings() {
   const [searchParams] = useSearchParams();
@@ -17,6 +16,7 @@ export default function F1PredictionsStandings() {
   const season = Number(searchParams.get("season") ?? currentYear);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>();
   const [finishedRaces, setFinishedRaces] = useState<F1RaceDto[]>([]);
   const [standings, setStandings] = useState<F1StandingsDto>();
   const [members, setMembers] = useState<DiscordMemberDto[]>([]);
@@ -25,31 +25,30 @@ export default function F1PredictionsStandings() {
   useEffect(() => {
     async function load() {
       setIsLoading(true);
-      const standings = await F1PredictionsApi.getStandings(season);
+      setError(undefined);
+      setStandings(undefined);
+      setCharts(undefined);
+      const standings = await F1PredictionsApi.getSeasonStandings(season);
       setStandings(standings);
       if (!standings || standings.standings.length === 0) {
         return;
       }
 
-      const [allFinishedRaces, charts, members] = await Promise.all([
-        F1PredictionsApi.find({ isActive: false, season }),
-        F1PredictionsApi.getCharts(season),
-        DiscordMembersApi.getMembers(standings.standings.map((x) => x.userId)),
-      ]);
-
-      setFinishedRaces(allFinishedRaces);
-      setCharts(charts);
-      setMembers(members);
+      const members = await DiscordMembersApi.getMembers(standings.standings.map((x) => x.userId)).catch(() => []);
+      setFinishedRaces(standings.events);
+      setCharts(standings.charts);
+      setMembers(Array.isArray(members) ? members.filter(Boolean) : []);
     }
 
     load()
-      .catch(console.error)
+      .catch((error) => setError(getF1ErrorMessage(error)))
       .finally(() => setIsLoading(false));
   }, [season]);
 
   return (
     <Stack direction={"column"} spacing={1}>
       {isLoading && <Loader />}
+      {!isLoading && error && <Alert severity="error">{error}</Alert>}
       {!isLoading && standings && standings.standings.length === 0 && (
         <Typography variant={"body1"}>
           Сезон {season} еще не стартовал

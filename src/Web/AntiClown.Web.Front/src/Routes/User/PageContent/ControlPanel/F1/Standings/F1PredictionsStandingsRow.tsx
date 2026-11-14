@@ -1,5 +1,5 @@
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
-import { F1PredictionUserResultDto } from "../../../../../../Dto/F1Predictions/F1PredictionUserResultDto";
+import { F1RacePointsView as F1PredictionUserResultDto, F1RaceSummary as F1RaceDto, F1StandingsRowView as F1StandingsRowDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import {
   Avatar,
   Box,
@@ -19,15 +19,22 @@ import React from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
-import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
 import DiscordMember from "../../../../../../Components/Users/DiscordMember";
-import { InfoOutlined } from "@mui/icons-material";
-import { F1StandingsRowDto } from "../../../../../../Dto/F1Predictions/F1StandingsRowDto";
 import { MAIN_COLOR } from "../../../../../../Helpers/Colors";
 
 const STICKY_BG_DEFAULT = lighten(MAIN_COLOR, 0.025);
 const STICKY_BG_ME = "#200056";
 const PODIUM_COLORS = ["#FFD700", "#C0C0C0", "#CD7F32"];
+
+const POINT_COLUMNS = [
+  { key: "tenthPlacePoints", label: "10 место" },
+  { key: "dnfsPoints", label: "DNF" },
+  { key: "safetyCarsPoints", label: "Инциденты" },
+  { key: "firstPlaceLeadPoints", label: "Отрыв 1 места" },
+  { key: "teamMatesPoints", label: "Команды" },
+  { key: "driverPositionPoints", label: "Позиция гонщика" },
+] as const;
+type PointColumn = typeof POINT_COLUMNS[number];
 
 interface IProps {
   discordMember: DiscordMemberDto | undefined;
@@ -50,14 +57,13 @@ export function F1PredictionsStandingsRow({
 }: IProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const userName = discordMember?.serverName ?? discordMember?.userName;
+  const userName = discordMember?.serverName ?? discordMember?.userName ?? results.participantName;
 
   const getRace = (id: string) => {
     return races.find((x) => x.id === id)!;
   };
 
-  const season =
-    races.length === 0 ? new Date().getFullYear() : races[0].season;
+  const columns = POINT_COLUMNS.filter((column) => results.results.some((result) => result?.[column.key] != null));
   const stillInChampionship = leaderPoints - results.totalPoints < pointsLeft;
   const stickyBg = isMe ? STICKY_BG_ME : STICKY_BG_DEFAULT;
   const resultsByRaceId = new Map(
@@ -88,7 +94,7 @@ export function F1PredictionsStandingsRow({
             >
               {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
-            {discordMember && (
+            {(
               <Box
                 sx={{
                   display: "flex",
@@ -101,10 +107,10 @@ export function F1PredictionsStandingsRow({
               >
                 <Avatar
                   alt={userName}
-                  src={discordMember.avatarUrl}
+                   src={discordMember?.avatarUrl}
                   sx={{ width: 24, height: 24, flexShrink: 0 }}
                 />
-                <DiscordMember member={discordMember} />
+                 {discordMember ? <DiscordMember member={discordMember} /> : <Typography variant="body2">{userName}</Typography>}
                 <Stack direction="row" spacing={0.25} sx={{ flexShrink: 0 }}>
                   {results.previousPodiums.map((podium) => {
                     const label = `${podium.season}: ${podium.place} место`;
@@ -146,7 +152,7 @@ export function F1PredictionsStandingsRow({
                     <Typography
                       sx={{ whiteSpace: "pre-line", fontSize: "0.75rem" }}
                     >
-                      {getPointsDetails(raceResult, race, season)}
+                      {getPointsDetails(raceResult)}
                     </Typography>
                   }
                   arrow
@@ -221,7 +227,7 @@ export function F1PredictionsStandingsRow({
                 История предсказаний {userName}
               </Typography>
               <Table size="small">
-                <TableHead>{getTableHeaderRows(season)}</TableHead>
+                <TableHead>{getTableHeaderRows(columns)}</TableHead>
                 <TableBody>
                   {results.results
                     .filter((raceResult) => raceResult !== null)
@@ -229,7 +235,7 @@ export function F1PredictionsStandingsRow({
                       getTableRow(
                         raceResult,
                         getRace(raceResult.raceId),
-                        season,
+                        columns,
                       ),
                     )}
                 </TableBody>
@@ -242,62 +248,13 @@ export function F1PredictionsStandingsRow({
   );
 }
 
-function getTableHeaderRows(season: number) {
+function getTableHeaderRows(columns: readonly PointColumn[]) {
   return (
     <TableRow key={"mainRow"}>
       <TableCell key={"head_name"}>Гонка</TableCell>
-      {/*За 10 место голосование есть всегда*/}
-      <TableCell key={"head_10th"} align="center">
-        10 место
-      </TableCell>
-      {/*В 2023 голосовали за первый DNF в гонке, затем выбирали 5 гонщиков*/}
-      <TableCell key={"head_dnf"} align="center">
-        {season === 2023 ? "Первый DNF" : "DNF"}
-      </TableCell>
-      {/*Голосование за количество инцидентов началось с 2024 года*/}
-      {season > 2023 && (
-        <TableCell key={"head_incidents"} align="center">
-          Инциденты
-        </TableCell>
-      )}
-      {/*Голосование за отрыв 1 места началось с 2024 года*/}
-      {season > 2023 && (
-        <TableCell key={"head_1st"} align="center">
-          Отрыв 1 места
-        </TableCell>
-      )}
-      {/*Голосование за победителей внутри команд было с 2024 по 2025 год*/}
-      {(season === 2024 || season === 2025) && (
-        <TableCell key={"head_teams"} align="center">
-          Команды
-        </TableCell>
-      )}
-      {/*Голосование за итоговую позицию гонщика началось в 2026 году*/}
-      {season >= 2026 && (
-        <TableCell key={"head_driver_position"} align="center">
-          Позиция гонщика
-        </TableCell>
-      )}
-      {/*
-      В 2023 году не было предсказаний спринтов
-      В 2024 году предсказания спринтов были и начисляли полные очки
-      В 2025 году предсказания спринтов приносили 30% очков
-      */}
+      {columns.map((column) => <TableCell key={column.key} align="center">{column.label}</TableCell>)}
       <TableCell key={"head_sum"} align="center">
         Сумма
-        {season === 2025 && (
-          <Tooltip title="За спринт начисляется 30% очков" arrow>
-            <IconButton
-              sx={{
-                minWidth: "auto",
-                borderRadius: "50%",
-                backgroundColor: "transparent",
-              }}
-            >
-              <InfoOutlined sx={{ fontSize: 18 }} />
-            </IconButton>
-          </Tooltip>
-        )}
       </TableCell>
     </TableRow>
   );
@@ -306,7 +263,7 @@ function getTableHeaderRows(season: number) {
 function getTableRow(
   raceResult: F1PredictionUserResultDto,
   race: F1RaceDto,
-  season: number,
+  columns: readonly PointColumn[],
 ) {
   const raceName = race.name + (race.isSprint ? " (спринт)" : "");
   return (
@@ -314,56 +271,7 @@ function getTableRow(
       <TableCell key={`${raceResult.userId}_${raceResult.raceId}_name`}>
         {raceName}
       </TableCell>
-      {/*За 10 место голосование есть всегда*/}
-      <TableCell
-        key={`${raceResult.userId}_${raceResult.raceId}_10th`}
-        align="center"
-      >
-        {raceResult.tenthPlacePoints}
-      </TableCell>
-      {/*В 2023 голосовали за первый DNF в гонке, затем выбирали 5 гонщиков*/}
-      <TableCell
-        key={`${raceResult.userId}_${raceResult.raceId}_dnf`}
-        align="center"
-      >
-        {raceResult.dnfsPoints}
-      </TableCell>
-      {/*Голосование за количество инцидентов началось с 2024 года*/}
-      {season > 2023 && (
-        <TableCell
-          key={`${raceResult.userId}_${raceResult.raceId}_incidents`}
-          align="center"
-        >
-          {raceResult.safetyCarsPoints}
-        </TableCell>
-      )}
-      {/*Голосование за отрыв 1 места началось с 2024 года*/}
-      {season > 2023 && (
-        <TableCell
-          key={`${raceResult.userId}_${raceResult.raceId}_1st`}
-          align="center"
-        >
-          {raceResult.firstPlaceLeadPoints}
-        </TableCell>
-      )}
-      {/*Голосование за победителей внутри команд было с 2024 по 2025 год*/}
-      {(season === 2024 || season === 2025) && (
-        <TableCell
-          key={`${raceResult.userId}_${raceResult.raceId}_teams`}
-          align="center"
-        >
-          {raceResult.teamMatesPoints}
-        </TableCell>
-      )}
-      {/*Голосование за итоговую позицию гонщика началось в 2026 году*/}
-      {season >= 2026 && (
-        <TableCell
-          key={`${raceResult.userId}_${raceResult.raceId}_driver_position`}
-          align="center"
-        >
-          {raceResult.driverPositionPoints}
-        </TableCell>
-      )}
+      {columns.map((column) => <TableCell key={column.key} align="center">{raceResult[column.key] ?? "—"}</TableCell>)}
       <TableCell
         key={`${raceResult.userId}_${raceResult.raceId}_sum`}
         align="center"
@@ -376,30 +284,9 @@ function getTableRow(
 
 function getPointsDetails(
   raceResult: F1PredictionUserResultDto,
-  race: F1RaceDto,
-  season: number,
 ) {
-  const parts: string[] = [];
-  parts.push(`10 место: ${raceResult.tenthPlacePoints}`);
-  parts.push(
-    (season === 2023 ? "Первый DNF" : "DNF") + `: ${raceResult.dnfsPoints}`,
-  );
-  if (season > 2023) {
-    parts.push(`Инциденты: ${raceResult.safetyCarsPoints}`);
-    parts.push(`Отрыв 1 места: ${raceResult.firstPlaceLeadPoints}`);
-    if (season === 2024 || season === 2025) {
-      parts.push(`Команды: ${raceResult.teamMatesPoints}`);
-    }
-  }
-  if (season >= 2026 && !!race.conditions) {
-    parts.push(
-      `Позиция ${race.conditions.positionPredictionDriver}: ${raceResult.driverPositionPoints}`,
-    );
-  }
-  parts.push(
-    `Сумма: ${raceResult.totalPoints}` +
-      (race.isSprint ? " (30% за спринт)" : ""),
-  );
-
+  const parts = POINT_COLUMNS.filter((column) => raceResult[column.key] !== null)
+    .map((column) => `${column.label}: ${raceResult[column.key]}`);
+  parts.push(`Сумма: ${raceResult.totalPoints}`, raceResult.rulesVersion);
   return parts.join("\n");
 }

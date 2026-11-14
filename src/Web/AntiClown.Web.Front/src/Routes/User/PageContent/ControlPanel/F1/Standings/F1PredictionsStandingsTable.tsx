@@ -13,10 +13,9 @@ import {
 import { lighten } from "@mui/material/styles";
 import { convertRaceNameToFlag } from "../../../../../../Helpers/RaceNameToFlagHelper";
 import { F1PredictionsStandingsRow } from "./F1PredictionsStandingsRow";
-import { F1RaceDto } from "../../../../../../Dto/F1Predictions/F1RaceDto";
+import { F1RaceSummary as F1RaceDto, F1StandingsView as F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import { useParams } from "react-router-dom";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
-import { F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1StandingsDto";
 import { MAIN_COLOR } from "../../../../../../Helpers/Colors";
 
 const RACE_COL_WIDTH = 40;

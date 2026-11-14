@@ -21,6 +21,8 @@ interface Props {
   ariaLabel?: string;
   disabled?: boolean;
   summaryMaxWidth?: number;
+  requiredCount?: number;
+  allowNobody?: boolean;
 }
 
 const NOBODY = "__nobody__";
@@ -35,6 +37,8 @@ export default function F1DnfSelect({
   ariaLabel = "DNF",
   disabled = false,
   summaryMaxWidth,
+  requiredCount = 5,
+  allowNobody = true,
 }: Props) {
   const labelId = useId();
   const selected = value.noDnfPredicted ? [] : value.dnfPickedDrivers ?? [];
@@ -59,7 +63,7 @@ export default function F1DnfSelect({
             noDnfPredicted: false,
             dnfPickedDrivers: next
               .filter((driver) => driver !== NOBODY)
-              .slice(0, 5),
+              .slice(0, requiredCount),
           },
     );
   }
@@ -95,8 +99,8 @@ export default function F1DnfSelect({
           const text = value.noDnfPredicted
             ? "Никто"
             : selectedDrivers.length
-              ? `${selectedDrivers.length}/5 · ${selectedDrivers.join(", ")}`
-              : "Выберите пилотов или «Никто»";
+              ? `${selectedDrivers.length}/${requiredCount} · ${selectedDrivers.join(", ")}`
+              : disabled ? "Не выбрано" : allowNobody ? "Выберите пилотов или «Никто»" : "Выберите пилота";
           return (
             <Box
               title={text}
@@ -117,19 +121,19 @@ export default function F1DnfSelect({
         }}
         MenuProps={{ PaperProps: { sx: { maxHeight: 440 } } }}
       >
-        <MenuItem value={NOBODY}>
+        {allowNobody && <MenuItem value={NOBODY}>
           <Checkbox
             size="small"
             checked={value.noDnfPredicted}
             sx={{ mr: 1, p: 0.5 }}
           />
           Никто
-        </MenuItem>
+        </MenuItem>}
         {drivers.map((driver) => (
           <MenuItem
             key={driver}
             value={driver}
-            disabled={selected.length >= 5 && !selected.includes(driver)}
+            disabled={selected.length >= requiredCount && !selected.includes(driver)}
           >
             <Checkbox
               size="small"
