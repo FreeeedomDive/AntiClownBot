@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Alert, Divider, Stack, Typography } from "@mui/material";
-import F1PredictionsApi, { getF1ErrorMessage } from "../../../../../../Api/F1PredictionsApi";
+import F1PredictionsApi, {
+  getF1ErrorMessage,
+} from "../../../../../../Api/F1PredictionsApi";
 import DiscordMembersApi from "../../../../../../Api/DiscordMembersApi";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import { F1SeasonStatsDto } from "../../../../../../Dto/F1Predictions/F1SeasonStatsDto";
@@ -34,8 +36,12 @@ export default function F1PredictionsStats() {
         ...loaded.tenthPlaceDnfAntiRating.map((x) => x.userId),
       ];
       if (userIds.length > 0) {
-        const loadedMembers = await DiscordMembersApi.getMembers(userIds).catch(() => []);
-        setMembers(Array.isArray(loadedMembers) ? loadedMembers.filter(Boolean) : []);
+        const loadedMembers = await DiscordMembersApi.getMembers(userIds).catch(
+          () => [],
+        );
+        setMembers(
+          Array.isArray(loadedMembers) ? loadedMembers.filter(Boolean) : [],
+        );
       }
     }
 

@@ -10,7 +10,9 @@ import {
   Select,
   Stack,
 } from "@mui/material";
-import F1PredictionsApi, { getF1ErrorMessage } from "../../../../../../Api/F1PredictionsApi";
+import F1PredictionsApi, {
+  getF1ErrorMessage,
+} from "../../../../../../Api/F1PredictionsApi";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import { RightsWrapper } from "../../../../../../Components/UserRights/RightsWrapper";
 import { F1RaceSummary as F1RaceDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
@@ -42,7 +44,10 @@ export default function F1PredictionsList() {
 
   useEffect(() => {
     let cancelled = false;
-    F1PredictionsApi.findOwnRaces({ season, isActive: onlyActive ? true : undefined })
+    F1PredictionsApi.findOwnRaces({
+      season,
+      isActive: onlyActive ? true : undefined,
+    })
       .then((races) => {
         if (!cancelled) {
           setData({ season, onlyActive, races });
@@ -52,7 +57,13 @@ export default function F1PredictionsList() {
         }
       })
       .catch((error) => {
-        if (!cancelled) setData({ season, onlyActive, races: [], error: getF1ErrorMessage(error) });
+        if (!cancelled)
+          setData({
+            season,
+            onlyActive,
+            races: [],
+            error: getF1ErrorMessage(error),
+          });
       });
     return () => {
       cancelled = true;

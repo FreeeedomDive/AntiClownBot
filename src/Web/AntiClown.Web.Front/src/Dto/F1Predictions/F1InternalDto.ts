@@ -41,9 +41,14 @@ export interface InternalPredictionDto {
   teamsPickedDrivers: string[] | null;
 }
 
-export type SaveOwnPredictionDto = Pick<InternalPredictionDto,
-  "tenthPlacePickedDriver" | "dnfPickedDrivers" | "safetyCarsPrediction" |
-  "driverPositionPrediction" | "firstPlaceLeadPrediction">;
+export type SaveOwnPredictionDto = Pick<
+  InternalPredictionDto,
+  | "tenthPlacePickedDriver"
+  | "dnfPickedDrivers"
+  | "safetyCarsPrediction"
+  | "driverPositionPrediction"
+  | "firstPlaceLeadPrediction"
+>;
 
 export interface InternalPredictionPointsDto {
   rulesVersion: string;
@@ -61,7 +66,10 @@ export interface InternalRaceResultDto {
   season: number;
   rulesVersion: string;
   result: {
-    classification: { driverName: string; status: "FINISHED" | "DNF" | "DNS" | "DQ" }[];
+    classification: {
+      driverName: string;
+      status: "FINISHED" | "DNF" | "DNS" | "DQ";
+    }[];
     safetyCars: number | null;
     firstPlaceLead: number | null;
   };
@@ -133,10 +141,20 @@ export interface F1StandingsView {
   charts: F1ChartsDto;
 }
 
-export interface InternalSeasonStatsDto extends Omit<F1SeasonStatsDto,
-  "tenthPlaceDnfAntiRating" | "closestLeadGapPredictions" |
-  "safetyCarPickCounts" | "safetyCarActualCounts" | "safetyCarCorrectGuesses"> {
-  tenthPlaceDnfAntiRating: { participantId: string; participantName: string; score: number }[];
+export interface InternalSeasonStatsDto
+  extends Omit<
+    F1SeasonStatsDto,
+    | "tenthPlaceDnfAntiRating"
+    | "closestLeadGapPredictions"
+    | "safetyCarPickCounts"
+    | "safetyCarActualCounts"
+    | "safetyCarCorrectGuesses"
+  > {
+  tenthPlaceDnfAntiRating: {
+    participantId: string;
+    participantName: string;
+    score: number;
+  }[];
   closestLeadGapPredictions: {
     participantId: string;
     participantName: string;

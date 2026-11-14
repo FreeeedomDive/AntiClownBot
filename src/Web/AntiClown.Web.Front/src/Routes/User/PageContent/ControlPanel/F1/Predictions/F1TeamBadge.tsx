@@ -17,8 +17,19 @@ export default function F1TeamBadge({ driver, teams }: Props) {
   const team = getTeamForDriver(driver, teams);
   if (!team) return null;
 
-  if (!team.badge && season !== undefined && season !== new Date().getFullYear()) return null;
-  const info = team.badge ? { trigram: team.badge, color: team.backgroundColor, textColor: team.textColor } : getTeamInfo(team.name);
+  if (
+    !team.badge &&
+    season !== undefined &&
+    season !== new Date().getFullYear()
+  )
+    return null;
+  const info = team.badge
+    ? {
+        trigram: team.badge,
+        color: team.backgroundColor,
+        textColor: team.textColor,
+      }
+    : getTeamInfo(team.name);
   if (!info) return null;
 
   return (

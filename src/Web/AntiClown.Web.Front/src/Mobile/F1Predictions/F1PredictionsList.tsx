@@ -9,7 +9,9 @@ import {
   Select,
   Stack,
 } from "@mui/material";
-import F1PredictionsApi, { getF1ErrorMessage } from "../../Api/F1PredictionsApi";
+import F1PredictionsApi, {
+  getF1ErrorMessage,
+} from "../../Api/F1PredictionsApi";
 import { Loader } from "../../Components/Loader/Loader";
 import { RightsWrapper } from "../../Components/UserRights/RightsWrapper";
 import { F1RaceSummary as F1RaceDto } from "../../Dto/F1Predictions/F1InternalDto";
@@ -40,7 +42,8 @@ export default function F1PredictionsList() {
         }
       })
       .catch((error) => {
-        if (!cancelled) setData({ onlyActive, races: [], error: getF1ErrorMessage(error) });
+        if (!cancelled)
+          setData({ onlyActive, races: [], error: getF1ErrorMessage(error) });
       });
     return () => {
       cancelled = true;

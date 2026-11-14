@@ -99,8 +99,14 @@ export default function F1DnfSelect({
           const text = value.noDnfPredicted
             ? "Никто"
             : selectedDrivers.length
-              ? `${selectedDrivers.length}/${requiredCount} · ${selectedDrivers.join(", ")}`
-              : disabled ? "Не выбрано" : allowNobody ? "Выберите пилотов или «Никто»" : "Выберите пилота";
+              ? `${
+                  selectedDrivers.length
+                }/${requiredCount} · ${selectedDrivers.join(", ")}`
+              : disabled
+                ? "Не выбрано"
+                : allowNobody
+                  ? "Выберите пилотов или «Никто»"
+                  : "Выберите пилота";
           return (
             <Box
               title={text}
@@ -121,19 +127,23 @@ export default function F1DnfSelect({
         }}
         MenuProps={{ PaperProps: { sx: { maxHeight: 440 } } }}
       >
-        {allowNobody && <MenuItem value={NOBODY}>
-          <Checkbox
-            size="small"
-            checked={value.noDnfPredicted}
-            sx={{ mr: 1, p: 0.5 }}
-          />
-          Никто
-        </MenuItem>}
+        {allowNobody && (
+          <MenuItem value={NOBODY}>
+            <Checkbox
+              size="small"
+              checked={value.noDnfPredicted}
+              sx={{ mr: 1, p: 0.5 }}
+            />
+            Никто
+          </MenuItem>
+        )}
         {drivers.map((driver) => (
           <MenuItem
             key={driver}
             value={driver}
-            disabled={selected.length >= requiredCount && !selected.includes(driver)}
+            disabled={
+              selected.length >= requiredCount && !selected.includes(driver)
+            }
           >
             <Checkbox
               size="small"

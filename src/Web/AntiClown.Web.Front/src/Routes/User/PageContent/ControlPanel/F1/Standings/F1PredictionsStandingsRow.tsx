@@ -1,5 +1,9 @@
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
-import { F1RacePointsView as F1PredictionUserResultDto, F1RaceSummary as F1RaceDto, F1StandingsRowView as F1StandingsRowDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
+import {
+  F1RacePointsView as F1PredictionUserResultDto,
+  F1RaceSummary as F1RaceDto,
+  F1StandingsRowView as F1StandingsRowDto,
+} from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import {
   Avatar,
   Box,
@@ -34,7 +38,7 @@ const POINT_COLUMNS = [
   { key: "teamMatesPoints", label: "Команды" },
   { key: "driverPositionPoints", label: "Позиция гонщика" },
 ] as const;
-type PointColumn = typeof POINT_COLUMNS[number];
+type PointColumn = (typeof POINT_COLUMNS)[number];
 
 interface IProps {
   discordMember: DiscordMemberDto | undefined;
@@ -57,13 +61,18 @@ export function F1PredictionsStandingsRow({
 }: IProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const userName = discordMember?.serverName ?? discordMember?.userName ?? results.participantName;
+  const userName =
+    discordMember?.serverName ??
+    discordMember?.userName ??
+    results.participantName;
 
   const getRace = (id: string) => {
     return races.find((x) => x.id === id)!;
   };
 
-  const columns = POINT_COLUMNS.filter((column) => results.results.some((result) => result?.[column.key] != null));
+  const columns = POINT_COLUMNS.filter((column) =>
+    results.results.some((result) => result?.[column.key] != null),
+  );
   const stillInChampionship = leaderPoints - results.totalPoints < pointsLeft;
   const stickyBg = isMe ? STICKY_BG_ME : STICKY_BG_DEFAULT;
   const resultsByRaceId = new Map(
@@ -94,7 +103,7 @@ export function F1PredictionsStandingsRow({
             >
               {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
-            {(
+            {
               <Box
                 sx={{
                   display: "flex",
@@ -107,10 +116,14 @@ export function F1PredictionsStandingsRow({
               >
                 <Avatar
                   alt={userName}
-                   src={discordMember?.avatarUrl}
+                  src={discordMember?.avatarUrl}
                   sx={{ width: 24, height: 24, flexShrink: 0 }}
                 />
-                 {discordMember ? <DiscordMember member={discordMember} /> : <Typography variant="body2">{userName}</Typography>}
+                {discordMember ? (
+                  <DiscordMember member={discordMember} />
+                ) : (
+                  <Typography variant="body2">{userName}</Typography>
+                )}
                 <Stack direction="row" spacing={0.25} sx={{ flexShrink: 0 }}>
                   {results.previousPodiums.map((podium) => {
                     const label = `${podium.season}: ${podium.place} место`;
@@ -135,7 +148,7 @@ export function F1PredictionsStandingsRow({
                   })}
                 </Stack>
               </Box>
-            )}
+            }
           </Stack>
         </TableCell>
         {races.map((race) => {
@@ -252,7 +265,11 @@ function getTableHeaderRows(columns: readonly PointColumn[]) {
   return (
     <TableRow key={"mainRow"}>
       <TableCell key={"head_name"}>Гонка</TableCell>
-      {columns.map((column) => <TableCell key={column.key} align="center">{column.label}</TableCell>)}
+      {columns.map((column) => (
+        <TableCell key={column.key} align="center">
+          {column.label}
+        </TableCell>
+      ))}
       <TableCell key={"head_sum"} align="center">
         Сумма
       </TableCell>
@@ -271,7 +288,11 @@ function getTableRow(
       <TableCell key={`${raceResult.userId}_${raceResult.raceId}_name`}>
         {raceName}
       </TableCell>
-      {columns.map((column) => <TableCell key={column.key} align="center">{raceResult[column.key] ?? "—"}</TableCell>)}
+      {columns.map((column) => (
+        <TableCell key={column.key} align="center">
+          {raceResult[column.key] ?? "—"}
+        </TableCell>
+      ))}
       <TableCell
         key={`${raceResult.userId}_${raceResult.raceId}_sum`}
         align="center"
@@ -282,11 +303,10 @@ function getTableRow(
   );
 }
 
-function getPointsDetails(
-  raceResult: F1PredictionUserResultDto,
-) {
-  const parts = POINT_COLUMNS.filter((column) => raceResult[column.key] !== null)
-    .map((column) => `${column.label}: ${raceResult[column.key]}`);
+function getPointsDetails(raceResult: F1PredictionUserResultDto) {
+  const parts = POINT_COLUMNS.filter(
+    (column) => raceResult[column.key] !== null,
+  ).map((column) => `${column.label}: ${raceResult[column.key]}`);
   parts.push(`Сумма: ${raceResult.totalPoints}`, raceResult.rulesVersion);
   return parts.join("\n");
 }

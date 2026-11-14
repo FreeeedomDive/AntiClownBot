@@ -13,7 +13,10 @@ import {
 import { lighten } from "@mui/material/styles";
 import { convertRaceNameToFlag } from "../../../../../../Helpers/RaceNameToFlagHelper";
 import { F1PredictionsStandingsRow } from "./F1PredictionsStandingsRow";
-import { F1RaceSummary as F1RaceDto, F1StandingsView as F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
+import {
+  F1RaceSummary as F1RaceDto,
+  F1StandingsView as F1StandingsDto,
+} from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import { useParams } from "react-router-dom";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { MAIN_COLOR } from "../../../../../../Helpers/Colors";

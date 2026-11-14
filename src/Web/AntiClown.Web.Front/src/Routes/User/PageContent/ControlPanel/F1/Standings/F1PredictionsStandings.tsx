@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import F1PredictionsApi, { getF1ErrorMessage } from "../../../../../../Api/F1PredictionsApi";
+import F1PredictionsApi, {
+  getF1ErrorMessage,
+} from "../../../../../../Api/F1PredictionsApi";
 import DiscordMembersApi from "../../../../../../Api/DiscordMembersApi";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
 import { Alert, Stack, Typography } from "@mui/material";
 import { Loader } from "../../../../../../Components/Loader/Loader";
 import F1PredictionsStandingsChart from "./F1PredictionsStandingsChart";
 import F1PredictionsStandingsTable from "./F1PredictionsStandingsTable";
-import { F1RaceSummary as F1RaceDto, F1StandingsView as F1StandingsDto } from "../../../../../../Dto/F1Predictions/F1InternalDto";
+import {
+  F1RaceSummary as F1RaceDto,
+  F1StandingsView as F1StandingsDto,
+} from "../../../../../../Dto/F1Predictions/F1InternalDto";
 import { F1ChartsDto } from "../../../../../../Dto/F1Predictions/F1ChartsDto";
 
 export default function F1PredictionsStandings() {
@@ -34,7 +39,9 @@ export default function F1PredictionsStandings() {
         return;
       }
 
-      const members = await DiscordMembersApi.getMembers(standings.standings.map((x) => x.userId)).catch(() => []);
+      const members = await DiscordMembersApi.getMembers(
+        standings.standings.map((x) => x.userId),
+      ).catch(() => []);
       setFinishedRaces(standings.events);
       setCharts(standings.charts);
       setMembers(Array.isArray(members) ? members.filter(Boolean) : []);
