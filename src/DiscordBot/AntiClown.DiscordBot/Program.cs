@@ -44,8 +44,6 @@ using AntiClown.DiscordBot.Telemetry;
 using AntiClown.DiscordBot.Utility.Locks;
 using AntiClown.Entertainment.Api.Client;
 using AntiClown.Entertainment.Api.Client.Configuration;
-using AntiClown.F1Predictions.Client;
-using AntiClown.F1Predictions.Client.Configuration;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Bedge;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.GuessNumber;
 using AntiClown.Entertainment.Api.Dto.CommonEvents.Lottery;
@@ -159,7 +157,6 @@ internal class Program
         builder.Services.Configure<AntiClownEntertainmentApiConnectionOptions>(builder.Configuration.GetSection("AntiClownEntertainmentApi"));
         builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
         builder.Services.Configure<WebOptions>(builder.Configuration.GetSection("Web"));
-        builder.Services.Configure<F1PredictionsConnectionOptions>(builder.Configuration.GetSection("F1Predictions"));
         builder.Services.Configure<GeminiAiSettings>(builder.Configuration.GetSection("GeminiAi"));
     }
 
@@ -176,8 +173,6 @@ internal class Program
     private static void BuildApiClients(WebApplicationBuilder builder)
     {
         builder.Services.AddHttpClient();
-        builder.Services.AddTransient<IF1PredictionsClient>(serviceProvider => new F1PredictionsClient(
-            serviceProvider.GetRequiredService<IOptions<F1PredictionsConnectionOptions>>().Value));
 
         builder.Services.AddTransientWithProxy<IAntiClownApiClient>(
             serviceProvider => AntiClownApiClientProvider.Build(serviceProvider.GetRequiredService<IOptions<AntiClownApiConnectionOptions>>().Value.ServiceUrl)

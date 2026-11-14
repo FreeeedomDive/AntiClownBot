@@ -1,12 +1,6 @@
 import axios from "axios";
-import { F1PredictionDto } from "../Dto/F1Predictions/F1PredictionDto";
-import { F1RaceDto } from "../Dto/F1Predictions/F1RaceDto";
-import { AddPredictionResultDto } from "../Dto/F1Predictions/AddPredictionResultDto";
-import { F1PredictionRaceResultDto } from "../Dto/F1Predictions/F1PredictionRaceResultDto";
 import { F1RaceFilterDto } from "../Dto/F1Predictions/F1RaceFilterDto";
 import { F1TeamDto } from "../Dto/F1Predictions/F1TeamDto";
-import { F1ChartsDto } from "../Dto/F1Predictions/F1ChartsDto";
-import { F1StandingsDto } from "../Dto/F1Predictions/F1StandingsDto";
 import { F1SeasonStatsDto } from "../Dto/F1Predictions/F1SeasonStatsDto";
 import {
   InternalRaceDto,
@@ -142,94 +136,11 @@ export default class F1PredictionsApi {
     };
   };
 
-  static init = () => {
-    return axios.create({
-      baseURL: `/webApi/f1predictions/`,
-      timeout: 10000,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      validateStatus: function (status) {
-        return status >= 200 && status < 300;
-      },
-    });
-  };
-
-  static find = async (filter: F1RaceFilterDto): Promise<F1RaceDto[]> => {
-    const result = await F1PredictionsApi.init().post<F1RaceDto[]>(
-      `find`,
-      filter,
-    );
-    return result.data;
-  };
-
-  static read = async (raceId: string, userId?: string): Promise<F1RaceDto> => {
-    const result = await F1PredictionsApi.init().get<F1RaceDto>(raceId, {
-      params: userId ? { userId } : undefined,
-    });
-    return result.data;
-  };
-
-  static addPrediction = async (
-    raceId: string,
-    prediction: F1PredictionDto,
-    isAdmin = false,
-  ): Promise<AddPredictionResultDto> => {
-    const result = await F1PredictionsApi.init().post<AddPredictionResultDto>(
-      `${raceId}/addPrediction`,
-      prediction,
-      { params: { isAdmin } },
-    );
-    return result.data;
-  };
-
-  static close = async (raceId: string): Promise<void> => {
-    await F1PredictionsApi.init().post(`${raceId}/close`);
-  };
-
-  static addResult = async (
-    raceId: string,
-    result: F1PredictionRaceResultDto,
-  ): Promise<void> => {
-    await F1PredictionsApi.init().post(`${raceId}/addResult`, result);
-  };
-
-  static finish = async (raceId: string): Promise<void> => {
-    await F1PredictionsApi.init().post(`${raceId}/finish`);
-  };
-
-  static getStandings = async (season?: number): Promise<F1StandingsDto> => {
-    const result = await F1PredictionsApi.init().get(`standingsV2`, {
-      params: { season },
-    });
-    return result.data;
-  };
-
-  static getCharts = async (season?: number): Promise<F1ChartsDto> => {
-    const result = await F1PredictionsApi.init().get(`charts`, {
-      params: { season },
-    });
-    return result.data;
-  };
-
   static getActiveTeams = async (): Promise<F1TeamDto[]> => {
     const result = await F1PredictionsApi.initV2().get<{
       data: InternalTeamDto[];
     }>(`teams`);
     return result.data.data.map(teamView);
-  };
-
-  static getLegacyTeams = async (): Promise<F1TeamDto[]> => {
-    const result = await F1PredictionsApi.init().get<F1TeamDto[]>("teams");
-    return result.data;
-  };
-
-  static saveQualifyingGrid = async (
-    raceId: string,
-    grid: string[],
-  ): Promise<void> => {
-    await F1PredictionsApi.init().post(`${raceId}/saveQualifyingGrid`, grid);
   };
 
   static getSeasonStats = async (season: number): Promise<F1SeasonStatsDto> => {
@@ -264,19 +175,5 @@ export default class F1PredictionsApi {
       safetyCarActualCounts: incidents(data.safetyCarActualCounts),
       safetyCarCorrectGuesses: incidents(data.safetyCarCorrectGuesses),
     };
-  };
-
-  static createOrUpdateTeam = async (
-    teamName: string,
-    firstDriver: string,
-    secondDriver: string,
-  ): Promise<void> => {
-    const team = {
-      name: teamName,
-      firstDriver: firstDriver,
-      secondDriver: secondDriver,
-    };
-    const result = await F1PredictionsApi.init().post(`teams`, team);
-    return result.data;
   };
 }

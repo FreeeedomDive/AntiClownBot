@@ -1,11 +1,7 @@
 using AntiClown.Entertainment.Api.Core.Database;
-using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
-using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.OpenF1;
 using AntiClown.Tests.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using NSubstitute;
 
 namespace AntiClown.Entertainment.Api.Core.IntegrationTests;
 
@@ -19,13 +15,4 @@ public class EntertainmentApiIntegrationTestsWebApplicationFactory
         await db.Database.MigrateAsync();
     }
 
-    protected override void ConfigureTestServices(IServiceCollection services)
-    {
-        services.RemoveAll<IJolpicaClient>();
-        services.AddSingleton(_ => Substitute.For<IJolpicaClient>());
-        services.RemoveAll<IStartingGridClient>();
-        services.AddSingleton(_ => Substitute.For<IStartingGridClient>());
-        services.RemoveAll<TimeProvider>();
-        services.AddSingleton(_ => Substitute.For<TimeProvider>());
-    }
 }

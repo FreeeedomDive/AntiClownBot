@@ -23,22 +23,13 @@ using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Announce;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Messages;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.PaymentsAndResets;
 using AntiClown.Entertainment.Api.Core.Database;
-using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.Jolpica;
-using AntiClown.Entertainment.Api.Core.F1Predictions.ExternalClients.OpenF1;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Bingo;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.ChampionshipPredictions;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Races;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Results;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Teams;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Services;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Bingo;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.ChampionshipPredictions;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Services.EventsProducing;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Results;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Statistics;
 using AntiClown.Entertainment.Api.Core.MinecraftAuth.Repositories;
 using AntiClown.Entertainment.Api.Core.MinecraftAuth.Services;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Options;
 using AntiClown.Entertainment.Api.Core.Options;
 using AntiClown.Entertainment.Api.Core.Parties.Repositories;
 using AntiClown.Entertainment.Api.Core.Parties.Services;
@@ -75,7 +66,6 @@ var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(assemblies));
 
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMQ"));
-builder.Services.Configure<F1PredictionsOptions>(builder.Configuration.GetSection("F1Predictions"));
 builder.Services.Configure<AntiClownApiConnectionOptions>(builder.Configuration.GetSection("AntiClownApi"));
 builder.Services.Configure<AntiClownDataApiConnectionOptions>(builder.Configuration.GetSection("AntiClownDataApi"));
 
@@ -112,9 +102,6 @@ builder.Services.AddTransientWithProxy<ICommonActiveEventsIndexRepository, Commo
 builder.Services.AddTransientWithProxy<IDailyEventsRepository, DailyEventsRepository>();
 builder.Services.AddTransientWithProxy<IActiveDailyEventsIndexRepository, ActiveDailyEventsIndexRepository>();
 builder.Services.AddTransientWithProxy<IPartiesRepository, PartiesRepository>();
-builder.Services.AddTransientWithProxy<IF1RacesRepository, F1RacesRepository>();
-builder.Services.AddTransientWithProxy<IF1PredictionResultsRepository, F1PredictionResultsRepository>();
-builder.Services.AddTransientWithProxy<IF1PredictionTeamsRepository, F1PredictionTeamsRepository>();
 builder.Services.AddTransientWithProxy<IF1BingoCardsRepository, F1BingoCardsRepository>();
 builder.Services.AddTransientWithProxy<IF1BingoBoardsRepository, F1BingoBoardsRepository>();
 builder.Services.AddTransientWithProxy<IF1ChampionshipPredictionsRepository, F1ChampionshipPredictionsRepository>();
@@ -145,16 +132,6 @@ builder.Services.AddTransientWithProxy<IPaymentsAndResetsService, PaymentsAndRes
 builder.Services.AddTransientWithProxy<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
 builder.Services.AddTransientWithProxy<IPartiesService, PartiesService>();
 builder.Services.AddTransientWithProxy<IF1PredictionsMessageProducer, F1PredictionsMessageProducer>();
-builder.Services.AddTransientWithProxy<IF1PredictionsResultBuilder, F1PredictionsResultBuilder>();
-builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
-builder.Services.AddTransient<IJolpicaClient, JolpicaClient>();
-builder.Services.AddHttpClient<IStartingGridClient, OpenF1StartingGridClient>(client =>
-{
-    client.BaseAddress = new Uri("https://api.openf1.org");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-builder.Services.AddTransientWithProxy<IF1PredictionsService, F1PredictionsService>();
-builder.Services.AddTransientWithProxy<IF1PredictionsStatisticsService, F1PredictionsStatisticsService>();
 builder.Services.AddTransientWithProxy<IMinecraftAuthService, MinecraftAuthService>();
 builder.Services.AddTransientWithProxy<IMinecraftAccountRepository, MinecraftAccountRepository>();
 builder.Services.AddTransientWithProxy<IMinecraftAccountService, MinecraftAccountService>();
