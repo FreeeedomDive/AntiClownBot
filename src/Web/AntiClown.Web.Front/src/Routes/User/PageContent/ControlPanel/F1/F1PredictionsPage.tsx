@@ -88,6 +88,7 @@ const F1PredictionsPage = () => {
   const showSeasonSelector =
     location.pathname.endsWith("/f1Predictions/standings") ||
     location.pathname.endsWith("/f1Predictions/races") ||
+    location.pathname.endsWith("/f1Predictions/championship") ||
     location.pathname.endsWith("/f1Predictions/bingo") ||
     location.pathname.endsWith("/f1Predictions/statistics");
 

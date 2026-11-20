@@ -18,12 +18,14 @@ interface Props {
   title: string;
   standings: string[];
   teams: F1TeamDto[];
+  currentDrivers: string[];
 }
 
 export default function F1ChampionshipCurrentStandings({
   title,
   standings,
   teams,
+  currentDrivers,
 }: Props) {
   return (
     <Stack direction="column" spacing={1}>
@@ -43,7 +45,11 @@ export default function F1ChampionshipCurrentStandings({
                 </TableCell>
                 <TableCell sx={{ padding: "1px", width: "100%" }}>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <F1TeamBadge driver={driver} teams={teams} />
+                    <F1TeamBadge
+                      driver={driver}
+                      teams={teams}
+                      formerTeam={!currentDrivers.includes(driver)}
+                    />
                     <Typography>{driver}</Typography>
                   </Box>
                 </TableCell>

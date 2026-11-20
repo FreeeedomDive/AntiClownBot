@@ -49,6 +49,14 @@ public sealed class F1PredictionsClient : IF1PredictionsClient, IDisposable
     public async Task<TeamDto[]> GetTeamsAsync(Guid participantId, int season, CancellationToken cancellationToken = default) =>
         (await RequiredAsync<ListResponseDto<TeamDto>>(Request($"teams?season={season}", Method.Get, participantId), cancellationToken)).Data;
 
+    public Task<ChampionshipDetailsDto> GetChampionshipAsync(Guid participantId, int season, CancellationToken cancellationToken = default) =>
+        RequiredAsync<ChampionshipDetailsDto>(Request($"championship/{season}", Method.Get, participantId), cancellationToken);
+
+    public Task<ChampionshipPredictionDto> SaveChampionshipPredictionAsync(Guid participantId, int season,
+        ChampionshipStageDto stage, SaveChampionshipPredictionRequestDto prediction, CancellationToken cancellationToken = default) =>
+        RequiredAsync<ChampionshipPredictionDto>(
+            Request($"championship/{season}/predictions/{stage}", Method.Put, participantId, prediction), cancellationToken);
+
     private RestRequest Request(string path, Method method, Guid? participantId = null, object? body = null)
     {
         var request = new RestRequest($"{resource}/{path}", method);
@@ -58,7 +66,7 @@ public sealed class F1PredictionsClient : IF1PredictionsClient, IDisposable
         }
         if (body is not null)
         {
-            request.AddStringBody(JsonConvert.SerializeObject(body, jsonSettings), DataFormat.Json);
+            request.AddStringBody(JsonConvert.SerializeObject(body, JsonSettings), DataFormat.Json);
         }
         return request;
     }
@@ -71,34 +79,36 @@ public sealed class F1PredictionsClient : IF1PredictionsClient, IDisposable
     {
         var response = await client.ExecuteAsync(request, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
-        if (response.ResponseStatus != ResponseStatus.Completed)
-        {
-            throw new F1PredictionsException(response.ResponseStatus == ResponseStatus.TimedOut ? 504 : 502,
-                "F1Predictions unavailable", "Не удалось получить ответ F1Predictions");
-        }
         var status = (int)response.StatusCode;
-        if (status < 200 || status >= 300)
+        switch (status)
         {
-            var title = "F1Predictions request failed";
-            var detail = $"F1Predictions returned HTTP {status}";
-            try
+            case 0:
+                throw new F1PredictionsException(response.ResponseStatus == ResponseStatus.TimedOut ? 504 : 502,
+                    "F1Predictions unavailable", "Не удалось получить ответ F1Predictions");
+            case < 200 or >= 300:
             {
-                var problem = JObject.Parse(response.Content ?? "{}");
-                title = problem.Value<string>("title") ?? title;
-                detail = problem.Value<string>("detail") ?? detail;
+                var title = "F1Predictions request failed";
+                var detail = $"F1Predictions returned HTTP {status}";
+                try
+                {
+                    var problem = JObject.Parse(response.Content ?? "{}");
+                    title = problem.Value<string>("title") ?? title;
+                    detail = problem.Value<string>("detail") ?? detail;
+                }
+                catch (JsonException)
+                {
+                }
+                throw new F1PredictionsException(status, title, detail);
             }
-            catch (JsonException)
-            {
-            }
-            throw new F1PredictionsException(status, title, detail);
         }
+
         if (response.StatusCode == HttpStatusCode.NoContent)
         {
             return null;
         }
         try
         {
-            return JsonConvert.DeserializeObject<T>(response.Content ?? "", jsonSettings);
+            return JsonConvert.DeserializeObject<T>(response.Content ?? "", JsonSettings);
         }
         catch (JsonException)
         {
@@ -110,7 +120,7 @@ public sealed class F1PredictionsClient : IF1PredictionsClient, IDisposable
 
     private readonly RestClient client;
     private readonly string resource;
-    private static readonly JsonSerializerSettings jsonSettings = new()
+    private static readonly JsonSerializerSettings JsonSettings = new()
     {
         ContractResolver = new CamelCasePropertyNamesContractResolver(),
         Converters = { new StringEnumConverter() },

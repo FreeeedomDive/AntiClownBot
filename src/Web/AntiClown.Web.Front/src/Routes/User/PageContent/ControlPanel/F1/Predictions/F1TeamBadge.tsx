@@ -10,9 +10,10 @@ import F1RaceSeasonContext from "./F1RaceSeasonContext";
 interface Props {
   driver: string;
   teams: F1TeamDto[];
+  formerTeam?: boolean;
 }
 
-export default function F1TeamBadge({ driver, teams }: Props) {
+export default function F1TeamBadge({ driver, teams, formerTeam }: Props) {
   const season = useContext(F1RaceSeasonContext);
   const team = getTeamForDriver(driver, teams);
   if (!team) return null;
@@ -35,11 +36,13 @@ export default function F1TeamBadge({ driver, teams }: Props) {
   return (
     <Box
       component="span"
+      title={formerTeam ? `${team.name} · не в текущем составе` : undefined}
       sx={{
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: info.color,
+        opacity: formerTeam ? 0.6 : undefined,
         color: info.textColor ?? "#fff",
         borderRadius: "4px",
         px: 0.75,

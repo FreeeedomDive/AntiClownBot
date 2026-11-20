@@ -10,4 +10,7 @@ public interface IF1PredictionsClient
     Task<SeasonStandingsDto> GetStandingsAsync(int season, CancellationToken cancellationToken = default);
     Task<SeasonStatsDto> GetStatsAsync(Guid participantId, int season, CancellationToken cancellationToken = default);
     Task<TeamDto[]> GetTeamsAsync(Guid participantId, int season, CancellationToken cancellationToken = default);
+    Task<ChampionshipDetailsDto> GetChampionshipAsync(Guid participantId, int season, CancellationToken cancellationToken = default);
+    Task<ChampionshipPredictionDto> SaveChampionshipPredictionAsync(Guid participantId, int season,
+        ChampionshipStageDto stage, SaveChampionshipPredictionRequestDto prediction, CancellationToken cancellationToken = default);
 }

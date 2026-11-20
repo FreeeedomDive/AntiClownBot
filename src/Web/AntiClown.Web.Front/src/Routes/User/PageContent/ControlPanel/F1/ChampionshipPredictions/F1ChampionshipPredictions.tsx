@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
+import axios from "axios";
 import {
   Alert,
   CircularProgress,
@@ -13,16 +14,16 @@ import {
 } from "@mui/material";
 import { Save } from "@mui/icons-material";
 import { Loader } from "../../../../../../Components/Loader/Loader";
-import F1ChampionshipPredictionsApi from "../../../../../../Api/F1ChampionshipPredictionsApi";
-import F1PredictionsApi from "../../../../../../Api/F1PredictionsApi";
+import F1PredictionsApi, {
+  getF1ErrorMessage,
+} from "../../../../../../Api/F1PredictionsApi";
 import DiscordMembersApi from "../../../../../../Api/DiscordMembersApi";
-import { F1ChampionshipResultsDto } from "../../../../../../Dto/F1Predictions/F1ChampionshipResultsDto";
-import { F1ChampionshipPredictionTypeDto } from "../../../../../../Dto/F1Predictions/F1ChampionshipPredictionTypeDto";
-import { F1ChampionshipUserPointsDto } from "../../../../../../Dto/F1Predictions/F1ChampionshipUserPointsDto";
+import {
+  F1ChampionshipDetailsDto,
+  F1ChampionshipPredictionDto,
+  F1ChampionshipStage,
+} from "../../../../../../Dto/F1Predictions/F1ChampionshipDetailsDto";
 import { DiscordMemberDto } from "../../../../../../Dto/Users/DiscordMemberDto";
-import { AddPredictionResultDto } from "../../../../../../Dto/F1Predictions/AddPredictionResultDto";
-import { getDriversFromTeams } from "../../../../../../Dto/F1Predictions/F1DriversHelpers";
-import { F1TeamDto } from "../../../../../../Dto/F1Predictions/F1TeamDto";
 import F1ChampionshipDriverDnDList from "./F1ChampionshipDriverDnDList";
 import F1ChampionshipCurrentStandings from "./F1ChampionshipCurrentStandings";
 import F1ChampionshipUserStandings from "./F1ChampionshipUserStandings";
@@ -34,103 +35,147 @@ const fabStyle = {
   zIndex: 1000,
 };
 
-const SEASON = new Date().getFullYear();
+function editableOrder(
+  prediction: F1ChampionshipPredictionDto | null,
+  roster: string[],
+) {
+  const order = prediction?.driverStandings;
+  if (
+    order?.length === roster.length &&
+    roster.every((driver) => order.includes(driver))
+  ) {
+    return order;
+  }
+  return roster;
+}
 
 export default function F1ChampionshipPredictions() {
   const { userId } = useParams<"userId">();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [results, setResults] = useState<F1ChampionshipResultsDto | undefined>(
-    undefined,
-  );
-  const [userPoints, setUserPoints] = useState<
-    F1ChampionshipUserPointsDto | undefined
-  >(undefined);
-  const [allPoints, setAllPoints] = useState<F1ChampionshipUserPointsDto[]>([]);
-  const [members, setMembers] = useState<DiscordMemberDto[]>([]);
-  const [teams, setTeams] = useState<F1TeamDto[]>([]);
-  const [preSeasonDrivers, setPreSeasonDrivers] = useState<string[]>([]);
-  const [midSeasonDrivers, setMidSeasonDrivers] = useState<string[]>([]);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveResult, setSaveResult] = useState<AddPredictionResultDto | null>(
-    null,
-  );
-
-  useEffect(() => {
-    if (!userId) {
-      return;
-    }
-
-    async function load() {
-      const [resultsData, predictionData, teams, pointsData] =
-        await Promise.all([
-          F1ChampionshipPredictionsApi.readResults(SEASON),
-          F1ChampionshipPredictionsApi.read(userId!, SEASON),
-          F1PredictionsApi.getActiveTeams(),
-          F1ChampionshipPredictionsApi.buildPoints(SEASON),
-        ]);
-
-      const membersData = await DiscordMembersApi.getMembers(
-        pointsData.map((p) => p.userId),
-      );
-
-      setResults(resultsData);
-      setAllPoints(pointsData);
-      setUserPoints(pointsData.find((p) => p.userId === userId));
-      setMembers(membersData);
-      setTeams(teams);
-
-      const defaultDrivers = getDriversFromTeams(teams);
-      setPreSeasonDrivers(
-        predictionData.preSeasonStandings?.length
-          ? predictionData.preSeasonStandings
-          : defaultDrivers,
-      );
-      setMidSeasonDrivers(
-        predictionData.midSeasonStandings?.length
-          ? predictionData.midSeasonStandings
-          : defaultDrivers,
-      );
-    }
-
-    load().catch(console.error);
-  }, [userId]);
-
-  const save = useCallback(async () => {
-    if (!userId) {
-      return;
-    }
-
-    setIsSaving(true);
-    const result = await F1ChampionshipPredictionsApi.createOrUpdate({
-      season: SEASON,
-      userId,
-      preSeasonStandings: preSeasonDrivers,
-      midSeasonStandings: midSeasonDrivers,
-    });
-    setSaveResult(result);
-    setIsSaving(false);
-  }, [userId, preSeasonDrivers, midSeasonDrivers]);
-
-  if (results === undefined) {
-    return <Loader />;
-  }
-
-  if (!results.hasData) {
-    return (
-      <Typography variant="h5">Сезон {SEASON} еще не стартовал</Typography>
-    );
-  }
-
-  const preSeasonEnabled =
-    results.isOpen &&
-    results.stage === F1ChampionshipPredictionTypeDto.PreSeason;
-  const midSeasonEnabled =
-    results.isOpen &&
-    results.stage === F1ChampionshipPredictionTypeDto.MidSeason;
+  const [searchParams] = useSearchParams();
+  const currentYear = new Date().getFullYear();
+  const requestedSeason = Number(searchParams.get("season") ?? currentYear);
+  const season =
+    Number.isInteger(requestedSeason) &&
+    requestedSeason >= 2023 &&
+    requestedSeason <= currentYear
+      ? requestedSeason
+      : currentYear;
 
   return (
-    <Stack direction="row" width="100%" sx={{ pb: 10 }}>
+    <ChampionshipPredictions key={`${userId}:${season}`} season={season} />
+  );
+}
+
+function ChampionshipPredictions({ season }: { season: number }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [details, setDetails] = useState<F1ChampionshipDetailsDto>();
+  const [loadError, setLoadError] = useState<string>();
+  const [revision, setRevision] = useState(0);
+  const [members, setMembers] = useState<DiscordMemberDto[]>([]);
+  const [draft, setDraft] = useState<{
+    stage: F1ChampionshipStage;
+    drivers: string[];
+  } | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [notice, setNotice] = useState<{
+    message: string;
+    error?: boolean;
+  } | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    F1PredictionsApi.getChampionship(season, controller.signal)
+      .then((data) => {
+        if (controller.signal.aborted) return;
+        setDetails(data);
+        setLoadError(undefined);
+        if (data.rows.length === 0) return;
+        DiscordMembersApi.getMembers(data.rows.map((row) => row.participantId))
+          .then((members) => {
+            if (!controller.signal.aborted && Array.isArray(members))
+              setMembers(members);
+          })
+          .catch(console.error);
+      })
+      .catch((error) => {
+        if (!controller.signal.aborted) setLoadError(getF1ErrorMessage(error));
+      });
+    return () => controller.abort();
+  }, [season, revision]);
+
+  if (!details) {
+    return loadError ? <Alert severity="error">{loadError}</Alert> : <Loader />;
+  }
+
+  if (!details.configured) {
+    return <Typography variant="h5">Сезон {season} еще не настроен</Typography>;
+  }
+
+  const activeStage = details.predictionsOpen ? details.currentStage : null;
+  function stageOrder(
+    stage: F1ChampionshipStage,
+    prediction: F1ChampionshipPredictionDto | null,
+    roster: string[],
+  ) {
+    if (stage !== activeStage) return prediction?.driverStandings ?? [];
+    return draft?.stage === stage
+      ? draft.drivers
+      : editableOrder(prediction, roster);
+  }
+  const preSeasonDrivers = stageOrder(
+    "PRE_SEASON",
+    details.preSeasonPrediction,
+    details.preSeasonRoster,
+  );
+  const midSeasonDrivers = stageOrder(
+    "MID_SEASON",
+    details.midSeasonPrediction,
+    details.midSeasonRoster,
+  );
+
+  async function save() {
+    if (!activeStage) return;
+    const drivers =
+      activeStage === "PRE_SEASON" ? preSeasonDrivers : midSeasonDrivers;
+    setIsSaving(true);
+    try {
+      const saved = await F1PredictionsApi.saveChampionshipPrediction(
+        season,
+        activeStage,
+        drivers,
+      );
+      setDetails(
+        (previous) =>
+          previous &&
+          (activeStage === "PRE_SEASON"
+            ? { ...previous, preSeasonPrediction: saved }
+            : { ...previous, midSeasonPrediction: saved }),
+      );
+      setDraft(null);
+      setNotice({ message: "Предсказание сохранено" });
+      setRevision((value) => value + 1);
+    } catch (error) {
+      const closed =
+        axios.isAxiosError(error) && error.response?.status === 409;
+      setNotice({
+        message: closed
+          ? "Приём предсказаний на этот этап закрыт"
+          : getF1ErrorMessage(error),
+        error: true,
+      });
+      if (closed) {
+        setDraft(null);
+        setRevision((value) => value + 1);
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  return (
+    <Stack width="100%" sx={{ pb: 10 }}>
+      {loadError && <Alert severity="warning">{loadError}</Alert>}
       <Grid
         container
         spacing={1}
@@ -148,14 +193,22 @@ export default function F1ChampionshipPredictions() {
           <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipDriverDnDList
               title="Предсезонные предсказания"
-              description="Активны до старта первой гонки сезона 8 марта"
+              description={
+                activeStage === "PRE_SEASON"
+                  ? "Приём открыт"
+                  : details.stageStarted
+                    ? "Приём закрыт"
+                    : "Приём ещё не открыт"
+              }
               droppableId="championship-pre-season-dnd"
               drivers={preSeasonDrivers}
-              setDrivers={setPreSeasonDrivers}
+              setDrivers={(drivers) =>
+                setDraft({ stage: "PRE_SEASON", drivers })
+              }
               disabled={false}
-              editable={preSeasonEnabled}
-              teams={teams}
-              points={userPoints?.preSeasonPoints}
+              editable={activeStage === "PRE_SEASON" && !isSaving}
+              teams={details.teams}
+              points={details.preSeasonPrediction?.points}
             />
           </Stack>
         </Grid>
@@ -171,17 +224,32 @@ export default function F1ChampionshipPredictions() {
           <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipDriverDnDList
               title="Предсказания посреди сезона"
-              description="Активны в летние каникулы с 27 июля по 23 августа"
+              description={
+                activeStage === "MID_SEASON"
+                  ? "Приём открыт"
+                  : details.currentStage === "MID_SEASON"
+                    ? "Приём закрыт"
+                    : "Приём ещё не открыт"
+              }
               droppableId="championship-mid-season-dnd"
               drivers={midSeasonDrivers}
-              setDrivers={setMidSeasonDrivers}
-              disabled={
-                results.stage === F1ChampionshipPredictionTypeDto.PreSeason
+              setDrivers={(drivers) =>
+                setDraft({ stage: "MID_SEASON", drivers })
               }
-              editable={midSeasonEnabled}
-              teams={teams}
-              points={userPoints?.midSeasonPoints}
+              disabled={
+                details.currentStage !== "MID_SEASON" &&
+                !details.midSeasonPrediction
+              }
+              editable={activeStage === "MID_SEASON" && !isSaving}
+              teams={details.teams}
+              points={details.midSeasonPrediction?.points}
             />
+            {details.midSeasonPrediction?.predictionSource ===
+              "PRE_SEASON_COPY" && (
+              <Typography variant="body2" color="text.secondary">
+                Скопировано из предсезонного прогноза
+              </Typography>
+            )}
           </Stack>
         </Grid>
         <Grid
@@ -196,8 +264,9 @@ export default function F1ChampionshipPredictions() {
           <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipCurrentStandings
               title="Текущий чемпионат"
-              standings={results.standings}
-              teams={teams}
+              standings={details.driverStandings}
+              teams={details.teams}
+              currentDrivers={details.currentDrivers}
             />
           </Stack>
         </Grid>
@@ -212,7 +281,7 @@ export default function F1ChampionshipPredictions() {
         >
           <Stack direction="column" spacing={1} width="100%" height="100%">
             <F1ChampionshipUserStandings
-              allPoints={allPoints}
+              allPoints={details.rows}
               members={members}
             />
           </Stack>
@@ -220,42 +289,36 @@ export default function F1ChampionshipPredictions() {
       </Grid>
 
       <Snackbar
-        open={saveResult !== null}
+        open={notice !== null}
         autoHideDuration={3000}
-        onClose={() => setSaveResult(null)}
+        onClose={() => setNotice(null)}
       >
-        <Alert
-          severity={
-            saveResult === AddPredictionResultDto.Success
-              ? "success"
-              : "warning"
-          }
-        >
-          {saveResult === AddPredictionResultDto.Success
-            ? "Предсказания успешно сохранены"
-            : "Предсказания на этот сезон уже закрыты"}
+        <Alert severity={notice?.error ? "error" : "success"}>
+          {notice?.message}
         </Alert>
       </Snackbar>
 
-      <Fab
-        disabled={isSaving}
-        variant={isMobile ? "circular" : "extended"}
-        sx={fabStyle}
-        onClick={save}
-        color="success"
-        aria-label={isSaving ? "Сохранение..." : "Сохранить предсказания"}
-      >
-        {isSaving ? (
-          <CircularProgress
-            size={24}
-            color="inherit"
-            sx={{ mr: isMobile ? 0 : 1 }}
-          />
-        ) : (
-          <Save />
-        )}
-        {!isMobile && (isSaving ? "Сохранение..." : "Сохранить")}
-      </Fab>
+      {activeStage && (
+        <Fab
+          disabled={isSaving}
+          variant={isMobile ? "circular" : "extended"}
+          sx={fabStyle}
+          onClick={save}
+          color="success"
+          aria-label={isSaving ? "Сохранение..." : "Сохранить предсказания"}
+        >
+          {isSaving ? (
+            <CircularProgress
+              size={24}
+              color="inherit"
+              sx={{ mr: isMobile ? 0 : 1 }}
+            />
+          ) : (
+            <Save />
+          )}
+          {!isMobile && (isSaving ? "Сохранение..." : "Сохранить")}
+        </Fab>
+      )}
     </Stack>
   );
 }
