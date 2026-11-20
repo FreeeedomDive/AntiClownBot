@@ -4,7 +4,6 @@ using AntiClown.Entertainment.Api.Core.CommonEvents.Repositories.ActiveEventsInd
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Repositories.ActiveEventsIndex;
 using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Bingo;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.ChampionshipPredictions;
 using AntiClown.Entertainment.Api.Core.MinecraftAuth.Repositories;
 using AntiClown.Entertainment.Api.Core.Parties.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +30,4 @@ public class DatabaseContext(
     public DbSet<MinecraftAccountStorageElement> MinecraftAccounts { get; set; }
     public DbSet<F1BingoCardStorageElement> F1BingoCards { get; set; }
     public DbSet<F1BingoBoardStorageElement> F1BingoBoards { get; set; }
-    public DbSet<F1ChampionshipPredictionStorageElement> F1ChampionshipPredictions { get; set; }
-    public DbSet<F1ChampionshipResultsStorageElement> F1ChampionshipResults { get; set; }
 }

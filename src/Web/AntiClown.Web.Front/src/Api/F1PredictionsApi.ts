@@ -3,6 +3,11 @@ import { F1RaceFilterDto } from "../Dto/F1Predictions/F1RaceFilterDto";
 import { F1TeamDto } from "../Dto/F1Predictions/F1TeamDto";
 import { F1SeasonStatsDto } from "../Dto/F1Predictions/F1SeasonStatsDto";
 import {
+  F1ChampionshipDetailsDto,
+  F1ChampionshipPredictionDto,
+  F1ChampionshipStage,
+} from "../Dto/F1Predictions/F1ChampionshipDetailsDto";
+import {
   InternalRaceDto,
   InternalTeamDto,
   InternalUserRaceDto,
@@ -93,6 +98,29 @@ export default class F1PredictionsApi {
       `races/${raceId}/prediction`,
       prediction,
     );
+    return data;
+  };
+
+  static getChampionship = async (
+    season: number,
+    signal?: AbortSignal,
+  ): Promise<F1ChampionshipDetailsDto> => {
+    const { data } = await F1PredictionsApi.initV2().get<
+      Omit<F1ChampionshipDetailsDto, "teams"> & { teams: InternalTeamDto[] }
+    >(`championship/${season}`, { signal });
+    return { ...data, teams: data.teams.map(teamView) };
+  };
+
+  static saveChampionshipPrediction = async (
+    season: number,
+    stage: F1ChampionshipStage,
+    driverStandings: string[],
+  ): Promise<F1ChampionshipPredictionDto> => {
+    const { data } =
+      await F1PredictionsApi.initV2().put<F1ChampionshipPredictionDto>(
+        `championship/${season}/predictions/${stage}`,
+        { driverStandings },
+      );
     return data;
   };
 
