@@ -94,8 +94,8 @@ const UserPageSideBar = observer(({ user }: Props) => {
             <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
               <UserPageSideBarItem
                 sidebarKey="F1Admin"
-                link={buildLink(userId, "admin/f1Predictions/championship")}
-                text="Админка F1"
+                link={buildLink(userId, "admin/f1Predictions/bingo")}
+                text="Админка бинго F1"
                 icon={<AdminPanelSettings sx={ICON_SX} />}
               />
             </RightsWrapper>
