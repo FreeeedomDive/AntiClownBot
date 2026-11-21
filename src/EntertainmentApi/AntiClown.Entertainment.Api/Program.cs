@@ -23,9 +23,6 @@ using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Announce;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.Messages;
 using AntiClown.Entertainment.Api.Core.DailyEvents.Services.PaymentsAndResets;
 using AntiClown.Entertainment.Api.Core.Database;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Repositories.Bingo;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Services.Bingo;
-using AntiClown.Entertainment.Api.Core.F1Predictions.Services.EventsProducing;
 using AntiClown.Entertainment.Api.Core.MinecraftAuth.Repositories;
 using AntiClown.Entertainment.Api.Core.MinecraftAuth.Services;
 using AntiClown.Entertainment.Api.Core.Options;
@@ -100,8 +97,6 @@ builder.Services.AddTransientWithProxy<ICommonActiveEventsIndexRepository, Commo
 builder.Services.AddTransientWithProxy<IDailyEventsRepository, DailyEventsRepository>();
 builder.Services.AddTransientWithProxy<IActiveDailyEventsIndexRepository, ActiveDailyEventsIndexRepository>();
 builder.Services.AddTransientWithProxy<IPartiesRepository, PartiesRepository>();
-builder.Services.AddTransientWithProxy<IF1BingoCardsRepository, F1BingoCardsRepository>();
-builder.Services.AddTransientWithProxy<IF1BingoBoardsRepository, F1BingoBoardsRepository>();
 
 // configure other stuff
 builder.Services.AddTransientWithProxy<IAntiClownApiClient>(serviceProvider
@@ -128,12 +123,9 @@ builder.Services.AddTransientWithProxy<IAnnounceEventService, AnnounceEventServi
 builder.Services.AddTransientWithProxy<IPaymentsAndResetsService, PaymentsAndResetsService>();
 builder.Services.AddTransientWithProxy<IActiveDailyEventsIndexService, ActiveDailyEventsIndexService>();
 builder.Services.AddTransientWithProxy<IPartiesService, PartiesService>();
-builder.Services.AddTransientWithProxy<IF1PredictionsMessageProducer, F1PredictionsMessageProducer>();
 builder.Services.AddTransientWithProxy<IMinecraftAuthService, MinecraftAuthService>();
 builder.Services.AddTransientWithProxy<IMinecraftAccountRepository, MinecraftAccountRepository>();
 builder.Services.AddTransientWithProxy<IMinecraftAccountService, MinecraftAccountService>();
-builder.Services.AddTransientWithProxy<IF1BingoBoardsService, F1BingoBoardsService>();
-builder.Services.AddTransientWithProxy<IF1BingoCardsService, F1BingoCardsService>();
 
 // configure HangFire
 builder.Services.AddHangfire((serviceProvider, config) =>

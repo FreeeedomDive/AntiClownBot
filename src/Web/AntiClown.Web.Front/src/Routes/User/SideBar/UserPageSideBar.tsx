@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 import { List, Stack } from "@mui/material";
 import {
   AccountBalanceWallet,
-  AdminPanelSettings,
   ArrowBack,
   Backpack,
   Casino,
@@ -91,14 +90,6 @@ const UserPageSideBar = observer(({ user }: Props) => {
       {isMyPage && userHasAnyAdminRights && (
         <>
           <List>
-            <RightsWrapper requiredRights={[RightsDto.F1PredictionsAdmin]}>
-              <UserPageSideBarItem
-                sidebarKey="F1Admin"
-                link={buildLink(userId, "admin/f1Predictions/bingo")}
-                text="Админка бинго F1"
-                icon={<AdminPanelSettings sx={ICON_SX} />}
-              />
-            </RightsWrapper>
             <RightsWrapper requiredRights={[RightsDto.EditSettings]}>
               <UserPageSideBarItem
                 sidebarKey="Settings"

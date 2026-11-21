@@ -3,7 +3,6 @@
 using AntiClown.Entertainment.Api.Client.Parties;
 using AntiClown.Entertainment.Api.Client.MinecraftAccount;
 using AntiClown.Entertainment.Api.Client.MinecraftAuth;
-using AntiClown.Entertainment.Api.Client.F1Bingo;
 using AntiClown.Entertainment.Api.Client.ActiveDailyEventsIndex;
 using AntiClown.Entertainment.Api.Client.AnnounceEvent;
 using AntiClown.Entertainment.Api.Client.PaymentsAndResetsEvent;
@@ -24,7 +23,6 @@ public interface IAntiClownEntertainmentApiClient
     IPartiesClient Parties { get; }
     IMinecraftAccountClient MinecraftAccount { get; }
     IMinecraftAuthClient MinecraftAuth { get; }
-    IF1BingoClient F1Bingo { get; }
     IActiveDailyEventsIndexClient ActiveDailyEventsIndex { get; }
     IAnnounceEventClient AnnounceEvent { get; }
     IPaymentsAndResetsEventClient PaymentsAndResetsEvent { get; }
