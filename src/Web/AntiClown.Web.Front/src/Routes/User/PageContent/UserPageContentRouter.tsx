@@ -14,7 +14,6 @@ import { Loader } from "../../../Components/Loader/Loader";
 import EditSettings from "./Admin/Settings/EditSettings";
 import F1BingoBoard from "./ControlPanel/F1/Bingo/F1BingoBoard";
 import F1PredictionsPage from "./ControlPanel/F1/F1PredictionsPage";
-import F1PredictionsAdminPage from "./Admin/F1/F1PredictionsAdminPage";
 
 interface Props {
   user: UserDto | null | undefined;
@@ -82,10 +81,6 @@ const UserPageContentRouter = ({ user }: Props) => {
             }
           />
           <Route path="/f1Predictions/*" element={<F1PredictionsPage />} />
-          <Route
-            path="/admin/f1Predictions/*"
-            element={<F1PredictionsAdminPage />}
-          />
           <Route
             path="/admin/settings"
             element={
