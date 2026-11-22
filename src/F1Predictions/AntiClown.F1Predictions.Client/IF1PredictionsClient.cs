@@ -4,6 +4,8 @@ namespace AntiClown.F1Predictions.Client;
 
 public interface IF1PredictionsClient
 {
+    Task<BingoDetailsDto> GetOwnBingoAsync(Guid participantId, int season, CancellationToken cancellationToken = default);
+    Task<BingoDetailsDto> CreateOwnBingoAsync(Guid participantId, int season, CancellationToken cancellationToken = default);
     Task<RaceDto[]> GetRacesAsync(Guid participantId, int season, CancellationToken cancellationToken = default);
     Task<UserRaceDto> GetRaceAsync(Guid participantId, Guid raceId, CancellationToken cancellationToken = default);
     Task<PredictionDto> SavePredictionAsync(Guid participantId, Guid raceId, SavePredictionRequestDto prediction, CancellationToken cancellationToken = default);

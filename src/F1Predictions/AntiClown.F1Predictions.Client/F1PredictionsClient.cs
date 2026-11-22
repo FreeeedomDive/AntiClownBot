@@ -57,6 +57,12 @@ public sealed class F1PredictionsClient : IF1PredictionsClient, IDisposable
         RequiredAsync<ChampionshipPredictionDto>(
             Request($"championship/{season}/predictions/{stage}", Method.Put, participantId, prediction), cancellationToken);
 
+    public Task<BingoDetailsDto> GetOwnBingoAsync(Guid participantId, int season, CancellationToken cancellationToken = default) =>
+        RequiredAsync<BingoDetailsDto>(Request($"bingo/boards/me?season={season}&lang=ru", Method.Get, participantId), cancellationToken);
+
+    public Task<BingoDetailsDto> CreateOwnBingoAsync(Guid participantId, int season, CancellationToken cancellationToken = default) =>
+        RequiredAsync<BingoDetailsDto>(Request($"bingo/boards/me?season={season}&lang=ru", Method.Put, participantId), cancellationToken);
+
     private RestRequest Request(string path, Method method, Guid? participantId = null, object? body = null)
     {
         var request = new RestRequest($"{resource}/{path}", method);

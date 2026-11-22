@@ -1,4 +1,4 @@
-import { F1BingoCardDto } from "../../../../../../Dto/F1Bingo/F1BingoCardDto";
+import { F1BingoUserCardDto } from "../../../../../../Dto/F1Bingo/F1BingoDetailsDto";
 import React from "react";
 import {
   Tooltip,
@@ -11,13 +11,13 @@ import {
 import { InfoOutlined } from "@mui/icons-material";
 
 interface Props {
-  card: F1BingoCardDto;
+  card: F1BingoUserCardDto;
 }
 
 const PROBABILITY_COLORS = {
-  Low: "darkred",
-  Medium: "#F4D06F",
-  High: "darkgreen",
+  LOW: "darkred",
+  MEDIUM: "#F4D06F",
+  HIGH: "darkgreen",
 };
 
 export default function F1BingoCard({ card }: Props) {
@@ -25,9 +25,9 @@ export default function F1BingoCard({ card }: Props) {
     description,
     explanation,
     probability,
-    totalRepeats,
+    requiredRepeats,
     completedRepeats,
-    isCompleted,
+    completed,
   } = card;
 
   return (
@@ -49,9 +49,9 @@ export default function F1BingoCard({ card }: Props) {
         <Typography variant="h6" sx={{ fontSize: 14, fontWeight: "bold" }}>
           {description}
         </Typography>
-        {totalRepeats > 1 && (
+        {requiredRepeats > 1 && (
           <Box display="flex" justifyContent="center" mt={1}>
-            {[...Array(totalRepeats)].map((_, index) => (
+            {[...Array(requiredRepeats)].map((_, index) => (
               <Box
                 key={index}
                 sx={{
@@ -68,7 +68,7 @@ export default function F1BingoCard({ card }: Props) {
           </Box>
         )}
       </CardContent>
-      {isCompleted && (
+      {completed && (
         <Box
           sx={{
             position: "absolute",
